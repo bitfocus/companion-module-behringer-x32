@@ -99,7 +99,7 @@ instance.prototype.actions = function(system) {
 				type:     'textinput',
 				label:    'Channel number 01-32 ( use leading 0 on all single digit channels 01 ,02 ...)',
 				id:       'channel',
-				default:  '1',
+				default:  '01',
 				regex:    self.REGEX_NUMBER
 				},
 				{
@@ -187,6 +187,48 @@ instance.prototype.actions = function(system) {
 			]
 		},
 
+		'go_cue':     {
+			label:     'Load Console Cue',
+			options: [
+				{
+				type:    'textinput',
+				label:   'Cue Nr 0-99',
+				id:      'cue',
+				default: '0',
+				regex:   self.REGEX_NUMBER
+				}
+
+			]
+		},
+
+		'go_scene':     {
+			label:     'Load Console Scene',
+			options: [
+				{
+				type:    'textinput',
+				label:   'scene Nr 0-99',
+				id:      'scene',
+				default: '0',
+				regex:   self.REGEX_NUMBER
+				}
+
+			]
+		},
+
+		'go_snip':     {
+			label:     'Load Console snippet',
+			options: [
+				{
+				type:    'textinput',
+				label:   'Snippet Nr 0-99',
+				id:      'snip',
+				default: '0',
+				regex:   self.REGEX_NUMBER
+				}
+
+			]
+		},
+
 	});
 }
 
@@ -239,6 +281,32 @@ instance.prototype.action = function(action) {
 		self.system.emit('osc_send', self.config.host, 10023,'/ch/' + opt.channel + '/config/color' ,[arg]);
 		break;
 
+		case 'go_cue':
+			var arg = {
+				type: "i",
+				value: parseInt(opt.cue)
+			};
+		self.system.emit('osc_send', self.config.host, 10023,'/‐action/gocue'  ,[arg]);
+		debug('/‐action/gocue', arg);
+		break;
+
+		case 'go_scene':
+			var arg = {
+				type: "i",
+				value: parseInt(opt.scene)
+			};
+		self.system.emit('osc_send', self.config.host, 10023,'/-action/goscene'  ,[arg]);
+		debug('/‐action/goscene', arg);
+		break;
+
+		case 'go_snip':
+			var arg = {
+				type: "i",
+				value: parseInt(opt.snip)
+			};
+		self.system.emit('osc_send', self.config.host, 10023,'/‐action/gosnippet'  ,[arg]);
+		debug ('/‐action/gosnippet', arg);
+		break;
 }
 
 
