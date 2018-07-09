@@ -315,7 +315,7 @@ instance.prototype.action = function(action) {
 };
 
 instance.module_info = {
-	label: 'Behringer X32',
+	label: 'Midas M32 / Behringer X32',
 	id: 'x32',
 	version: '0.0.1'
 };
