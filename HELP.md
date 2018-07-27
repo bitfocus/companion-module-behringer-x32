@@ -16,5 +16,6 @@ Mute Group | Turns the selected mute group on or off
 Load Console Cue | Loads the given cue from the consoles internal cue list 0-99
 Load Console Scene | Loads the given scene from the consoles internal scene list 0-99
 Load Console Snippet | Loads the given snippet from the consoles internal snippet list 0-99
+Tape Operation | Stop,Play,PlayPause,Record,RecordPause,Fast Forward,Rewind of the tape Deck
 
 for additional actions please raise a feature request at [github](https://github.com/bitfocus/companion)

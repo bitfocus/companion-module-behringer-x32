@@ -88,6 +88,16 @@ instance.prototype.color_val = [
 		{ label: 'White Inverted',   id: '15' }
 ];
 
+instance.prototype.tape_func = [
+		{ label: 'STOP',                id: '0' },
+		{ label: 'PLAY PAUSE',          id: '1' },
+		{ label: 'PLAY',                id: '2' },
+		{ label: 'RECORD PAUSE',        id: '3' },
+		{ label: 'RECORD',              id: '4' },
+		{ label: 'FAST FORWARD',        id: '5' },
+		{ label: 'REWIND',              id: '6' }
+];
+
 instance.prototype.actions = function(system) {
 	var self = this;
 	self.system.emit('instance_actions', self.id, {
@@ -229,6 +239,19 @@ instance.prototype.actions = function(system) {
 			]
 		},
 
+		'tape':     {
+			label:     'Tape Operation',
+			options: [
+
+				{
+				type:    'dropdown',
+				label:   'Function',
+				id:      'tFunc',
+				choices: self.tape_func
+				}
+			]
+		}
+
 	});
 }
 
@@ -306,6 +329,15 @@ instance.prototype.action = function(action) {
 			};
 		self.system.emit('osc_send', self.config.host, 10023,'/‐action/gosnippet'  ,[arg]);
 		debug ('/‐action/gosnippet', arg);
+		break;
+
+		case 'tape':
+			var arg = {
+				type: "i",
+				value: parseInt(opt.tFunc)
+			};
+		self.system.emit('osc_send', self.config.host, 10023,'/-stat/tape/state'  ,[arg]);
+		debug ('/-stat/tape/state', arg);
 		break;
 }
 
