@@ -6,7 +6,6 @@ function instance(system, id, config) {
 	var self = this;
 	// super-constructor
 	instance_skel.apply(this, arguments);
-	self.togglePlayState = 1;
 	self.actions(); // export actions
 	return self;
 }
@@ -32,7 +31,7 @@ instance.prototype.config_fields = function () {
 			type: 'textinput',
 			id: 'host',
 			label: 'Target IP',
-			tooltip: 'The IP of the X32 console',
+			tooltip: 'The IP of the M32 / X32 console',
 			width: 6,
 			regex: self.REGEX_IP
 		}
@@ -46,7 +45,7 @@ instance.prototype.destroy = function() {
 };
 
 instance.prototype.fader_val = [
-		{ label: '- ∞',         id: '0.0' },
+		{ label: '- ∞',        id: '0.0' },
 		{ label: '-50 dB: ',   id: '0.1251' },
 		{ label: '-30 dB',     id: '0.251' },
 		{ label: '-20 dB',     id: '0.375' },
@@ -106,32 +105,33 @@ instance.prototype.actions = function(system) {
 			label:      'Set mute',
 			options: [
 				{
-				type:     'dropdown',
-				label:    'Type',
-				id:       'type',
-				choices:  [
-					{ id: '/ch/',      label: 'Channel 01-32' },
-					{ id: '/auxin/',   label: 'Aux In 01-08' },
-					{ id: '/fxrtn/',   label: 'FX Return 01-08' },
-					{ id: '/bus/',     label: 'Bus 01-16'  },
-					{ id: '/mtx/',     label: 'Matrix 01-06' }
-				 ]
-				 },
-				{
-				type:     'textinput',
-				label:    'Ch, AuxIn, FXrtn, Bus, Mtx Number ( use leading 0 on all single digit numbers 01 ,02 ...) ',
-				id:       'num',
-				default:  '01',
-				regex:    self.REGEX_NUMBER
+					type:     'dropdown',
+					label:    'Type',
+					id:       'type',
+					choices:  [
+						{ id: '/ch/',      label: 'Channel 01-32' },
+						{ id: '/auxin/',   label: 'Aux In 01-08' },
+						{ id: '/fxrtn/',   label: 'FX Return 01-08' },
+						{ id: '/bus/',     label: 'Bus 01-16'  },
+						{ id: '/mtx/',     label: 'Matrix 01-06' }
+					 ]
 				},
 				{
-				type:     'dropdown',
-				label:    'Mute / Unmute',
-				id:       'mute',
-				choices:  [ { id: '0', label: 'Mute' }, { id: '1', label: 'Unmute' } ]
+					type:     'textinput',
+					label:    'Ch, AuxIn, FXrtn, Bus, Mtx Number ( use leading 0 on all single digit numbers 01 ,02) ',
+					id:       'num',
+					default:  '01',
+					regex:    self.REGEX_NUMBER
+				},
+				{
+					type:     'dropdown',
+					label:    'Mute / Unmute',
+					id:       'mute',
+					choices:  [ { id: '0', label: 'Mute' }, { id: '1', label: 'Unmute' } ]
 				},
 			]
 		},
+
 		'mMute':     {
 			label:      'Set Main mute',
 			options: [
@@ -157,29 +157,29 @@ instance.prototype.actions = function(system) {
 			label:      'Set fader level',
 			options: [
 				{
-				type:     'dropdown',
-				label:    'Type',
-				id:       'type',
-				choices:  [
-					{ id: '/ch/',      label: 'Channel 01-32' },
-					{ id: '/auxin/',   label: 'Aux In 01-08' },
-					{ id: '/fxrtn/',   label: 'FX Return 01-08' },
-					{ id: '/bus/',     label: 'Bus 01-16'  },
-					{ id: '/mtx/',     label: 'Matrix 01-06' }
+					type:     'dropdown',
+					label:    'Type',
+					id:       'type',
+					choices:  [
+						{ id: '/ch/',      label: 'Channel 01-32' },
+						{ id: '/auxin/',   label: 'Aux In 01-08' },
+						{ id: '/fxrtn/',   label: 'FX Return 01-08' },
+						{ id: '/bus/',     label: 'Bus 01-16'  },
+						{ id: '/mtx/',     label: 'Matrix 01-06' }
 				 ]
-				 },
-				{
-				type:     'textinput',
-				label:    'Ch, AuxIn, FXrtn, Bus, Mtx Number ( use leading 0 on all single digit numbers 01 ,02 ...)' ,
-				id:       'num',
-				default:  '01',
-				regex:    self.REGEX_NUMBER
 				},
 				{
-				type:     'dropdown',
-				label:    'Fader Level',
-				id:       'fad',
-				choices:  self.fader_val
+					type:     'textinput',
+					label:    'Ch, AuxIn, FXrtn, Bus, Mtx Number ( use leading 0 on all single digit numbers 01 ,02)' ,
+					id:       'num',
+					default:  '01',
+					regex:    self.REGEX_NUMBER
+				},
+				{
+					type:     'dropdown',
+					label:    'Fader Level',
+					id:       'fad',
+					choices:  self.fader_val
 				}
 			]
 		},
@@ -188,19 +188,19 @@ instance.prototype.actions = function(system) {
 			label:      'Set Main fader level',
 			options: [
 				{
-				type:     'dropdown',
-				label:    'Type',
-				id:       'type',
-				choices:  [
-					{ id: '/main/st',      label: 'Stereo' },
-					{ id: '/main/m',       label: 'Mono' }
+					type:     'dropdown',
+					label:    'Type',
+					id:       'type',
+					choices:  [
+						{ id: '/main/st',      label: 'Stereo' },
+						{ id: '/main/m',       label: 'Mono' }
 				 ]
-				 },
+				},
 				{
-				type:     'dropdown',
-				label:    'Fader Level',
-				id:       'fad',
-				choices:  self.fader_val
+					type:     'dropdown',
+					label:    'Fader Level',
+					id:       'fad',
+					choices:  self.fader_val
 				}
 			]
 		},
@@ -209,29 +209,29 @@ instance.prototype.actions = function(system) {
 			label:     'Set label',
 			options: [
 				{
-				type:     'dropdown',
-				label:    'Type',
-				id:       'type',
-				choices:  [
-					{ id: '/ch/',      label: 'Channel 01-32' },
-					{ id: '/auxin/',   label: 'Aux In 01-08' },
-					{ id: '/fxrtn/',   label: 'FX Return 01-08' },
-					{ id: '/bus/',     label: 'Bus 01-16'  },
-					{ id: '/mtx/',     label: 'Matrix 01-06' }
-				 ]
-				 },
-				{
-				type:    'textinput',
-				label:   'Ch, AuxIn, FXrtn, Bus, Mtx Number ( use leading 0 on all single digit numbers 01 ,02 ...)',
-				id:      'num',
-				default: '01',
-				regex: self.REGEX_NUMBER
+					type:     'dropdown',
+					label:    'Type',
+					id:       'type',
+					choices:  [
+						{ id: '/ch/',      label: 'Channel 01-32' },
+						{ id: '/auxin/',   label: 'Aux In 01-08' },
+						{ id: '/fxrtn/',   label: 'FX Return 01-08' },
+						{ id: '/bus/',     label: 'Bus 01-16'  },
+						{ id: '/mtx/',     label: 'Matrix 01-06' }
+					]
 				},
 				{
-				type:    'textinput',
-				label:   'Label',
-				id:      'lab',
-				default: ''
+					type:    'textinput',
+					label:   'Ch, AuxIn, FXrtn, Bus, Mtx Number ( use leading 0 on all single digit numbers 01 ,02)',
+					id:      'num',
+					default: '01',
+					regex: self.REGEX_NUMBER
+				},
+				{
+					type:    'textinput',
+					label:   'Label',
+					id:      'lab',
+					default: ''
 				}
 			]
 		},
@@ -240,50 +240,50 @@ instance.prototype.actions = function(system) {
 			label:     'Set Main label',
 			options: [
 				{
-				type:     'dropdown',
-				label:    'Type',
-				id:       'type',
-				choices:  [
-					{ id: '/main/st',      label: 'Stereo' },
-					{ id: '/main/m',       label: 'Mono' }
-				 ]
-				 },
+					type:     'dropdown',
+					label:    'Type',
+					id:       'type',
+					choices:  [
+						{ id: '/main/st',      label: 'Stereo' },
+						{ id: '/main/m',       label: 'Mono' }
+					]
+				},
 				{
-				type:    'textinput',
-				label:   'Label',
-				id:      'lab',
-				default: ''
+					type:    'textinput',
+					label:   'Label',
+					id:      'lab',
+					default: ''
 				}
 			]
 		},
 
 		'color':     {
-			label:     'Set the color',
+			label:     'Set color',
 			options: [
 				{
-				type:     'dropdown',
-				label:    'Type',
-				id:       'type',
-				choices:  [
-					{ id: '/ch/',      label: 'Channel 01-32' },
-					{ id: '/auxin/',   label: 'Aux In 01-08' },
-					{ id: '/fxrtn/',   label: 'FX Return 01-08' },
-					{ id: '/bus/',     label: 'Bus 01-16'  },
-					{ id: '/mtx/',     label: 'Matrix 01-06' }
-				 ]
-				 },
-				{
-				type:    'textinput',
-				label:   'Ch, AuxIn, FXrtn, Bus, Mtx Number ( use leading 0 on all single digit numbers 01 ,02 ...)',
-				id:      'num',
-				default: '01',
-				regex:   self.REGEX_NUMBER
+					type:     'dropdown',
+					label:    'Type',
+					id:       'type',
+					choices:  [
+						{ id: '/ch/',      label: 'Channel 01-32' },
+						{ id: '/auxin/',   label: 'Aux In 01-08' },
+						{ id: '/fxrtn/',   label: 'FX Return 01-08' },
+						{ id: '/bus/',     label: 'Bus 01-16'  },
+						{ id: '/mtx/',     label: 'Matrix 01-06' }
+					]
 				},
 				{
-				type:    'dropdown',
-				label:   'color',
-				id:      'col',
-				choices: self.color_val
+					type:    'textinput',
+					label:   'Ch, AuxIn, FXrtn, Bus, Mtx Number ( use leading 0 on all single digit numbers 01 ,02)',
+					id:      'num',
+					default: '01',
+					regex:   self.REGEX_NUMBER
+				},
+				{
+					type:    'dropdown',
+					label:   'color',
+					id:      'col',
+					choices: self.color_val
 				}
 			]
 		},
@@ -292,19 +292,19 @@ instance.prototype.actions = function(system) {
 			label:     'Set Main color',
 			options: [
 				{
-				type:     'dropdown',
-				label:    'Type',
-				id:       'type',
-				choices:  [
-					{ id: '/main/st',      label: 'Stereo' },
-					{ id: '/main/m',       label: 'Mono' }
-				 ]
-				 },
+					type:     'dropdown',
+					label:    'Type',
+					id:       'type',
+					choices:  [
+						{ id: '/main/st',      label: 'Stereo' },
+						{ id: '/main/m',       label: 'Mono' }
+					]
+				},
 				{
-				type:    'dropdown',
-				label:   'color',
-				id:      'col',
-				choices: self.color_val
+					type:    'dropdown',
+					label:   'color',
+					id:      'col',
+					choices: self.color_val
 				}
 			]
 		},
@@ -313,17 +313,17 @@ instance.prototype.actions = function(system) {
 			label:     'Mute Group ON/OFF',
 			options: [
 				{
-				type:    'textinput',
-				label:   'Mute Group Number (1-6)',
-				id:      'mute_grp',
-				default: '1',
-				regex: self.REGEX_NUMBER
+					type:    'textinput',
+					label:   'Mute Group Number (1-6)',
+					id:      'mute_grp',
+					default: '1',
+					regex: self.REGEX_NUMBER
 				},
 				{
-				type:    'dropdown',
-				label:   'Mute / Unmute',
-				id:      'mute',
-				choices: [ { id: '1', label: 'Mute' }, { id: '0', label: 'Unmute' } ]
+					type:    'dropdown',
+					label:   'Mute / Unmute',
+					id:      'mute',
+					choices: [ { id: '1', label: 'Mute' }, { id: '0', label: 'Unmute' } ]
 				}
 			]
 		},
@@ -332,13 +332,12 @@ instance.prototype.actions = function(system) {
 			label:     'Load Console Cue',
 			options: [
 				{
-				type:    'textinput',
-				label:   'Cue Nr 0-99',
-				id:      'cue',
-				default: '0',
-				regex:   self.REGEX_NUMBER
+					type:    'textinput',
+					label:   'Cue Nr 0-99',
+					id:      'cue',
+					default: '0',
+					regex:   self.REGEX_NUMBER
 				}
-
 			]
 		},
 
@@ -346,11 +345,11 @@ instance.prototype.actions = function(system) {
 			label:     'Load Console Scene',
 			options: [
 				{
-				type:    'textinput',
-				label:   'scene Nr 0-99',
-				id:      'scene',
-				default: '0',
-				regex:   self.REGEX_NUMBER
+					type:    'textinput',
+					label:   'scene Nr 0-99',
+					id:      'scene',
+					default: '0',
+					regex:   self.REGEX_NUMBER
 				}
 
 			]
@@ -360,11 +359,11 @@ instance.prototype.actions = function(system) {
 			label:     'Load Console snippet',
 			options: [
 				{
-				type:    'textinput',
-				label:   'Snippet Nr 0-99',
-				id:      'snip',
-				default: '0',
-				regex:   self.REGEX_NUMBER
+					type:    'textinput',
+					label:   'Snippet Nr 0-99',
+					id:      'snip',
+					default: '0',
+					regex:   self.REGEX_NUMBER
 				}
 
 			]
@@ -375,32 +374,26 @@ instance.prototype.actions = function(system) {
 			options: [
 
 				{
-				type:    'dropdown',
-				label:   'Function',
-				id:      'tFunc',
-				choices: self.tape_func
+					type:    'dropdown',
+					label:   'Function',
+					id:      'tFunc',
+					choices: self.tape_func
 				}
 			]
 		}
-
 	});
 }
 
 instance.prototype.action = function(action) {
 	var self = this;
-	var id = action.action;
-	var cmd
-	var opt = action.options
-
+	var cmd;
+	var opt = action.options;
 
 	switch (action.action){
-
-
-
 		case 'mute':
 			var arg = {
 				type: "i",
-				value: opt.mute
+				value: parseInt(opt.mute)
 			};
 			cmd = opt.type + opt.num + '/mix/on';
 		break;
@@ -408,7 +401,7 @@ instance.prototype.action = function(action) {
 		case 'mMute':
 			var arg = {
 				type: "i",
-				value: opt.mute
+				value: parseInt(opt.mute)
 			};
 			cmd = opt.type + '/mix/on';
 		break;
@@ -448,7 +441,7 @@ instance.prototype.action = function(action) {
 		case 'color':
 		var arg = {
 			type: "i",
-			value: opt.col
+			value: parseInt(opt.col)
 		};
 		cmd = opt.type + opt.num + '/config/color';
 
@@ -457,7 +450,7 @@ instance.prototype.action = function(action) {
 		case 'mColor':
 		var arg = {
 			type: "i",
-			value: opt.col
+			value: parseInt(opt.col)
 		};
 		cmd = opt.type + '/config/color';
 		break;
@@ -465,7 +458,7 @@ instance.prototype.action = function(action) {
 		case 'mute_grp':
 			var arg = {
 				type: "i",
-				value: opt.mute
+				value: parseInt(opt.mute)
 			};
 			cmd = '/config/mute/'+ opt.mute_grp;
 		break;
@@ -512,7 +505,7 @@ instance.prototype.action = function(action) {
 instance.module_info = {
 	label: 'Midas M32 / Behringer X32',
 	id: 'x32',
-	version: '0.0.1'
+	version: '0.0.2'
 };
 
 instance_skel.extendedBy(instance);
