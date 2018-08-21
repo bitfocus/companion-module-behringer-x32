@@ -102,13 +102,25 @@ instance.prototype.actions = function(system) {
 	var self = this;
 	self.system.emit('instance_actions', self.id, {
 
-		'channel_mute':     {
-			label:      'Set the channel mute',
+		'mute':     {
+			label:      'Set mute',
 			options: [
 				{
+				type:     'dropdown',
+				label:    'Type',
+				id:       'type',
+				choices:  [
+					{ id: '/ch/',      label: 'Channel 01-32' },
+					{ id: '/auxin/',   label: 'Aux In 01-08' },
+					{ id: '/fxrtn/',   label: 'FX Return 01-08' },
+					{ id: '/bus/',     label: 'Bus 01-16'  },
+					{ id: '/mtx/',     label: 'Matrix 01-06' }
+				 ]
+				 },
+				{
 				type:     'textinput',
-				label:    'Channel number 01-32 ( use leading 0 on all single digit channels 01 ,02 ...)',
-				id:       'channel',
+				label:    'Ch, AuxIn, FXrtn, Bus, Mtx Number ( use leading 0 on all single digit numbers 01 ,02 ...) ',
+				id:       'num',
 				default:  '01',
 				regex:    self.REGEX_NUMBER
 				},
@@ -117,17 +129,49 @@ instance.prototype.actions = function(system) {
 				label:    'Mute / Unmute',
 				id:       'mute',
 				choices:  [ { id: '0', label: 'Mute' }, { id: '1', label: 'Unmute' } ]
-				}
+				},
+			]
+		},
+		'mMute':     {
+			label:      'Set Main mute',
+			options: [
+				{
+					type:     'dropdown',
+					label:    'Type',
+					id:       'type',
+					choices:  [
+						{ id: '/main/st',      label: 'Stereo' },
+						{ id: '/main/m',       label: 'Mono' }
+					 ]
+				},
+				{
+					type:     'dropdown',
+					label:    'Mute / Unmute',
+					id:       'mute',
+					choices:  [ { id: '0', label: 'Mute' }, { id: '1', label: 'Unmute' } ]
+				},
 			]
 		},
 
-		'channel_fad':     {
-			label:      'Channel fader level',
+		'fad':     {
+			label:      'Set fader level',
 			options: [
 				{
+				type:     'dropdown',
+				label:    'Type',
+				id:       'type',
+				choices:  [
+					{ id: '/ch/',      label: 'Channel 01-32' },
+					{ id: '/auxin/',   label: 'Aux In 01-08' },
+					{ id: '/fxrtn/',   label: 'FX Return 01-08' },
+					{ id: '/bus/',     label: 'Bus 01-16'  },
+					{ id: '/mtx/',     label: 'Matrix 01-06' }
+				 ]
+				 },
+				{
 				type:     'textinput',
-				label:    'Channel number 01-32 (Use leading 0 on all single digit channels 01 ,02 ...)',
-				id:       'channel',
+				label:    'Ch, AuxIn, FXrtn, Bus, Mtx Number ( use leading 0 on all single digit numbers 01 ,02 ...)' ,
+				id:       'num',
 				default:  '01',
 				regex:    self.REGEX_NUMBER
 				},
@@ -136,6 +180,131 @@ instance.prototype.actions = function(system) {
 				label:    'Fader Level',
 				id:       'fad',
 				choices:  self.fader_val
+				}
+			]
+		},
+
+		'mFad':     {
+			label:      'Set Main fader level',
+			options: [
+				{
+				type:     'dropdown',
+				label:    'Type',
+				id:       'type',
+				choices:  [
+					{ id: '/main/st',      label: 'Stereo' },
+					{ id: '/main/m',       label: 'Mono' }
+				 ]
+				 },
+				{
+				type:     'dropdown',
+				label:    'Fader Level',
+				id:       'fad',
+				choices:  self.fader_val
+				}
+			]
+		},
+
+		'label':     {
+			label:     'Set label',
+			options: [
+				{
+				type:     'dropdown',
+				label:    'Type',
+				id:       'type',
+				choices:  [
+					{ id: '/ch/',      label: 'Channel 01-32' },
+					{ id: '/auxin/',   label: 'Aux In 01-08' },
+					{ id: '/fxrtn/',   label: 'FX Return 01-08' },
+					{ id: '/bus/',     label: 'Bus 01-16'  },
+					{ id: '/mtx/',     label: 'Matrix 01-06' }
+				 ]
+				 },
+				{
+				type:    'textinput',
+				label:   'Ch, AuxIn, FXrtn, Bus, Mtx Number ( use leading 0 on all single digit numbers 01 ,02 ...)',
+				id:      'num',
+				default: '01',
+				regex: self.REGEX_NUMBER
+				},
+				{
+				type:    'textinput',
+				label:   'Label',
+				id:      'lab',
+				default: ''
+				}
+			]
+		},
+
+		'mLabel':     {
+			label:     'Set Main label',
+			options: [
+				{
+				type:     'dropdown',
+				label:    'Type',
+				id:       'type',
+				choices:  [
+					{ id: '/main/st',      label: 'Stereo' },
+					{ id: '/main/m',       label: 'Mono' }
+				 ]
+				 },
+				{
+				type:    'textinput',
+				label:   'Label',
+				id:      'lab',
+				default: ''
+				}
+			]
+		},
+
+		'color':     {
+			label:     'Set the color',
+			options: [
+				{
+				type:     'dropdown',
+				label:    'Type',
+				id:       'type',
+				choices:  [
+					{ id: '/ch/',      label: 'Channel 01-32' },
+					{ id: '/auxin/',   label: 'Aux In 01-08' },
+					{ id: '/fxrtn/',   label: 'FX Return 01-08' },
+					{ id: '/bus/',     label: 'Bus 01-16'  },
+					{ id: '/mtx/',     label: 'Matrix 01-06' }
+				 ]
+				 },
+				{
+				type:    'textinput',
+				label:   'Ch, AuxIn, FXrtn, Bus, Mtx Number ( use leading 0 on all single digit numbers 01 ,02 ...)',
+				id:      'num',
+				default: '01',
+				regex:   self.REGEX_NUMBER
+				},
+				{
+				type:    'dropdown',
+				label:   'color',
+				id:      'col',
+				choices: self.color_val
+				}
+			]
+		},
+
+		'mColor':     {
+			label:     'Set Main color',
+			options: [
+				{
+				type:     'dropdown',
+				label:    'Type',
+				id:       'type',
+				choices:  [
+					{ id: '/main/st',      label: 'Stereo' },
+					{ id: '/main/m',       label: 'Mono' }
+				 ]
+				 },
+				{
+				type:    'dropdown',
+				label:   'color',
+				id:      'col',
+				choices: self.color_val
 				}
 			]
 		},
@@ -155,44 +324,6 @@ instance.prototype.actions = function(system) {
 				label:   'Mute / Unmute',
 				id:      'mute',
 				choices: [ { id: '1', label: 'Mute' }, { id: '0', label: 'Unmute' } ]
-				}
-			]
-		},
-
-		'channel_label':     {
-			label:     'Set the channel label',
-			options: [
-				{
-				type:    'textinput',
-				label:   'Channel number 01-32 (Use leading 0 on all single digit channels 01 ,02 ...)',
-				id:      'channel',
-				default: '01',
-				regex: self.REGEX_NUMBER
-				},
-				{
-				type:    'textinput',
-				label:   'Channel Label',
-				id:      'ch_lab',
-				default: ''
-				}
-			]
-		},
-
-		'channel_color':     {
-			label:     'Set the channel color',
-			options: [
-				{
-				type:    'textinput',
-				label:   'Channel number 01-32 (Use leading 0 on all single digit channels 01 ,02 ...)',
-				id:      'channel',
-				default: '01',
-				regex:   self.REGEX_NUMBER
-				},
-				{
-				type:    'dropdown',
-				label:   'Channel color',
-				id:      'ch_col',
-				choices: self.color_val
 				}
 			]
 		},
@@ -264,44 +395,79 @@ instance.prototype.action = function(action) {
 
 	switch (action.action){
 
+
+
+		case 'mute':
+			var arg = {
+				type: "i",
+				value: opt.mute
+			};
+			cmd = opt.type + opt.num + '/mix/on';
+		break;
+
+		case 'mMute':
+			var arg = {
+				type: "i",
+				value: opt.mute
+			};
+			cmd = opt.type + '/mix/on';
+		break;
+
+		case 'fad':
+			var arg = {
+				type: "f",
+				value: parseFloat(opt.fad)
+			};
+			cmd = opt.type + opt.num + '/mix/fader';
+		break;
+
+		case 'mFad':
+			var arg = {
+				type: "f",
+				value: parseFloat(opt.fad)
+			};
+			cmd = opt.type + '/mix/fader';
+		break;
+
+		case 'label':
+			var arg = {
+				type: "s",
+				value: "" + opt.lab
+			};
+			cmd = opt.type + opt.num + '/config/name';
+		break;
+
+		case 'mLabel':
+			var arg = {
+				type: "s",
+				value: "" + opt.lab
+			};
+			cmd = opt.type + '/config/name';
+		break;
+
+		case 'color':
+		var arg = {
+			type: "i",
+			value: opt.col
+		};
+		cmd = opt.type + opt.num + '/config/color';
+
+		break;
+
+		case 'mColor':
+		var arg = {
+			type: "i",
+			value: opt.col
+		};
+		cmd = opt.type + '/config/color';
+		break;
+
 		case 'mute_grp':
 			var arg = {
 				type: "i",
 				value: opt.mute
 			};
-			self.system.emit('osc_send', self.config.host, 10023,'/config/mute/'+ opt.mute_grp  , [arg]);
-		break;
-
-		case 'channel_mute':
-			var arg = {
-				type: "i",
-				value: opt.mute
-			};
-			self.system.emit('osc_send', self.config.host, 10023,'/ch/' + opt.channel + '/mix/on' ,[arg]);
-		break;
-
-		case 'channel_fad':
-			var arg = {
-				type: "f",
-				value: parseFloat(opt.fad)
-			};
-			self.system.emit('osc_send', self.config.host, 10023,'/ch/' + opt.channel + '/mix/fader' ,[arg]);
-		break;
-
-		case 'channel_label':
-			var arg = {
-				type: "s",
-				value: "" + opt.ch_lab
-			};
-			self.system.emit('osc_send', self.config.host, 10023,'/ch/' + opt.channel + '/config/name' ,[arg]);
-		break;
-
-		case 'channel_color':
-		var arg = {
-			type: "i",
-			value: opt.ch_col
-		};
-		self.system.emit('osc_send', self.config.host, 10023,'/ch/' + opt.channel + '/config/color' ,[arg]);
+			cmd = '/config/mute/'+ opt.mute_grp;
 		break;
 
 		case 'go_cue':
@@ -309,8 +475,7 @@ instance.prototype.action = function(action) {
 				type: "i",
 				value: parseInt(opt.cue)
 			};
-		self.system.emit('osc_send', self.config.host, 10023,'/‐action/gocue'  ,[arg]);
-		debug('/‐action/gocue', arg);
+			cmd = '/‐action/gocue';
 		break;
 
 		case 'go_scene':
@@ -318,8 +483,7 @@ instance.prototype.action = function(action) {
 				type: "i",
 				value: parseInt(opt.scene)
 			};
-		self.system.emit('osc_send', self.config.host, 10023,'/-action/goscene'  ,[arg]);
-		debug('/‐action/goscene', arg);
+			cmd = '/-action/goscene';
 		break;
 
 		case 'go_snip':
@@ -327,8 +491,7 @@ instance.prototype.action = function(action) {
 				type: "i",
 				value: parseInt(opt.snip)
 			};
-		self.system.emit('osc_send', self.config.host, 10023,'/‐action/gosnippet'  ,[arg]);
-		debug ('/‐action/gosnippet', arg);
+			cmd = '/‐action/gosnippet';
 		break;
 
 		case 'tape':
@@ -336,13 +499,13 @@ instance.prototype.action = function(action) {
 				type: "i",
 				value: parseInt(opt.tFunc)
 			};
-		self.system.emit('osc_send', self.config.host, 10023,'/-stat/tape/state'  ,[arg]);
-		debug ('/-stat/tape/state', arg);
+			cmd = '/-stat/tape/state'
 		break;
 }
-
-
-
+	if (cmd !== undefined) {
+		self.system.emit('osc_send', self.config.host, 10023,cmd  ,[arg]);
+		debug (cmd, arg);
+	}
 
 };
 
