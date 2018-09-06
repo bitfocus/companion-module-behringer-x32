@@ -381,6 +381,8 @@ instance.prototype.actions = function(system) {
 			]
 		},
 
+	//	'clearSolo':     {label:     'Clear Solo'},
+
 		'tape':     {
 			label:     'Tape Operation',
 			options: [
@@ -400,7 +402,7 @@ instance.prototype.action = function(action) {
 	var self = this;
 	var cmd;
 	var opt = action.options;
-	var nVal = parseInt(opt.num);
+	var nVal = 1;
 
 	switch (action.action){
 		case 'mute':
@@ -543,7 +545,15 @@ instance.prototype.action = function(action) {
 			};
 			cmd = '/‐action/gosnippet';
 		break;
-
+/*
+		case 'clearSolo':
+			var arg = {
+				type: "s",
+				value: '1'
+			};
+			cmd = '/‐action/clearsolo';
+		break;
+*/
 		case 'tape':
 			var arg = {
 				type: "i",
@@ -556,6 +566,7 @@ instance.prototype.action = function(action) {
 		self.system.emit('osc_send', self.config.host, 10023,cmd  ,[arg]);
 		debug (cmd, arg);
 	}
+
 
 };
 
