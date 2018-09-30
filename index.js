@@ -567,13 +567,6 @@ instance.prototype.action = function(action) {
 		debug (cmd, arg);
 	}
 
-
-};
-
-instance.module_info = {
-	label: 'Midas M32 / Behringer X32',
-	id: 'x32',
-	version: '0.0.2'
 };
 
 instance_skel.extendedBy(instance);
