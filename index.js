@@ -417,11 +417,13 @@ instance.prototype.action = function(action) {
 				if (opt.num >= 10) {
 					nVal = parseInt(opt.num)
 				}
+				cmd = opt.type + nVal + '/mix/on';
 			}
 			if (opt.type == '/dca/') {
 				nVal = parseInt(opt.num)
+				cmd = opt.type + nVal + '/on';
 			}
-			cmd = opt.type + nVal + '/mix/on';
+
 		break;
 
 		case 'mMute':
@@ -444,11 +446,13 @@ instance.prototype.action = function(action) {
 				if (opt.num >= 10) {
 					nVal = parseInt(opt.num)
 				}
+				cmd = opt.type + nVal + '/mix/fader';
 			}
 			if (opt.type == '/dca/') {
 				nVal = parseInt(opt.num)
+				cmd = opt.type + nVal + '/fader';
 			}
-			cmd = opt.type + nVal + '/mix/fader';
+
 		break;
 
 		case 'mFad':
