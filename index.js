@@ -360,7 +360,7 @@ instance.prototype.actions = function(system) {
 					type:    'textinput',
 					label:   'scene Nr 0-99',
 					id:      'scene',
-					default: '0',
+					default: 0,
 					regex:   self.REGEX_NUMBER
 				}
 
@@ -374,7 +374,7 @@ instance.prototype.actions = function(system) {
 					type:    'textinput',
 					label:   'Snippet Nr 0-99',
 					id:      'snip',
-					default: '0',
+					default: 0,
 					regex:   self.REGEX_NUMBER
 				}
 
@@ -531,7 +531,7 @@ instance.prototype.action = function(action) {
 				type: "i",
 				value: parseInt(opt.cue)
 			};
-			cmd = '/‐action/gocue';
+			cmd = '/-action/gocue';
 		break;
 
 		case 'go_scene':
@@ -547,7 +547,7 @@ instance.prototype.action = function(action) {
 				type: "i",
 				value: parseInt(opt.snip)
 			};
-			cmd = '/‐action/gosnippet';
+			cmd = '/-action/gosnippet';
 		break;
 /*
 		case 'clearSolo':
