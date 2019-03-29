@@ -381,6 +381,20 @@ instance.prototype.actions = function(system) {
 			]
 		},
 
+		'select':     {
+			label:     'Select ch 0-31, Aux-USB-FX 32-47, BUS 48-63, MTX 64-69, 70 L/R, 71 Mono/Center',
+			options: [
+				{
+					type:    'textinput',
+					label:   'select 0-71',
+					id:      'select',
+					default: 0,
+					regex:   self.REGEX_NUMBER
+				}
+
+			]
+		},
+
 	//	'clearSolo':     {label:     'Clear Solo'},
 
 		'tape':     {
@@ -548,6 +562,14 @@ instance.prototype.action = function(action) {
 				value: parseInt(opt.snip)
 			};
 			cmd = '/-action/gosnippet';
+		break;
+
+		case 'select':
+			var arg = {
+				type: "i",
+				value: parseInt(opt.select)
+			};
+			cmd = '/-stat/selidx';
 		break;
 /*
 		case 'clearSolo':
