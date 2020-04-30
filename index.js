@@ -6,6 +6,29 @@ function instance(system, id, config) {
 	var self = this;
 	// super-constructor
 	instance_skel.apply(this, arguments);
+
+	self.addUpgradeScript(function (config, actions) {
+		var changed = false;
+
+		for (var k in actions) {
+			var action = actions[k];
+
+			if (['mute','mMute'].includes(action.action)) {
+				if (action.options.mute === null) {
+					action.options.mute = '0';
+					changed = true;
+				}
+			}
+			if ('mute_grp' == action.action) {
+				if (action.options.mute === null) {
+					action.options.mute = '1';
+					changed = true;
+				}
+			}
+		}
+		return changed;
+	});
+
 	self.actions(); // export actions
 	return self;
 }
@@ -129,6 +152,7 @@ instance.prototype.actions = function(system) {
 					type:     'dropdown',
 					label:    'Mute / Unmute',
 					id:       'mute',
+					default:  '0',
 					choices:  [ { id: '0', label: 'Mute' }, { id: '1', label: 'Unmute' } ]
 				},
 			]
@@ -151,6 +175,7 @@ instance.prototype.actions = function(system) {
 					type:     'dropdown',
 					label:    'Mute / Unmute',
 					id:       'mute',
+					default:  '0',
 					choices:  [ { id: '0', label: 'Mute' }, { id: '1', label: 'Unmute' } ]
 				},
 			]
@@ -335,6 +360,7 @@ instance.prototype.actions = function(system) {
 					type:    'dropdown',
 					label:   'Mute / Unmute',
 					id:      'mute',
+					default:  '1',
 					choices: [ { id: '1', label: 'Mute' }, { id: '0', label: 'Unmute' } ]
 				}
 			]
