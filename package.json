@@ -3,7 +3,7 @@
 	"legacy": [
 		"x32"
 	],
-	"version": "1.0.1",
+	"version": "2.0.0-0",
 	"api_version": "1.0.0",
 	"keywords": [
 		"Audio"
@@ -14,8 +14,54 @@
 	"description": "Module for controling the Midas M32 and Behringer X32 consoles",
 	"main": "index.js",
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
+		"build": "trash dist && yarn build:main",
+		"build:main": "tsc -p tsconfig.build.json",
+		"build:watch": "tsc -p tsconfig.build.json --watch",
+		"lint": "eslint . --ext .ts",
+		"validate:dependencies": "yarn audit && yarn license-validate",
+		"license-validate": "node-license-validator -p -d --allow-licenses MIT BSD BSD-3-Clause ISC Apache Unlicense WTFPL",
+		"postinstall": "yarn build"
 	},
-	"author": "Per Roine <per.roine@gmail.com>",
-	"license": "MIT"
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/bitfocus/companion-module-behringer-x32.git"
+	},
+	"author": "Julian Waller <julian@superfly.tv>",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/bitfocus/companion-module-behringer-x32/issues"
+	},
+	"husky": {
+		"hooks": {
+			"pre-commit": "lint-staged"
+		}
+	},
+	"lint-staged": {
+		"*.{js,json,md}": [
+			"prettier --write",
+			"git add"
+		],
+		"*.{ts}": [
+			"yarn lint --fix --",
+			"git add"
+		]
+	},
+	"dependencies": {
+		"underscore": "^1.10.1"
+	},
+	"devDependencies": {
+		"@types/node": "^12.0.4",
+		"@types/underscore": "^1.9.3",
+		"@typescript-eslint/eslint-plugin": "^2.30.0",
+		"@typescript-eslint/parser": "^2.30.0",
+		"eslint": "^6.8.0",
+		"eslint-config-prettier": "^6.11.0",
+		"eslint-plugin-prettier": "^3.1.3",
+		"husky": "^3.0.5",
+		"lint-staged": "^9.2.5",
+		"node-license-validator": "^1.3.0",
+		"prettier": "^1.17.1",
+		"trash-cli": "^3.0.0",
+		"typescript": "^3.6.3"
+	}
 }
