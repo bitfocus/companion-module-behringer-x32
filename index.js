@@ -7,25 +7,32 @@ function instance(system, id, config) {
 	// super-constructor
 	instance_skel.apply(this, arguments);
 
-	self.addUpgradeScript(function (config, actions) {
+	self.addUpgradeScript(function(config, actions, releaseActions, feedbacks) {
 		var changed = false;
 
-		for (var k in actions) {
-			var action = actions[k];
-
-			if (['mute','mMute'].includes(action.action)) {
-				if (action.options.mute === null) {
-					action.options.mute = '0';
-					changed = true;
+		function upgradePass(actions, changed) {
+			for (var k in actions) {
+				var action = actions[k];
+				
+				if (['mute','mMute'].includes(action.action)) {
+					if (action.options.mute === null) {
+						action.options.mute = '0';
+						changed = true;
+					}
+				}
+				if ('mute_grp' == action.action) {
+					if (action.options.mute === null) {
+						action.options.mute = '1';
+						changed = true;
+					}
 				}
 			}
-			if ('mute_grp' == action.action) {
-				if (action.options.mute === null) {
-					action.options.mute = '1';
-					changed = true;
-				}
-			}
+			return changed;
 		}
+
+		changed = upgradePass(actions, changed);
+		changed = upgradePass(releaseActions, changed);
+
 		return changed;
 	});
 
