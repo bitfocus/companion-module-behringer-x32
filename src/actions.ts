@@ -23,7 +23,7 @@ export enum ActionId {
   Tape = 'tape'
 }
 
-export function GetActionsList(self: InstanceSkel<X32Config>, _state: X32State): CompanionActions {
+export function GetActionsList(_self: InstanceSkel<X32Config>, _state: X32State): CompanionActions {
   const actions: { [id in ActionId]: Required<CompanionAction> | undefined } = {
     [ActionId.Mute]: {
       label: 'Set mute',
@@ -43,11 +43,12 @@ export function GetActionsList(self: InstanceSkel<X32Config>, _state: X32State):
           default: '/ch/'
         },
         {
-          type: 'textinput',
+          type: 'number',
           label: 'Ch, AuxIn, FXrtn, Bus, Mtx or Dca Number',
           id: 'num',
-          default: '1',
-          regex: self.REGEX_NUMBER
+          default: 1,
+          min: 1,
+          max: 32
         },
         {
           type: 'dropdown',
@@ -65,11 +66,12 @@ export function GetActionsList(self: InstanceSkel<X32Config>, _state: X32State):
       label: 'Mute Group ON/OFF',
       options: [
         {
-          type: 'textinput',
+          type: 'number',
           label: 'Mute Group Number (1-6)',
           id: 'mute_grp',
-          default: '1',
-          regex: self.REGEX_NUMBER
+          default: 1,
+          min: 1,
+          max: 6
         },
         {
           type: 'dropdown',
@@ -126,11 +128,12 @@ export function GetActionsList(self: InstanceSkel<X32Config>, _state: X32State):
           default: '/ch/'
         },
         {
-          type: 'textinput',
+          type: 'number',
           label: 'Ch, AuxIn, FXrtn, Bus, Mtx or Dca Number',
           id: 'num',
-          default: '1',
-          regex: self.REGEX_NUMBER
+          default: 1,
+          min: 1,
+          max: 32
         },
         {
           type: 'dropdown',
@@ -181,11 +184,12 @@ export function GetActionsList(self: InstanceSkel<X32Config>, _state: X32State):
           default: '/ch/'
         },
         {
-          type: 'textinput',
+          type: 'number',
           label: 'Ch, AuxIn, FXrtn, Bus, Mtx Number',
           id: 'num',
-          default: '1',
-          regex: self.REGEX_NUMBER
+          default: 1,
+          min: 1,
+          max: 32
         },
         {
           type: 'textinput',
@@ -236,11 +240,12 @@ export function GetActionsList(self: InstanceSkel<X32Config>, _state: X32State):
           default: '/ch/'
         },
         {
-          type: 'textinput',
+          type: 'number',
           label: 'Ch, AuxIn, FXrtn, Bus, Mtx or Dca Number',
           id: 'num',
-          default: '1',
-          regex: self.REGEX_NUMBER
+          default: 1,
+          min: 1,
+          max: 32
         },
         {
           type: 'dropdown',
@@ -279,11 +284,12 @@ export function GetActionsList(self: InstanceSkel<X32Config>, _state: X32State):
       label: 'Load Console Cue',
       options: [
         {
-          type: 'textinput',
+          type: 'number',
           label: 'Cue Nr 0-99',
           id: 'cue',
-          default: '0',
-          regex: self.REGEX_NUMBER
+          default: 0,
+          min: 0,
+          max: 99
         }
       ]
     },
