@@ -4,7 +4,7 @@ import { GetActionsList, HandleAction } from './actions'
 import { X32Config, GetConfigFields } from './config'
 import { FeedbackId, GetFeedbacksList } from './feedback'
 import { GetPresetsList } from './presets'
-import { InitVariables } from './variables'
+import { InitVariables, updateDeviceInfoVariables } from './variables'
 import { X32State } from './state'
 import * as osc from 'osc'
 
@@ -15,6 +15,9 @@ class X32Instance extends InstanceSkel<X32Config> {
   private osc: osc.UDPPort
   private x32State: X32State
   private initDone: boolean
+  private isActive: boolean
+
+  private heartbeat: NodeJS.Timer | undefined
 
   /**
    * Create an instance of an ATEM module.
@@ -22,16 +25,12 @@ class X32Instance extends InstanceSkel<X32Config> {
   constructor(system: CompanionSystem, id: string, config: X32Config) {
     super(system, id, config)
 
-    this.osc = new osc.UDPPort({
-      localAddress: '0.0.0.0',
-      localPort: 12321,
-      broadcast: true,
-      metadata: true
-    })
+    this.osc = new osc.UDPPort({})
 
     this.x32State = new X32State()
 
     this.initDone = false
+    this.isActive = false
   }
 
   // Override base types to make types stricter
@@ -46,7 +45,9 @@ class X32Instance extends InstanceSkel<X32Config> {
    * is OK to start doing things.
    */
   public init(): void {
-    this.status(this.STATUS_OK) // Stateless connection here
+    this.isActive = true
+    this.status(this.STATUS_UNKNOWN)
+    this.setupOscSocket()
 
     this.updateCompanionBits()
   }
@@ -58,6 +59,13 @@ class X32Instance extends InstanceSkel<X32Config> {
     this.config = config
 
     this.x32State = new X32State()
+
+    if (this.config.host !== undefined) {
+      this.osc.close()
+
+      this.status(this.STATUS_WARNING, 'Connecting')
+      this.setupOscSocket()
+    }
   }
 
   /**
@@ -79,6 +87,13 @@ class X32Instance extends InstanceSkel<X32Config> {
    * Clean up the instance before it is destroyed.
    */
   public destroy(): void {
+    this.isActive = false
+
+    if (this.osc) {
+      this.osc.close()
+      delete this.osc
+    }
+
     this.debug('destroy', this.id)
   }
 
@@ -88,6 +103,69 @@ class X32Instance extends InstanceSkel<X32Config> {
     this.setFeedbackDefinitions(GetFeedbacksList(this, this.x32State))
     this.setActions(GetActionsList(this, this.x32State))
     this.checkFeedbacks()
+  }
+
+  private pulse(): void {
+    this.osc.send({
+      address: '/xremote',
+      args: []
+    })
+  }
+
+  private setupOscSocket(): void {
+    this.status(this.STATUS_WARNING, 'Connecting')
+
+    this.osc = new osc.UDPPort({
+      localAddress: '0.0.0.0',
+      localPort: 0,
+      broadcast: true,
+      metadata: true,
+      remoteAddress: this.config.host,
+      remotePort: 10023
+    })
+
+    this.osc.on('error', (err: Error): void => {
+      this.log('error', `Error: ${err.message}`)
+      this.status(this.STATUS_ERROR, err.message)
+      if (this.heartbeat !== undefined) {
+        clearInterval(this.heartbeat)
+        this.heartbeat = undefined
+      }
+    })
+    this.osc.on('ready', () => {
+      this.pulse()
+      this.heartbeat = setInterval(() => {
+        this.pulse()
+      }, 9500)
+
+      // TODO get initial state
+      this.osc.send({ address: '/xinfo', args: [] })
+      this.osc.send({ address: '/-snap/name', args: [] })
+      this.osc.send({ address: '/-snap/index', args: [] })
+
+      this.status(this.STATUS_OK)
+      this.isActive = true
+    })
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    this.osc.on('close' as any, () => {
+      if (this.heartbeat !== undefined) {
+        clearInterval(this.heartbeat)
+        this.heartbeat = undefined
+      }
+    })
+
+    this.osc.on('message', (message): void => {
+      console.log('Message', message)
+      const args = message.args as osc.MetaArgument[]
+      switch (message.address) {
+        case '/xinfo':
+          updateDeviceInfoVariables(this, args)
+          break
+      }
+    })
+
+    this.osc.open()
   }
 }
 

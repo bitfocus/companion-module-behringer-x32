@@ -350,13 +350,10 @@ export function HandleAction(
   action: CompanionActionEvent
 ): void {
   const sendOsc = (cmd: string, arg: osc.MetaArgument): void => {
-    oscSocket.send(
-      {
-        address: cmd,
-        args: [arg]
-      },
-      instance.config.host
-    )
+    oscSocket.send({
+      address: cmd,
+      args: [arg]
+    })
   }
   const opt = action.options
   const getOptNumber = (key: string): number => {
