@@ -6,11 +6,13 @@ import { FeedbackId, GetFeedbacksList } from './feedback'
 import { GetPresetsList } from './presets'
 import { InitVariables } from './variables'
 import { X32State } from './state'
+import * as osc from 'osc'
 
 /**
  * Companion instance class for the Blackmagic ATEM Switchers.
  */
 class X32Instance extends InstanceSkel<X32Config> {
+  private osc: osc.UDPPort
   private x32State: X32State
   private initDone: boolean
 
@@ -19,6 +21,13 @@ class X32Instance extends InstanceSkel<X32Config> {
    */
   constructor(system: CompanionSystem, id: string, config: X32Config) {
     super(system, id, config)
+
+    this.osc = new osc.UDPPort({
+      localAddress: '0.0.0.0',
+      localPort: 12321,
+      broadcast: true,
+      metadata: true
+    })
 
     this.x32State = new X32State()
 
@@ -55,7 +64,7 @@ class X32Instance extends InstanceSkel<X32Config> {
    * Executes the provided action.
    */
   public action(action: CompanionActionEvent): void {
-    HandleAction(this, this.x32State, action)
+    HandleAction(this, this.osc, this.x32State, action)
   }
 
   /**
@@ -77,7 +86,7 @@ class X32Instance extends InstanceSkel<X32Config> {
     InitVariables(this, this.x32State)
     this.setPresetDefinitions(GetPresetsList(this, this.x32State))
     this.setFeedbackDefinitions(GetFeedbacksList(this, this.x32State))
-    this.setActions(GetActionsList(this.x32State))
+    this.setActions(GetActionsList(this, this.x32State))
     this.checkFeedbacks()
   }
 }
