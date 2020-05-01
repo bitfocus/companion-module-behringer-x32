@@ -69,69 +69,59 @@ export const CHOICES_FADER_LEVEL: DropdownChoice[] = [
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ChannelChoicesOptions {
+  defaultNames?: boolean
   // TODO - skipXXX
   includeMain?: boolean
 }
 
-export function GetTargetChoices(_state: X32State, options?: ChannelChoicesOptions): DropdownChoice[] {
+export function GetTargetChoices(state: X32State, options?: ChannelChoicesOptions): DropdownChoice[] {
   const res: DropdownChoice[] = []
 
-  for (let i = 1; i <= 32; i++) {
+  const getNameFromState = (id: string): string | undefined => {
+    if (options?.defaultNames) {
+      return undefined
+    }
+    const val = state.get(`${id}/config/name`)
+    return val && val[0]?.type === 's' ? val[0].value : undefined
+  }
+
+  const appendTarget = (id: string, defaultName: string): void => {
+    const realname = getNameFromState(id)
     res.push({
-      id: `/ch/${padNumber(i)}`,
-      label: `Channel ${i}`
+      id,
+      label: realname ? `${realname} (${defaultName})` : defaultName
     })
   }
 
+  for (let i = 1; i <= 32; i++) {
+    appendTarget(`/ch/${padNumber(i)}`, `Channel ${i}`)
+  }
+
   for (let i = 1; i <= 8; i++) {
-    res.push({
-      id: `/auxin/${padNumber(i)}`,
-      label: `Aux In ${i}`
-    })
+    appendTarget(`/auxin/${padNumber(i)}`, `Aux In ${i}`)
   }
 
   for (let i = 1; i <= 4; i++) {
     const o = (i - 1) * 2 + 1
-    res.push({
-      id: `/fxrtn/${padNumber(o)}`,
-      label: `FX Return ${i} L`
-    })
-    res.push({
-      id: `/fxrtn/${padNumber(o + 1)}`,
-      label: `FX Return ${i} R`
-    })
+    appendTarget(`/fxrtn/${padNumber(o)}`, `FX Return ${i} L`)
+    appendTarget(`/fxrtn/${padNumber(o + 1)}`, `FX Return ${i} R`)
   }
 
   for (let i = 1; i <= 16; i++) {
-    res.push({
-      id: `/bus/${padNumber(i)}`,
-      label: `Bus ${i}`
-    })
+    appendTarget(`/bus/${padNumber(i)}`, `Bus ${i}`)
   }
 
   for (let i = 1; i <= 6; i++) {
-    res.push({
-      id: `/mtx/${padNumber(i)}`,
-      label: `Matrix ${i}`
-    })
+    appendTarget(`/mtx/${padNumber(i)}`, `Matrix ${i}`)
   }
 
   for (let i = 1; i <= 8; i++) {
-    res.push({
-      id: `/dca/${i}`,
-      label: `DCA ${i}`
-    })
+    appendTarget(`/dca/${i}`, `DCA ${i}`)
   }
 
   if (options?.includeMain) {
-    res.push({
-      id: `/main/st`,
-      label: `Main Stereo`
-    })
-    res.push({
-      id: `/main/m`,
-      label: `Main Mono`
-    })
+    appendTarget(`/main/st`, `Main Stereo`)
+    appendTarget(`/main/m,`, `Main Mono`)
   }
 
   return res

@@ -25,7 +25,7 @@ export function InitVariables(instance: InstanceSkel<X32Config>, state: X32State
     }
   ]
 
-  const targets = GetTargetChoices(state)
+  const targets = GetTargetChoices(state, { includeMain: true, defaultNames: true })
   for (const target of targets) {
     variables.push({
       label: `Name: ${target.label}`,
@@ -51,7 +51,7 @@ export function updateDeviceInfoVariables(instance: InstanceSkel<X32Config>, arg
 }
 
 export function updateNameVariables(instance: InstanceSkel<X32Config>, state: X32State): void {
-  const targets = GetTargetChoices(state)
+  const targets = GetTargetChoices(state, { includeMain: true, defaultNames: true })
   for (const target of targets) {
     const val = state.get(`${target.id}/config/name`)
     const valStr = val && val[0]?.type === 's' ? val[0].value : ''

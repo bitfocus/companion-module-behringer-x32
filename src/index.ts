@@ -175,7 +175,7 @@ class X32Instance extends InstanceSkel<X32Config> {
   }
 
   private loadVariablesData(): void {
-    const targets = GetTargetChoices(this.x32State)
+    const targets = GetTargetChoices(this.x32State, { includeMain: true, defaultNames: true })
     for (const target of targets) {
       this.osc.send({
         address: `${target.id}/config/name`,
