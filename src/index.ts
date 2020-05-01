@@ -103,16 +103,11 @@ class X32Instance extends InstanceSkel<X32Config> {
     this.setActions(GetActionsList(this, this.x32State))
     this.checkFeedbacks()
 
-    for (const fb of this.getAllFeedbacks()) {
-      const path = GetFeedbackPath(fb)
-      if (path) {
-        ensureLoaded(this.osc, this.x32State, path)
-      }
-    }
+    // Ensure all feedbacks have an initial value
+    this.subscribeFeedbacks()
   }
 
   private pulse(): void {
-    console.log('pulse')
     this.osc.send({
       address: '/xremote',
       args: []

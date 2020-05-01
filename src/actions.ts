@@ -351,16 +351,16 @@ export function GetActionsList(_self: InstanceSkel<X32Config>, _state: X32State)
 
 export function HandleAction(
   instance: InstanceSkel<X32Config>,
-  oscSocket: osc.UDPPort,
+  _oscSocket: osc.UDPPort,
   _state: X32State,
   action: CompanionActionEvent
 ): void {
   const sendOsc = (cmd: string, arg: osc.MetaArgument): void => {
     console.log(cmd, arg)
-    oscSocket.send({
-      address: cmd,
-      args: [arg]
-    })
+    // HACK: We send commands on a different port than we run /xremote on, so that we get change events for what we send.
+    // Otherwise we can have no confirmation that a command was accepted
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(instance as any).system.emit('osc_send', instance.config.host, 10023, cmd, [arg])
   }
   const opt = action.options
   const getOptNumber = (key: string): number => {

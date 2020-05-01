@@ -99,7 +99,7 @@ export function GetTargetChoices(_state: X32State, _options?: ChannelChoicesOpti
     })
   }
 
-  for (let i = 1; i <= 6; i++) {
+  for (let i = 1; i <= 8; i++) {
     res.push({
       id: `/dca/${i}`,
       label: `DCA ${i}`

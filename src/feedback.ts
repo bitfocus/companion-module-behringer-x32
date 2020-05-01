@@ -78,7 +78,7 @@ export function GetFeedbacksList(
       callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
         const data = state.get(MutePath(evt.options.target as string))
         console.log(data, MutePath(evt.options.target as string))
-        const muted = getDataNumber(data, 0) === 1
+        const muted = getDataNumber(data, 0) === 0
         if (muted === !!evt.options.state) {
           return getOptColors(evt)
         }
