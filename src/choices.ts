@@ -121,7 +121,7 @@ export function GetTargetChoices(state: X32State, options?: ChannelChoicesOption
 
   if (options?.includeMain) {
     appendTarget(`/main/st`, `Main Stereo`)
-    appendTarget(`/main/m,`, `Main Mono`)
+    appendTarget(`/main/m`, `Main Mono`)
   }
 
   return res

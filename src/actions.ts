@@ -22,9 +22,7 @@ export enum ActionId {
   FaderLevel = 'fad',
   MainFaderLevel = 'mFad',
   Label = 'label',
-  MainLabel = 'mLabel',
   Color = 'color',
-  MainColor = 'mColor',
   GoCue = 'go_cue',
   GoScene = 'go_scene',
   GoSnip = 'go_snip',
@@ -138,47 +136,10 @@ export function GetActionsList(_self: InstanceSkel<X32Config>, state: X32State):
       options: [
         {
           type: 'dropdown',
-          label: 'Type',
-          id: 'type',
-          choices: [
-            { id: '/ch/', label: 'Channel 1-32' },
-            { id: '/auxin/', label: 'Aux In 1-8' },
-            { id: '/fxrtn/', label: 'FX Return 1-8' },
-            { id: '/bus/', label: 'Bus 1-16' },
-            { id: '/mtx/', label: 'Matrix 1-6' },
-            { id: '/dca/', label: 'Dca 1-8' }
-          ],
-          default: '/ch/'
-        },
-        {
-          type: 'number',
-          label: 'Ch, AuxIn, FXrtn, Bus, Mtx Number',
-          id: 'num',
-          default: 1,
-          min: 1,
-          max: 32
-        },
-        {
-          type: 'textinput',
-          label: 'Label',
-          id: 'lab',
-          default: ''
-        }
-      ]
-    },
-
-    [ActionId.MainLabel]: {
-      label: 'Set Main label',
-      options: [
-        {
-          type: 'dropdown',
-          label: 'Type',
-          id: 'type',
-          choices: [
-            { id: '/main/st', label: 'Stereo' },
-            { id: '/main/m', label: 'Mono' }
-          ],
-          default: '/main/st'
+          label: 'Target',
+          id: 'target',
+          choices: allTargets,
+          default: allTargets[0].id
         },
         {
           type: 'textinput',
@@ -194,48 +155,10 @@ export function GetActionsList(_self: InstanceSkel<X32Config>, state: X32State):
       options: [
         {
           type: 'dropdown',
-          label: 'Type',
-          id: 'type',
-          choices: [
-            { id: '/ch/', label: 'Channel 1-32' },
-            { id: '/auxin/', label: 'Aux In 1-8' },
-            { id: '/fxrtn/', label: 'FX Return 1-8' },
-            { id: '/bus/', label: 'Bus 1-16' },
-            { id: '/mtx/', label: 'Matrix 1-6' },
-            { id: '/dca/', label: 'DCA 1-8' }
-          ],
-          default: '/ch/'
-        },
-        {
-          type: 'number',
-          label: 'Ch, AuxIn, FXrtn, Bus, Mtx or Dca Number',
-          id: 'num',
-          default: 1,
-          min: 1,
-          max: 32
-        },
-        {
-          type: 'dropdown',
-          label: 'color',
-          id: 'col',
-          default: CHOICES_COLOR[0].id,
-          choices: CHOICES_COLOR
-        }
-      ]
-    },
-
-    [ActionId.MainColor]: {
-      label: 'Set Main color',
-      options: [
-        {
-          type: 'dropdown',
-          label: 'Type',
-          id: 'type',
-          choices: [
-            { id: '/main/st', label: 'Stereo' },
-            { id: '/main/m', label: 'Mono' }
-          ],
-          default: '/main/st'
+          label: 'Target',
+          id: 'target',
+          choices: allTargets,
+          default: allTargets[0].id
         },
         {
           type: 'dropdown',
@@ -391,32 +314,14 @@ export function HandleAction(
       break
     }
     case ActionId.Label: {
-      if (opt.lab) {
-        sendOsc(`${channelCmdPrefix(true)}/config/name`, {
-          type: 's',
-          value: `${opt.lab}`
-        })
-      }
-      break
-    }
-    case ActionId.MainLabel: {
-      if (opt.lab) {
-        sendOsc(`${opt.type}/config/name`, {
-          type: 's',
-          value: `${opt.lab}`
-        })
-      }
-      break
-    }
-    case ActionId.Color: {
-      sendOsc(`${channelCmdPrefix(true)}/config/color`, {
-        type: 'i',
-        value: getOptNumber('col')
+      sendOsc(`${opt.target}/config/name`, {
+        type: 's',
+        value: `${opt.lab}`
       })
       break
     }
-    case ActionId.MainColor: {
-      sendOsc(`${opt.type}/config/color`, {
+    case ActionId.Color: {
+      sendOsc(`${opt.target}/config/color`, {
         type: 'i',
         value: getOptNumber('col')
       })

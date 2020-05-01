@@ -7,7 +7,7 @@ export class X32State {
     this.data = new Map()
   }
 
-  // TODO
+  // TODO better typings
   public get(path: string): osc.MetaArgument[] | undefined {
     return this.data.get(path)
   }
@@ -15,23 +15,3 @@ export class X32State {
     this.data.set(path, data)
   }
 }
-
-// export class X32Subscriptions {
-//   private subscriptions: Map<string, string[]>
-
-//   constructor() {
-//     this.subscriptions = new Map()
-//   }
-
-//   public subscribe(id: string, path: string): void {
-//     let subs = this.subscriptions.get(path)
-//     if (!subs) {
-//       subs = []
-//       this.subscriptions.set(path, subs)
-//     }
-
-//     subs.push(id)
-//   }
-
-//   public unsubscribe(id: string, path: string): void {}
-// }

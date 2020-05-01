@@ -6,6 +6,7 @@ import {
 } from '../../../instance_skel_types'
 import { ActionId } from './actions'
 import { X32Config } from './config'
+import { padNumber } from './util'
 
 export function upgradeV2x0x0(
   _config: CompanionCoreInstanceconfig & X32Config,
@@ -19,31 +20,67 @@ export function upgradeV2x0x0(
 
   const allActions = [...actions, ...releaseActions]
   _.each(allActions, action => {
-    if (action.action === ActionId.Mute && !action.options.target) {
-      const type = action.options.type || '/ch/'
-      delete action.options.type
+    switch (action.action) {
+      case ActionId.Mute:
+      case ActionId.Color:
+      case ActionId.Label: {
+        if (!action.options.target) {
+          const type = action.options.type || '/ch/'
+          delete action.options.type
 
-      const num = action.options.num || '1'
-      delete action.options.num
+          const num = padNumber(Number(action.options.num || 1))
+          delete action.options.num
 
-      action.options.target = `${type}${num}`
+          action.options.target = `${type}${num}`
 
-      changed = true
-    } else if (action.action === ActionId.MuteGroup) {
-      if (action.options.mute_grp) {
-        action.options.target = `/config/mute/${action.options.mute_grp}`
-        delete action.options.mute_grp
-
-        changed = true
+          changed = true
+        }
+        break
       }
-    } else if (action.action === 'mMute') {
-      if (action.options.type) {
-        action.options.target = action.options.type
-        delete action.options.type
+      case ActionId.MuteGroup: {
+        if (action.options.mute_grp) {
+          action.options.target = `/config/mute/${action.options.mute_grp}`
+          delete action.options.mute_grp
 
-        action.action = ActionId.Mute
+          changed = true
+        }
+        break
+      }
+      case 'mMute': {
+        if (action.options.type) {
+          action.options.target = action.options.type
+          delete action.options.type
 
-        changed = true
+          action.action = ActionId.Mute
+          action.label = `${action.instance}:${action.action}`
+
+          changed = true
+        }
+        break
+      }
+      case 'mColor': {
+        if (action.options.type) {
+          action.options.target = action.options.type
+          delete action.options.type
+
+          action.action = ActionId.Color
+          action.label = `${action.instance}:${action.action}`
+
+          changed = true
+        }
+        break
+      }
+      case 'mLabel': {
+        if (action.options.type) {
+          action.options.target = action.options.type
+          delete action.options.type
+
+          action.action = ActionId.Label
+          action.label = `${action.instance}:${action.action}`
+
+          changed = true
+        }
+        break
       }
     }
   })
