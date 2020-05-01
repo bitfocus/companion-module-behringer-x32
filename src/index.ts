@@ -4,11 +4,12 @@ import { GetActionsList, HandleAction } from './actions'
 import { X32Config, GetConfigFields } from './config'
 import { FeedbackId, GetFeedbacksList } from './feedback'
 import { GetPresetsList } from './presets'
-import { InitVariables, updateDeviceInfoVariables } from './variables'
+import { InitVariables, updateDeviceInfoVariables, updateNameVariables } from './variables'
 import { X32State } from './state'
 import * as osc from 'osc'
 import { MutePath } from './paths'
 import { upgradeV2x0x0 } from './migrations'
+import { GetTargetChoices } from './choices'
 
 /**
  * Companion instance class for the Behringer X32 Mixers.
@@ -102,6 +103,8 @@ class X32Instance extends InstanceSkel<X32Config> {
     this.setActions(GetActionsList(this, this.x32State))
     this.checkFeedbacks()
 
+    updateNameVariables(this, this.x32State)
+
     // Ensure all feedbacks have an initial value
     this.subscribeFeedbacks()
   }
@@ -162,12 +165,23 @@ class X32Instance extends InstanceSkel<X32Config> {
 
       switch (message.address) {
         case '/xinfo':
+          this.loadVariablesData()
           updateDeviceInfoVariables(this, args)
           break
       }
     })
 
     this.osc.open()
+  }
+
+  private loadVariablesData(): void {
+    const targets = GetTargetChoices(this.x32State)
+    for (const target of targets) {
+      this.osc.send({
+        address: `${target.id}/config/name`,
+        args: []
+      })
+    }
   }
 
   private checkFeedbackChanges(msg: osc.OscMessage): void {
@@ -187,6 +201,10 @@ class X32Instance extends InstanceSkel<X32Config> {
     }
 
     // TODO
+
+    if (msg.address.match('/config/name$')) {
+      this.updateCompanionBits()
+    }
   }
 }
 

@@ -90,10 +90,15 @@ export function GetTargetChoices(_state: X32State, options?: ChannelChoicesOptio
     })
   }
 
-  for (let i = 1; i <= 8; i++) {
+  for (let i = 1; i <= 4; i++) {
+    const o = (i - 1) * 2 + 1
     res.push({
-      id: `/fxrtn/${padNumber(i)}`,
-      label: `FX Return ${i}`
+      id: `/fxrtn/${padNumber(o)}`,
+      label: `FX Return ${i} L`
+    })
+    res.push({
+      id: `/fxrtn/${padNumber(o + 1)}`,
+      label: `FX Return ${i} R`
     })
   }
 
