@@ -6,7 +6,7 @@ import {
   CompanionFeedbackResult
 } from '../../../instance_skel_types'
 import { X32State } from './state'
-import { GetTargetChoices } from './choices'
+import { GetTargetChoices, GetMuteGroupChoices } from './choices'
 import { ensureLoaded, assertUnreachable } from './util'
 import { MutePath } from './paths'
 import * as osc from 'osc'
@@ -16,7 +16,8 @@ import { X32Config } from './config'
 type CompanionFeedbackWithCallback = CompanionFeedback & Required<Pick<CompanionFeedback, 'callback'>>
 
 export enum FeedbackId {
-  Mute = 'mute'
+  Mute = 'mute',
+  MuteGroup = 'mute_grp'
 }
 
 export function ForegroundPicker(color: number): CompanionInputFieldColor {
@@ -54,6 +55,8 @@ export function GetFeedbacksList(
   state: X32State
 ): CompanionFeedbacks {
   const mutableChannels = GetTargetChoices(state, { includeMain: true })
+  const muteGroups = GetMuteGroupChoices(state)
+
   const feedbacks: { [id in FeedbackId]: CompanionFeedbackWithCallback | undefined } = {
     [FeedbackId.Mute]: {
       label: 'Change colors from mute state',
@@ -77,7 +80,6 @@ export function GetFeedbacksList(
       ],
       callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
         const data = state.get(MutePath(evt.options.target as string))
-        console.log(data, MutePath(evt.options.target as string))
         const muted = getDataNumber(data, 0) === 0
         if (muted === !!evt.options.state) {
           return getOptColors(evt)
@@ -86,6 +88,38 @@ export function GetFeedbacksList(
       },
       subscribe: (evt: CompanionFeedbackEvent): void => {
         ensureLoaded(oscSocket, state, MutePath(evt.options.target as string))
+      }
+    },
+    [FeedbackId.MuteGroup]: {
+      label: 'Change colors from mute group state',
+      description: 'If the specified mute group is muted, change color of the bank',
+      options: [
+        BackgroundPicker(self.rgb(255, 0, 0)),
+        ForegroundPicker(self.rgb(0, 0, 0)),
+        {
+          id: 'mute_grp',
+          type: 'dropdown',
+          label: 'Target',
+          choices: muteGroups,
+          default: muteGroups[0].id
+        },
+        {
+          id: 'state',
+          type: 'checkbox',
+          label: 'Muted',
+          default: true
+        }
+      ],
+      callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
+        const data = state.get(evt.options.mute_grp as string)
+        const muted = getDataNumber(data, 0) === 1
+        if (muted === !!evt.options.state) {
+          return getOptColors(evt)
+        }
+        return {}
+      },
+      subscribe: (evt: CompanionFeedbackEvent): void => {
+        ensureLoaded(oscSocket, state, evt.options.mute_grp as string)
       }
     }
   }

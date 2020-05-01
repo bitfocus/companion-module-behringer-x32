@@ -9,16 +9,16 @@ import {
   CHOICES_FADER_LEVEL,
   GetTargetChoices,
   CHOICES_MUTE,
-  MUTE_TOGGLE
+  MUTE_TOGGLE,
+  GetMuteGroupChoices,
+  CHOICES_MUTE_GROUP
 } from './choices'
 import * as osc from 'osc'
 import { MutePath } from './paths'
 
 export enum ActionId {
-  Mute2 = 'mute2',
   Mute = 'mute',
   MuteGroup = 'mute_grp',
-  MainMute = 'mMute',
   FaderLevel = 'fad',
   MainFaderLevel = 'mFad',
   Label = 'label',
@@ -35,9 +35,11 @@ export enum ActionId {
 export function GetActionsList(_self: InstanceSkel<X32Config>, state: X32State): CompanionActions {
   // const defaultTargets = GetTargetChoices(state)
   const allTargets = GetTargetChoices(state, { includeMain: true })
+  const muteGroups = GetMuteGroupChoices(state)
+
   const actions: { [id in ActionId]: Required<CompanionAction> | undefined } = {
-    [ActionId.Mute2]: {
-      label: 'Set mute v2',
+    [ActionId.Mute]: {
+      label: 'Set mute',
       options: [
         {
           type: 'dropdown',
@@ -55,88 +57,23 @@ export function GetActionsList(_self: InstanceSkel<X32Config>, state: X32State):
         }
       ]
     },
-    [ActionId.Mute]: {
-      label: 'Set mute',
-      options: [
-        {
-          type: 'dropdown',
-          label: 'Type',
-          id: 'type',
-          choices: [
-            { id: '/ch/', label: 'Channel 1-32' },
-            { id: '/auxin/', label: 'Aux In 1-8' },
-            { id: '/fxrtn/', label: 'FX Return 1-8' },
-            { id: '/bus/', label: 'Bus 1-16' },
-            { id: '/mtx/', label: 'Matrix 1-6' },
-            { id: '/dca/', label: 'Dca 1-8' }
-          ],
-          default: '/ch/'
-        },
-        {
-          type: 'number',
-          label: 'Ch, AuxIn, FXrtn, Bus, Mtx or Dca Number',
-          id: 'num',
-          default: 1,
-          min: 1,
-          max: 32
-        },
-        {
-          type: 'dropdown',
-          label: 'Mute / Unmute',
-          id: 'mute',
-          default: '0',
-          choices: [
-            { id: '0', label: 'Mute' },
-            { id: '1', label: 'Unmute' }
-          ]
-        }
-      ]
-    },
     [ActionId.MuteGroup]: {
       label: 'Mute Group ON/OFF',
       options: [
         {
-          type: 'number',
-          label: 'Mute Group Number (1-6)',
-          id: 'mute_grp',
-          default: 1,
-          min: 1,
-          max: 6
+          type: 'dropdown',
+          label: 'Mute Group',
+          id: 'target',
+          // TODO - this needs a migration
+          default: muteGroups[0].id,
+          choices: muteGroups
         },
         {
           type: 'dropdown',
           label: 'Mute / Unmute',
           id: 'mute',
-          default: '1',
-          choices: [
-            { id: '1', label: 'Mute' },
-            { id: '0', label: 'Unmute' }
-          ]
-        }
-      ]
-    },
-    [ActionId.MainMute]: {
-      label: 'Set Main mute',
-      options: [
-        {
-          type: 'dropdown',
-          label: 'Type',
-          id: 'type',
-          choices: [
-            { id: '/main/st', label: 'Stereo' },
-            { id: '/main/m', label: 'Mono' }
-          ],
-          default: '/main/st'
-        },
-        {
-          type: 'dropdown',
-          label: 'Mute / Unmute',
-          id: 'mute',
-          default: '0',
-          choices: [
-            { id: '0', label: 'Mute' },
-            { id: '1', label: 'Unmute' }
-          ]
+          default: CHOICES_MUTE_GROUP[0].id,
+          choices: CHOICES_MUTE_GROUP
         }
       ]
     },
@@ -411,7 +348,7 @@ export function HandleAction(
 
   const actionId = action.action as ActionId
   switch (actionId) {
-    case ActionId.Mute2: {
+    case ActionId.Mute:{
       let onState = getOptNumber('mute')
       const cmd = MutePath(opt.target as string)
 
@@ -425,26 +362,17 @@ export function HandleAction(
       })
       break
     }
-    case ActionId.Mute: {
-      sendOsc(`${channelCmdPrefix()}/on`, {
-        type: 'i',
-        value: getOptNumber('mute')
-      })
-      break
-    }
     case ActionId.MuteGroup: {
-      if (opt.lab) {
-        sendOsc(`/config/mute/${getOptNumber('mute_grp')}`, {
-          type: 'i',
-          value: getOptNumber('mute')
-        })
+      let onState = getOptNumber('mute')
+      const cmd = opt.target as string
+
+      if (onState === MUTE_TOGGLE) {
+        const currentState = state.get(cmd)
+        onState = currentState && currentState[0]?.type === 'i' && currentState[0]?.value === 1 ? 0 : 1
       }
-      break
-    }
-    case ActionId.MainMute: {
-      sendOsc(`${opt.type}/mix/on`, {
+      sendOsc(cmd, {
         type: 'i',
-        value: getOptNumber('mute')
+        value: onState
       })
       break
     }

@@ -1,11 +1,17 @@
 import { DropdownChoice } from '../../../instance_skel_types'
 import { X32State } from './state'
+import { padNumber } from './util'
 
 export const MUTE_TOGGLE = 2
 export const CHOICES_MUTE: DropdownChoice[] = [
   { id: MUTE_TOGGLE, label: 'Toggle' },
   { id: 0, label: 'Mute' },
   { id: 1, label: 'Unmute' }
+]
+export const CHOICES_MUTE_GROUP: DropdownChoice[] = [
+  { id: MUTE_TOGGLE, label: 'Toggle' },
+  { id: 1, label: 'Mute' },
+  { id: 0, label: 'Unmute' }
 ]
 
 export const CHOICES_COLOR: DropdownChoice[] = [
@@ -70,8 +76,6 @@ export interface ChannelChoicesOptions {
 export function GetTargetChoices(_state: X32State, options?: ChannelChoicesOptions): DropdownChoice[] {
   const res: DropdownChoice[] = []
 
-  const padNumber = (i: number): string => ('0' + i).substr(-2)
-
   for (let i = 1; i <= 32; i++) {
     res.push({
       id: `/ch/${padNumber(i)}`,
@@ -122,6 +126,19 @@ export function GetTargetChoices(_state: X32State, options?: ChannelChoicesOptio
     res.push({
       id: `/main/m`,
       label: `Main Mono`
+    })
+  }
+
+  return res
+}
+
+export function GetMuteGroupChoices(_state: X32State): DropdownChoice[] {
+  const res: DropdownChoice[] = []
+
+  for (let i = 1; i <= 6; i++) {
+    res.push({
+      id: `/config/mute/${i}`,
+      label: `Mute group ${i}`
     })
   }
 

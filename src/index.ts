@@ -8,6 +8,7 @@ import { InitVariables, updateDeviceInfoVariables } from './variables'
 import { X32State } from './state'
 import * as osc from 'osc'
 import { MutePath } from './paths'
+import { upgradeV2x0x0 } from './migrations'
 
 /**
  * Companion instance class for the Behringer X32 Mixers.
@@ -24,14 +25,19 @@ class X32Instance extends InstanceSkel<X32Config> {
   constructor(system: CompanionSystem, id: string, config: X32Config) {
     super(system, id, config)
 
+    // HACK: for testing upgrade script
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(config as any)._configIdx = -1
+
     this.osc = new osc.UDPPort({})
 
     this.x32State = new X32State()
+
+    this.addUpgradeScript(upgradeV2x0x0)
   }
 
   // Override base types to make types stricter
   public checkFeedbacks(feedbackId?: FeedbackId): void {
-    console.log('fb check', feedbackId)
     super.checkFeedbacks(feedbackId)
   }
 
@@ -174,6 +180,10 @@ class X32Instance extends InstanceSkel<X32Config> {
       msg.address.match(MutePath('^/main/([a-z]+)'))
     ) {
       this.checkFeedbacks(FeedbackId.Mute)
+    }
+
+    if (msg.address.match('^/config/mute/([0-9]+)')) {
+      this.checkFeedbacks(FeedbackId.MuteGroup)
     }
 
     // TODO
