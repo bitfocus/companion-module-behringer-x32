@@ -67,11 +67,12 @@ export const CHOICES_FADER_LEVEL: DropdownChoice[] = [
   { label: '+10 dB', id: '1.0' }
 ]
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ChannelChoicesOptions {
   defaultNames?: boolean
-  // TODO - skipXXX
+  numericIndex?: boolean
   includeMain?: boolean
+  skipDca?: boolean
+  // TODO - more skipXXX
 }
 
 export function GetTargetChoices(state: X32State, options?: ChannelChoicesOptions): DropdownChoice[] {
@@ -85,10 +86,11 @@ export function GetTargetChoices(state: X32State, options?: ChannelChoicesOption
     return val && val[0]?.type === 's' ? val[0].value : undefined
   }
 
+  let i = 0
   const appendTarget = (id: string, defaultName: string): void => {
     const realname = getNameFromState(id)
     res.push({
-      id,
+      id: options?.numericIndex ? i++ : id,
       label: realname ? `${realname} (${defaultName})` : defaultName
     })
   }
@@ -115,8 +117,10 @@ export function GetTargetChoices(state: X32State, options?: ChannelChoicesOption
     appendTarget(`/mtx/${padNumber(i)}`, `Matrix ${i}`)
   }
 
-  for (let i = 1; i <= 8; i++) {
-    appendTarget(`/dca/${i}`, `DCA ${i}`)
+  if (!options?.skipDca) {
+    for (let i = 1; i <= 8; i++) {
+      appendTarget(`/dca/${i}`, `DCA ${i}`)
+    }
   }
 
   if (options?.includeMain) {

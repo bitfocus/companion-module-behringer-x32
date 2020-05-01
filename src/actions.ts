@@ -31,9 +31,9 @@ export enum ActionId {
 }
 
 export function GetActionsList(_self: InstanceSkel<X32Config>, state: X32State): CompanionActions {
-  // const defaultTargets = GetTargetChoices(state)
   const allTargets = GetTargetChoices(state, { includeMain: true })
   const muteGroups = GetMuteGroupChoices(state)
+  const selectChoices = GetTargetChoices(state, { skipDca: true, numericIndex: true })
 
   const actions: { [id in ActionId]: Required<CompanionAction> | undefined } = {
     [ActionId.Mute]: {
@@ -62,7 +62,6 @@ export function GetActionsList(_self: InstanceSkel<X32Config>, state: X32State):
           type: 'dropdown',
           label: 'Mute Group',
           id: 'target',
-          // TODO - this needs a migration
           default: muteGroups[0].id,
           choices: muteGroups
         },
@@ -210,15 +209,14 @@ export function GetActionsList(_self: InstanceSkel<X32Config>, state: X32State):
       ]
     },
     [ActionId.Select]: {
-      label: 'Select ch 0-31, Aux-USB-FX 32-47, BUS 48-63, MTX 64-69, 70 L/R, 71 Mono/Center',
+      label: 'Select',
       options: [
         {
-          type: 'number',
-          label: 'select 0-71',
+          type: 'dropdown',
+          label: 'Target',
           id: 'select',
-          default: 0,
-          min: 0,
-          max: 71
+          choices: selectChoices,
+          default: selectChoices[0].id
         }
       ]
     },

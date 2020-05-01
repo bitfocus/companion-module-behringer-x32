@@ -200,8 +200,6 @@ class X32Instance extends InstanceSkel<X32Config> {
       this.checkFeedbacks(FeedbackId.MuteGroup)
     }
 
-    // TODO
-
     if (msg.address.match('/config/name$')) {
       this.updateCompanionBits()
     }
