@@ -28,7 +28,7 @@ class X32Instance extends InstanceSkel<X32Config> {
 
     // HACK: for testing upgrade script
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ;(config as any)._configIdx = -1
+    // ;(config as any)._configIdx = -1
 
     this.osc = new osc.UDPPort({})
 
