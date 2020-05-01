@@ -53,7 +53,7 @@ export function GetFeedbacksList(
   oscSocket: osc.UDPPort,
   state: X32State
 ): CompanionFeedbacks {
-  const mutableChannels = GetTargetChoices(state)
+  const mutableChannels = GetTargetChoices(state, { includeMain: true })
   const feedbacks: { [id in FeedbackId]: CompanionFeedbackWithCallback | undefined } = {
     [FeedbackId.Mute]: {
       label: 'Change colors from mute state',

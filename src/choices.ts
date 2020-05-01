@@ -1,6 +1,13 @@
 import { DropdownChoice } from '../../../instance_skel_types'
 import { X32State } from './state'
 
+export const MUTE_TOGGLE = 2
+export const CHOICES_MUTE: DropdownChoice[] = [
+  { id: MUTE_TOGGLE, label: 'Toggle' },
+  { id: 0, label: 'Mute' },
+  { id: 1, label: 'Unmute' }
+]
+
 export const CHOICES_COLOR: DropdownChoice[] = [
   { label: 'Off', id: '0' },
   { label: 'Red: ', id: '1' },
@@ -57,9 +64,10 @@ export const CHOICES_FADER_LEVEL: DropdownChoice[] = [
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ChannelChoicesOptions {
   // TODO - skipXXX
+  includeMain?: boolean
 }
 
-export function GetTargetChoices(_state: X32State, _options?: ChannelChoicesOptions): DropdownChoice[] {
+export function GetTargetChoices(_state: X32State, options?: ChannelChoicesOptions): DropdownChoice[] {
   const res: DropdownChoice[] = []
 
   const padNumber = (i: number): string => ('0' + i).substr(-2)
@@ -103,6 +111,17 @@ export function GetTargetChoices(_state: X32State, _options?: ChannelChoicesOpti
     res.push({
       id: `/dca/${i}`,
       label: `DCA ${i}`
+    })
+  }
+
+  if (options?.includeMain) {
+    res.push({
+      id: `/main/st`,
+      label: `Main Stereo`
+    })
+    res.push({
+      id: `/main/m`,
+      label: `Main Mono`
     })
   }
 

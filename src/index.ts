@@ -2,12 +2,11 @@ import InstanceSkel = require('../../../instance_skel')
 import { CompanionActionEvent, CompanionConfigField, CompanionSystem } from '../../../instance_skel_types'
 import { GetActionsList, HandleAction } from './actions'
 import { X32Config, GetConfigFields } from './config'
-import { FeedbackId, GetFeedbacksList, GetFeedbackPath } from './feedback'
+import { FeedbackId, GetFeedbacksList } from './feedback'
 import { GetPresetsList } from './presets'
 import { InitVariables, updateDeviceInfoVariables } from './variables'
 import { X32State } from './state'
 import * as osc from 'osc'
-import { ensureLoaded } from './util'
 import { MutePath } from './paths'
 
 /**
@@ -176,7 +175,11 @@ class X32Instance extends InstanceSkel<X32Config> {
     const args = msg.args as osc.MetaArgument[]
     this.x32State.set(msg.address, args)
 
-    if (msg.address.match(MutePath('^/([a-z]+)/([0-9]+)')) || msg.address.match(MutePath('^/dca/[0-9]+'))) {
+    if (
+      msg.address.match(MutePath('^/([a-z]+)/([0-9]+)')) ||
+      msg.address.match(MutePath('^/dca/([0-9]+)')) ||
+      msg.address.match(MutePath('^/main/([a-z]+)'))
+    ) {
       this.checkFeedbacks(FeedbackId.Mute)
     }
 

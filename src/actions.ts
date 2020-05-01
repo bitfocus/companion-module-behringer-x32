@@ -3,10 +3,19 @@ import { CompanionAction, CompanionActionEvent, CompanionActions } from '../../.
 import { X32State } from './state'
 import { X32Config } from './config'
 import { assertUnreachable } from './util'
-import { CHOICES_TAPE_FUNC, CHOICES_COLOR, CHOICES_FADER_LEVEL } from './choices'
+import {
+  CHOICES_TAPE_FUNC,
+  CHOICES_COLOR,
+  CHOICES_FADER_LEVEL,
+  GetTargetChoices,
+  CHOICES_MUTE,
+  MUTE_TOGGLE
+} from './choices'
 import * as osc from 'osc'
+import { MutePath } from './paths'
 
 export enum ActionId {
+  Mute2 = 'mute2',
   Mute = 'mute',
   MuteGroup = 'mute_grp',
   MainMute = 'mMute',
@@ -23,8 +32,29 @@ export enum ActionId {
   Tape = 'tape'
 }
 
-export function GetActionsList(_self: InstanceSkel<X32Config>, _state: X32State): CompanionActions {
+export function GetActionsList(_self: InstanceSkel<X32Config>, state: X32State): CompanionActions {
+  // const defaultTargets = GetTargetChoices(state)
+  const allTargets = GetTargetChoices(state, { includeMain: true })
   const actions: { [id in ActionId]: Required<CompanionAction> | undefined } = {
+    [ActionId.Mute2]: {
+      label: 'Set mute v2',
+      options: [
+        {
+          type: 'dropdown',
+          label: 'Target',
+          id: 'target',
+          choices: allTargets,
+          default: allTargets[0].id
+        },
+        {
+          type: 'dropdown',
+          label: 'Mute / Unmute',
+          id: 'mute',
+          default: CHOICES_MUTE[0].id,
+          choices: CHOICES_MUTE
+        }
+      ]
+    },
     [ActionId.Mute]: {
       label: 'Set mute',
       options: [
@@ -352,7 +382,7 @@ export function GetActionsList(_self: InstanceSkel<X32Config>, _state: X32State)
 export function HandleAction(
   instance: InstanceSkel<X32Config>,
   _oscSocket: osc.UDPPort,
-  _state: X32State,
+  state: X32State,
   action: CompanionActionEvent
 ): void {
   const sendOsc = (cmd: string, arg: osc.MetaArgument): void => {
@@ -381,6 +411,20 @@ export function HandleAction(
 
   const actionId = action.action as ActionId
   switch (actionId) {
+    case ActionId.Mute2: {
+      let onState = getOptNumber('mute')
+      const cmd = MutePath(opt.target as string)
+
+      if (onState === MUTE_TOGGLE) {
+        const currentState = state.get(cmd)
+        onState = currentState && currentState[0]?.type === 'i' && currentState[0]?.value === 0 ? 1 : 0
+      }
+      sendOsc(cmd, {
+        type: 'i',
+        value: onState
+      })
+      break
+    }
     case ActionId.Mute: {
       sendOsc(`${channelCmdPrefix()}/on`, {
         type: 'i',
