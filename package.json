@@ -47,7 +47,6 @@
 		]
 	},
 	"dependencies": {
-		"osc": "^2.4.1",
 		"underscore": "^1.10.1"
 	},
 	"devDependencies": {
