@@ -10,17 +10,16 @@ import * as osc from 'osc'
 import { MutePath } from './paths'
 
 /**
- * Companion instance class for the Blackmagic ATEM Switchers.
+ * Companion instance class for the Behringer X32 Mixers.
  */
 class X32Instance extends InstanceSkel<X32Config> {
   private osc: osc.UDPPort
   private x32State: X32State
-  private isActive: boolean
 
   private heartbeat: NodeJS.Timer | undefined
 
   /**
-   * Create an instance of an ATEM module.
+   * Create an instance of an X32 module.
    */
   constructor(system: CompanionSystem, id: string, config: X32Config) {
     super(system, id, config)
@@ -28,8 +27,6 @@ class X32Instance extends InstanceSkel<X32Config> {
     this.osc = new osc.UDPPort({})
 
     this.x32State = new X32State()
-
-    this.isActive = false
   }
 
   // Override base types to make types stricter
@@ -43,7 +40,6 @@ class X32Instance extends InstanceSkel<X32Config> {
    * is OK to start doing things.
    */
   public init(): void {
-    this.isActive = true
     this.status(this.STATUS_UNKNOWN)
     this.setupOscSocket()
 
@@ -85,8 +81,6 @@ class X32Instance extends InstanceSkel<X32Config> {
    * Clean up the instance before it is destroyed.
    */
   public destroy(): void {
-    this.isActive = false
-
     if (this.osc) {
       this.osc.close()
       delete this.osc
@@ -145,7 +139,6 @@ class X32Instance extends InstanceSkel<X32Config> {
       this.osc.send({ address: '/-snap/index', args: [] })
 
       this.status(this.STATUS_OK)
-      this.isActive = true
     })
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
