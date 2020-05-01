@@ -1,4 +1,5 @@
 import { DropdownChoice } from '../../../instance_skel_types'
+import { X32State } from './state'
 
 export const CHOICES_COLOR: DropdownChoice[] = [
   { label: 'Off', id: '0' },
@@ -52,3 +53,58 @@ export const CHOICES_FADER_LEVEL: DropdownChoice[] = [
   { label: '+9 dB', id: '0.975' },
   { label: '+10 dB', id: '1.0' }
 ]
+
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface ChannelChoicesOptions {
+  // TODO - skipXXX
+}
+
+export function GetTargetChoices(_state: X32State, _options?: ChannelChoicesOptions): DropdownChoice[] {
+  const res: DropdownChoice[] = []
+
+  const padNumber = (i: number): string => ('0' + i).substr(-2)
+
+  for (let i = 1; i <= 32; i++) {
+    res.push({
+      id: `/ch/${padNumber(i)}`,
+      label: `Channel ${i}`
+    })
+  }
+
+  for (let i = 1; i <= 8; i++) {
+    res.push({
+      id: `/auxin/${padNumber(i)}`,
+      label: `Aux In ${i}`
+    })
+  }
+
+  for (let i = 1; i <= 8; i++) {
+    res.push({
+      id: `/fxrtn/${padNumber(i)}`,
+      label: `FX Return ${i}`
+    })
+  }
+
+  for (let i = 1; i <= 16; i++) {
+    res.push({
+      id: `/bus/${padNumber(i)}`,
+      label: `Bus ${i}`
+    })
+  }
+
+  for (let i = 1; i <= 6; i++) {
+    res.push({
+      id: `/mtx/${padNumber(i)}`,
+      label: `Matrix ${i}`
+    })
+  }
+
+  for (let i = 1; i <= 6; i++) {
+    res.push({
+      id: `/dca/${i}`,
+      label: `DCA ${i}`
+    })
+  }
+
+  return res
+}

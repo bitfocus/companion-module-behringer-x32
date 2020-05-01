@@ -1,4 +1,5 @@
-import { InputValue } from '../../../instance_skel_types'
+import * as osc from 'osc'
+import { X32State } from './state'
 
 export const MEDIA_PLAYER_SOURCE_CLIP_OFFSET = 1000
 
@@ -10,30 +11,14 @@ export function literal<T>(val: T): T {
   return val
 }
 
-export function iterateTimes<T>(count: number, cb: (i: number) => T): T[] {
-  const res: T[] = []
-  for (let i = 0; i < count; i++) {
-    res.push(cb(i))
-  }
-  return res
-}
-
-export function calculateTransitionSelection(
-  keyCount: number,
-  options: { [key: string]: InputValue | undefined }
-): number {
-  let selection = 0
-  if (options.background) {
-    selection |= 1 << 0
-  }
-
-  for (let i = 0; i < keyCount; i++) {
-    if (options[`key${i}`]) {
-      selection |= 1 << (i + 1)
-    }
-  }
-
-  return selection
-}
-
 export type Required<T> = T extends object ? { [P in keyof T]-?: NonNullable<T[P]> } : T
+
+export function ensureLoaded(oscSocket: osc.UDPPort, state: X32State, path: string): void {
+  console.log(`Ensure: ${path}`)
+  if (!state.get(path)) {
+    oscSocket.send({
+      address: path,
+      args: []
+    })
+  }
+}

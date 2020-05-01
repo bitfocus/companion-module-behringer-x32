@@ -2,11 +2,13 @@ import InstanceSkel = require('../../../instance_skel')
 import { CompanionActionEvent, CompanionConfigField, CompanionSystem } from '../../../instance_skel_types'
 import { GetActionsList, HandleAction } from './actions'
 import { X32Config, GetConfigFields } from './config'
-import { FeedbackId, GetFeedbacksList } from './feedback'
+import { FeedbackId, GetFeedbacksList, GetFeedbackPath } from './feedback'
 import { GetPresetsList } from './presets'
 import { InitVariables, updateDeviceInfoVariables } from './variables'
 import { X32State } from './state'
 import * as osc from 'osc'
+import { ensureLoaded } from './util'
+import { MutePath } from './paths'
 
 /**
  * Companion instance class for the Blackmagic ATEM Switchers.
@@ -14,7 +16,6 @@ import * as osc from 'osc'
 class X32Instance extends InstanceSkel<X32Config> {
   private osc: osc.UDPPort
   private x32State: X32State
-  private initDone: boolean
   private isActive: boolean
 
   private heartbeat: NodeJS.Timer | undefined
@@ -29,15 +30,13 @@ class X32Instance extends InstanceSkel<X32Config> {
 
     this.x32State = new X32State()
 
-    this.initDone = false
     this.isActive = false
   }
 
   // Override base types to make types stricter
-  public checkFeedbacks(feedbackId?: FeedbackId, ignoreInitDone?: boolean): void {
-    if (ignoreInitDone || this.initDone) {
-      super.checkFeedbacks(feedbackId)
-    }
+  public checkFeedbacks(feedbackId?: FeedbackId): void {
+    console.log('fb check', feedbackId)
+    super.checkFeedbacks(feedbackId)
   }
 
   /**
@@ -100,12 +99,20 @@ class X32Instance extends InstanceSkel<X32Config> {
   private updateCompanionBits(): void {
     InitVariables(this, this.x32State)
     this.setPresetDefinitions(GetPresetsList(this, this.x32State))
-    this.setFeedbackDefinitions(GetFeedbacksList(this, this.x32State))
+    this.setFeedbackDefinitions(GetFeedbacksList(this, this.osc, this.x32State))
     this.setActions(GetActionsList(this, this.x32State))
     this.checkFeedbacks()
+
+    for (const fb of this.getAllFeedbacks()) {
+      const path = GetFeedbackPath(fb)
+      if (path) {
+        ensureLoaded(this.osc, this.x32State, path)
+      }
+    }
   }
 
   private pulse(): void {
+    console.log('pulse')
     this.osc.send({
       address: '/xremote',
       args: []
@@ -158,6 +165,8 @@ class X32Instance extends InstanceSkel<X32Config> {
     this.osc.on('message', (message): void => {
       console.log('Message', message)
       const args = message.args as osc.MetaArgument[]
+      this.checkFeedbackChanges(message)
+
       switch (message.address) {
         case '/xinfo':
           updateDeviceInfoVariables(this, args)
@@ -166,6 +175,17 @@ class X32Instance extends InstanceSkel<X32Config> {
     })
 
     this.osc.open()
+  }
+
+  private checkFeedbackChanges(msg: osc.OscMessage): void {
+    const args = msg.args as osc.MetaArgument[]
+    this.x32State.set(msg.address, args)
+
+    if (msg.address.match(MutePath('^/([a-z]+)/([0-9]+)')) || msg.address.match(MutePath('^/dca/[0-9]+'))) {
+      this.checkFeedbacks(FeedbackId.Mute)
+    }
+
+    // TODO
   }
 }
 

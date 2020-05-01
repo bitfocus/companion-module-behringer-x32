@@ -356,6 +356,7 @@ export function HandleAction(
   action: CompanionActionEvent
 ): void {
   const sendOsc = (cmd: string, arg: osc.MetaArgument): void => {
+    console.log(cmd, arg)
     oscSocket.send({
       address: cmd,
       args: [arg]
