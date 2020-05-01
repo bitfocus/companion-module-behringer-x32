@@ -348,7 +348,7 @@ export function HandleAction(
 
   const actionId = action.action as ActionId
   switch (actionId) {
-    case ActionId.Mute:{
+    case ActionId.Mute: {
       let onState = getOptNumber('mute')
       const cmd = MutePath(opt.target as string)
 

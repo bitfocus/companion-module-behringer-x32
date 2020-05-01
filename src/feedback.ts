@@ -132,6 +132,8 @@ export function GetFeedbackPath(evt: CompanionFeedbackEvent): string | null {
   switch (feedbackId) {
     case FeedbackId.Mute:
       return MutePath(evt.options.target as string)
+    case FeedbackId.MuteGroup:
+      return evt.options.target as string
     default:
       assertUnreachable(feedbackId)
       return null
