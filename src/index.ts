@@ -7,7 +7,7 @@ import { GetPresetsList } from './presets'
 import { InitVariables, updateDeviceInfoVariables, updateNameVariables } from './variables'
 import { X32State } from './state'
 import * as osc from 'osc'
-import { MutePath } from './paths'
+import { MutePath, MainPath } from './paths'
 import { upgradeV2x0x0 } from './migrations'
 import { GetTargetChoices } from './choices'
 
@@ -181,6 +181,10 @@ class X32Instance extends InstanceSkel<X32Config> {
         address: `${target.id}/config/name`,
         args: []
       })
+      this.osc.send({
+        address: `${MainPath(target.id as string)}/fader`,
+        args: []
+      })
     }
   }
 
@@ -200,7 +204,7 @@ class X32Instance extends InstanceSkel<X32Config> {
       this.checkFeedbacks(FeedbackId.MuteGroup)
     }
 
-    if (msg.address.match('/config/name$')) {
+    if (msg.address.match('/config/name$') || msg.address.match('/fader$')) {
       this.updateCompanionBits()
     }
   }
