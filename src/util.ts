@@ -59,12 +59,12 @@ export function dbToFloat(d: number): number {
     f = 1
   }
   // Optionally round “f” to a X32 known value
-  return Math.round((f * 1023.5) / 1023.0)
+  return f // Math.round((f * 1023.5) / 1023.0)
 }
 
 export function formatDb(d: number): string {
-  // Round to 2dp
-  d = Math.round(d * 100) / 100
+  // Round to 1dp
+  d = Math.round(d * 10) / 10
 
   if (d <= -90) {
     return '-inf'

@@ -2,11 +2,10 @@ import InstanceSkel = require('../../../instance_skel')
 import { CompanionAction, CompanionActionEvent, CompanionActions } from '../../../instance_skel_types'
 import { X32State } from './state'
 import { X32Config } from './config'
-import { assertUnreachable } from './util'
+import { assertUnreachable, dbToFloat } from './util'
 import {
   CHOICES_TAPE_FUNC,
   CHOICES_COLOR,
-  CHOICES_FADER_LEVEL,
   GetTargetChoices,
   CHOICES_MUTE,
   MUTE_TOGGLE,
@@ -14,13 +13,12 @@ import {
   CHOICES_MUTE_GROUP
 } from './choices'
 import * as osc from 'osc'
-import { MutePath } from './paths'
+import { MutePath, MainPath } from './paths'
 
 export enum ActionId {
   Mute = 'mute',
   MuteGroup = 'mute_grp',
   FaderLevel = 'fad',
-  MainFaderLevel = 'mFad',
   Label = 'label',
   Color = 'color',
   GoCue = 'go_cue',
@@ -79,54 +77,21 @@ export function GetActionsList(_self: InstanceSkel<X32Config>, state: X32State):
       options: [
         {
           type: 'dropdown',
-          label: 'Type',
-          id: 'type',
-          choices: [
-            { id: '/ch/', label: 'Channel 1-32' },
-            { id: '/auxin/', label: 'Aux In 1-8' },
-            { id: '/fxrtn/', label: 'FX Return 1-8' },
-            { id: '/bus/', label: 'Bus 1-16' },
-            { id: '/mtx/', label: 'Matrix 1-6' },
-            { id: '/dca/', label: 'Dca 1-8' }
-          ],
-          default: '/ch/'
+          label: 'Target',
+          id: 'target',
+          choices: allTargets,
+          default: allTargets[0].id
         },
         {
           type: 'number',
-          label: 'Ch, AuxIn, FXrtn, Bus, Mtx or Dca Number',
-          id: 'num',
-          default: 1,
-          min: 1,
-          max: 32
-        },
-        {
-          type: 'dropdown',
-          label: 'Fader Level',
+          label: 'Fader Level (-90 = -inf)',
           id: 'fad',
-          default: CHOICES_FADER_LEVEL[0].id,
-          choices: CHOICES_FADER_LEVEL
-        }
-      ]
-    },
-    [ActionId.MainFaderLevel]: {
-      label: 'Set Main fader level',
-      options: [
-        {
-          type: 'dropdown',
-          label: 'Type',
-          id: 'type',
-          choices: [
-            { id: '/main/st', label: 'Stereo' },
-            { id: '/main/m', label: 'Mono' }
-          ],
-          default: '/main/st'
-        },
-        {
-          type: 'dropdown',
-          label: 'Fader Level',
-          id: 'fad',
-          default: CHOICES_FADER_LEVEL[0].id,
-          choices: CHOICES_FADER_LEVEL
+          range: true,
+          required: true,
+          default: 0,
+          step: 0.1,
+          min: -90,
+          max: 10
         }
       ]
     },
@@ -261,11 +226,6 @@ export function HandleAction(
   // const getOptBool = (key: string): boolean => {
   //   return !!opt[key]
   // }
-  const channelCmdPrefix = (notMix?: boolean): string => {
-    const num = getOptNumber('num')
-    const numStr = ('0' + num).substr(-2)
-    return opt.type == '/dca/' ? `${opt.type}${num}` : `${opt.type}${numStr}${notMix ? '' : '/mix'}`
-  }
 
   const actionId = action.action as ActionId
   switch (actionId) {
@@ -298,16 +258,9 @@ export function HandleAction(
       break
     }
     case ActionId.FaderLevel: {
-      sendOsc(`${channelCmdPrefix()}/fader`, {
+      sendOsc(`${MainPath(opt.target as string)}/fader`, {
         type: 'f',
-        value: getOptNumber('fad')
-      })
-      break
-    }
-    case ActionId.MainFaderLevel: {
-      sendOsc(`${opt.type}/mix/fader`, {
-        type: 'f',
-        value: getOptNumber('fad')
+        value: dbToFloat(getOptNumber('fad'))
       })
       break
     }

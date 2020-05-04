@@ -23,6 +23,7 @@ export function upgradeV2x0x0(
     switch (action.action) {
       case ActionId.Mute:
       case ActionId.Color:
+      case ActionId.FaderLevel:
       case ActionId.Label: {
         if (!action.options.target) {
           const type = action.options.type || '/ch/'
@@ -76,6 +77,18 @@ export function upgradeV2x0x0(
           delete action.options.type
 
           action.action = ActionId.Label
+          action.label = `${action.instance}:${action.action}`
+
+          changed = true
+        }
+        break
+      }
+      case 'mFad': {
+        if (action.options.type) {
+          action.options.target = action.options.type
+          delete action.options.type
+
+          action.action = ActionId.FaderLevel
           action.label = `${action.instance}:${action.action}`
 
           changed = true

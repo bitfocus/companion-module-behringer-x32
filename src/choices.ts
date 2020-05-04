@@ -43,30 +43,6 @@ export const CHOICES_TAPE_FUNC: DropdownChoice[] = [
   { label: 'REWIND', id: '6' }
 ]
 
-export const CHOICES_FADER_LEVEL: DropdownChoice[] = [
-  { label: '- ∞', id: '0.0' },
-  { label: '-50 dB: ', id: '0.1251' },
-  { label: '-30 dB', id: '0.251' },
-  { label: '-20 dB', id: '0.375' },
-  { label: '-18 dB', id: '0.4' },
-  { label: '-15 dB', id: '0.437' },
-  { label: '-12 dB', id: '0.475' },
-  { label: '-9 dB', id: '0.525' },
-  { label: '-6 dB', id: '0.6' },
-  { label: '-3 dB', id: '0.675' },
-  { label: '-2 dB', id: '0.7' },
-  { label: '-1 dB', id: '0.725' },
-  { label: '0 dB', id: '0.75' },
-  { label: '+1 dB', id: '0.775' },
-  { label: '+2 dB', id: '0.8' },
-  { label: '+3 dB', id: '0.825' },
-  { label: '+4 dB', id: '0.85' },
-  { label: '+5 dB', id: '0.875' },
-  { label: '+6 dB', id: '0.9' },
-  { label: '+9 dB', id: '0.975' },
-  { label: '+10 dB', id: '1.0' }
-]
-
 export interface ChannelChoicesOptions {
   defaultNames?: boolean
   numericIndex?: boolean
