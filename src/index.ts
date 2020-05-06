@@ -10,6 +10,7 @@ import * as osc from 'osc'
 import { MutePath, MainPath } from './paths'
 import { upgradeV2x0x0 } from './migrations'
 import { GetTargetChoices } from './choices'
+import * as debounceFn from 'debounce-fn'
 
 /**
  * Companion instance class for the Behringer X32 Mixers.
@@ -19,6 +20,8 @@ class X32Instance extends InstanceSkel<X32Config> {
   private x32State: X32State
 
   private heartbeat: NodeJS.Timer | undefined
+
+  private readonly debounceUpdateCompanionBits: () => void
 
   /**
    * Create an instance of an X32 module.
@@ -35,6 +38,11 @@ class X32Instance extends InstanceSkel<X32Config> {
     this.x32State = new X32State()
 
     this.addUpgradeScript(upgradeV2x0x0)
+
+    this.debounceUpdateCompanionBits = debounceFn(this.updateCompanionBits, {
+      wait: 100,
+      immediate: false
+    })
   }
 
   // Override base types to make types stricter
@@ -142,7 +150,6 @@ class X32Instance extends InstanceSkel<X32Config> {
         this.pulse()
       }, 9500)
 
-      // TODO get initial state
       this.osc.send({ address: '/xinfo', args: [] })
       this.osc.send({ address: '/-snap/name', args: [] })
       this.osc.send({ address: '/-snap/index', args: [] })
@@ -159,7 +166,7 @@ class X32Instance extends InstanceSkel<X32Config> {
     })
 
     this.osc.on('message', (message): void => {
-      console.log('Message', message)
+      // console.log('Message', message)
       const args = message.args as osc.MetaArgument[]
       this.checkFeedbackChanges(message)
 
@@ -205,7 +212,7 @@ class X32Instance extends InstanceSkel<X32Config> {
     }
 
     if (msg.address.match('/config/name$') || msg.address.match('/fader$')) {
-      this.updateCompanionBits()
+      this.debounceUpdateCompanionBits()
     }
   }
 }
