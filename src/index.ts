@@ -20,6 +20,7 @@ class X32Instance extends InstanceSkel<X32Config> {
   private x32State: X32State
 
   private heartbeat: NodeJS.Timer | undefined
+  private reconnectTimer: NodeJS.Timer | undefined
 
   private readonly debounceUpdateCompanionBits: () => void
 
@@ -143,18 +144,25 @@ class X32Instance extends InstanceSkel<X32Config> {
         clearInterval(this.heartbeat)
         this.heartbeat = undefined
       }
+
+      if (!this.reconnectTimer) {
+        this.reconnectTimer = setTimeout(() => {
+          this.reconnectTimer = undefined
+          this.setupOscSocket()
+        }, 2000)
+      }
     })
     this.osc.on('ready', () => {
       this.pulse()
       this.heartbeat = setInterval(() => {
         this.pulse()
-      }, 9500)
+      }, 1500)
 
       this.osc.send({ address: '/xinfo', args: [] })
       this.osc.send({ address: '/-snap/name', args: [] })
       this.osc.send({ address: '/-snap/index', args: [] })
 
-      this.status(this.STATUS_OK)
+      this.status(this.STATUS_WARNING, 'Syncing')
     })
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -172,6 +180,7 @@ class X32Instance extends InstanceSkel<X32Config> {
 
       switch (message.address) {
         case '/xinfo':
+          this.status(this.STATUS_OK)
           this.loadVariablesData()
           updateDeviceInfoVariables(this, args)
           break
