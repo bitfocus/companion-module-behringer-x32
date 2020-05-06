@@ -6,7 +6,7 @@ import {
 } from '../../../instance_skel_types'
 import { ActionId } from './actions'
 import { X32Config } from './config'
-import { padNumber } from './util'
+import { padNumber, floatToDB } from './util'
 
 export function upgradeV2x0x0(
   _config: CompanionCoreInstanceconfig & X32Config,
@@ -34,6 +34,16 @@ export function upgradeV2x0x0(
 
           action.options.target = `${type}${num}`
 
+          console.log(action.action, action.options.mute)
+
+          if (action.action === ActionId.Mute && action.options.mute === null) {
+            action.options.mute = 0
+          } else if (action.action === ActionId.Color && action.options.col === null) {
+            action.options.col = '0'
+          } else if (action.action === ActionId.FaderLevel) {
+            action.options.fad = floatToDB((action.options.fad ?? 0) as number)
+          }
+
           changed = true
         }
         break
@@ -43,6 +53,10 @@ export function upgradeV2x0x0(
           action.options.target = `/config/mute/${action.options.mute_grp}`
           delete action.options.mute_grp
 
+          if (action.options.mute === null) {
+            action.options.mute = 0
+          }
+
           changed = true
         }
         break
@@ -51,6 +65,10 @@ export function upgradeV2x0x0(
         if (action.options.type) {
           action.options.target = action.options.type
           delete action.options.type
+
+          if (action.options.mute === null) {
+            action.options.mute = 0
+          }
 
           action.action = ActionId.Mute
           action.label = `${action.instance}:${action.action}`
@@ -63,6 +81,10 @@ export function upgradeV2x0x0(
         if (action.options.type) {
           action.options.target = action.options.type
           delete action.options.type
+
+          if (action.options.col === null) {
+            action.options.col = '0'
+          }
 
           action.action = ActionId.Color
           action.label = `${action.instance}:${action.action}`
@@ -87,6 +109,8 @@ export function upgradeV2x0x0(
         if (action.options.type) {
           action.options.target = action.options.type
           delete action.options.type
+
+          action.options.fad = floatToDB((action.options.fad ?? 0) as number)
 
           action.action = ActionId.FaderLevel
           action.label = `${action.instance}:${action.action}`
