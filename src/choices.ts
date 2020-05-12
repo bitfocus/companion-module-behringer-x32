@@ -86,7 +86,7 @@ export function GetTargetChoices(state: X32State, options?: ChannelChoicesOption
   }
 
   for (let i = 1; i <= 16; i++) {
-    appendTarget(`/bus/${padNumber(i)}`, `Bus ${i}`)
+    appendTarget(`/bus/${padNumber(i)}`, `MixBus ${i}`)
   }
 
   for (let i = 1; i <= 6; i++) {

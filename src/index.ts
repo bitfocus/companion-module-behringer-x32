@@ -11,6 +11,7 @@ import { MutePath, MainPath } from './paths'
 import { upgradeV2x0x0 } from './migrations'
 import { GetTargetChoices } from './choices'
 import * as debounceFn from 'debounce-fn'
+import PQueue from 'p-queue'
 
 /**
  * Companion instance class for the Behringer X32 Mixers.
@@ -23,6 +24,12 @@ class X32Instance extends InstanceSkel<X32Config> {
   private reconnectTimer: NodeJS.Timer | undefined
 
   private readonly debounceUpdateCompanionBits: () => void
+  private readonly requestQueue: PQueue = new PQueue({
+    concurrency: 20,
+    timeout: 500,
+    throwOnTimeout: true
+  })
+  private inFlightRequests: { [path: string]: () => void } = {}
 
   /**
    * Create an instance of an X32 module.
@@ -141,6 +148,9 @@ class X32Instance extends InstanceSkel<X32Config> {
     this.osc.on('error', (err: Error): void => {
       this.log('error', `Error: ${err.message}`)
       this.status(this.STATUS_ERROR, err.message)
+      this.requestQueue.clear()
+      this.inFlightRequests = {}
+
       if (this.heartbeat !== undefined) {
         clearInterval(this.heartbeat)
         this.heartbeat = undefined
@@ -158,6 +168,9 @@ class X32Instance extends InstanceSkel<X32Config> {
       this.heartbeat = setInterval(() => {
         this.pulse()
       }, 1500)
+
+      this.requestQueue.clear()
+      this.inFlightRequests = {}
 
       this.osc.send({ address: '/xinfo', args: [] })
       this.osc.send({ address: '/-snap/name', args: [] })
@@ -179,6 +192,11 @@ class X32Instance extends InstanceSkel<X32Config> {
       const args = message.args as osc.MetaArgument[]
       this.checkFeedbackChanges(message)
 
+      if (this.inFlightRequests[message.address]) {
+        this.inFlightRequests[message.address]()
+        delete this.inFlightRequests[message.address]
+      }
+
       switch (message.address) {
         case '/xinfo':
           this.status(this.STATUS_OK)
@@ -194,15 +212,36 @@ class X32Instance extends InstanceSkel<X32Config> {
   private loadVariablesData(): void {
     const targets = GetTargetChoices(this.x32State, { includeMain: true, defaultNames: true })
     for (const target of targets) {
-      this.osc.send({
-        address: `${target.id}/config/name`,
-        args: []
-      })
-      this.osc.send({
-        address: `${MainPath(target.id as string)}/fader`,
-        args: []
-      })
+      this.queueOscRequest(`${target.id}/config/name`)
+      this.queueOscRequest(`${MainPath(target.id as string)}/fader`)
     }
+  }
+
+  private queueOscRequest(path: string): void {
+    this.requestQueue
+      .add(async () => {
+        if (this.inFlightRequests[path]) {
+          this.debug(`Ignoring request "${path}" as one in flight`)
+          return
+        }
+
+        console.log('starting request', path)
+
+        const p = new Promise(resolve => {
+          this.inFlightRequests[path] = resolve
+        })
+
+        this.osc.send({
+          address: path,
+          args: []
+        })
+
+        await p
+      })
+      .catch(() => {
+        delete this.inFlightRequests[path]
+        this.log('error', `Request failed for "${path}"`)
+      })
   }
 
   private checkFeedbackChanges(msg: osc.OscMessage): void {

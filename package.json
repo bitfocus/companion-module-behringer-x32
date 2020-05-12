@@ -48,6 +48,7 @@
 	},
 	"dependencies": {
 		"debounce-fn": "^3.0.1",
+		"p-queue": "^6.4.0",
 		"underscore": "^1.10.1"
 	},
 	"devDependencies": {
