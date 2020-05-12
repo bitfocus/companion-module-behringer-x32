@@ -16,8 +16,6 @@ export function upgradeV2x0x0(
 ): boolean {
   let changed = false
 
-  console.log('Running x32 upgrade to v2.0.0')
-
   const allActions = [...actions, ...releaseActions]
   _.each(allActions, action => {
     switch (action.action) {

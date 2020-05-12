@@ -38,6 +38,7 @@ class X32Instance extends InstanceSkel<X32Config> {
 
     this.x32State = new X32State()
 
+    this.addUpgradeScript(() => false) // Previous version had a script
     this.addUpgradeScript(upgradeV2x0x0)
 
     this.debounceUpdateCompanionBits = debounceFn(this.updateCompanionBits, {
