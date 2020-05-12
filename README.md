@@ -13,3 +13,11 @@ While developing the module, by using `yarn build:watch` the compiler will be ru
 ### v2.0.0
 
 - Rewrite in Typescript with some linting and formatting rules.
+
+- Added Mute feedback
+
+- Added variables for channel names and fader levels
+
+- Use slider inputs for fader levels
+
+- Rework channel selection to use a proper list with current names
