@@ -6,9 +6,9 @@ import {
   CompanionFeedbackResult
 } from '../../../instance_skel_types'
 import { X32State } from './state'
-import { GetTargetChoices, GetMuteGroupChoices } from './choices'
+import { GetTargetChoices, GetMuteGroupChoices, GetChannelSendChoices } from './choices'
 import { ensureLoaded, assertUnreachable } from './util'
-import { MutePath } from './paths'
+import { MutePath, MainPath } from './paths'
 import * as osc from 'osc'
 import InstanceSkel = require('../../../instance_skel')
 import { X32Config } from './config'
@@ -17,7 +17,8 @@ type CompanionFeedbackWithCallback = CompanionFeedback & Required<Pick<Companion
 
 export enum FeedbackId {
   Mute = 'mute',
-  MuteGroup = 'mute_grp'
+  MuteGroup = 'mute_grp',
+  MuteChannelSend = 'mute_channel_send'
 }
 
 export function ForegroundPicker(color: number): CompanionInputFieldColor {
@@ -56,6 +57,13 @@ export function GetFeedbacksList(
 ): CompanionFeedbacks {
   const mutableChannels = GetTargetChoices(state, { includeMain: true })
   const muteGroups = GetMuteGroupChoices(state)
+  const channelSendSources = GetTargetChoices(state, {
+    includeMain: false,
+    skipDca: true,
+    skipBus: true,
+    skipMatrix: true
+  })
+  const channelSendTargets = GetChannelSendChoices(state, true)
 
   const feedbacks: { [id in FeedbackId]: CompanionFeedbackWithCallback | undefined } = {
     [FeedbackId.Mute]: {
@@ -121,6 +129,49 @@ export function GetFeedbacksList(
       subscribe: (evt: CompanionFeedbackEvent): void => {
         ensureLoaded(oscSocket, state, evt.options.mute_grp as string)
       }
+    },
+    [FeedbackId.MuteChannelSend]: {
+      label: 'Change colors from channel send mute state',
+      description: 'If the specified channel send is muted, change color of the bank',
+      options: [
+        BackgroundPicker(self.rgb(255, 0, 0)),
+        ForegroundPicker(self.rgb(0, 0, 0)),
+        {
+          type: 'dropdown',
+          label: 'Source',
+          id: 'source',
+          choices: channelSendSources,
+          default: channelSendSources[0].id
+        },
+        {
+          type: 'dropdown',
+          label: 'Target',
+          id: 'target',
+          choices: channelSendTargets,
+          default: channelSendTargets[0].id
+        },
+        {
+          id: 'state',
+          type: 'checkbox',
+          label: 'Muted',
+          default: true
+        }
+      ],
+      callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
+        const path = GetFeedbackPath(evt)
+        const data = path ? state.get(path) : undefined
+        const muted = getDataNumber(data, 0) === 0
+        if (muted === !!evt.options.state) {
+          return getOptColors(evt)
+        }
+        return {}
+      },
+      subscribe: (evt: CompanionFeedbackEvent): void => {
+        const path = GetFeedbackPath(evt)
+        if (path) {
+          ensureLoaded(oscSocket, state, path)
+        }
+      }
     }
   }
 
@@ -134,6 +185,8 @@ export function GetFeedbackPath(evt: CompanionFeedbackEvent): string | null {
       return MutePath(evt.options.target as string)
     case FeedbackId.MuteGroup:
       return evt.options.target as string
+    case FeedbackId.MuteChannelSend:
+      return `${MainPath(evt.options.source as string)}/${evt.options.target}`
     default:
       assertUnreachable(feedbackId)
       return null

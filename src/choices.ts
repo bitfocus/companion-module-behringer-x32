@@ -48,6 +48,8 @@ export interface ChannelChoicesOptions {
   numericIndex?: boolean
   includeMain?: boolean
   skipDca?: boolean
+  skipBus?: boolean
+  skipMatrix?: boolean
   // TODO - more skipXXX
 }
 
@@ -62,12 +64,12 @@ export function GetTargetChoices(state: X32State, options?: ChannelChoicesOption
     return val && val[0]?.type === 's' ? val[0].value : undefined
   }
 
-  let i = 0
+  let o = 0
   const appendTarget = (id: string, defaultName: string): void => {
     const realname = getNameFromState(id)
     res.push({
-      id: options?.numericIndex ? i++ : id,
-      label: realname ? `${realname} (${defaultName})` : defaultName
+      id: options?.numericIndex ? o++ : id,
+      label: realname && realname !== defaultName ? `${realname} (${defaultName})` : defaultName
     })
   }
 
@@ -85,12 +87,16 @@ export function GetTargetChoices(state: X32State, options?: ChannelChoicesOption
     appendTarget(`/fxrtn/${padNumber(o + 1)}`, `FX Return ${i} R`)
   }
 
-  for (let i = 1; i <= 16; i++) {
-    appendTarget(`/bus/${padNumber(i)}`, `MixBus ${i}`)
+  if (!options?.skipBus) {
+    for (let i = 1; i <= 16; i++) {
+      appendTarget(`/bus/${padNumber(i)}`, `MixBus ${i}`)
+    }
   }
 
-  for (let i = 1; i <= 6; i++) {
-    appendTarget(`/mtx/${padNumber(i)}`, `Matrix ${i}`)
+  if (!options?.skipMatrix) {
+    for (let i = 1; i <= 6; i++) {
+      appendTarget(`/mtx/${padNumber(i)}`, `Matrix ${i}`)
+    }
   }
 
   if (!options?.skipDca) {
@@ -103,6 +109,49 @@ export function GetTargetChoices(state: X32State, options?: ChannelChoicesOption
     appendTarget(`/main/st`, `Main Stereo`)
     appendTarget(`/main/m`, `Main Mono`)
   }
+
+  return res
+}
+
+// export function GetMixBusChoices(state: X32State): DropdownChoice[] {
+//   const res: DropdownChoice[] = []
+
+//   const appendTarget = (id: string, defaultName: string): void => {
+//     const val = state.get(`/bus/${id}/config/name`)
+//     const realname = val && val[0]?.type === 's' ? val[0].value : undefined
+//     res.push({
+//       id: id,
+//       label: realname && realname !== defaultName ? `${realname} (${defaultName})` : defaultName
+//     })
+//   }
+
+//   for (let i = 1; i <= 16; i++) {
+//     appendTarget(`${padNumber(i)}`, `MixBus ${i}`)
+//   }
+
+//   return res
+// }
+
+export function GetChannelSendChoices(state: X32State, includeMainStereo?: boolean): DropdownChoice[] {
+  const res: DropdownChoice[] = []
+
+  const appendTarget = (statePath: string, mixId: string, defaultName: string): void => {
+    const val = state.get(`${statePath}/config/name`)
+    const realname = val && val[0]?.type === 's' ? val[0].value : undefined
+    res.push({
+      id: mixId,
+      label: realname && realname !== defaultName ? `${realname} (${defaultName})` : defaultName
+    })
+  }
+
+  for (let i = 1; i <= 16; i++) {
+    appendTarget(`/bus/${padNumber(i)}`, `${padNumber(i)}/on`, `MixBus ${i}`)
+  }
+
+  if (includeMainStereo) {
+    appendTarget(`/main/st`, 'st', `Main Stereo`)
+  }
+  appendTarget(`/main/m`, 'mono', `Main Mono`)
 
   return res
 }

@@ -255,6 +255,12 @@ class X32Instance extends InstanceSkel<X32Config> {
     ) {
       this.checkFeedbacks(FeedbackId.Mute)
     }
+    if (
+      msg.address.match('^/([a-z]+)/([0-9]+)/mix/([0-9]+)/on') ||
+      msg.address.match('^/([a-z]+)/([0-9]+)/mix/(st|mono)')
+    ) {
+      this.checkFeedbacks(FeedbackId.MuteChannelSend)
+    }
 
     if (msg.address.match('^/config/mute/([0-9]+)')) {
       this.checkFeedbacks(FeedbackId.MuteGroup)

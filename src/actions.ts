@@ -10,7 +10,8 @@ import {
   CHOICES_MUTE,
   MUTE_TOGGLE,
   GetMuteGroupChoices,
-  CHOICES_MUTE_GROUP
+  CHOICES_MUTE_GROUP,
+  GetChannelSendChoices
 } from './choices'
 import * as osc from 'osc'
 import { MutePath, MainPath } from './paths'
@@ -18,6 +19,7 @@ import { MutePath, MainPath } from './paths'
 export enum ActionId {
   Mute = 'mute',
   MuteGroup = 'mute_grp',
+  MuteChannelSend = 'mute_channel_send',
   FaderLevel = 'fad',
   Label = 'label',
   Color = 'color',
@@ -30,6 +32,13 @@ export enum ActionId {
 
 export function GetActionsList(_self: InstanceSkel<X32Config>, state: X32State): CompanionActions {
   const allTargets = GetTargetChoices(state, { includeMain: true })
+  const channelSendSources = GetTargetChoices(state, {
+    includeMain: false,
+    skipDca: true,
+    skipBus: true,
+    skipMatrix: true
+  })
+  const channelSendTargets = GetChannelSendChoices(state, true)
   const muteGroups = GetMuteGroupChoices(state)
   const selectChoices = GetTargetChoices(state, { skipDca: true, numericIndex: true })
 
@@ -69,6 +78,32 @@ export function GetActionsList(_self: InstanceSkel<X32Config>, state: X32State):
           id: 'mute',
           default: CHOICES_MUTE_GROUP[0].id,
           choices: CHOICES_MUTE_GROUP
+        }
+      ]
+    },
+    [ActionId.MuteChannelSend]: {
+      label: 'Set mute channel send',
+      options: [
+        {
+          type: 'dropdown',
+          label: 'Source',
+          id: 'source',
+          choices: channelSendSources,
+          default: channelSendSources[0].id
+        },
+        {
+          type: 'dropdown',
+          label: 'Target',
+          id: 'target',
+          choices: channelSendTargets,
+          default: channelSendTargets[0].id
+        },
+        {
+          type: 'dropdown',
+          label: 'Mute / Unmute',
+          id: 'mute',
+          default: CHOICES_MUTE[0].id,
+          choices: CHOICES_MUTE
         }
       ]
     },
@@ -226,17 +261,28 @@ export function HandleAction(
   // const getOptBool = (key: string): boolean => {
   //   return !!opt[key]
   // }
+  const getResolveMute = (cmd: string, cmdIsCalledOn: boolean): number => {
+    const onState = getOptNumber('mute')
+    if (onState === MUTE_TOGGLE) {
+      const currentState = state.get(cmd)
+      const currentVal = currentState && currentState[0]?.type === 'i' && currentState[0]?.value
+      if (typeof currentVal === 'number') {
+        return currentVal === 0 ? 1 : 0
+      } else {
+        // default to off
+        return cmdIsCalledOn ? 0 : 1
+      }
+    } else {
+      return onState
+    }
+  }
 
   const actionId = action.action as ActionId
   switch (actionId) {
     case ActionId.Mute: {
-      let onState = getOptNumber('mute')
       const cmd = MutePath(opt.target as string)
+      const onState = getResolveMute(cmd, true)
 
-      if (onState === MUTE_TOGGLE) {
-        const currentState = state.get(cmd)
-        onState = currentState && currentState[0]?.type === 'i' && currentState[0]?.value === 0 ? 1 : 0
-      }
       sendOsc(cmd, {
         type: 'i',
         value: onState
@@ -244,13 +290,19 @@ export function HandleAction(
       break
     }
     case ActionId.MuteGroup: {
-      let onState = getOptNumber('mute')
       const cmd = opt.target as string
+      const onState = getResolveMute(cmd, false)
 
-      if (onState === MUTE_TOGGLE) {
-        const currentState = state.get(cmd)
-        onState = currentState && currentState[0]?.type === 'i' && currentState[0]?.value === 1 ? 0 : 1
-      }
+      sendOsc(cmd, {
+        type: 'i',
+        value: onState
+      })
+      break
+    }
+    case ActionId.MuteChannelSend: {
+      const cmd = `${MainPath(opt.source as string)}/${opt.target}`
+      const onState = getResolveMute(cmd, true)
+
       sendOsc(cmd, {
         type: 'i',
         value: onState
