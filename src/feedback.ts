@@ -7,13 +7,13 @@ import {
 } from '../../../instance_skel_types'
 import { X32State } from './state'
 import { GetTargetChoices, GetMuteGroupChoices, GetChannelSendChoices } from './choices'
-import { ensureLoaded, assertUnreachable } from './util'
+import { ensureLoaded } from './util'
 import { MutePath, MainPath } from './paths'
 import * as osc from 'osc'
 import InstanceSkel = require('../../../instance_skel')
 import { X32Config } from './config'
 
-type CompanionFeedbackWithCallback = CompanionFeedback & Required<Pick<CompanionFeedback, 'callback'>>
+type CompanionFeedbackWithCallback = CompanionFeedback & Required<Pick<CompanionFeedback, 'callback' | 'subscribe'>>
 
 export enum FeedbackId {
   Mute = 'mute',
@@ -158,7 +158,7 @@ export function GetFeedbacksList(
         }
       ],
       callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
-        const path = GetFeedbackPath(evt)
+        const path = `${MainPath(evt.options.source as string)}/${evt.options.target}`
         const data = path ? state.get(path) : undefined
         const muted = getDataNumber(data, 0) === 0
         if (muted === !!evt.options.state) {
@@ -167,7 +167,7 @@ export function GetFeedbacksList(
         return {}
       },
       subscribe: (evt: CompanionFeedbackEvent): void => {
-        const path = GetFeedbackPath(evt)
+        const path = `${MainPath(evt.options.source as string)}/${evt.options.target}`
         if (path) {
           ensureLoaded(oscSocket, state, path)
         }
@@ -176,19 +176,4 @@ export function GetFeedbacksList(
   }
 
   return feedbacks
-}
-
-export function GetFeedbackPath(evt: CompanionFeedbackEvent): string | null {
-  const feedbackId = evt.type as FeedbackId
-  switch (feedbackId) {
-    case FeedbackId.Mute:
-      return MutePath(evt.options.target as string)
-    case FeedbackId.MuteGroup:
-      return evt.options.target as string
-    case FeedbackId.MuteChannelSend:
-      return `${MainPath(evt.options.source as string)}/${evt.options.target}`
-    default:
-      assertUnreachable(feedbackId)
-      return null
-  }
 }

@@ -117,13 +117,14 @@ class X32Instance extends InstanceSkel<X32Config> {
     InitVariables(this, this.x32State)
     this.setPresetDefinitions(GetPresetsList(this, this.x32State))
     this.setFeedbackDefinitions(GetFeedbacksList(this, this.osc, this.x32State))
-    this.setActions(GetActionsList(this, this.x32State))
+    this.setActions(GetActionsList(this, this.osc, this.x32State))
     this.checkFeedbacks()
 
     updateNameVariables(this, this.x32State)
 
-    // Ensure all feedbacks have an initial value
+    // Ensure all feedbacks & actions have an initial value
     this.subscribeFeedbacks()
+    this.subscribeActions()
   }
 
   private pulse(): void {
@@ -225,7 +226,7 @@ class X32Instance extends InstanceSkel<X32Config> {
           return
         }
 
-        console.log('starting request', path)
+        // console.log('starting request', path)
 
         const p = new Promise(resolve => {
           this.inFlightRequests[path] = resolve

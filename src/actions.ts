@@ -2,7 +2,7 @@ import InstanceSkel = require('../../../instance_skel')
 import { CompanionAction, CompanionActionEvent, CompanionActions } from '../../../instance_skel_types'
 import { X32State } from './state'
 import { X32Config } from './config'
-import { assertUnreachable, dbToFloat } from './util'
+import { assertUnreachable, dbToFloat, ensureLoaded } from './util'
 import {
   CHOICES_TAPE_FUNC,
   CHOICES_COLOR,
@@ -30,7 +30,13 @@ export enum ActionId {
   Tape = 'tape'
 }
 
-export function GetActionsList(_self: InstanceSkel<X32Config>, state: X32State): CompanionActions {
+type CompanionActionWithCallback = CompanionAction // & Required<Pick<CompanionAction, 'callback'>>
+
+export function GetActionsList(
+  _self: InstanceSkel<X32Config>,
+  oscSocket: osc.UDPPort,
+  state: X32State
+): CompanionActions {
   const allTargets = GetTargetChoices(state, { includeMain: true })
   const channelSendSources = GetTargetChoices(state, {
     includeMain: false,
@@ -42,7 +48,7 @@ export function GetActionsList(_self: InstanceSkel<X32Config>, state: X32State):
   const muteGroups = GetMuteGroupChoices(state)
   const selectChoices = GetTargetChoices(state, { skipDca: true, numericIndex: true })
 
-  const actions: { [id in ActionId]: Required<CompanionAction> | undefined } = {
+  const actions: { [id in ActionId]: CompanionActionWithCallback | undefined } = {
     [ActionId.Mute]: {
       label: 'Set mute',
       options: [
@@ -60,7 +66,12 @@ export function GetActionsList(_self: InstanceSkel<X32Config>, state: X32State):
           default: CHOICES_MUTE[0].id,
           choices: CHOICES_MUTE
         }
-      ]
+      ],
+      subscribe: (evt): void => {
+        if (evt.options.mute === MUTE_TOGGLE) {
+          ensureLoaded(oscSocket, state, MutePath(evt.options.target as string))
+        }
+      }
     },
     [ActionId.MuteGroup]: {
       label: 'Mute Group ON/OFF',
@@ -79,7 +90,12 @@ export function GetActionsList(_self: InstanceSkel<X32Config>, state: X32State):
           default: CHOICES_MUTE_GROUP[0].id,
           choices: CHOICES_MUTE_GROUP
         }
-      ]
+      ],
+      subscribe: (evt): void => {
+        if (evt.options.mute === MUTE_TOGGLE) {
+          ensureLoaded(oscSocket, state, evt.options.target as string)
+        }
+      }
     },
     [ActionId.MuteChannelSend]: {
       label: 'Set mute channel send',
@@ -105,7 +121,15 @@ export function GetActionsList(_self: InstanceSkel<X32Config>, state: X32State):
           default: CHOICES_MUTE[0].id,
           choices: CHOICES_MUTE
         }
-      ]
+      ],
+      // callback: (action): void => {
+      //   console.log('mute send', action)
+      // },
+      subscribe: (evt): void => {
+        if (evt.options.mute === MUTE_TOGGLE) {
+          ensureLoaded(oscSocket, state, `${MainPath(evt.options.source as string)}/${evt.options.target}`)
+        }
+      }
     },
     [ActionId.FaderLevel]: {
       label: 'Set fader level',
