@@ -1,6 +1,6 @@
 import InstanceSkel = require('../../../instance_skel')
-import { CompanionActionEvent, CompanionConfigField, CompanionSystem } from '../../../instance_skel_types'
-import { GetActionsList, HandleAction } from './actions'
+import { CompanionConfigField, CompanionSystem } from '../../../instance_skel_types'
+import { GetActionsList } from './actions'
 import { X32Config, GetConfigFields } from './config'
 import { FeedbackId, GetFeedbacksList } from './feedback'
 import { GetPresetsList } from './presets'
@@ -84,13 +84,6 @@ class X32Instance extends InstanceSkel<X32Config> {
       this.status(this.STATUS_WARNING, 'Connecting')
       this.setupOscSocket()
     }
-  }
-
-  /**
-   * Executes the provided action.
-   */
-  public action(action: CompanionActionEvent): void {
-    HandleAction(this, this.osc, this.x32State, action)
   }
 
   /**

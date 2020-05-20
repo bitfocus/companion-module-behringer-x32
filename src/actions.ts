@@ -2,7 +2,7 @@ import InstanceSkel = require('../../../instance_skel')
 import { CompanionAction, CompanionActionEvent, CompanionActions } from '../../../instance_skel_types'
 import { X32State } from './state'
 import { X32Config } from './config'
-import { assertUnreachable, dbToFloat, ensureLoaded } from './util'
+import { dbToFloat, ensureLoaded } from './util'
 import {
   CHOICES_TAPE_FUNC,
   CHOICES_COLOR,
@@ -30,10 +30,10 @@ export enum ActionId {
   Tape = 'tape'
 }
 
-type CompanionActionWithCallback = CompanionAction // & Required<Pick<CompanionAction, 'callback'>>
+type CompanionActionWithCallback = CompanionAction & Required<Pick<CompanionAction, 'callback'>>
 
 export function GetActionsList(
-  _self: InstanceSkel<X32Config>,
+  self: InstanceSkel<X32Config>,
   oscSocket: osc.UDPPort,
   state: X32State
 ): CompanionActions {
@@ -47,6 +47,39 @@ export function GetActionsList(
   const channelSendTargets = GetChannelSendChoices(state, true)
   const muteGroups = GetMuteGroupChoices(state)
   const selectChoices = GetTargetChoices(state, { skipDca: true, numericIndex: true })
+
+  const sendOsc = (cmd: string, arg: osc.MetaArgument): void => {
+    console.log(cmd, arg)
+    // HACK: We send commands on a different port than we run /xremote on, so that we get change events for what we send.
+    // Otherwise we can have no confirmation that a command was accepted
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(self as any).system.emit('osc_send', self.config.host, 10023, cmd, [arg])
+  }
+  const getOptNumber = (action: CompanionActionEvent, key: string): number => {
+    const val = Number(action.options[key])
+    if (isNaN(val)) {
+      throw new Error(`Invalid option '${key}'`)
+    }
+    return val
+  }
+  // const getOptBool = (key: string): boolean => {
+  //   return !!opt[key]
+  // }
+  const getResolveMute = (action: CompanionActionEvent, cmd: string, cmdIsCalledOn: boolean): number => {
+    const onState = getOptNumber(action, 'mute')
+    if (onState === MUTE_TOGGLE) {
+      const currentState = state.get(cmd)
+      const currentVal = currentState && currentState[0]?.type === 'i' && currentState[0]?.value
+      if (typeof currentVal === 'number') {
+        return currentVal === 0 ? 1 : 0
+      } else {
+        // default to off
+        return cmdIsCalledOn ? 0 : 1
+      }
+    } else {
+      return onState
+    }
+  }
 
   const actions: { [id in ActionId]: CompanionActionWithCallback | undefined } = {
     [ActionId.Mute]: {
@@ -67,6 +100,15 @@ export function GetActionsList(
           choices: CHOICES_MUTE
         }
       ],
+      callback: (action): void => {
+        const cmd = MutePath(action.options.target as string)
+        const onState = getResolveMute(action, cmd, true)
+
+        sendOsc(cmd, {
+          type: 'i',
+          value: onState
+        })
+      },
       subscribe: (evt): void => {
         if (evt.options.mute === MUTE_TOGGLE) {
           ensureLoaded(oscSocket, state, MutePath(evt.options.target as string))
@@ -91,6 +133,15 @@ export function GetActionsList(
           choices: CHOICES_MUTE_GROUP
         }
       ],
+      callback: (action): void => {
+        const cmd = action.options.target as string
+        const onState = getResolveMute(action, cmd, false)
+
+        sendOsc(cmd, {
+          type: 'i',
+          value: onState
+        })
+      },
       subscribe: (evt): void => {
         if (evt.options.mute === MUTE_TOGGLE) {
           ensureLoaded(oscSocket, state, evt.options.target as string)
@@ -122,9 +173,15 @@ export function GetActionsList(
           choices: CHOICES_MUTE
         }
       ],
-      // callback: (action): void => {
-      //   console.log('mute send', action)
-      // },
+      callback: (action): void => {
+        const cmd = `${MainPath(action.options.source as string)}/${action.options.target}`
+        const onState = getResolveMute(action, cmd, true)
+
+        sendOsc(cmd, {
+          type: 'i',
+          value: onState
+        })
+      },
       subscribe: (evt): void => {
         if (evt.options.mute === MUTE_TOGGLE) {
           ensureLoaded(oscSocket, state, `${MainPath(evt.options.source as string)}/${evt.options.target}`)
@@ -152,7 +209,13 @@ export function GetActionsList(
           min: -90,
           max: 10
         }
-      ]
+      ],
+      callback: (action): void => {
+        sendOsc(`${MainPath(action.options.target as string)}/fader`, {
+          type: 'f',
+          value: dbToFloat(getOptNumber(action, 'fad'))
+        })
+      }
     },
     [ActionId.Label]: {
       label: 'Set label',
@@ -170,7 +233,13 @@ export function GetActionsList(
           id: 'lab',
           default: ''
         }
-      ]
+      ],
+      callback: (action): void => {
+        sendOsc(`${action.options.target}/config/name`, {
+          type: 's',
+          value: `${action.options.lab}`
+        })
+      }
     },
 
     [ActionId.Color]: {
@@ -190,7 +259,13 @@ export function GetActionsList(
           default: CHOICES_COLOR[0].id,
           choices: CHOICES_COLOR
         }
-      ]
+      ],
+      callback: (action): void => {
+        sendOsc(`${action.options.target}/config/color`, {
+          type: 'i',
+          value: getOptNumber(action, 'col')
+        })
+      }
     },
 
     [ActionId.GoCue]: {
@@ -204,7 +279,13 @@ export function GetActionsList(
           min: 0,
           max: 99
         }
-      ]
+      ],
+      callback: (action): void => {
+        sendOsc(`/-action/gocue`, {
+          type: 'i',
+          value: getOptNumber(action, 'cue')
+        })
+      }
     },
     [ActionId.GoScene]: {
       label: 'Load Console Scene',
@@ -217,7 +298,13 @@ export function GetActionsList(
           min: 0,
           max: 99
         }
-      ]
+      ],
+      callback: (action): void => {
+        sendOsc(`/-action/goscene`, {
+          type: 'i',
+          value: getOptNumber(action, 'scene')
+        })
+      }
     },
     [ActionId.GoSnip]: {
       label: 'Load Console snippet',
@@ -230,7 +317,13 @@ export function GetActionsList(
           min: 0,
           max: 99
         }
-      ]
+      ],
+      callback: (action): void => {
+        sendOsc(`/-action/gosnippet`, {
+          type: 'i',
+          value: getOptNumber(action, 'snip')
+        })
+      }
     },
     [ActionId.Select]: {
       label: 'Select',
@@ -242,7 +335,13 @@ export function GetActionsList(
           choices: selectChoices,
           default: selectChoices[0].id
         }
-      ]
+      ],
+      callback: (action): void => {
+        sendOsc(`/-stat/selidx`, {
+          type: 'i',
+          value: getOptNumber(action, 'select')
+        })
+      }
     },
     [ActionId.Tape]: {
       label: 'Tape Operation',
@@ -254,143 +353,15 @@ export function GetActionsList(
           default: CHOICES_TAPE_FUNC[0].id,
           choices: CHOICES_TAPE_FUNC
         }
-      ]
+      ],
+      callback: (action): void => {
+        sendOsc(`/-stat/tape/state`, {
+          type: 'i',
+          value: getOptNumber(action, 'tFunc')
+        })
+      }
     }
   }
 
   return actions
-}
-
-export function HandleAction(
-  instance: InstanceSkel<X32Config>,
-  _oscSocket: osc.UDPPort,
-  state: X32State,
-  action: CompanionActionEvent
-): void {
-  const sendOsc = (cmd: string, arg: osc.MetaArgument): void => {
-    console.log(cmd, arg)
-    // HACK: We send commands on a different port than we run /xremote on, so that we get change events for what we send.
-    // Otherwise we can have no confirmation that a command was accepted
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ;(instance as any).system.emit('osc_send', instance.config.host, 10023, cmd, [arg])
-  }
-  const opt = action.options
-  const getOptNumber = (key: string): number => {
-    const val = Number(opt[key])
-    if (isNaN(val)) {
-      throw new Error(`Invalid option '${key}'`)
-    }
-    return val
-  }
-  // const getOptBool = (key: string): boolean => {
-  //   return !!opt[key]
-  // }
-  const getResolveMute = (cmd: string, cmdIsCalledOn: boolean): number => {
-    const onState = getOptNumber('mute')
-    if (onState === MUTE_TOGGLE) {
-      const currentState = state.get(cmd)
-      const currentVal = currentState && currentState[0]?.type === 'i' && currentState[0]?.value
-      if (typeof currentVal === 'number') {
-        return currentVal === 0 ? 1 : 0
-      } else {
-        // default to off
-        return cmdIsCalledOn ? 0 : 1
-      }
-    } else {
-      return onState
-    }
-  }
-
-  const actionId = action.action as ActionId
-  switch (actionId) {
-    case ActionId.Mute: {
-      const cmd = MutePath(opt.target as string)
-      const onState = getResolveMute(cmd, true)
-
-      sendOsc(cmd, {
-        type: 'i',
-        value: onState
-      })
-      break
-    }
-    case ActionId.MuteGroup: {
-      const cmd = opt.target as string
-      const onState = getResolveMute(cmd, false)
-
-      sendOsc(cmd, {
-        type: 'i',
-        value: onState
-      })
-      break
-    }
-    case ActionId.MuteChannelSend: {
-      const cmd = `${MainPath(opt.source as string)}/${opt.target}`
-      const onState = getResolveMute(cmd, true)
-
-      sendOsc(cmd, {
-        type: 'i',
-        value: onState
-      })
-      break
-    }
-    case ActionId.FaderLevel: {
-      sendOsc(`${MainPath(opt.target as string)}/fader`, {
-        type: 'f',
-        value: dbToFloat(getOptNumber('fad'))
-      })
-      break
-    }
-    case ActionId.Label: {
-      sendOsc(`${opt.target}/config/name`, {
-        type: 's',
-        value: `${opt.lab}`
-      })
-      break
-    }
-    case ActionId.Color: {
-      sendOsc(`${opt.target}/config/color`, {
-        type: 'i',
-        value: getOptNumber('col')
-      })
-      break
-    }
-    case ActionId.GoCue: {
-      sendOsc(`/-action/gocue`, {
-        type: 'i',
-        value: getOptNumber('cue')
-      })
-      break
-    }
-    case ActionId.GoScene: {
-      sendOsc(`/-action/goscene`, {
-        type: 'i',
-        value: getOptNumber('scene')
-      })
-      break
-    }
-    case ActionId.GoSnip: {
-      sendOsc(`/-action/gosnippet`, {
-        type: 'i',
-        value: getOptNumber('snip')
-      })
-      break
-    }
-    case ActionId.Select: {
-      sendOsc(`/-stat/selidx`, {
-        type: 'i',
-        value: getOptNumber('select')
-      })
-      break
-    }
-    case ActionId.Tape: {
-      sendOsc(`/-stat/tape/state`, {
-        type: 'i',
-        value: getOptNumber('tFunc')
-      })
-      break
-    }
-    default:
-      assertUnreachable(actionId)
-      instance.debug('Unknown action: ' + action.action)
-  }
 }
