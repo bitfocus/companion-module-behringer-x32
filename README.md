@@ -10,6 +10,14 @@ While developing the module, by using `yarn build:watch` the compiler will be ru
 
 ## Changes
 
+### v2.1.0
+
+- Fix initial state loading
+
+- Fix mute toggle actions not always working on first use
+
+- Mute/unmute channel send to buses
+
 ### v2.0.0
 
 - Rewrite in Typescript with some linting and formatting rules.

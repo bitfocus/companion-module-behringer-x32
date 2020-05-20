@@ -12,6 +12,7 @@ We support the following actions:
 | Channel, AuxIn, FxReturn, Bus, Matrix. Main Stereo, Mono fader | Sets the level of the selected Channel, AuxIn, FxReturn, Bus, Matrix, Main Stereo, Mono fader                      |
 | Channel, AuxIn, FxReturn, Bus, Matrix, Main Stereo, Mono label | Sets the text label in the scribble strip of the selected Channel, AuxIn, FxReturn, Bus, Matrix, Main Stereo, Mono |
 | Channel, AuxIn, FxReturn, Bus, Matrix, Main Stereo, Mono       | Sets the color of the scribble strip of the selected Channel, AuxIn, FxReturn, Bus, Matrix, Main Stereo, Mono      |
+| Channel, AuxIn, FxReturn Send mute                             | Mutes or Unmutes the selected Channel, AuxIn, FxReturn to Bus or Main send                                         |
 | Mute Group                                                     | Turns the selected mute group on or off                                                                            |
 | Load Console Cue                                               | Loads the given cue from the consoles internal cue list 0-99                                                       |
 | Load Console Scene                                             | Loads the given scene from the consoles internal scene list 0-99                                                   |
