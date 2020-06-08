@@ -2,7 +2,7 @@
 
 ## Getting started
 
-Executing a `yarn` command should perform all necessary steps to develop the module, if it does not then follow the steps below.
+Execute `yarn` command to install the dependencies.
 
 The module can be built once with `yarn build`. This should be enough to get the module to be loadable by companion.
 
