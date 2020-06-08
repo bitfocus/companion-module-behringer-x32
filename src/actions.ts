@@ -26,6 +26,7 @@ export enum ActionId {
   MuteBusSend = 'mute_bus_send',
   FaderLevel = 'fad',
   ChannelSendLevel = 'level_channel_send',
+  BusSendLevel = 'level_bus_send',
   Label = 'label',
   Color = 'color',
   GoCue = 'go_cue',
@@ -264,7 +265,7 @@ export function GetActionsList(
       }
     },
     [ActionId.ChannelSendLevel]: {
-      label: 'Set level of channel send',
+      label: 'Set level of channel to bus send',
       options: [
         {
           type: 'dropdown',
@@ -292,6 +293,40 @@ export function GetActionsList(
       ],
       callback: (action): void => {
         sendOsc(`${MainPath(action.options.source as string)}/${action.options.target}`, {
+          type: 'f',
+          value: dbToFloat(getOptNumber(action, 'fad'))
+        })
+      }
+    },
+    [ActionId.BusSendLevel]: {
+      label: 'Set level of bus to matrix send',
+      options: [
+        {
+          type: 'dropdown',
+          label: 'Source',
+          id: 'source',
+          ...convertChoices(busSendSources)
+        },
+        {
+          type: 'dropdown',
+          label: 'Target',
+          id: 'target',
+          ...convertChoices(GetBusSendChoices(state))
+        },
+        {
+          type: 'number',
+          label: 'Fader Level (-90 = -inf)',
+          id: 'fad',
+          range: true,
+          required: true,
+          default: 0,
+          step: 0.1,
+          min: -90,
+          max: 10
+        }
+      ],
+      callback: (action): void => {
+        sendOsc(`${MainPath(action.options.source as string)}/${action.options.target}/level`, {
           type: 'f',
           value: dbToFloat(getOptNumber(action, 'fad'))
         })
