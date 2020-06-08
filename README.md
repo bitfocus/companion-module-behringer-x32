@@ -10,6 +10,16 @@ While developing the module, by using `yarn build:watch` the compiler will be ru
 
 ## Changes
 
+### v2.2.0
+
+- Set level of bus send to matrix
+
+- Mute/unmute bus send to matrix
+
+- Set level of channel send to bus
+
+- Talkback on/off
+
 ### v2.1.0
 
 - Fix initial state loading
