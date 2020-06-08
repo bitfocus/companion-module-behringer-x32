@@ -18,7 +18,8 @@ type CompanionFeedbackWithCallback = CompanionFeedback & Required<Pick<Companion
 export enum FeedbackId {
   Mute = 'mute',
   MuteGroup = 'mute_grp',
-  MuteChannelSend = 'mute_channel_send'
+  MuteChannelSend = 'mute_channel_send',
+  TalkbackTalk = 'talkback_talk'
 }
 
 export function ForegroundPicker(color: number): CompanionInputFieldColor {
@@ -167,6 +168,47 @@ export function GetFeedbacksList(
         if (path) {
           ensureLoaded(oscSocket, state, path)
         }
+      }
+    },
+    [FeedbackId.TalkbackTalk]: {
+      label: 'Change colors from talkback talk state',
+      description: 'If the specified talkback is on, change color of the bank',
+      options: [
+        BackgroundPicker(self.rgb(255, 0, 0)),
+        ForegroundPicker(self.rgb(0, 0, 0)),
+        {
+          type: 'dropdown',
+          label: 'Function',
+          id: 'channel',
+          ...convertChoices([
+            {
+              id: 'A',
+              label: 'A'
+            },
+            {
+              id: 'B',
+              label: 'B'
+            }
+          ])
+        },
+        {
+          id: 'state',
+          type: 'checkbox',
+          label: 'On',
+          default: true
+        }
+      ],
+      callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
+        const path = `/-stat/talk/${evt.options.channel}`
+        const data = path ? state.get(path) : undefined
+        const isOn = getDataNumber(data, 0) !== 0
+        if (isOn === !!evt.options.state) {
+          return getOptColors(evt)
+        }
+        return {}
+      },
+      subscribe: (evt: CompanionFeedbackEvent): void => {
+        ensureLoaded(oscSocket, state, `/-stat/talk/${evt.options.channel}`)
       }
     }
   }

@@ -263,6 +263,10 @@ class X32Instance extends InstanceSkel<X32Config> {
     if (msg.address.match('/config/name$') || msg.address.match('/fader$')) {
       this.debounceUpdateCompanionBits()
     }
+
+    if (msg.address.match('/-stat/talk/([A-Z])')) {
+      this.checkFeedbacks(FeedbackId.TalkbackTalk)
+    }
   }
 }
 

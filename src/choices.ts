@@ -13,6 +13,11 @@ export const CHOICES_MUTE_GROUP: DropdownChoice[] = [
   { id: 1, label: 'Mute' },
   { id: 0, label: 'Unmute' }
 ]
+export const CHOICES_ON_OFF: DropdownChoice[] = [
+  { id: MUTE_TOGGLE, label: 'Toggle' },
+  { id: 1, label: 'On' },
+  { id: 0, label: 'Off' }
+]
 
 export const CHOICES_COLOR: DropdownChoice[] = [
   { label: 'Off', id: '0' },

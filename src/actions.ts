@@ -12,7 +12,8 @@ import {
   GetMuteGroupChoices,
   CHOICES_MUTE_GROUP,
   GetChannelSendChoices,
-  convertChoices
+  convertChoices,
+  CHOICES_ON_OFF
 } from './choices'
 import * as osc from 'osc'
 import { MutePath, MainPath } from './paths'
@@ -29,7 +30,8 @@ export enum ActionId {
   GoScene = 'go_scene',
   GoSnip = 'go_snip',
   Select = 'select',
-  Tape = 'tape'
+  Tape = 'tape',
+  TalkbackTalk = 'talkback_talk'
 }
 
 type CompanionActionWithCallback = CompanionAction & Required<Pick<CompanionAction, 'callback'>>
@@ -66,8 +68,13 @@ export function GetActionsList(
   // const getOptBool = (key: string): boolean => {
   //   return !!opt[key]
   // }
-  const getResolveMute = (action: CompanionActionEvent, cmd: string, cmdIsCalledOn: boolean): number => {
-    const onState = getOptNumber(action, 'mute')
+  const getResolveOnOffMute = (
+    action: CompanionActionEvent,
+    cmd: string,
+    cmdIsCalledOn: boolean,
+    prop: 'mute' | 'on' = 'mute'
+  ): number => {
+    const onState = getOptNumber(action, prop)
     if (onState === MUTE_TOGGLE) {
       const currentState = state.get(cmd)
       const currentVal = currentState && currentState[0]?.type === 'i' && currentState[0]?.value
@@ -101,7 +108,7 @@ export function GetActionsList(
       ],
       callback: (action): void => {
         const cmd = MutePath(action.options.target as string)
-        const onState = getResolveMute(action, cmd, true)
+        const onState = getResolveOnOffMute(action, cmd, true)
 
         sendOsc(cmd, {
           type: 'i',
@@ -132,7 +139,7 @@ export function GetActionsList(
       ],
       callback: (action): void => {
         const cmd = action.options.target as string
-        const onState = getResolveMute(action, cmd, false)
+        const onState = getResolveOnOffMute(action, cmd, false)
 
         sendOsc(cmd, {
           type: 'i',
@@ -169,7 +176,7 @@ export function GetActionsList(
       ],
       callback: (action): void => {
         const cmd = `${MainPath(action.options.source as string)}/${action.options.target}`
-        const onState = getResolveMute(action, cmd, true)
+        const onState = getResolveOnOffMute(action, cmd, true)
 
         sendOsc(cmd, {
           type: 'i',
@@ -238,7 +245,6 @@ export function GetActionsList(
         }
       ],
       callback: (action): void => {
-        console.log(action)
         sendOsc(`${MainPath(action.options.source as string)}/${action.options.target}`, {
           type: 'f',
           value: dbToFloat(getOptNumber(action, 'fad'))
@@ -382,6 +388,46 @@ export function GetActionsList(
           type: 'i',
           value: getOptNumber(action, 'tFunc')
         })
+      }
+    },
+    [ActionId.TalkbackTalk]: {
+      label: 'Talkback Talk',
+      options: [
+        {
+          type: 'dropdown',
+          label: 'Function',
+          id: 'channel',
+          ...convertChoices([
+            {
+              id: 'A',
+              label: 'A'
+            },
+            {
+              id: 'B',
+              label: 'B'
+            }
+          ])
+        },
+        {
+          type: 'dropdown',
+          label: 'On / Off',
+          id: 'on',
+          ...convertChoices(CHOICES_ON_OFF)
+        }
+      ],
+      callback: (action): void => {
+        const cmd = `/-stat/talk/${action.options.channel}`
+        const onState = getResolveOnOffMute(action, cmd, true, 'on')
+
+        sendOsc(cmd, {
+          type: 'i',
+          value: onState
+        })
+      },
+      subscribe: (evt): void => {
+        if (evt.options.on === MUTE_TOGGLE) {
+          ensureLoaded(oscSocket, state, `/-stat/talk/${evt.options.channel}`)
+        }
       }
     }
   }
