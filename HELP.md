@@ -17,6 +17,8 @@ We support the following actions:
 | Bus, Main Send Stereo, Mono mute                               | Mutes or Unmutes the selected Bus or Main to Matrix send                                                           |
 | Bus, Main Stereo, Mono Send level                              | Sets the level of the selected Bus or Main to Matrix send                                                          |
 | Mute Group                                                     | Turns the selected mute group on or off                                                                            |
+| Channel set trim                                               | Sets the trim of the selected channel                                                                              |
+| Headamp set gain                                               | Sets the gain of the selected headamp                                                                              |
 | Load Console Cue                                               | Loads the given cue from the consoles internal cue list 0-99                                                       |
 | Load Console Scene                                             | Loads the given scene from the consoles internal scene list 0-99                                                   |
 | Load Console Snippet                                           | Loads the given snippet from the consoles internal snippet list 0-99                                               |

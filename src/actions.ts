@@ -2,7 +2,7 @@ import InstanceSkel = require('../../../instance_skel')
 import { CompanionAction, CompanionActionEvent, CompanionActions } from '../../../instance_skel_types'
 import { X32State } from './state'
 import { X32Config } from './config'
-import { dbToFloat, ensureLoaded } from './util'
+import { dbToFloat, ensureLoaded, trimToFloat, headampGainToFloat } from './util'
 import {
   CHOICES_TAPE_FUNC,
   CHOICES_COLOR,
@@ -15,7 +15,9 @@ import {
   CHOICES_ON_OFF,
   GetBusSendChoices,
   FaderLevelChoice,
-  MuteChoice
+  MuteChoice,
+  HeadampGainChoice,
+  GetHeadampChoices
 } from './choices'
 import * as osc from 'osc'
 import { MutePath, MainPath } from './paths'
@@ -28,6 +30,9 @@ export enum ActionId {
   FaderLevel = 'fad',
   ChannelSendLevel = 'level_channel_send',
   BusSendLevel = 'level_bus_send',
+  InputTrim = 'input_trim',
+  // InputGain = 'input_gain',
+  HeadampGain = 'headamp_gain',
   Label = 'label',
   Color = 'color',
   GoCue = 'go_cue',
@@ -46,7 +51,7 @@ export function GetActionsList(
   state: X32State
 ): CompanionActions {
   const allTargets = GetTargetChoices(state, { includeMain: true })
-  const channelSendSources = GetTargetChoices(state, {
+  const allInputs = GetTargetChoices(state, {
     includeMain: false,
     skipDca: true,
     skipBus: true,
@@ -63,11 +68,15 @@ export function GetActionsList(
   })
 
   const sendOsc = (cmd: string, arg: osc.MetaArgument): void => {
-    console.log(cmd, arg)
-    // HACK: We send commands on a different port than we run /xremote on, so that we get change events for what we send.
-    // Otherwise we can have no confirmation that a command was accepted
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ;(self as any).system.emit('osc_send', self.config.host, 10023, cmd, [arg])
+    try {
+      console.log(cmd, arg)
+      // HACK: We send commands on a different port than we run /xremote on, so that we get change events for what we send.
+      // Otherwise we can have no confirmation that a command was accepted
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ;(self as any).system.emit('osc_send', self.config.host, 10023, cmd, [arg])
+    } catch (e) {
+      self.log('error', `Command send failed: ${e}`)
+    }
   }
   const getOptNumber = (action: CompanionActionEvent, key: string): number => {
     const val = Number(action.options[key])
@@ -161,7 +170,7 @@ export function GetActionsList(
           type: 'dropdown',
           label: 'Source',
           id: 'source',
-          ...convertChoices(channelSendSources)
+          ...convertChoices(allInputs)
         },
         {
           type: 'dropdown',
@@ -239,7 +248,7 @@ export function GetActionsList(
           type: 'dropdown',
           label: 'Source',
           id: 'source',
-          ...convertChoices(channelSendSources)
+          ...convertChoices(allInputs)
         },
         {
           type: 'dropdown',
@@ -277,6 +286,52 @@ export function GetActionsList(
         sendOsc(`${MainPath(action.options.source as string)}/${action.options.target}/level`, {
           type: 'f',
           value: dbToFloat(getOptNumber(action, 'fad'))
+        })
+      }
+    },
+    [ActionId.InputTrim]: {
+      label: 'Set input trim',
+      options: [
+        {
+          type: 'dropdown',
+          label: 'Input',
+          id: 'input',
+          ...convertChoices(allInputs)
+        },
+        {
+          type: 'number',
+          label: 'Trim',
+          id: 'trim',
+          range: true,
+          required: true,
+          default: 0,
+          step: 0.1,
+          min: -18,
+          max: 18
+        }
+      ],
+      callback: (action): void => {
+        sendOsc(`${action.options.input}/preamp/trim`, {
+          type: 'f',
+          value: trimToFloat(getOptNumber(action, 'trim'))
+        })
+      }
+    },
+    [ActionId.HeadampGain]: {
+      label: 'Set Headamp gain',
+      options: [
+        {
+          type: 'dropdown',
+          label: 'Headamp',
+          id: 'headamp',
+          ...convertChoices(GetHeadampChoices())
+        },
+        HeadampGainChoice
+      ],
+      callback: (action): void => {
+        sendOsc(`${action.options.headamp}/gain`, {
+          type: 'f',
+          value: headampGainToFloat(getOptNumber(action, 'gain'))
         })
       }
     },

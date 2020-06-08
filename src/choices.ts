@@ -75,6 +75,17 @@ export const FaderLevelChoice: CompanionInputFieldNumber = {
   min: -90,
   max: 10
 }
+export const HeadampGainChoice: CompanionInputFieldNumber = {
+  type: 'number',
+  label: 'Gain',
+  id: 'gain',
+  range: true,
+  required: true,
+  default: 0,
+  step: 0.1,
+  min: -12,
+  max: 60
+}
 export const MuteChoice: CompanionInputFieldDropdown = {
   type: 'dropdown',
   label: 'Mute / Unmute',
@@ -219,6 +230,33 @@ export function GetMuteGroupChoices(_state: X32State): DropdownChoice[] {
     res.push({
       id: `/config/mute/${i}`,
       label: `Mute group ${i}`
+    })
+  }
+
+  return res
+}
+
+export function GetHeadampChoices(): DropdownChoice[] {
+  const res: DropdownChoice[] = []
+
+  for (let i = 1; i <= 32; i++) {
+    res.push({
+      id: `/headamp/${padNumber(res.length, 3)}`,
+      label: `Local XLR ${i}`
+    })
+  }
+
+  for (let i = 1; i <= 32; i++) {
+    res.push({
+      id: `/headamp/${padNumber(res.length, 3)}`,
+      label: `AES50-A ${i}`
+    })
+  }
+
+  for (let i = 1; i <= 32; i++) {
+    res.push({
+      id: `/headamp/${padNumber(res.length, 3)}`,
+      label: `AES50-B ${i}`
     })
   }
 

@@ -20,6 +20,10 @@ While developing the module, by using `yarn build:watch` the compiler will be ru
 
 - Talkback on/off
 
+- Set input trim
+
+- Set headamp gain
+
 ### v2.1.0
 
 - Fix initial state loading

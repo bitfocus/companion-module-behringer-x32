@@ -27,8 +27,8 @@ export function ensureLoaded(oscSocket: osc.UDPPort, state: X32State, path: stri
   }
 }
 
-export function padNumber(i: number): string {
-  return ('0' + i).substr(-2)
+export function padNumber(i: number, len = 2): string {
+  return ('000000' + i).substr(-len)
 }
 
 export function floatToDB(f: number): number {
@@ -73,4 +73,22 @@ export function formatDb(d: number): string {
   } else {
     return `${d}dB`
   }
+}
+export function trimToFloat(d: number): number {
+  return clamp((d + 18) / 36)
+}
+export function floatToTrim(f: number): number {
+  return clamp(f * 36 - 18, -18, 18)
+}
+
+export function floatToHeadampGain(f: number): number {
+  return clamp(f * 72 - 12, -12, 60)
+}
+
+export function headampGainToFloat(d: number): number {
+  return clamp((d + 12) / 72)
+}
+
+function clamp(val: number, min = 0, max = 1): number {
+  return Math.min(Math.max(val, min), max)
 }
