@@ -31,8 +31,6 @@ export function upgradeV2x0x0(
 
           action.options.target = `${type}${num}`
 
-          console.log(action.action, action.options.mute)
-
           if (action.action === ActionId.Mute && action.options.mute === null) {
             action.options.mute = 0
           } else if (action.action === ActionId.Color && action.options.col === null) {

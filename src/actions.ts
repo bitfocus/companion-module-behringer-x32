@@ -69,7 +69,6 @@ export function GetActionsList(
 
   const sendOsc = (cmd: string, arg: osc.MetaArgument): void => {
     try {
-      console.log(cmd, arg)
       // HACK: We send commands on a different port than we run /xremote on, so that we get change events for what we send.
       // Otherwise we can have no confirmation that a command was accepted
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
