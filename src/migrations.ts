@@ -1,4 +1,3 @@
-import * as _ from 'underscore'
 import {
   CompanionCoreInstanceconfig,
   CompanionMigrationAction,
@@ -17,7 +16,7 @@ export function upgradeV2x0x0(
   let changed = false
 
   const allActions = [...actions, ...releaseActions]
-  _.each(allActions, action => {
+  for (const action of allActions) {
     switch (action.action) {
       case ActionId.Mute:
       case ActionId.Color:
@@ -118,7 +117,7 @@ export function upgradeV2x0x0(
         break
       }
     }
-  })
+  }
 
   return changed
 }
