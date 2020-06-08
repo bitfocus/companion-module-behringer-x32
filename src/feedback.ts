@@ -6,7 +6,13 @@ import {
   CompanionFeedbackResult
 } from '../../../instance_skel_types'
 import { X32State } from './state'
-import { GetTargetChoices, GetMuteGroupChoices, GetChannelSendChoices, convertChoices } from './choices'
+import {
+  GetTargetChoices,
+  GetMuteGroupChoices,
+  GetChannelSendChoices,
+  convertChoices,
+  GetBusSendChoices
+} from './choices'
 import { ensureLoaded } from './util'
 import { MutePath, MainPath } from './paths'
 import * as osc from 'osc'
@@ -19,6 +25,7 @@ export enum FeedbackId {
   Mute = 'mute',
   MuteGroup = 'mute_grp',
   MuteChannelSend = 'mute_channel_send',
+  MuteBusSend = 'mute_bus_send',
   TalkbackTalk = 'talkback_talk'
 }
 
@@ -65,6 +72,13 @@ export function GetFeedbacksList(
     skipMatrix: true
   })
   const channelSendTargets = GetChannelSendChoices(state, 'on')
+  const busSendSources = GetTargetChoices(state, {
+    skipInputs: true,
+    includeMain: true,
+    skipDca: true,
+    skipBus: false,
+    skipMatrix: true
+  })
 
   const feedbacks: { [id in FeedbackId]: CompanionFeedbackWithCallback | undefined } = {
     [FeedbackId.Mute]: {
@@ -130,7 +144,7 @@ export function GetFeedbacksList(
       }
     },
     [FeedbackId.MuteChannelSend]: {
-      label: 'Change colors from channel send mute state',
+      label: 'Change colors from channel to bus send mute state',
       description: 'If the specified channel send is muted, change color of the bank',
       options: [
         BackgroundPicker(self.rgb(255, 0, 0)),
@@ -165,6 +179,47 @@ export function GetFeedbacksList(
       },
       subscribe: (evt: CompanionFeedbackEvent): void => {
         const path = `${MainPath(evt.options.source as string)}/${evt.options.target}`
+        if (path) {
+          ensureLoaded(oscSocket, state, path)
+        }
+      }
+    },
+    [FeedbackId.MuteBusSend]: {
+      label: 'Change colors from bus to matrix send mute state',
+      description: 'If the specified bus send is muted, change color of the bank',
+      options: [
+        BackgroundPicker(self.rgb(255, 0, 0)),
+        ForegroundPicker(self.rgb(0, 0, 0)),
+        {
+          type: 'dropdown',
+          label: 'Source',
+          id: 'source',
+          ...convertChoices(busSendSources)
+        },
+        {
+          type: 'dropdown',
+          label: 'Target',
+          id: 'target',
+          ...convertChoices(GetBusSendChoices(state))
+        },
+        {
+          id: 'state',
+          type: 'checkbox',
+          label: 'Muted',
+          default: true
+        }
+      ],
+      callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
+        const path = `${MainPath(evt.options.source as string)}/${evt.options.target}/on`
+        const data = path ? state.get(path) : undefined
+        const muted = getDataNumber(data, 0) === 0
+        if (muted === !!evt.options.state) {
+          return getOptColors(evt)
+        }
+        return {}
+      },
+      subscribe: (evt: CompanionFeedbackEvent): void => {
+        const path = `${MainPath(evt.options.source as string)}/${evt.options.target}/on`
         if (path) {
           ensureLoaded(oscSocket, state, path)
         }

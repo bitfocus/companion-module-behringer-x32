@@ -55,6 +55,7 @@ export interface ChannelChoicesOptions {
   skipDca?: boolean
   skipBus?: boolean
   skipMatrix?: boolean
+  skipInputs?: boolean
   // TODO - more skipXXX
 }
 
@@ -85,18 +86,20 @@ export function GetTargetChoices(state: X32State, options?: ChannelChoicesOption
     })
   }
 
-  for (let i = 1; i <= 32; i++) {
-    appendTarget(`/ch/${padNumber(i)}`, `Channel ${i}`)
-  }
+  if (!options?.skipInputs) {
+    for (let i = 1; i <= 32; i++) {
+      appendTarget(`/ch/${padNumber(i)}`, `Channel ${i}`)
+    }
 
-  for (let i = 1; i <= 8; i++) {
-    appendTarget(`/auxin/${padNumber(i)}`, `Aux In ${i}`)
-  }
+    for (let i = 1; i <= 8; i++) {
+      appendTarget(`/auxin/${padNumber(i)}`, `Aux In ${i}`)
+    }
 
-  for (let i = 1; i <= 4; i++) {
-    const o = (i - 1) * 2 + 1
-    appendTarget(`/fxrtn/${padNumber(o)}`, `FX Return ${i} L`)
-    appendTarget(`/fxrtn/${padNumber(o + 1)}`, `FX Return ${i} R`)
+    for (let i = 1; i <= 4; i++) {
+      const o = (i - 1) * 2 + 1
+      appendTarget(`/fxrtn/${padNumber(o)}`, `FX Return ${i} L`)
+      appendTarget(`/fxrtn/${padNumber(o + 1)}`, `FX Return ${i} R`)
+    }
   }
 
   if (!options?.skipBus) {
@@ -165,6 +168,24 @@ export function GetChannelSendChoices(state: X32State, type: 'on' | 'level'): Dr
   }
   appendTarget(`/main/m`, `m${type == 'on' ? '' : type}`, `Main Mono`)
 
+  return res
+}
+
+export function GetBusSendChoices(state: X32State): DropdownChoice[] {
+  const res: DropdownChoice[] = []
+
+  const appendTarget = (statePath: string, mixId: string, defaultName: string): void => {
+    const val = state.get(`${statePath}/config/name`)
+    const realname = val && val[0]?.type === 's' ? val[0].value : undefined
+    res.push({
+      id: mixId,
+      label: realname && realname !== defaultName ? `${realname} (${defaultName})` : defaultName
+    })
+  }
+
+  for (let i = 1; i <= 6; i++) {
+    appendTarget(`/mtx/${padNumber(i)}`, padNumber(i), `Matrix ${i}`)
+  }
   return res
 }
 

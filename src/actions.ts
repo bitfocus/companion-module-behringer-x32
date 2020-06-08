@@ -13,7 +13,8 @@ import {
   CHOICES_MUTE_GROUP,
   GetChannelSendChoices,
   convertChoices,
-  CHOICES_ON_OFF
+  CHOICES_ON_OFF,
+  GetBusSendChoices
 } from './choices'
 import * as osc from 'osc'
 import { MutePath, MainPath } from './paths'
@@ -22,6 +23,7 @@ export enum ActionId {
   Mute = 'mute',
   MuteGroup = 'mute_grp',
   MuteChannelSend = 'mute_channel_send',
+  MuteBusSend = 'mute_bus_send',
   FaderLevel = 'fad',
   ChannelSendLevel = 'level_channel_send',
   Label = 'label',
@@ -50,6 +52,13 @@ export function GetActionsList(
   })
   const muteGroups = GetMuteGroupChoices(state)
   const selectChoices = GetTargetChoices(state, { skipDca: true, numericIndex: true })
+  const busSendSources = GetTargetChoices(state, {
+    skipInputs: true,
+    includeMain: true,
+    skipDca: true,
+    skipBus: false,
+    skipMatrix: true
+  })
 
   const sendOsc = (cmd: string, arg: osc.MetaArgument): void => {
     console.log(cmd, arg)
@@ -153,7 +162,7 @@ export function GetActionsList(
       }
     },
     [ActionId.MuteChannelSend]: {
-      label: 'Set mute channel send',
+      label: 'Set mute for channel to bus send',
       options: [
         {
           type: 'dropdown',
@@ -186,6 +195,43 @@ export function GetActionsList(
       subscribe: (evt): void => {
         if (evt.options.mute === MUTE_TOGGLE) {
           ensureLoaded(oscSocket, state, `${MainPath(evt.options.source as string)}/${evt.options.target}`)
+        }
+      }
+    },
+    [ActionId.MuteBusSend]: {
+      label: 'Set mute for bus to matrix send',
+      options: [
+        {
+          type: 'dropdown',
+          label: 'Source',
+          id: 'source',
+          ...convertChoices(busSendSources)
+        },
+        {
+          type: 'dropdown',
+          label: 'Target',
+          id: 'target',
+          ...convertChoices(GetBusSendChoices(state))
+        },
+        {
+          type: 'dropdown',
+          label: 'Mute / Unmute',
+          id: 'mute',
+          ...convertChoices(CHOICES_MUTE)
+        }
+      ],
+      callback: (action): void => {
+        const cmd = `${MainPath(action.options.source as string)}/${action.options.target}/on`
+        const onState = getResolveOnOffMute(action, cmd, true)
+
+        sendOsc(cmd, {
+          type: 'i',
+          value: onState
+        })
+      },
+      subscribe: (evt): void => {
+        if (evt.options.mute === MUTE_TOGGLE) {
+          ensureLoaded(oscSocket, state, `${MainPath(evt.options.source as string)}/${evt.options.target}/on`)
         }
       }
     },
