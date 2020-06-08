@@ -90,15 +90,13 @@ export function GetActionsList(
           type: 'dropdown',
           label: 'Target',
           id: 'target',
-          choices: allTargets,
-          default: allTargets[0].id
+          ...convertChoices(allTargets)
         },
         {
           type: 'dropdown',
           label: 'Mute / Unmute',
           id: 'mute',
-          default: CHOICES_MUTE[0].id,
-          choices: CHOICES_MUTE
+          ...convertChoices(CHOICES_MUTE)
         }
       ],
       callback: (action): void => {
@@ -123,15 +121,13 @@ export function GetActionsList(
           type: 'dropdown',
           label: 'Mute Group',
           id: 'target',
-          default: muteGroups[0].id,
-          choices: muteGroups
+          ...convertChoices(muteGroups)
         },
         {
           type: 'dropdown',
           label: 'Mute / Unmute',
           id: 'mute',
-          default: CHOICES_MUTE_GROUP[0].id,
-          choices: CHOICES_MUTE_GROUP
+          ...convertChoices(CHOICES_MUTE_GROUP)
         }
       ],
       callback: (action): void => {
@@ -168,8 +164,7 @@ export function GetActionsList(
           type: 'dropdown',
           label: 'Mute / Unmute',
           id: 'mute',
-          default: CHOICES_MUTE[0].id,
-          choices: CHOICES_MUTE
+          ...convertChoices(CHOICES_MUTE)
         }
       ],
       callback: (action): void => {
@@ -194,8 +189,7 @@ export function GetActionsList(
           type: 'dropdown',
           label: 'Target',
           id: 'target',
-          choices: allTargets,
-          default: allTargets[0].id
+          ...convertChoices(allTargets)
         },
         {
           type: 'number',
@@ -258,8 +252,7 @@ export function GetActionsList(
           type: 'dropdown',
           label: 'Target',
           id: 'target',
-          choices: allTargets,
-          default: allTargets[0].id
+          ...convertChoices(allTargets)
         },
         {
           type: 'textinput',
@@ -283,15 +276,13 @@ export function GetActionsList(
           type: 'dropdown',
           label: 'Target',
           id: 'target',
-          choices: allTargets,
-          default: allTargets[0].id
+          ...convertChoices(allTargets)
         },
         {
           type: 'dropdown',
           label: 'color',
           id: 'col',
-          default: CHOICES_COLOR[0].id,
-          choices: CHOICES_COLOR
+          ...convertChoices(CHOICES_COLOR)
         }
       ],
       callback: (action): void => {
@@ -366,8 +357,7 @@ export function GetActionsList(
           type: 'dropdown',
           label: 'Target',
           id: 'select',
-          choices: selectChoices,
-          default: selectChoices[0].id
+          ...convertChoices(selectChoices)
         }
       ],
       callback: (action): void => {
@@ -384,8 +374,7 @@ export function GetActionsList(
           type: 'dropdown',
           label: 'Function',
           id: 'tFunc',
-          default: CHOICES_TAPE_FUNC[0].id,
-          choices: CHOICES_TAPE_FUNC
+          ...convertChoices(CHOICES_TAPE_FUNC)
         }
       ],
       callback: (action): void => {

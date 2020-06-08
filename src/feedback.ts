@@ -6,7 +6,7 @@ import {
   CompanionFeedbackResult
 } from '../../../instance_skel_types'
 import { X32State } from './state'
-import { GetTargetChoices, GetMuteGroupChoices, GetChannelSendChoices } from './choices'
+import { GetTargetChoices, GetMuteGroupChoices, GetChannelSendChoices, convertChoices } from './choices'
 import { ensureLoaded } from './util'
 import { MutePath, MainPath } from './paths'
 import * as osc from 'osc'
@@ -76,8 +76,7 @@ export function GetFeedbacksList(
           id: 'target',
           type: 'dropdown',
           label: 'Target',
-          choices: mutableChannels,
-          default: mutableChannels[0].id
+          ...convertChoices(mutableChannels)
         },
         {
           id: 'state',
@@ -108,8 +107,7 @@ export function GetFeedbacksList(
           id: 'mute_grp',
           type: 'dropdown',
           label: 'Target',
-          choices: muteGroups,
-          default: muteGroups[0].id
+          ...convertChoices(muteGroups)
         },
         {
           id: 'state',
@@ -140,15 +138,13 @@ export function GetFeedbacksList(
           type: 'dropdown',
           label: 'Source',
           id: 'source',
-          choices: channelSendSources,
-          default: channelSendSources[0].id
+          ...convertChoices(channelSendSources)
         },
         {
           type: 'dropdown',
           label: 'Target',
           id: 'target',
-          choices: channelSendTargets,
-          default: channelSendTargets[0].id
+          ...convertChoices(channelSendTargets)
         },
         {
           id: 'state',
