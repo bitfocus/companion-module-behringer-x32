@@ -7,14 +7,15 @@ import {
   CHOICES_TAPE_FUNC,
   CHOICES_COLOR,
   GetTargetChoices,
-  CHOICES_MUTE,
   MUTE_TOGGLE,
   GetMuteGroupChoices,
   CHOICES_MUTE_GROUP,
   GetChannelSendChoices,
   convertChoices,
   CHOICES_ON_OFF,
-  GetBusSendChoices
+  GetBusSendChoices,
+  FaderLevelChoice,
+  MuteChoice
 } from './choices'
 import * as osc from 'osc'
 import { MutePath, MainPath } from './paths'
@@ -109,20 +110,13 @@ export function GetActionsList(
           id: 'target',
           ...convertChoices(allTargets)
         },
-        {
-          type: 'dropdown',
-          label: 'Mute / Unmute',
-          id: 'mute',
-          ...convertChoices(CHOICES_MUTE)
-        }
+        MuteChoice
       ],
       callback: (action): void => {
         const cmd = MutePath(action.options.target as string)
-        const onState = getResolveOnOffMute(action, cmd, true)
-
         sendOsc(cmd, {
           type: 'i',
-          value: onState
+          value: getResolveOnOffMute(action, cmd, true)
         })
       },
       subscribe: (evt): void => {
@@ -149,11 +143,9 @@ export function GetActionsList(
       ],
       callback: (action): void => {
         const cmd = action.options.target as string
-        const onState = getResolveOnOffMute(action, cmd, false)
-
         sendOsc(cmd, {
           type: 'i',
-          value: onState
+          value: getResolveOnOffMute(action, cmd, false)
         })
       },
       subscribe: (evt): void => {
@@ -177,20 +169,13 @@ export function GetActionsList(
           id: 'target',
           ...convertChoices(GetChannelSendChoices(state, 'on'))
         },
-        {
-          type: 'dropdown',
-          label: 'Mute / Unmute',
-          id: 'mute',
-          ...convertChoices(CHOICES_MUTE)
-        }
+        MuteChoice
       ],
       callback: (action): void => {
         const cmd = `${MainPath(action.options.source as string)}/${action.options.target}`
-        const onState = getResolveOnOffMute(action, cmd, true)
-
         sendOsc(cmd, {
           type: 'i',
-          value: onState
+          value: getResolveOnOffMute(action, cmd, true)
         })
       },
       subscribe: (evt): void => {
@@ -214,20 +199,13 @@ export function GetActionsList(
           id: 'target',
           ...convertChoices(GetBusSendChoices(state))
         },
-        {
-          type: 'dropdown',
-          label: 'Mute / Unmute',
-          id: 'mute',
-          ...convertChoices(CHOICES_MUTE)
-        }
+        MuteChoice
       ],
       callback: (action): void => {
         const cmd = `${MainPath(action.options.source as string)}/${action.options.target}/on`
-        const onState = getResolveOnOffMute(action, cmd, true)
-
         sendOsc(cmd, {
           type: 'i',
-          value: onState
+          value: getResolveOnOffMute(action, cmd, true)
         })
       },
       subscribe: (evt): void => {
@@ -245,17 +223,7 @@ export function GetActionsList(
           id: 'target',
           ...convertChoices(allTargets)
         },
-        {
-          type: 'number',
-          label: 'Fader Level (-90 = -inf)',
-          id: 'fad',
-          range: true,
-          required: true,
-          default: 0,
-          step: 0.1,
-          min: -90,
-          max: 10
-        }
+        FaderLevelChoice
       ],
       callback: (action): void => {
         sendOsc(`${MainPath(action.options.target as string)}/fader`, {
@@ -279,17 +247,7 @@ export function GetActionsList(
           id: 'target',
           ...convertChoices(GetChannelSendChoices(state, 'level'))
         },
-        {
-          type: 'number',
-          label: 'Fader Level (-90 = -inf)',
-          id: 'fad',
-          range: true,
-          required: true,
-          default: 0,
-          step: 0.1,
-          min: -90,
-          max: 10
-        }
+        FaderLevelChoice
       ],
       callback: (action): void => {
         sendOsc(`${MainPath(action.options.source as string)}/${action.options.target}`, {
@@ -313,17 +271,7 @@ export function GetActionsList(
           id: 'target',
           ...convertChoices(GetBusSendChoices(state))
         },
-        {
-          type: 'number',
-          label: 'Fader Level (-90 = -inf)',
-          id: 'fad',
-          range: true,
-          required: true,
-          default: 0,
-          step: 0.1,
-          min: -90,
-          max: 10
-        }
+        FaderLevelChoice
       ],
       callback: (action): void => {
         sendOsc(`${MainPath(action.options.source as string)}/${action.options.target}/level`, {

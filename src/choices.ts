@@ -1,4 +1,9 @@
-import { DropdownChoice, ConfigValue } from '../../../instance_skel_types'
+import {
+  DropdownChoice,
+  ConfigValue,
+  CompanionInputFieldNumber,
+  CompanionInputFieldDropdown
+} from '../../../instance_skel_types'
 import { X32State } from './state'
 import { padNumber } from './util'
 
@@ -57,6 +62,24 @@ export interface ChannelChoicesOptions {
   skipMatrix?: boolean
   skipInputs?: boolean
   // TODO - more skipXXX
+}
+
+export const FaderLevelChoice: CompanionInputFieldNumber = {
+  type: 'number',
+  label: 'Fader Level (-90 = -inf)',
+  id: 'fad',
+  range: true,
+  required: true,
+  default: 0,
+  step: 0.1,
+  min: -90,
+  max: 10
+}
+export const MuteChoice: CompanionInputFieldDropdown = {
+  type: 'dropdown',
+  label: 'Mute / Unmute',
+  id: 'mute',
+  ...convertChoices(CHOICES_MUTE)
 }
 
 export function convertChoices(choices: DropdownChoice[]): { choices: DropdownChoice[]; default: ConfigValue } {
