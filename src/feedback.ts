@@ -63,7 +63,7 @@ export function GetFeedbacksList(
     skipBus: true,
     skipMatrix: true
   })
-  const channelSendTargets = GetChannelSendChoices(state, true)
+  const channelSendTargets = GetChannelSendChoices(state, 'on')
 
   const feedbacks: { [id in FeedbackId]: CompanionFeedbackWithCallback | undefined } = {
     [FeedbackId.Mute]: {

@@ -11,7 +11,8 @@ import {
   MUTE_TOGGLE,
   GetMuteGroupChoices,
   CHOICES_MUTE_GROUP,
-  GetChannelSendChoices
+  GetChannelSendChoices,
+  convertChoices
 } from './choices'
 import * as osc from 'osc'
 import { MutePath, MainPath } from './paths'
@@ -21,6 +22,7 @@ export enum ActionId {
   MuteGroup = 'mute_grp',
   MuteChannelSend = 'mute_channel_send',
   FaderLevel = 'fad',
+  ChannelSendLevel = 'level_channel_send',
   Label = 'label',
   Color = 'color',
   GoCue = 'go_cue',
@@ -44,7 +46,6 @@ export function GetActionsList(
     skipBus: true,
     skipMatrix: true
   })
-  const channelSendTargets = GetChannelSendChoices(state, true)
   const muteGroups = GetMuteGroupChoices(state)
   const selectChoices = GetTargetChoices(state, { skipDca: true, numericIndex: true })
 
@@ -155,15 +156,13 @@ export function GetActionsList(
           type: 'dropdown',
           label: 'Source',
           id: 'source',
-          choices: channelSendSources,
-          default: channelSendSources[0].id
+          ...convertChoices(channelSendSources)
         },
         {
           type: 'dropdown',
           label: 'Target',
           id: 'target',
-          choices: channelSendTargets,
-          default: channelSendTargets[0].id
+          ...convertChoices(GetChannelSendChoices(state, 'on'))
         },
         {
           type: 'dropdown',
@@ -212,6 +211,41 @@ export function GetActionsList(
       ],
       callback: (action): void => {
         sendOsc(`${MainPath(action.options.target as string)}/fader`, {
+          type: 'f',
+          value: dbToFloat(getOptNumber(action, 'fad'))
+        })
+      }
+    },
+    [ActionId.ChannelSendLevel]: {
+      label: 'Set level of channel send',
+      options: [
+        {
+          type: 'dropdown',
+          label: 'Source',
+          id: 'source',
+          ...convertChoices(channelSendSources)
+        },
+        {
+          type: 'dropdown',
+          label: 'Target',
+          id: 'target',
+          ...convertChoices(GetChannelSendChoices(state, 'level'))
+        },
+        {
+          type: 'number',
+          label: 'Fader Level (-90 = -inf)',
+          id: 'fad',
+          range: true,
+          required: true,
+          default: 0,
+          step: 0.1,
+          min: -90,
+          max: 10
+        }
+      ],
+      callback: (action): void => {
+        console.log(action)
+        sendOsc(`${MainPath(action.options.source as string)}/${action.options.target}`, {
           type: 'f',
           value: dbToFloat(getOptNumber(action, 'fad'))
         })

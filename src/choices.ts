@@ -1,4 +1,4 @@
-import { DropdownChoice } from '../../../instance_skel_types'
+import { DropdownChoice, ConfigValue } from '../../../instance_skel_types'
 import { X32State } from './state'
 import { padNumber } from './util'
 
@@ -51,6 +51,13 @@ export interface ChannelChoicesOptions {
   skipBus?: boolean
   skipMatrix?: boolean
   // TODO - more skipXXX
+}
+
+export function convertChoices(choices: DropdownChoice[]): { choices: DropdownChoice[]; default: ConfigValue } {
+  return {
+    choices,
+    default: choices[0].id
+  }
 }
 
 export function GetTargetChoices(state: X32State, options?: ChannelChoicesOptions): DropdownChoice[] {
@@ -132,7 +139,7 @@ export function GetTargetChoices(state: X32State, options?: ChannelChoicesOption
 //   return res
 // }
 
-export function GetChannelSendChoices(state: X32State, includeMainStereo?: boolean): DropdownChoice[] {
+export function GetChannelSendChoices(state: X32State, type: 'on' | 'level'): DropdownChoice[] {
   const res: DropdownChoice[] = []
 
   const appendTarget = (statePath: string, mixId: string, defaultName: string): void => {
@@ -145,13 +152,13 @@ export function GetChannelSendChoices(state: X32State, includeMainStereo?: boole
   }
 
   for (let i = 1; i <= 16; i++) {
-    appendTarget(`/bus/${padNumber(i)}`, `${padNumber(i)}/on`, `MixBus ${i}`)
+    appendTarget(`/bus/${padNumber(i)}`, `${padNumber(i)}/${type}`, `MixBus ${i}`)
   }
 
-  if (includeMainStereo) {
+  if (type === 'on') {
     appendTarget(`/main/st`, 'st', `Main Stereo`)
   }
-  appendTarget(`/main/m`, 'mono', `Main Mono`)
+  appendTarget(`/main/m`, `m${type == 'on' ? '' : type}`, `Main Mono`)
 
   return res
 }
