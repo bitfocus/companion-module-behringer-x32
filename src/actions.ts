@@ -552,7 +552,6 @@ export function GetActionsList(
         }
       ],
       callback: (action): void => {
-        console.log(action)
         sendOsc(`/config/osc/dest`, {
           type: 'i',
           value: getOptNumber(action, 'destination')

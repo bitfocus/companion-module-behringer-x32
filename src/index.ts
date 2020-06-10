@@ -5,9 +5,9 @@ import { X32Config, GetConfigFields } from './config'
 import { FeedbackId, GetFeedbacksList } from './feedback'
 import { GetPresetsList } from './presets'
 import { InitVariables, updateDeviceInfoVariables, updateNameVariables } from './variables'
-import { X32State } from './state'
+import { X32State, X32Subscriptions } from './state'
 import * as osc from 'osc'
-import { MutePath, MainPath } from './paths'
+import { MainPath } from './paths'
 import { upgradeV2x0x0 } from './migrations'
 import { GetTargetChoices } from './choices'
 import * as debounceFn from 'debounce-fn'
@@ -19,6 +19,7 @@ import PQueue from 'p-queue'
 class X32Instance extends InstanceSkel<X32Config> {
   private osc: osc.UDPPort
   private x32State: X32State
+  private x32Subscriptions: X32Subscriptions
 
   private heartbeat: NodeJS.Timer | undefined
   private reconnectTimer: NodeJS.Timer | undefined
@@ -44,6 +45,7 @@ class X32Instance extends InstanceSkel<X32Config> {
     this.osc = new osc.UDPPort({})
 
     this.x32State = new X32State()
+    this.x32Subscriptions = new X32Subscriptions()
 
     this.addUpgradeScript(() => false) // Previous version had a script
     this.addUpgradeScript(upgradeV2x0x0)
@@ -77,6 +79,7 @@ class X32Instance extends InstanceSkel<X32Config> {
     this.config = config
 
     this.x32State = new X32State()
+    this.x32Subscriptions = new X32Subscriptions()
 
     if (this.config.host !== undefined) {
       this.osc.close()
@@ -109,7 +112,7 @@ class X32Instance extends InstanceSkel<X32Config> {
   private updateCompanionBits(): void {
     InitVariables(this, this.x32State)
     this.setPresetDefinitions(GetPresetsList(this, this.x32State))
-    this.setFeedbackDefinitions(GetFeedbacksList(this, this.osc, this.x32State))
+    this.setFeedbackDefinitions(GetFeedbacksList(this, this.osc, this.x32State, this.x32Subscriptions))
     this.setActions(GetActionsList(this, this.osc, this.x32State))
     this.checkFeedbacks()
 
@@ -242,40 +245,12 @@ class X32Instance extends InstanceSkel<X32Config> {
     const args = msg.args as osc.MetaArgument[]
     this.x32State.set(msg.address, args)
 
-    if (
-      msg.address.match(MutePath('^/([a-z]+)/([0-9]+)')) ||
-      msg.address.match(MutePath('^/dca/([0-9]+)')) ||
-      msg.address.match(MutePath('^/main/([a-z]+)'))
-    ) {
-      this.checkFeedbacks(FeedbackId.Mute)
-    }
-    if (
-      msg.address.match('^/([a-z]+)/([0-9]+)/mix/([0-9]+)/on') ||
-      msg.address.match('^/([a-z]+)/([0-9]+)/mix/(st|mono)')
-    ) {
-      this.checkFeedbacks(FeedbackId.MuteChannelSend)
-    }
-    if (msg.address.match('^/bus/([0-9]+)/mix/([0-9]+)/on') || msg.address.match('^/main/([a-z]+)/mix/([0-9]+)/on')) {
-      this.checkFeedbacks(FeedbackId.MuteBusSend)
-    }
-
-    if (msg.address.match('^/config/mute/([0-9]+)')) {
-      this.checkFeedbacks(FeedbackId.MuteGroup)
+    for (const fb of this.x32Subscriptions.getFeedbacks(msg.address)) {
+      this.checkFeedbacks(fb)
     }
 
     if (msg.address.match('/config/name$') || msg.address.match('/fader$')) {
       this.debounceUpdateCompanionBits()
-    }
-
-    if (msg.address.match('/-stat/talk/([A-Z])')) {
-      this.checkFeedbacks(FeedbackId.TalkbackTalk)
-    }
-
-    if (msg.address.match('/-stat/osc/on')) {
-      this.checkFeedbacks(FeedbackId.OscillatorEnable)
-    }
-    if (msg.address.match('/config/osc/dest')) {
-      this.checkFeedbacks(FeedbackId.OscillatorDestination)
     }
   }
 }

@@ -5,7 +5,7 @@ import {
   CompanionFeedbackEvent,
   CompanionFeedbackResult
 } from '../../../instance_skel_types'
-import { X32State } from './state'
+import { X32State, X32Subscriptions } from './state'
 import {
   GetTargetChoices,
   GetMuteGroupChoices,
@@ -20,7 +20,8 @@ import * as osc from 'osc'
 import InstanceSkel = require('../../../instance_skel')
 import { X32Config } from './config'
 
-type CompanionFeedbackWithCallback = CompanionFeedback & Required<Pick<CompanionFeedback, 'callback' | 'subscribe'>>
+type CompanionFeedbackWithCallback = CompanionFeedback &
+  Required<Pick<CompanionFeedback, 'callback' | 'subscribe' | 'unsubscribe'>>
 
 export enum FeedbackId {
   Mute = 'mute',
@@ -61,10 +62,29 @@ function getDataNumber(data: osc.MetaArgument[] | undefined, index: number): num
   return val?.type === 'i' || val?.type === 'f' ? val.value : undefined
 }
 
+function subscribeFeedback(
+  oscSocket: osc.UDPPort,
+  state: X32State,
+  subs: X32Subscriptions,
+  path: string,
+  id: string,
+  type: string
+): void {
+  console.log(path, id, type)
+  console.log(subs)
+  subs.subscribe(path, id, type as FeedbackId)
+  console.log(subs)
+  ensureLoaded(oscSocket, state, path)
+}
+function unsubscribeFeedback(subs: X32Subscriptions, path: string, id: string): void {
+  subs.unsubscribe(path, id)
+}
+
 export function GetFeedbacksList(
   self: InstanceSkel<X32Config>,
   oscSocket: osc.UDPPort,
-  state: X32State
+  state: X32State,
+  subs: X32Subscriptions
 ): CompanionFeedbacks {
   const mutableChannels = GetTargetChoices(state, { includeMain: true })
   const muteGroups = GetMuteGroupChoices(state)
@@ -112,7 +132,12 @@ export function GetFeedbacksList(
         return {}
       },
       subscribe: (evt: CompanionFeedbackEvent): void => {
-        ensureLoaded(oscSocket, state, MutePath(evt.options.target as string))
+        const path = MutePath(evt.options.target as string)
+        subscribeFeedback(oscSocket, state, subs, path, evt.id, evt.type)
+      },
+      unsubscribe: (evt: CompanionFeedbackEvent): void => {
+        const path = MutePath(evt.options.target as string)
+        unsubscribeFeedback(subs, path, evt.id)
       }
     },
     [FeedbackId.MuteGroup]: {
@@ -143,7 +168,12 @@ export function GetFeedbacksList(
         return {}
       },
       subscribe: (evt: CompanionFeedbackEvent): void => {
-        ensureLoaded(oscSocket, state, evt.options.mute_grp as string)
+        const path = evt.options.mute_grp as string
+        subscribeFeedback(oscSocket, state, subs, path, evt.id, evt.type)
+      },
+      unsubscribe: (evt: CompanionFeedbackEvent): void => {
+        const path = evt.options.mute_grp as string
+        unsubscribeFeedback(subs, path, evt.id)
       }
     },
     [FeedbackId.MuteChannelSend]: {
@@ -182,9 +212,11 @@ export function GetFeedbacksList(
       },
       subscribe: (evt: CompanionFeedbackEvent): void => {
         const path = `${MainPath(evt.options.source as string)}/${evt.options.target}`
-        if (path) {
-          ensureLoaded(oscSocket, state, path)
-        }
+        subscribeFeedback(oscSocket, state, subs, path, evt.id, evt.type)
+      },
+      unsubscribe: (evt: CompanionFeedbackEvent): void => {
+        const path = `${MainPath(evt.options.source as string)}/${evt.options.target}`
+        unsubscribeFeedback(subs, path, evt.id)
       }
     },
     [FeedbackId.MuteBusSend]: {
@@ -223,9 +255,11 @@ export function GetFeedbacksList(
       },
       subscribe: (evt: CompanionFeedbackEvent): void => {
         const path = `${MainPath(evt.options.source as string)}/${evt.options.target}/on`
-        if (path) {
-          ensureLoaded(oscSocket, state, path)
-        }
+        subscribeFeedback(oscSocket, state, subs, path, evt.id, evt.type)
+      },
+      unsubscribe: (evt: CompanionFeedbackEvent): void => {
+        const path = `${MainPath(evt.options.source as string)}/${evt.options.target}/on`
+        unsubscribeFeedback(subs, path, evt.id)
       }
     },
     [FeedbackId.TalkbackTalk]: {
@@ -266,7 +300,12 @@ export function GetFeedbacksList(
         return {}
       },
       subscribe: (evt: CompanionFeedbackEvent): void => {
-        ensureLoaded(oscSocket, state, `/-stat/talk/${evt.options.channel}`)
+        const path = `/-stat/talk/${evt.options.channel}`
+        subscribeFeedback(oscSocket, state, subs, path, evt.id, evt.type)
+      },
+      unsubscribe: (evt: CompanionFeedbackEvent): void => {
+        const path = `/-stat/talk/${evt.options.channel}`
+        unsubscribeFeedback(subs, path, evt.id)
       }
     },
     [FeedbackId.OscillatorEnable]: {
@@ -291,8 +330,13 @@ export function GetFeedbacksList(
         }
         return {}
       },
-      subscribe: (): void => {
-        ensureLoaded(oscSocket, state, `/-stat/osc/on`)
+      subscribe: (evt: CompanionFeedbackEvent): void => {
+        const path = `/-stat/osc/on`
+        subscribeFeedback(oscSocket, state, subs, path, evt.id, evt.type)
+      },
+      unsubscribe: (evt: CompanionFeedbackEvent): void => {
+        const path = `/-stat/osc/on`
+        unsubscribeFeedback(subs, path, evt.id)
       }
     },
     [FeedbackId.OscillatorDestination]: {
@@ -317,8 +361,13 @@ export function GetFeedbacksList(
         }
         return {}
       },
-      subscribe: (): void => {
-        ensureLoaded(oscSocket, state, `/config/osc/dest`)
+      subscribe: (evt: CompanionFeedbackEvent): void => {
+        const path = `/config/osc/dest`
+        subscribeFeedback(oscSocket, state, subs, path, evt.id, evt.type)
+      },
+      unsubscribe: (evt: CompanionFeedbackEvent): void => {
+        const path = `/config/osc/dest`
+        unsubscribeFeedback(subs, path, evt.id)
       }
     }
   }
