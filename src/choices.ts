@@ -148,15 +148,15 @@ export function GetTargetChoices(state: X32State, options?: ChannelChoicesOption
     }
   }
 
+  if (options?.includeMain) {
+    appendTarget(`/main/st`, `Main Stereo`)
+    appendTarget(`/main/m`, `Main Mono`)
+  }
+
   if (!options?.skipDca) {
     for (let i = 1; i <= 8; i++) {
       appendTarget(`/dca/${i}`, `DCA ${i}`)
     }
-  }
-
-  if (options?.includeMain) {
-    appendTarget(`/main/st`, `Main Stereo`)
-    appendTarget(`/main/m`, `Main Mono`)
   }
 
   return res
@@ -261,4 +261,23 @@ export function GetHeadampChoices(): DropdownChoice[] {
   }
 
   return res
+}
+
+export function GetOscillatorDestinations(state: X32State): DropdownChoice[] {
+  return [
+    ...GetTargetChoices(state, { skipDca: true, skipInputs: true, skipMatrix: true }),
+    {
+      label: 'Main L'
+    },
+    {
+      label: 'Main R'
+    },
+    {
+      label: 'Main L+R'
+    },
+    {
+      label: 'Main M/C'
+    },
+    ...GetTargetChoices(state, { skipDca: true, skipInputs: true, skipBus: true })
+  ].map((dst, i) => ({ id: i, label: dst.label }))
 }

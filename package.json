@@ -3,7 +3,7 @@
 	"legacy": [
 		"x32"
 	],
-	"version": "2.2.0",
+	"version": "2.3.0",
 	"api_version": "1.0.0",
 	"keywords": [
 		"Audio"
@@ -14,6 +14,7 @@
 	"description": "Module for controling the Midas M32 and Behringer X32 consoles",
 	"main": "dist/index.js",
 	"scripts": {
+		"dev": "yarn build:watch",
 		"build": "trash dist && yarn build:main",
 		"build:main": "tsc -p tsconfig.build.json",
 		"build:watch": "tsc -p tsconfig.build.json --watch",

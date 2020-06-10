@@ -10,6 +10,10 @@ While developing the module, by using `yarn build:watch` the compiler will be ru
 
 ## Changes
 
+### v2.3.0
+
+- Oscillator enable & destination
+
 ### v2.2.0
 
 - Set level of bus send to matrix

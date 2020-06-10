@@ -17,7 +17,8 @@ import {
   FaderLevelChoice,
   MuteChoice,
   HeadampGainChoice,
-  GetHeadampChoices
+  GetHeadampChoices,
+  GetOscillatorDestinations
 } from './choices'
 import * as osc from 'osc'
 import { MutePath, MainPath } from './paths'
@@ -40,7 +41,9 @@ export enum ActionId {
   GoSnip = 'go_snip',
   Select = 'select',
   Tape = 'tape',
-  TalkbackTalk = 'talkback_talk'
+  TalkbackTalk = 'talkback_talk',
+  OscillatorEnable = 'oscillator-enable',
+  OscillatorDestination = 'oscillator-destination'
 }
 
 type CompanionActionWithCallback = CompanionAction & Required<Pick<CompanionAction, 'callback'>>
@@ -58,7 +61,7 @@ export function GetActionsList(
     skipMatrix: true
   })
   const muteGroups = GetMuteGroupChoices(state)
-  const selectChoices = GetTargetChoices(state, { skipDca: true, numericIndex: true })
+  const selectChoices = GetTargetChoices(state, { skipDca: true, includeMain: true, numericIndex: true })
   const busSendSources = GetTargetChoices(state, {
     skipInputs: true,
     includeMain: true,
@@ -511,6 +514,49 @@ export function GetActionsList(
         if (evt.options.on === MUTE_TOGGLE) {
           ensureLoaded(oscSocket, state, `/-stat/talk/${evt.options.channel}`)
         }
+      }
+    },
+    [ActionId.OscillatorEnable]: {
+      label: 'Oscillator Enable',
+      options: [
+        {
+          type: 'dropdown',
+          label: 'On / Off',
+          id: 'on',
+          ...convertChoices(CHOICES_ON_OFF)
+        }
+      ],
+      callback: (action): void => {
+        const cmd = `/-stat/osc/on`
+        const onState = getResolveOnOffMute(action, cmd, true, 'on')
+
+        sendOsc(cmd, {
+          type: 'i',
+          value: onState
+        })
+      },
+      subscribe: (evt): void => {
+        if (evt.options.on === MUTE_TOGGLE) {
+          ensureLoaded(oscSocket, state, `/-stat/osc/on`)
+        }
+      }
+    },
+    [ActionId.OscillatorDestination]: {
+      label: 'Oscillator Destination',
+      options: [
+        {
+          type: 'dropdown',
+          label: 'destination',
+          id: 'destination',
+          ...convertChoices(GetOscillatorDestinations(state))
+        }
+      ],
+      callback: (action): void => {
+        console.log(action)
+        sendOsc(`/config/osc/dest`, {
+          type: 'i',
+          value: getOptNumber(action, 'destination')
+        })
       }
     }
   }

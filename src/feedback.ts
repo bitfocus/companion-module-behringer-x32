@@ -11,7 +11,8 @@ import {
   GetMuteGroupChoices,
   GetChannelSendChoices,
   convertChoices,
-  GetBusSendChoices
+  GetBusSendChoices,
+  GetOscillatorDestinations
 } from './choices'
 import { ensureLoaded } from './util'
 import { MutePath, MainPath } from './paths'
@@ -26,7 +27,9 @@ export enum FeedbackId {
   MuteGroup = 'mute_grp',
   MuteChannelSend = 'mute_channel_send',
   MuteBusSend = 'mute_bus_send',
-  TalkbackTalk = 'talkback_talk'
+  TalkbackTalk = 'talkback_talk',
+  OscillatorEnable = 'oscillator-enable',
+  OscillatorDestination = 'oscillator-destination'
 }
 
 export function ForegroundPicker(color: number): CompanionInputFieldColor {
@@ -264,6 +267,58 @@ export function GetFeedbacksList(
       },
       subscribe: (evt: CompanionFeedbackEvent): void => {
         ensureLoaded(oscSocket, state, `/-stat/talk/${evt.options.channel}`)
+      }
+    },
+    [FeedbackId.OscillatorEnable]: {
+      label: 'Change colors from oscillator enabled state',
+      description: 'If the oscillator is on, change color of the bank',
+      options: [
+        BackgroundPicker(self.rgb(255, 0, 0)),
+        ForegroundPicker(self.rgb(0, 0, 0)),
+        {
+          id: 'state',
+          type: 'checkbox',
+          label: 'On',
+          default: true
+        }
+      ],
+      callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
+        const path = `/-stat/osc/on`
+        const data = path ? state.get(path) : undefined
+        const isOn = getDataNumber(data, 0) !== 0
+        if (isOn === !!evt.options.state) {
+          return getOptColors(evt)
+        }
+        return {}
+      },
+      subscribe: (): void => {
+        ensureLoaded(oscSocket, state, `/-stat/osc/on`)
+      }
+    },
+    [FeedbackId.OscillatorDestination]: {
+      label: 'Change colors from oscillator destination state',
+      description: 'If the oscillator destination matches, change color of the bank',
+      options: [
+        BackgroundPicker(self.rgb(255, 0, 0)),
+        ForegroundPicker(self.rgb(0, 0, 0)),
+        {
+          type: 'dropdown',
+          label: 'destination',
+          id: 'destination',
+          ...convertChoices(GetOscillatorDestinations(state))
+        }
+      ],
+      callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
+        const path = `/config/osc/dest`
+        const data = path ? state.get(path) : undefined
+        const destination = getDataNumber(data, 0)
+        if (destination === Number(evt.options.destination)) {
+          return getOptColors(evt)
+        }
+        return {}
+      },
+      subscribe: (): void => {
+        ensureLoaded(oscSocket, state, `/config/osc/dest`)
       }
     }
   }

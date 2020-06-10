@@ -270,6 +270,13 @@ class X32Instance extends InstanceSkel<X32Config> {
     if (msg.address.match('/-stat/talk/([A-Z])')) {
       this.checkFeedbacks(FeedbackId.TalkbackTalk)
     }
+
+    if (msg.address.match('/-stat/osc/on')) {
+      this.checkFeedbacks(FeedbackId.OscillatorEnable)
+    }
+    if (msg.address.match('/config/osc/dest')) {
+      this.checkFeedbacks(FeedbackId.OscillatorDestination)
+    }
   }
 }
 
