@@ -70,10 +70,7 @@ function subscribeFeedback(
   id: string,
   type: string
 ): void {
-  console.log(path, id, type)
-  console.log(subs)
   subs.subscribe(path, id, type as FeedbackId)
-  console.log(subs)
   ensureLoaded(oscSocket, state, path)
 }
 function unsubscribeFeedback(subs: X32Subscriptions, path: string, id: string): void {
