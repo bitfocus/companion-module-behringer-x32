@@ -21,8 +21,12 @@ class X32Instance extends InstanceSkel<X32Config> {
   private x32State: X32State
   private x32Subscriptions: X32Subscriptions
 
+  /** Ping the x32 at a regular interval to tell it to keep sending us info, and for us to check it is still there */
   private heartbeat: NodeJS.Timer | undefined
+  /** Delay a reconnect a few seconds after an error, or monitor the ping for lack of response */
   private reconnectTimer: NodeJS.Timer | undefined
+  /** Once we have an osc socket ready, we send /xinfo on repeat until we get a response */
+  private syncInterval: NodeJS.Timer | undefined
 
   private readonly debounceUpdateCompanionBits: () => void
   private readonly requestQueue: PQueue = new PQueue({
@@ -101,6 +105,22 @@ class X32Instance extends InstanceSkel<X32Config> {
    * Clean up the instance before it is destroyed.
    */
   public destroy(): void {
+    if (this.reconnectTimer) {
+      clearTimeout(this.reconnectTimer)
+      this.reconnectTimer = undefined
+    }
+    if (this.syncInterval) {
+      clearInterval(this.syncInterval)
+      this.syncInterval = undefined
+    }
+
+    if (this.heartbeat) {
+      clearInterval(this.heartbeat)
+      this.heartbeat = undefined
+    }
+
+    console.log(this.config)
+
     if (this.osc) {
       this.osc.close()
       delete this.osc
@@ -128,9 +148,27 @@ class X32Instance extends InstanceSkel<X32Config> {
       address: '/xremote',
       args: []
     })
+
+    if (!this.syncInterval) {
+      // Once handshaked, poll something with a response
+      this.osc.send({ address: '/xinfo', args: [] })
+      if (!this.reconnectTimer) {
+        this.reconnectTimer = setTimeout(() => {
+          // Timed out
+          this.reconnectTimer = undefined
+          this.setupOscSocket()
+        }, 5000)
+      }
+    }
   }
 
   private setupOscSocket(): void {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if (!(this.config as any).enabled) {
+      // This is disabled, so don't try and setup a socket
+      return
+    }
+
     this.status(this.STATUS_WARNING, 'Connecting')
 
     this.osc = new osc.UDPPort({
@@ -148,13 +186,18 @@ class X32Instance extends InstanceSkel<X32Config> {
       this.requestQueue.clear()
       this.inFlightRequests = {}
 
-      if (this.heartbeat !== undefined) {
+      if (this.heartbeat) {
         clearInterval(this.heartbeat)
         this.heartbeat = undefined
       }
 
       if (!this.reconnectTimer) {
         this.reconnectTimer = setTimeout(() => {
+          if (this.syncInterval) {
+            clearInterval(this.syncInterval)
+            this.syncInterval = undefined
+          }
+
           this.reconnectTimer = undefined
           this.setupOscSocket()
         }, 2000)
@@ -169,9 +212,17 @@ class X32Instance extends InstanceSkel<X32Config> {
       this.requestQueue.clear()
       this.inFlightRequests = {}
 
-      this.osc.send({ address: '/xinfo', args: [] })
-      this.osc.send({ address: '/-snap/name', args: [] })
-      this.osc.send({ address: '/-snap/index', args: [] })
+      const doSync = (): void => {
+        if (this.osc) {
+          this.osc.send({ address: '/xinfo', args: [] })
+          this.osc.send({ address: '/-snap/name', args: [] })
+          this.osc.send({ address: '/-snap/index', args: [] })
+        }
+      }
+      if (!this.syncInterval) {
+        this.syncInterval = setInterval(doSync, 2000)
+      }
+      doSync()
 
       this.status(this.STATUS_WARNING, 'Syncing')
     })
@@ -197,8 +248,22 @@ class X32Instance extends InstanceSkel<X32Config> {
       switch (message.address) {
         case '/xinfo':
           this.status(this.STATUS_OK)
-          this.loadVariablesData()
-          updateDeviceInfoVariables(this, args)
+
+          if (this.reconnectTimer) {
+            // Clear the timer, as it is alive
+            clearTimeout(this.reconnectTimer)
+            this.reconnectTimer = undefined
+          }
+
+          if (this.syncInterval) {
+            // Sync success, stop the interval
+            clearInterval(this.syncInterval)
+            this.syncInterval = undefined
+
+            // Load the initial data
+            this.loadVariablesData()
+            updateDeviceInfoVariables(this, args)
+          }
           break
       }
     })
