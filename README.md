@@ -10,6 +10,10 @@ While developing the module, by using `yarn build:watch` the compiler will be ru
 
 ## Changes
 
+### v2.3.2
+
+- Fix bad send calls causing error dialog loop
+
 ### v2.3.1
 
 - Fix connection management
