@@ -86,7 +86,11 @@ class X32Instance extends InstanceSkel<X32Config> {
     this.x32Subscriptions = new X32Subscriptions()
 
     if (this.config.host !== undefined) {
-      this.osc.close()
+      try {
+        this.osc.close()
+      } catch (e) {
+        // Ignore
+      }
 
       this.status(this.STATUS_WARNING, 'Connecting')
       this.setupOscSocket()
@@ -119,10 +123,12 @@ class X32Instance extends InstanceSkel<X32Config> {
       this.heartbeat = undefined
     }
 
-    console.log(this.config)
-
     if (this.osc) {
-      this.osc.close()
+      try {
+        this.osc.close()
+      } catch (e) {
+        // Ignore
+      }
       delete this.osc
     }
 
@@ -144,21 +150,25 @@ class X32Instance extends InstanceSkel<X32Config> {
   }
 
   private pulse(): void {
-    this.osc.send({
-      address: '/xremote',
-      args: []
-    })
+    try {
+      this.osc.send({
+        address: '/xremote',
+        args: []
+      })
 
-    if (!this.syncInterval) {
-      // Once handshaked, poll something with a response
-      this.osc.send({ address: '/xinfo', args: [] })
-      if (!this.reconnectTimer) {
-        this.reconnectTimer = setTimeout(() => {
-          // Timed out
-          this.reconnectTimer = undefined
-          this.setupOscSocket()
-        }, 5000)
+      if (!this.syncInterval) {
+        // Once handshaked, poll something with a response
+        this.osc.send({ address: '/xinfo', args: [] })
+        if (!this.reconnectTimer) {
+          this.reconnectTimer = setTimeout(() => {
+            // Timed out
+            this.reconnectTimer = undefined
+            this.setupOscSocket()
+          }, 5000)
+        }
       }
+    } catch (e) {
+      // Ignore
     }
   }
 
@@ -214,9 +224,13 @@ class X32Instance extends InstanceSkel<X32Config> {
 
       const doSync = (): void => {
         if (this.osc) {
-          this.osc.send({ address: '/xinfo', args: [] })
-          this.osc.send({ address: '/-snap/name', args: [] })
-          this.osc.send({ address: '/-snap/index', args: [] })
+          try {
+            this.osc.send({ address: '/xinfo', args: [] })
+            this.osc.send({ address: '/-snap/name', args: [] })
+            this.osc.send({ address: '/-snap/index', args: [] })
+          } catch (e) {
+            // Ignore
+          }
         }
       }
       if (!this.syncInterval) {
