@@ -12,6 +12,10 @@ export function MainFaderPath(options: { [key: string]: InputValue | undefined }
   return `${MainPath(options.target as string)}/fader`
 }
 
-export function SendFaderPath(options: { [key: string]: InputValue | undefined }): string {
+export function SendChannelToBusPath(options: { [key: string]: InputValue | undefined }): string {
   return `${MainPath(options.source as string)}/${options.target}`
+}
+
+export function SendBusToMatrixPath(options: { [key: string]: InputValue | undefined }): string {
+  return `${MainPath(options.source as string)}/${options.target}/level`
 }

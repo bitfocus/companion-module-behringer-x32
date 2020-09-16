@@ -2,7 +2,7 @@ import InstanceSkel = require('../../../instance_skel')
 import { CompanionAction, CompanionActionEvent, CompanionActions } from '../../../instance_skel_types'
 import { X32State } from './state'
 import { X32Config } from './config'
-import { dbToFloat, ensureLoaded, trimToFloat, headampGainToFloat, floatToDB } from './util'
+import { ensureLoaded, trimToFloat, headampGainToFloat, floatToDB } from './util'
 import {
   CHOICES_TAPE_FUNC,
   CHOICES_COLOR,
@@ -23,7 +23,7 @@ import {
   FadeDurationChoice
 } from './choices'
 import * as osc from 'osc'
-import { MutePath, MainPath, MainFaderPath, SendFaderPath } from './paths'
+import { MutePath, MainPath, MainFaderPath, SendChannelToBusPath, SendBusToMatrixPath } from './paths'
 import { Required as MakeRequired } from 'utility-types'
 import { X32Transitions } from './transitions'
 
@@ -41,6 +41,9 @@ export enum ActionId {
   ChannelSendLevelStore = 'level_channel_store',
   ChannelSendLevelRestore = 'level_channel_restore',
   BusSendLevel = 'level_bus_send',
+  BusSendLevelDelta = 'level_bus_send_delta',
+  BusSendLevelStore = 'level_bus_store',
+  BusSendLevelRestore = 'level_bus_restore',
   InputTrim = 'input_trim',
   // InputGain = 'input_gain',
   HeadampGain = 'headamp_gain',
@@ -355,14 +358,14 @@ export function GetActionsList(
         FadeDurationChoice
       ],
       callback: (action): void => {
-        const cmd = SendFaderPath(action.options)
+        const cmd = SendChannelToBusPath(action.options)
         const currentState = state.get(cmd)
         const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
         transitions.run(cmd, currentVal, getOptNumber(action, 'fad'), getOptNumber(action, 'fadeDuration', 0))
       },
       subscribe: (evt): void => {
         // In case we have a fade time
-        ensureLoaded(oscSocket, state, SendFaderPath(evt.options))
+        ensureLoaded(oscSocket, state, SendChannelToBusPath(evt.options))
       }
     },
     [ActionId.ChannelSendLevelDelta]: {
@@ -384,7 +387,7 @@ export function GetActionsList(
         FadeDurationChoice
       ],
       callback: (action): void => {
-        const cmd = SendFaderPath(action.options)
+        const cmd = SendChannelToBusPath(action.options)
         const currentState = state.get(cmd)
         const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
         if (typeof currentVal === 'number') {
@@ -397,7 +400,7 @@ export function GetActionsList(
         }
       },
       subscribe: (evt): void => {
-        ensureLoaded(oscSocket, state, SendFaderPath(evt.options))
+        ensureLoaded(oscSocket, state, SendChannelToBusPath(evt.options))
       }
     },
     [ActionId.ChannelSendLevelStore]: {
@@ -417,7 +420,7 @@ export function GetActionsList(
         }
       ],
       callback: (action, info): void => {
-        const cmd = SendFaderPath(action.options)
+        const cmd = SendChannelToBusPath(action.options)
         const currentState = state.get(cmd)
         const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
         if (currentVal !== undefined) {
@@ -425,7 +428,7 @@ export function GetActionsList(
         }
       },
       subscribe: (evt): void => {
-        ensureLoaded(oscSocket, state, SendFaderPath(evt.options))
+        ensureLoaded(oscSocket, state, SendChannelToBusPath(evt.options))
       }
     },
     [ActionId.ChannelSendLevelRestore]: {
@@ -446,7 +449,7 @@ export function GetActionsList(
         FadeDurationChoice
       ],
       callback: (action, info): void => {
-        const cmd = SendFaderPath(action.options)
+        const cmd = SendChannelToBusPath(action.options)
         const storedVal = state.popPressValue(`${info.page}-${info.bank}-${cmd}`)
         if (storedVal !== undefined) {
           const currentState = state.get(cmd)
@@ -473,13 +476,111 @@ export function GetActionsList(
           id: 'target',
           ...convertChoices(GetBusSendChoices(state))
         },
-        FaderLevelChoice
+        FaderLevelChoice,
+        FadeDurationChoice
       ],
       callback: (action): void => {
-        sendOsc(`${MainPath(action.options.source as string)}/${action.options.target}/level`, {
-          type: 'f',
-          value: dbToFloat(getOptNumber(action, 'fad'))
-        })
+        const cmd = SendBusToMatrixPath(action.options)
+        const currentState = state.get(cmd)
+        const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
+        transitions.run(cmd, currentVal, getOptNumber(action, 'fad'), getOptNumber(action, 'fadeDuration', 0))
+      },
+      subscribe: (evt): void => {
+        // In case we have a fade time
+        ensureLoaded(oscSocket, state, SendBusToMatrixPath(evt.options))
+      }
+    },
+    [ActionId.BusSendLevelDelta]: {
+      label: 'Adjust level of bus to matrix send',
+      options: [
+        {
+          type: 'dropdown',
+          label: 'Source',
+          id: 'source',
+          ...convertChoices(busSendSources)
+        },
+        {
+          type: 'dropdown',
+          label: 'Target',
+          id: 'target',
+          ...convertChoices(GetBusSendChoices(state))
+        },
+        FaderLevelDeltaChoice,
+        FadeDurationChoice
+      ],
+      callback: (action): void => {
+        const cmd = SendBusToMatrixPath(action.options)
+        const currentState = state.get(cmd)
+        const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
+        if (typeof currentVal === 'number') {
+          transitions.run(
+            cmd,
+            currentVal,
+            currentVal + getOptNumber(action, 'delta'),
+            getOptNumber(action, 'fadeDuration', 0)
+          )
+        }
+      },
+      subscribe: (evt): void => {
+        ensureLoaded(oscSocket, state, SendBusToMatrixPath(evt.options))
+      }
+    },
+    [ActionId.BusSendLevelStore]: {
+      label: 'Store level of bus to matrix send',
+      options: [
+        {
+          type: 'dropdown',
+          label: 'Source',
+          id: 'source',
+          ...convertChoices(busSendSources)
+        },
+        {
+          type: 'dropdown',
+          label: 'Target',
+          id: 'target',
+          ...convertChoices(GetBusSendChoices(state))
+        }
+      ],
+      callback: (action, info): void => {
+        const cmd = SendBusToMatrixPath(action.options)
+        const currentState = state.get(cmd)
+        const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
+        if (currentVal !== undefined) {
+          state.setPressValue(`${info.page}-${info.bank}-${cmd}`, currentVal)
+        }
+      },
+      subscribe: (evt): void => {
+        ensureLoaded(oscSocket, state, SendBusToMatrixPath(evt.options))
+      }
+    },
+    [ActionId.BusSendLevelRestore]: {
+      label: 'Restore level of bus to matrix send',
+      options: [
+        {
+          type: 'dropdown',
+          label: 'Source',
+          id: 'source',
+          ...convertChoices(busSendSources)
+        },
+        {
+          type: 'dropdown',
+          label: 'Target',
+          id: 'target',
+          ...convertChoices(GetBusSendChoices(state))
+        },
+        FadeDurationChoice
+      ],
+      callback: (action, info): void => {
+        const cmd = SendBusToMatrixPath(action.options)
+        const storedVal = state.popPressValue(`${info.page}-${info.bank}-${cmd}`)
+        if (storedVal !== undefined) {
+          const currentState = state.get(cmd)
+          const currentVal =
+            currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
+          if (currentVal !== undefined) {
+            transitions.run(cmd, currentVal, storedVal, getOptNumber(action, 'fadeDuration', 0))
+          }
+        }
       }
     },
     [ActionId.InputTrim]: {

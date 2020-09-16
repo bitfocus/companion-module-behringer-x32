@@ -16,7 +16,7 @@ import {
   FaderLevelChoice
 } from './choices'
 import { compareNumber, ensureLoaded, floatToDB } from './util'
-import { MutePath, MainPath, MainFaderPath, SendFaderPath } from './paths'
+import { MutePath, MainPath, MainFaderPath, SendChannelToBusPath, SendBusToMatrixPath } from './paths'
 import * as osc from 'osc'
 import InstanceSkel = require('../../../instance_skel')
 import { X32Config } from './config'
@@ -32,6 +32,7 @@ export enum FeedbackId {
   MuteBusSend = 'mute_bus_send',
   FaderLevel = 'fader_level',
   ChannelSendLevel = 'level_channel_send',
+  BusSendLevel = 'level_bus_send',
   TalkbackTalk = 'talkback_talk',
   OscillatorEnable = 'oscillator-enable',
   OscillatorDestination = 'oscillator-destination'
@@ -320,7 +321,7 @@ export function GetFeedbacksList(
         FaderLevelChoice
       ],
       callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
-        const currentState = state.get(SendFaderPath(evt.options))
+        const currentState = state.get(SendChannelToBusPath(evt.options))
         const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0]?.value : undefined
         if (
           typeof currentVal === 'number' &&
@@ -332,11 +333,53 @@ export function GetFeedbacksList(
         return {}
       },
       subscribe: (evt): void => {
-        const path = SendFaderPath(evt.options)
+        const path = SendChannelToBusPath(evt.options)
         subscribeFeedback(oscSocket, state, subs, path, evt)
       },
       unsubscribe: (evt: CompanionFeedbackEvent): void => {
-        const path = SendFaderPath(evt.options)
+        const path = SendChannelToBusPath(evt.options)
+        unsubscribeFeedback(subs, path, evt)
+      }
+    },
+    [FeedbackId.BusSendLevel]: {
+      label: 'Change colors from level of bus to matrix send',
+      description: 'If the bus to matrix send level has the specified gain, change color of the bank',
+      options: [
+        ForegroundPicker(self.rgb(0, 0, 0)),
+        BackgroundPicker(self.rgb(0, 255, 0)),
+        {
+          type: 'dropdown',
+          label: 'Source',
+          id: 'source',
+          ...convertChoices(busSendSources)
+        },
+        {
+          type: 'dropdown',
+          label: 'Target',
+          id: 'target',
+          ...convertChoices(GetBusSendChoices(state))
+        },
+        NumberComparitorPicker(),
+        FaderLevelChoice
+      ],
+      callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
+        const currentState = state.get(SendBusToMatrixPath(evt.options))
+        const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0]?.value : undefined
+        if (
+          typeof currentVal === 'number' &&
+          compareNumber(evt.options.fad, evt.options.comparitor, floatToDB(currentVal))
+        ) {
+          return getOptColors(evt)
+        }
+
+        return {}
+      },
+      subscribe: (evt): void => {
+        const path = SendBusToMatrixPath(evt.options)
+        subscribeFeedback(oscSocket, state, subs, path, evt)
+      },
+      unsubscribe: (evt: CompanionFeedbackEvent): void => {
+        const path = SendBusToMatrixPath(evt.options)
         unsubscribeFeedback(subs, path, evt)
       }
     },
