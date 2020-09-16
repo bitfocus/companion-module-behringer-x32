@@ -26,3 +26,5 @@ We support the following actions:
 | Talkback Talk                                                  | Talkback talk on/off                                                                                               |
 
 for additional actions please raise a feature request at [github](https://github.com/bitfocus/companion-module-behringer-x32)
+
+If setting a fade duration, running another action for that value will cancel the first, and run the new one from the current level. If you wish to cancel a fade, run an 'Adjust fader level' with an offset of 0.

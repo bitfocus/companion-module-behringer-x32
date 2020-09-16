@@ -182,13 +182,16 @@ class X32Instance extends InstanceSkel<X32Config> {
   }
 
   private setupOscSocket(): void {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    if (!(this.config as any).enabled) {
-      // This is disabled, so don't try and setup a socket
-      return
-    }
-
     this.status(this.STATUS_WARNING, 'Connecting')
+
+    if (this.reconnectTimer) {
+      clearTimeout(this.reconnectTimer)
+      this.reconnectTimer = undefined
+    }
+    if (this.syncInterval) {
+      clearInterval(this.syncInterval)
+      this.syncInterval = undefined
+    }
 
     this.osc = new osc.UDPPort({
       localAddress: '0.0.0.0',
