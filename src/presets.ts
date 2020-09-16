@@ -6,7 +6,7 @@ import { X32Config } from './config'
 import { FeedbackId } from './feedback'
 import { X32State } from './state'
 import { ValuesType, NonUndefined } from 'utility-types'
-import { GetBusSendChoices, GetChannelSendChoices, GetTargetChoices } from './choices'
+import { GetBusSendChoices, GetChannelSendChoices, GetLevelsChoiceConfigs, GetTargetChoices } from './choices'
 
 interface CompanionPresetExt extends CompanionPreset {
   feedbacks: Array<
@@ -29,30 +29,15 @@ interface CompanionPresetExt extends CompanionPreset {
 export function GetPresetsList(instance: InstanceSkel<X32Config>, state: X32State): CompanionPreset[] {
   const presets: CompanionPresetExt[] = []
 
-  const allTargets = GetTargetChoices(state, { includeMain: true })
-  const allInputs = GetTargetChoices(state, {
-    includeMain: false,
-    skipDca: true,
-    skipBus: true,
-    skipMatrix: true
-  })
-  const channelSendTargets = GetChannelSendChoices(state, 'level')
-  const busSendSources = GetTargetChoices(state, {
-    skipInputs: true,
-    includeMain: true,
-    skipDca: true,
-    skipBus: false,
-    skipMatrix: true
-  })
-  const busSendTargets = GetBusSendChoices(state)
+  const levelsChoices = GetLevelsChoiceConfigs(state)
 
-  const sampleTarget = allTargets[0]
-  const sampleInput = allInputs[0]
-  const sampleChannelSendTarget = channelSendTargets[0]
-  const sampleBusSendSource = busSendSources[0]
-  const sampleBusSendTarget = busSendTargets[0]
+  const sampleChannel = levelsChoices.channels[0]
+  const sampleInput = levelsChoices.allSources[0]
+  const sampleChannelSendTarget = levelsChoices.channelSendTargets[0]
+  const sampleBusSendSource = levelsChoices.busSendSources[0]
+  const sampleBusSendTarget = levelsChoices.busSendTargets[0]
 
-  if (sampleTarget) {
+  if (sampleChannel) {
     presets.push({
       label: 'Dip fader level',
       category: 'Dip level',
@@ -67,13 +52,13 @@ export function GetPresetsList(instance: InstanceSkel<X32Config>, state: X32Stat
         {
           action: ActionId.FaderLevelStore,
           options: {
-            target: sampleTarget.id
+            target: sampleChannel.id
           }
         },
         {
           action: ActionId.FaderLevelDelta,
           options: {
-            target: sampleTarget.id,
+            target: sampleChannel.id,
             delta: -10,
             duration: 0
           }
@@ -83,7 +68,7 @@ export function GetPresetsList(instance: InstanceSkel<X32Config>, state: X32Stat
         {
           action: ActionId.FaderLevelRestore,
           options: {
-            target: sampleTarget.id,
+            target: sampleChannel.id,
             duration: 0
           }
         }

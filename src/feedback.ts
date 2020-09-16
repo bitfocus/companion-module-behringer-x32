@@ -13,7 +13,8 @@ import {
   convertChoices,
   GetBusSendChoices,
   GetOscillatorDestinations,
-  FaderLevelChoice
+  FaderLevelChoice,
+  GetLevelsChoiceConfigs
 } from './choices'
 import { compareNumber, ensureLoaded, floatToDB } from './util'
 import { MutePath, MainPath, MainFaderPath, SendChannelToBusPath, SendBusToMatrixPath } from './paths'
@@ -87,22 +88,8 @@ export function GetFeedbacksList(
   state: X32State,
   subs: X32Subscriptions
 ): CompanionFeedbacks {
-  const allTargets = GetTargetChoices(state, { includeMain: true })
+  const levelsChoices = GetLevelsChoiceConfigs(state)
   const muteGroups = GetMuteGroupChoices(state)
-  const channelSendSources = GetTargetChoices(state, {
-    includeMain: false,
-    skipDca: true,
-    skipBus: true,
-    skipMatrix: true
-  })
-  const channelSendTargets = GetChannelSendChoices(state, 'on')
-  const busSendSources = GetTargetChoices(state, {
-    skipInputs: true,
-    includeMain: true,
-    skipDca: true,
-    skipBus: false,
-    skipMatrix: true
-  })
 
   const feedbacks: { [id in FeedbackId]: CompanionFeedbackWithCallback | undefined } = {
     [FeedbackId.Mute]: {
@@ -115,7 +102,7 @@ export function GetFeedbacksList(
           id: 'target',
           type: 'dropdown',
           label: 'Target',
-          ...convertChoices(allTargets)
+          ...convertChoices(levelsChoices.channels)
         },
         {
           id: 'state',
@@ -187,13 +174,13 @@ export function GetFeedbacksList(
           type: 'dropdown',
           label: 'Source',
           id: 'source',
-          ...convertChoices(channelSendSources)
+          ...convertChoices(levelsChoices.allSources)
         },
         {
           type: 'dropdown',
           label: 'Target',
           id: 'target',
-          ...convertChoices(channelSendTargets)
+          ...convertChoices(GetChannelSendChoices(state, 'on'))
         },
         {
           id: 'state',
@@ -230,13 +217,13 @@ export function GetFeedbacksList(
           type: 'dropdown',
           label: 'Source',
           id: 'source',
-          ...convertChoices(busSendSources)
+          ...convertChoices(levelsChoices.busSendSources)
         },
         {
           type: 'dropdown',
           label: 'Target',
           id: 'target',
-          ...convertChoices(GetBusSendChoices(state))
+          ...convertChoices(levelsChoices.busSendTargets)
         },
         {
           id: 'state',
@@ -273,7 +260,7 @@ export function GetFeedbacksList(
           type: 'dropdown',
           label: 'Target',
           id: 'target',
-          ...convertChoices(allTargets)
+          ...convertChoices(levelsChoices.channels)
         },
         NumberComparitorPicker(),
         FaderLevelChoice
@@ -309,13 +296,13 @@ export function GetFeedbacksList(
           type: 'dropdown',
           label: 'Source',
           id: 'source',
-          ...convertChoices(channelSendSources)
+          ...convertChoices(levelsChoices.allSources)
         },
         {
           type: 'dropdown',
           label: 'Target',
           id: 'target',
-          ...convertChoices(GetChannelSendChoices(state, 'level'))
+          ...convertChoices(levelsChoices.channelSendTargets)
         },
         NumberComparitorPicker(),
         FaderLevelChoice
@@ -351,13 +338,13 @@ export function GetFeedbacksList(
           type: 'dropdown',
           label: 'Source',
           id: 'source',
-          ...convertChoices(busSendSources)
+          ...convertChoices(levelsChoices.busSendSources)
         },
         {
           type: 'dropdown',
           label: 'Target',
           id: 'target',
-          ...convertChoices(GetBusSendChoices(state))
+          ...convertChoices(levelsChoices.busSendTargets)
         },
         NumberComparitorPicker(),
         FaderLevelChoice

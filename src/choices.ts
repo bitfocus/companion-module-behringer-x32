@@ -118,6 +118,35 @@ export function convertChoices(choices: DropdownChoice[]): { choices: DropdownCh
   }
 }
 
+export function GetLevelsChoiceConfigs(
+  state: X32State
+): {
+  channels: DropdownChoice[]
+  allSources: DropdownChoice[]
+  channelSendTargets: DropdownChoice[]
+  busSendSources: DropdownChoice[]
+  busSendTargets: DropdownChoice[]
+} {
+  return {
+    channels: GetTargetChoices(state, { includeMain: true }),
+    allSources: GetTargetChoices(state, {
+      includeMain: false,
+      skipDca: true,
+      skipBus: true,
+      skipMatrix: true
+    }),
+    channelSendTargets: GetChannelSendChoices(state, 'level'),
+    busSendSources: GetTargetChoices(state, {
+      skipInputs: true,
+      includeMain: true,
+      skipDca: true,
+      skipBus: false,
+      skipMatrix: true
+    }),
+    busSendTargets: GetBusSendChoices(state)
+  }
+}
+
 export function GetTargetChoices(state: X32State, options?: ChannelChoicesOptions): DropdownChoice[] {
   const res: DropdownChoice[] = []
 

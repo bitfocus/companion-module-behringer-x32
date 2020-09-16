@@ -20,7 +20,8 @@ import {
   GetHeadampChoices,
   GetOscillatorDestinations,
   FaderLevelDeltaChoice,
-  FadeDurationChoice
+  FadeDurationChoice,
+  GetLevelsChoiceConfigs
 } from './choices'
 import * as osc from 'osc'
 import { MutePath, MainPath, MainFaderPath, SendChannelToBusPath, SendBusToMatrixPath } from './paths'
@@ -67,22 +68,9 @@ export function GetActionsList(
   transitions: X32Transitions,
   state: X32State
 ): CompanionActions {
-  const allTargets = GetTargetChoices(state, { includeMain: true })
-  const allInputs = GetTargetChoices(state, {
-    includeMain: false,
-    skipDca: true,
-    skipBus: true,
-    skipMatrix: true
-  })
+  const levelsChoices = GetLevelsChoiceConfigs(state)
   const muteGroups = GetMuteGroupChoices(state)
   const selectChoices = GetTargetChoices(state, { skipDca: true, includeMain: true, numericIndex: true })
-  const busSendSources = GetTargetChoices(state, {
-    skipInputs: true,
-    includeMain: true,
-    skipDca: true,
-    skipBus: false,
-    skipMatrix: true
-  })
 
   const sendOsc = (cmd: string, arg: osc.MetaArgument): void => {
     try {
@@ -135,7 +123,7 @@ export function GetActionsList(
           type: 'dropdown',
           label: 'Target',
           id: 'target',
-          ...convertChoices(allTargets)
+          ...convertChoices(levelsChoices.channels)
         },
         MuteChoice
       ],
@@ -188,7 +176,7 @@ export function GetActionsList(
           type: 'dropdown',
           label: 'Source',
           id: 'source',
-          ...convertChoices(allInputs)
+          ...convertChoices(levelsChoices.allSources)
         },
         {
           type: 'dropdown',
@@ -218,7 +206,7 @@ export function GetActionsList(
           type: 'dropdown',
           label: 'Source',
           id: 'source',
-          ...convertChoices(busSendSources)
+          ...convertChoices(levelsChoices.busSendSources)
         },
         {
           type: 'dropdown',
@@ -248,7 +236,7 @@ export function GetActionsList(
           type: 'dropdown',
           label: 'Target',
           id: 'target',
-          ...convertChoices(allTargets)
+          ...convertChoices(levelsChoices.channels)
         },
         FaderLevelChoice,
         FadeDurationChoice
@@ -271,7 +259,7 @@ export function GetActionsList(
           type: 'dropdown',
           label: 'Target',
           id: 'target',
-          ...convertChoices(allTargets)
+          ...convertChoices(levelsChoices.channels)
         }
       ],
       callback: (action, info): void => {
@@ -293,7 +281,7 @@ export function GetActionsList(
           type: 'dropdown',
           label: 'Target',
           id: 'target',
-          ...convertChoices(allTargets)
+          ...convertChoices(levelsChoices.channels)
         },
         FadeDurationChoice
       ],
@@ -317,7 +305,7 @@ export function GetActionsList(
           type: 'dropdown',
           label: 'Target',
           id: 'target',
-          ...convertChoices(allTargets)
+          ...convertChoices(levelsChoices.channels)
         },
         FaderLevelDeltaChoice,
         FadeDurationChoice
@@ -346,13 +334,13 @@ export function GetActionsList(
           type: 'dropdown',
           label: 'Source',
           id: 'source',
-          ...convertChoices(allInputs)
+          ...convertChoices(levelsChoices.allSources)
         },
         {
           type: 'dropdown',
           label: 'Target',
           id: 'target',
-          ...convertChoices(GetChannelSendChoices(state, 'level'))
+          ...convertChoices(levelsChoices.channelSendTargets)
         },
         FaderLevelChoice,
         FadeDurationChoice
@@ -375,13 +363,13 @@ export function GetActionsList(
           type: 'dropdown',
           label: 'Source',
           id: 'source',
-          ...convertChoices(allInputs)
+          ...convertChoices(levelsChoices.allSources)
         },
         {
           type: 'dropdown',
           label: 'Target',
           id: 'target',
-          ...convertChoices(GetChannelSendChoices(state, 'level'))
+          ...convertChoices(levelsChoices.channelSendTargets)
         },
         FaderLevelDeltaChoice,
         FadeDurationChoice
@@ -410,13 +398,13 @@ export function GetActionsList(
           type: 'dropdown',
           label: 'Source',
           id: 'source',
-          ...convertChoices(allInputs)
+          ...convertChoices(levelsChoices.allSources)
         },
         {
           type: 'dropdown',
           label: 'Target',
           id: 'target',
-          ...convertChoices(GetChannelSendChoices(state, 'level'))
+          ...convertChoices(levelsChoices.channelSendTargets)
         }
       ],
       callback: (action, info): void => {
@@ -438,13 +426,13 @@ export function GetActionsList(
           type: 'dropdown',
           label: 'Source',
           id: 'source',
-          ...convertChoices(allInputs)
+          ...convertChoices(levelsChoices.allSources)
         },
         {
           type: 'dropdown',
           label: 'Target',
           id: 'target',
-          ...convertChoices(GetChannelSendChoices(state, 'level'))
+          ...convertChoices(levelsChoices.channelSendTargets)
         },
         FadeDurationChoice
       ],
@@ -468,13 +456,13 @@ export function GetActionsList(
           type: 'dropdown',
           label: 'Source',
           id: 'source',
-          ...convertChoices(busSendSources)
+          ...convertChoices(levelsChoices.busSendSources)
         },
         {
           type: 'dropdown',
           label: 'Target',
           id: 'target',
-          ...convertChoices(GetBusSendChoices(state))
+          ...convertChoices(levelsChoices.busSendTargets)
         },
         FaderLevelChoice,
         FadeDurationChoice
@@ -497,13 +485,13 @@ export function GetActionsList(
           type: 'dropdown',
           label: 'Source',
           id: 'source',
-          ...convertChoices(busSendSources)
+          ...convertChoices(levelsChoices.busSendSources)
         },
         {
           type: 'dropdown',
           label: 'Target',
           id: 'target',
-          ...convertChoices(GetBusSendChoices(state))
+          ...convertChoices(levelsChoices.busSendTargets)
         },
         FaderLevelDeltaChoice,
         FadeDurationChoice
@@ -532,13 +520,13 @@ export function GetActionsList(
           type: 'dropdown',
           label: 'Source',
           id: 'source',
-          ...convertChoices(busSendSources)
+          ...convertChoices(levelsChoices.busSendSources)
         },
         {
           type: 'dropdown',
           label: 'Target',
           id: 'target',
-          ...convertChoices(GetBusSendChoices(state))
+          ...convertChoices(levelsChoices.busSendTargets)
         }
       ],
       callback: (action, info): void => {
@@ -560,13 +548,13 @@ export function GetActionsList(
           type: 'dropdown',
           label: 'Source',
           id: 'source',
-          ...convertChoices(busSendSources)
+          ...convertChoices(levelsChoices.busSendSources)
         },
         {
           type: 'dropdown',
           label: 'Target',
           id: 'target',
-          ...convertChoices(GetBusSendChoices(state))
+          ...convertChoices(levelsChoices.busSendTargets)
         },
         FadeDurationChoice
       ],
@@ -590,7 +578,7 @@ export function GetActionsList(
           type: 'dropdown',
           label: 'Input',
           id: 'input',
-          ...convertChoices(allInputs)
+          ...convertChoices(levelsChoices.allSources)
         },
         {
           type: 'number',
@@ -636,7 +624,7 @@ export function GetActionsList(
           type: 'dropdown',
           label: 'Target',
           id: 'target',
-          ...convertChoices(allTargets)
+          ...convertChoices(levelsChoices.channels)
         },
         {
           type: 'textinput',
@@ -660,7 +648,7 @@ export function GetActionsList(
           type: 'dropdown',
           label: 'Target',
           id: 'target',
-          ...convertChoices(allTargets)
+          ...convertChoices(levelsChoices.channels)
         },
         {
           type: 'dropdown',
