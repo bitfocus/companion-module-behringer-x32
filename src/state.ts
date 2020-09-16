@@ -3,9 +3,11 @@ import { FeedbackId } from './feedback'
 
 export class X32State {
   private readonly data: Map<string, osc.MetaArgument[]>
+  private readonly pressStorage: Map<string, number>
 
   constructor() {
     this.data = new Map()
+    this.pressStorage = new Map()
   }
 
   // TODO better typings
@@ -14,6 +16,15 @@ export class X32State {
   }
   public set(path: string, data: osc.MetaArgument[]): void {
     this.data.set(path, data)
+  }
+
+  public setPressValue(path: string, value: number): void {
+    this.pressStorage.set(path, value)
+  }
+  public popPressValue(path: string): number | undefined {
+    const val = this.pressStorage.get(path)
+    if (val !== undefined) this.pressStorage.delete(path)
+    return val
   }
 }
 

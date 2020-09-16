@@ -33,9 +33,13 @@ export enum ActionId {
   MuteChannelSend = 'mute_channel_send',
   MuteBusSend = 'mute_bus_send',
   FaderLevel = 'fad',
+  FaderLevelStore = 'fader_store',
+  FaderLevelRestore = 'fader_restore',
   FaderLevelDelta = 'fader_delta',
   ChannelSendLevel = 'level_channel_send',
   ChannelSendLevelDelta = 'level_channel_send_delta',
+  ChannelSendLevelStore = 'level_channel_store',
+  ChannelSendLevelRestore = 'level_channel_restore',
   BusSendLevel = 'level_bus_send',
   InputTrim = 'input_trim',
   // InputGain = 'input_gain',
@@ -52,7 +56,7 @@ export enum ActionId {
   OscillatorDestination = 'oscillator-destination'
 }
 
-type CompanionActionWithCallback = Omit<MakeRequired<CompanionAction, 'callback'>, 'unsubscribe'>
+type CompanionActionWithCallback = MakeRequired<CompanionAction, 'callback'>
 
 export function GetActionsList(
   self: InstanceSkel<X32Config>,
@@ -257,6 +261,52 @@ export function GetActionsList(
         ensureLoaded(oscSocket, state, MainFaderPath(evt.options))
       }
     },
+    [ActionId.FaderLevelStore]: {
+      label: 'Store fader level',
+      options: [
+        {
+          type: 'dropdown',
+          label: 'Target',
+          id: 'target',
+          ...convertChoices(allTargets)
+        }
+      ],
+      callback: (action, info): void => {
+        const cmd = MainFaderPath(action.options)
+        const currentState = state.get(cmd)
+        const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
+        if (currentVal !== undefined) {
+          state.setPressValue(`${info.page}-${info.bank}-${cmd}`, currentVal)
+        }
+      },
+      subscribe: (evt): void => {
+        ensureLoaded(oscSocket, state, MainFaderPath(evt.options))
+      }
+    },
+    [ActionId.FaderLevelRestore]: {
+      label: 'Restore fader level',
+      options: [
+        {
+          type: 'dropdown',
+          label: 'Target',
+          id: 'target',
+          ...convertChoices(allTargets)
+        },
+        FadeDurationChoice
+      ],
+      callback: (action, info): void => {
+        const cmd = MainFaderPath(action.options)
+        const storedVal = state.popPressValue(`${info.page}-${info.bank}-${cmd}`)
+        if (storedVal !== undefined) {
+          const currentState = state.get(cmd)
+          const currentVal =
+            currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
+          if (currentVal !== undefined) {
+            transitions.run(cmd, currentVal, storedVal, getOptNumber(action, 'fadeDuration', 0))
+          }
+        }
+      }
+    },
     [ActionId.FaderLevelDelta]: {
       label: 'Adjust fader level',
       options: [
@@ -348,6 +398,64 @@ export function GetActionsList(
       },
       subscribe: (evt): void => {
         ensureLoaded(oscSocket, state, SendFaderPath(evt.options))
+      }
+    },
+    [ActionId.ChannelSendLevelStore]: {
+      label: 'Store level of channel to bus send',
+      options: [
+        {
+          type: 'dropdown',
+          label: 'Source',
+          id: 'source',
+          ...convertChoices(allInputs)
+        },
+        {
+          type: 'dropdown',
+          label: 'Target',
+          id: 'target',
+          ...convertChoices(GetChannelSendChoices(state, 'level'))
+        }
+      ],
+      callback: (action, info): void => {
+        const cmd = SendFaderPath(action.options)
+        const currentState = state.get(cmd)
+        const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
+        if (currentVal !== undefined) {
+          state.setPressValue(`${info.page}-${info.bank}-${cmd}`, currentVal)
+        }
+      },
+      subscribe: (evt): void => {
+        ensureLoaded(oscSocket, state, SendFaderPath(evt.options))
+      }
+    },
+    [ActionId.ChannelSendLevelRestore]: {
+      label: 'Restore level of channel to bus send',
+      options: [
+        {
+          type: 'dropdown',
+          label: 'Source',
+          id: 'source',
+          ...convertChoices(allInputs)
+        },
+        {
+          type: 'dropdown',
+          label: 'Target',
+          id: 'target',
+          ...convertChoices(GetChannelSendChoices(state, 'level'))
+        },
+        FadeDurationChoice
+      ],
+      callback: (action, info): void => {
+        const cmd = SendFaderPath(action.options)
+        const storedVal = state.popPressValue(`${info.page}-${info.bank}-${cmd}`)
+        if (storedVal !== undefined) {
+          const currentState = state.get(cmd)
+          const currentVal =
+            currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
+          if (currentVal !== undefined) {
+            transitions.run(cmd, currentVal, storedVal, getOptNumber(action, 'fadeDuration', 0))
+          }
+        }
       }
     },
     [ActionId.BusSendLevel]: {
