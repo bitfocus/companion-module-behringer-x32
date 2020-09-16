@@ -279,7 +279,7 @@ export function GetFeedbacksList(
       ],
       callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
         const currentState = state.get(MainFaderPath(evt.options))
-        const currentVal = currentState && currentState[0]?.type === 'f' && currentState[0]?.value
+        const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0]?.value : undefined
         if (
           typeof currentVal === 'number' &&
           compareNumber(evt.options.fad, evt.options.comparitor, floatToDB(currentVal))
@@ -321,7 +321,7 @@ export function GetFeedbacksList(
       ],
       callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
         const currentState = state.get(SendFaderPath(evt.options))
-        const currentVal = currentState && currentState[0]?.type === 'f' && currentState[0]?.value
+        const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0]?.value : undefined
         if (
           typeof currentVal === 'number' &&
           compareNumber(evt.options.fad, evt.options.comparitor, floatToDB(currentVal))

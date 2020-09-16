@@ -101,6 +101,15 @@ export const MuteChoice: CompanionInputFieldDropdown = {
   id: 'mute',
   ...convertChoices(CHOICES_MUTE)
 }
+export const FadeDurationChoice: CompanionInputFieldNumber = {
+  type: 'number',
+  label: 'Fade Duration (ms)',
+  id: 'fadeDuration',
+  default: 0,
+  min: 0,
+  step: 10,
+  max: 60000
+}
 
 export function convertChoices(choices: DropdownChoice[]): { choices: DropdownChoice[]; default: ConfigValue } {
   return {

@@ -2,7 +2,7 @@ import InstanceSkel = require('../../../instance_skel')
 import { CompanionAction, CompanionActionEvent, CompanionActions } from '../../../instance_skel_types'
 import { X32State } from './state'
 import { X32Config } from './config'
-import { dbToFloat, ensureLoaded, trimToFloat, headampGainToFloat, offsetFloatByDb } from './util'
+import { dbToFloat, ensureLoaded, trimToFloat, headampGainToFloat, floatToDB } from './util'
 import {
   CHOICES_TAPE_FUNC,
   CHOICES_COLOR,
@@ -19,11 +19,13 @@ import {
   HeadampGainChoice,
   GetHeadampChoices,
   GetOscillatorDestinations,
-  FaderLevelDeltaChoice
+  FaderLevelDeltaChoice,
+  FadeDurationChoice
 } from './choices'
 import * as osc from 'osc'
 import { MutePath, MainPath, MainFaderPath, SendFaderPath } from './paths'
 import { Required as MakeRequired } from 'utility-types'
+import { X32Transitions } from './transitions'
 
 export enum ActionId {
   Mute = 'mute',
@@ -55,6 +57,7 @@ type CompanionActionWithCallback = Omit<MakeRequired<CompanionAction, 'callback'
 export function GetActionsList(
   self: InstanceSkel<X32Config>,
   oscSocket: osc.UDPPort,
+  transitions: X32Transitions,
   state: X32State
 ): CompanionActions {
   const allTargets = GetTargetChoices(state, { includeMain: true })
@@ -84,8 +87,10 @@ export function GetActionsList(
       self.log('error', `Command send failed: ${e}`)
     }
   }
-  const getOptNumber = (action: CompanionActionEvent, key: string): number => {
-    const val = Number(action.options[key])
+  const getOptNumber = (action: CompanionActionEvent, key: string, defVal?: number): number => {
+    const rawVal = action.options[key]
+    if (defVal !== undefined && rawVal === undefined) return defVal
+    const val = Number(rawVal)
     if (isNaN(val)) {
       throw new Error(`Invalid option '${key}'`)
     }
@@ -238,13 +243,18 @@ export function GetActionsList(
           id: 'target',
           ...convertChoices(allTargets)
         },
-        FaderLevelChoice
+        FaderLevelChoice,
+        FadeDurationChoice
       ],
       callback: (action): void => {
-        sendOsc(MainFaderPath(action.options), {
-          type: 'f',
-          value: dbToFloat(getOptNumber(action, 'fad'))
-        })
+        const cmd = MainFaderPath(action.options)
+        const currentState = state.get(cmd)
+        const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
+        transitions.run(cmd, currentVal, getOptNumber(action, 'fad'), getOptNumber(action, 'fadeDuration', 0))
+      },
+      subscribe: (evt): void => {
+        // In case we have a fade time
+        ensureLoaded(oscSocket, state, MainFaderPath(evt.options))
       }
     },
     [ActionId.FaderLevelDelta]: {
@@ -256,17 +266,20 @@ export function GetActionsList(
           id: 'target',
           ...convertChoices(allTargets)
         },
-        FaderLevelDeltaChoice
+        FaderLevelDeltaChoice,
+        FadeDurationChoice
       ],
       callback: (action): void => {
         const cmd = MainFaderPath(action.options)
         const currentState = state.get(cmd)
-        const currentVal = currentState && currentState[0]?.type === 'f' && currentState[0]?.value
+        const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
         if (typeof currentVal === 'number') {
-          sendOsc(cmd, {
-            type: 'f',
-            value: offsetFloatByDb(currentVal, getOptNumber(action, 'delta'))
-          })
+          transitions.run(
+            cmd,
+            currentVal,
+            currentVal + getOptNumber(action, 'delta'),
+            getOptNumber(action, 'fadeDuration', 0)
+          )
         }
       },
       subscribe: (evt): void => {
@@ -288,13 +301,18 @@ export function GetActionsList(
           id: 'target',
           ...convertChoices(GetChannelSendChoices(state, 'level'))
         },
-        FaderLevelChoice
+        FaderLevelChoice,
+        FadeDurationChoice
       ],
       callback: (action): void => {
-        sendOsc(SendFaderPath(action.options), {
-          type: 'f',
-          value: dbToFloat(getOptNumber(action, 'fad'))
-        })
+        const cmd = SendFaderPath(action.options)
+        const currentState = state.get(cmd)
+        const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
+        transitions.run(cmd, currentVal, getOptNumber(action, 'fad'), getOptNumber(action, 'fadeDuration', 0))
+      },
+      subscribe: (evt): void => {
+        // In case we have a fade time
+        ensureLoaded(oscSocket, state, SendFaderPath(evt.options))
       }
     },
     [ActionId.ChannelSendLevelDelta]: {
@@ -312,17 +330,20 @@ export function GetActionsList(
           id: 'target',
           ...convertChoices(GetChannelSendChoices(state, 'level'))
         },
-        FaderLevelDeltaChoice
+        FaderLevelDeltaChoice,
+        FadeDurationChoice
       ],
       callback: (action): void => {
         const cmd = SendFaderPath(action.options)
         const currentState = state.get(cmd)
-        const currentVal = currentState && currentState[0]?.type === 'f' && currentState[0]?.value
+        const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
         if (typeof currentVal === 'number') {
-          sendOsc(cmd, {
-            type: 'f',
-            value: offsetFloatByDb(currentVal, getOptNumber(action, 'delta'))
-          })
+          transitions.run(
+            cmd,
+            currentVal,
+            currentVal + getOptNumber(action, 'delta'),
+            getOptNumber(action, 'fadeDuration', 0)
+          )
         }
       },
       subscribe: (evt): void => {

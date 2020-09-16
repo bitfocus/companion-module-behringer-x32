@@ -12,6 +12,7 @@ import { upgradeV2x0x0 } from './migrations'
 import { GetTargetChoices } from './choices'
 import * as debounceFn from 'debounce-fn'
 import PQueue from 'p-queue'
+import { X32Transitions } from './transitions'
 
 /**
  * Companion instance class for the Behringer X32 Mixers.
@@ -20,6 +21,7 @@ class X32Instance extends InstanceSkel<X32Config> {
   private osc: osc.UDPPort
   private x32State: X32State
   private x32Subscriptions: X32Subscriptions
+  private transitions: X32Transitions
 
   /** Ping the x32 at a regular interval to tell it to keep sending us info, and for us to check it is still there */
   private heartbeat: NodeJS.Timer | undefined
@@ -50,6 +52,7 @@ class X32Instance extends InstanceSkel<X32Config> {
 
     this.x32State = new X32State()
     this.x32Subscriptions = new X32Subscriptions()
+    this.transitions = new X32Transitions(this)
 
     this.addUpgradeScript(() => false) // Previous version had a script
     this.addUpgradeScript(upgradeV2x0x0)
@@ -85,6 +88,9 @@ class X32Instance extends InstanceSkel<X32Config> {
     this.x32State = new X32State()
     this.x32Subscriptions = new X32Subscriptions()
 
+    this.transitions.stopAll()
+    this.transitions = new X32Transitions(this)
+
     if (this.config.host !== undefined) {
       try {
         this.osc.close()
@@ -94,6 +100,7 @@ class X32Instance extends InstanceSkel<X32Config> {
 
       this.status(this.STATUS_WARNING, 'Connecting')
       this.setupOscSocket()
+      this.updateCompanionBits()
     }
   }
 
@@ -123,6 +130,8 @@ class X32Instance extends InstanceSkel<X32Config> {
       this.heartbeat = undefined
     }
 
+    this.transitions.stopAll()
+
     if (this.osc) {
       try {
         this.osc.close()
@@ -139,7 +148,7 @@ class X32Instance extends InstanceSkel<X32Config> {
     InitVariables(this, this.x32State)
     this.setPresetDefinitions(GetPresetsList(this, this.x32State))
     this.setFeedbackDefinitions(GetFeedbacksList(this, this.osc, this.x32State, this.x32Subscriptions))
-    this.setActions(GetActionsList(this, this.osc, this.x32State))
+    this.setActions(GetActionsList(this, this.osc, this.transitions, this.x32State))
     this.checkFeedbacks()
 
     updateNameVariables(this, this.x32State)
