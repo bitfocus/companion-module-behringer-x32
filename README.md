@@ -20,6 +20,8 @@ While developing the module, by using `yarn build:watch` the compiler will be ru
 
 - Fix connection not opening when updating config
 
+- Temporarily store and restore fader levels
+
 ### v2.3.2
 
 - Fix bad send calls causing error dialog loop
