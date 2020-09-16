@@ -7,11 +7,9 @@ import {
 } from '../../../instance_skel_types'
 import { X32State, X32Subscriptions } from './state'
 import {
-  GetTargetChoices,
   GetMuteGroupChoices,
   GetChannelSendChoices,
   convertChoices,
-  GetBusSendChoices,
   GetOscillatorDestinations,
   FaderLevelChoice,
   GetLevelsChoiceConfigs

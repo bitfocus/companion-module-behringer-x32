@@ -6,7 +6,7 @@ import { X32Config } from './config'
 import { FeedbackId } from './feedback'
 import { X32State } from './state'
 import { ValuesType, NonUndefined } from 'utility-types'
-import { GetBusSendChoices, GetChannelSendChoices, GetLevelsChoiceConfigs, GetTargetChoices } from './choices'
+import { GetLevelsChoiceConfigs } from './choices'
 
 interface CompanionPresetExt extends CompanionPreset {
   feedbacks: Array<
