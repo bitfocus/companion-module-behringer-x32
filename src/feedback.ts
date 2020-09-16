@@ -12,13 +12,15 @@ import {
   GetChannelSendChoices,
   convertChoices,
   GetBusSendChoices,
-  GetOscillatorDestinations
+  GetOscillatorDestinations,
+  FaderLevelChoice
 } from './choices'
-import { ensureLoaded } from './util'
-import { MutePath, MainPath } from './paths'
+import { compareNumber, ensureLoaded, floatToDB } from './util'
+import { MutePath, MainPath, MainFaderPath, SendFaderPath } from './paths'
 import * as osc from 'osc'
 import InstanceSkel = require('../../../instance_skel')
 import { X32Config } from './config'
+import { NumberComparitorPicker } from './input'
 
 type CompanionFeedbackWithCallback = CompanionFeedback &
   Required<Pick<CompanionFeedback, 'callback' | 'subscribe' | 'unsubscribe'>>
@@ -28,6 +30,8 @@ export enum FeedbackId {
   MuteGroup = 'mute_grp',
   MuteChannelSend = 'mute_channel_send',
   MuteBusSend = 'mute_bus_send',
+  FaderLevel = 'fader_level',
+  ChannelSendLevel = 'level_channel_send',
   TalkbackTalk = 'talkback_talk',
   OscillatorEnable = 'oscillator-enable',
   OscillatorDestination = 'oscillator-destination'
@@ -67,14 +71,13 @@ function subscribeFeedback(
   state: X32State,
   subs: X32Subscriptions,
   path: string,
-  id: string,
-  type: string
+  evt: CompanionFeedbackEvent
 ): void {
-  subs.subscribe(path, id, type as FeedbackId)
+  subs.subscribe(path, evt.id, evt.type as FeedbackId)
   ensureLoaded(oscSocket, state, path)
 }
-function unsubscribeFeedback(subs: X32Subscriptions, path: string, id: string): void {
-  subs.unsubscribe(path, id)
+function unsubscribeFeedback(subs: X32Subscriptions, path: string, evt: CompanionFeedbackEvent): void {
+  subs.unsubscribe(path, evt.id)
 }
 
 export function GetFeedbacksList(
@@ -83,7 +86,7 @@ export function GetFeedbacksList(
   state: X32State,
   subs: X32Subscriptions
 ): CompanionFeedbacks {
-  const mutableChannels = GetTargetChoices(state, { includeMain: true })
+  const allTargets = GetTargetChoices(state, { includeMain: true })
   const muteGroups = GetMuteGroupChoices(state)
   const channelSendSources = GetTargetChoices(state, {
     includeMain: false,
@@ -111,7 +114,7 @@ export function GetFeedbacksList(
           id: 'target',
           type: 'dropdown',
           label: 'Target',
-          ...convertChoices(mutableChannels)
+          ...convertChoices(allTargets)
         },
         {
           id: 'state',
@@ -130,11 +133,11 @@ export function GetFeedbacksList(
       },
       subscribe: (evt: CompanionFeedbackEvent): void => {
         const path = MutePath(evt.options.target as string)
-        subscribeFeedback(oscSocket, state, subs, path, evt.id, evt.type)
+        subscribeFeedback(oscSocket, state, subs, path, evt)
       },
       unsubscribe: (evt: CompanionFeedbackEvent): void => {
         const path = MutePath(evt.options.target as string)
-        unsubscribeFeedback(subs, path, evt.id)
+        unsubscribeFeedback(subs, path, evt)
       }
     },
     [FeedbackId.MuteGroup]: {
@@ -166,11 +169,11 @@ export function GetFeedbacksList(
       },
       subscribe: (evt: CompanionFeedbackEvent): void => {
         const path = evt.options.mute_grp as string
-        subscribeFeedback(oscSocket, state, subs, path, evt.id, evt.type)
+        subscribeFeedback(oscSocket, state, subs, path, evt)
       },
       unsubscribe: (evt: CompanionFeedbackEvent): void => {
         const path = evt.options.mute_grp as string
-        unsubscribeFeedback(subs, path, evt.id)
+        unsubscribeFeedback(subs, path, evt)
       }
     },
     [FeedbackId.MuteChannelSend]: {
@@ -209,11 +212,11 @@ export function GetFeedbacksList(
       },
       subscribe: (evt: CompanionFeedbackEvent): void => {
         const path = `${MainPath(evt.options.source as string)}/${evt.options.target}`
-        subscribeFeedback(oscSocket, state, subs, path, evt.id, evt.type)
+        subscribeFeedback(oscSocket, state, subs, path, evt)
       },
       unsubscribe: (evt: CompanionFeedbackEvent): void => {
         const path = `${MainPath(evt.options.source as string)}/${evt.options.target}`
-        unsubscribeFeedback(subs, path, evt.id)
+        unsubscribeFeedback(subs, path, evt)
       }
     },
     [FeedbackId.MuteBusSend]: {
@@ -252,11 +255,89 @@ export function GetFeedbacksList(
       },
       subscribe: (evt: CompanionFeedbackEvent): void => {
         const path = `${MainPath(evt.options.source as string)}/${evt.options.target}/on`
-        subscribeFeedback(oscSocket, state, subs, path, evt.id, evt.type)
+        subscribeFeedback(oscSocket, state, subs, path, evt)
       },
       unsubscribe: (evt: CompanionFeedbackEvent): void => {
         const path = `${MainPath(evt.options.source as string)}/${evt.options.target}/on`
-        unsubscribeFeedback(subs, path, evt.id)
+        unsubscribeFeedback(subs, path, evt)
+      }
+    },
+    [FeedbackId.FaderLevel]: {
+      label: 'Change colors from fader level',
+      description: 'If the fader level has the specified gain, change color of the bank',
+      options: [
+        ForegroundPicker(self.rgb(0, 0, 0)),
+        BackgroundPicker(self.rgb(0, 255, 0)),
+        {
+          type: 'dropdown',
+          label: 'Target',
+          id: 'target',
+          ...convertChoices(allTargets)
+        },
+        NumberComparitorPicker(),
+        FaderLevelChoice
+      ],
+      callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
+        const currentState = state.get(MainFaderPath(evt.options))
+        const currentVal = currentState && currentState[0]?.type === 'f' && currentState[0]?.value
+        if (
+          typeof currentVal === 'number' &&
+          compareNumber(evt.options.fad, evt.options.comparitor, floatToDB(currentVal))
+        ) {
+          return getOptColors(evt)
+        }
+
+        return {}
+      },
+      subscribe: (evt): void => {
+        const path = MainFaderPath(evt.options)
+        subscribeFeedback(oscSocket, state, subs, path, evt)
+      },
+      unsubscribe: (evt: CompanionFeedbackEvent): void => {
+        const path = MainFaderPath(evt.options)
+        unsubscribeFeedback(subs, path, evt)
+      }
+    },
+    [FeedbackId.ChannelSendLevel]: {
+      label: 'Change colors from level of channel to bus send',
+      description: 'If the channel to bus send level has the specified gain, change color of the bank',
+      options: [
+        ForegroundPicker(self.rgb(0, 0, 0)),
+        BackgroundPicker(self.rgb(0, 255, 0)),
+        {
+          type: 'dropdown',
+          label: 'Source',
+          id: 'source',
+          ...convertChoices(channelSendSources)
+        },
+        {
+          type: 'dropdown',
+          label: 'Target',
+          id: 'target',
+          ...convertChoices(GetChannelSendChoices(state, 'level'))
+        },
+        NumberComparitorPicker(),
+        FaderLevelChoice
+      ],
+      callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
+        const currentState = state.get(SendFaderPath(evt.options))
+        const currentVal = currentState && currentState[0]?.type === 'f' && currentState[0]?.value
+        if (
+          typeof currentVal === 'number' &&
+          compareNumber(evt.options.fad, evt.options.comparitor, floatToDB(currentVal))
+        ) {
+          return getOptColors(evt)
+        }
+
+        return {}
+      },
+      subscribe: (evt): void => {
+        const path = SendFaderPath(evt.options)
+        subscribeFeedback(oscSocket, state, subs, path, evt)
+      },
+      unsubscribe: (evt: CompanionFeedbackEvent): void => {
+        const path = SendFaderPath(evt.options)
+        unsubscribeFeedback(subs, path, evt)
       }
     },
     [FeedbackId.TalkbackTalk]: {
@@ -298,11 +379,11 @@ export function GetFeedbacksList(
       },
       subscribe: (evt: CompanionFeedbackEvent): void => {
         const path = `/-stat/talk/${evt.options.channel}`
-        subscribeFeedback(oscSocket, state, subs, path, evt.id, evt.type)
+        subscribeFeedback(oscSocket, state, subs, path, evt)
       },
       unsubscribe: (evt: CompanionFeedbackEvent): void => {
         const path = `/-stat/talk/${evt.options.channel}`
-        unsubscribeFeedback(subs, path, evt.id)
+        unsubscribeFeedback(subs, path, evt)
       }
     },
     [FeedbackId.OscillatorEnable]: {
@@ -329,11 +410,11 @@ export function GetFeedbacksList(
       },
       subscribe: (evt: CompanionFeedbackEvent): void => {
         const path = `/-stat/osc/on`
-        subscribeFeedback(oscSocket, state, subs, path, evt.id, evt.type)
+        subscribeFeedback(oscSocket, state, subs, path, evt)
       },
       unsubscribe: (evt: CompanionFeedbackEvent): void => {
         const path = `/-stat/osc/on`
-        unsubscribeFeedback(subs, path, evt.id)
+        unsubscribeFeedback(subs, path, evt)
       }
     },
     [FeedbackId.OscillatorDestination]: {
@@ -360,11 +441,11 @@ export function GetFeedbacksList(
       },
       subscribe: (evt: CompanionFeedbackEvent): void => {
         const path = `/config/osc/dest`
-        subscribeFeedback(oscSocket, state, subs, path, evt.id, evt.type)
+        subscribeFeedback(oscSocket, state, subs, path, evt)
       },
       unsubscribe: (evt: CompanionFeedbackEvent): void => {
         const path = `/config/osc/dest`
-        unsubscribeFeedback(subs, path, evt.id)
+        unsubscribeFeedback(subs, path, evt)
       }
     }
   }

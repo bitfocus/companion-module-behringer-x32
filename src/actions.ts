@@ -23,6 +23,7 @@ import {
 } from './choices'
 import * as osc from 'osc'
 import { MutePath, MainPath, MainFaderPath, SendFaderPath } from './paths'
+import { Required as MakeRequired } from 'utility-types'
 
 export enum ActionId {
   Mute = 'mute',
@@ -49,7 +50,7 @@ export enum ActionId {
   OscillatorDestination = 'oscillator-destination'
 }
 
-type CompanionActionWithCallback = CompanionAction & Required<Pick<CompanionAction, 'callback'>>
+type CompanionActionWithCallback = Omit<MakeRequired<CompanionAction, 'callback'>, 'unsubscribe'>
 
 export function GetActionsList(
   self: InstanceSkel<X32Config>,
