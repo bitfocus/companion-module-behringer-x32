@@ -10,6 +10,14 @@ While developing the module, by using `yarn build:watch` the compiler will be ru
 
 ## Changes
 
+### v2.4.0
+
+- Relative fader levels adjustments
+
+- Fader level feedbacks
+
+- Fader level fades
+
 ### v2.3.2
 
 - Fix bad send calls causing error dialog loop
