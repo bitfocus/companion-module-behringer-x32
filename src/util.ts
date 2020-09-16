@@ -62,6 +62,10 @@ export function dbToFloat(d: number): number {
   return f // Math.round((f * 1023.5) / 1023.0)
 }
 
+export function offsetFloatByDb(f: number, delta: number): number {
+  return dbToFloat(floatToDB(f) + delta)
+}
+
 export function formatDb(d: number): string {
   // Round to 1dp
   d = Math.round(d * 10) / 10

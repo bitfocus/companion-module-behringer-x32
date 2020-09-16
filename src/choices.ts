@@ -75,6 +75,15 @@ export const FaderLevelChoice: CompanionInputFieldNumber = {
   min: -90,
   max: 10
 }
+
+export const FaderLevelDeltaChoice: CompanionInputFieldNumber = {
+  type: 'number',
+  label: 'Delta',
+  id: 'delta',
+  default: 1,
+  max: 100,
+  min: -100
+}
 export const HeadampGainChoice: CompanionInputFieldNumber = {
   type: 'number',
   label: 'Gain',

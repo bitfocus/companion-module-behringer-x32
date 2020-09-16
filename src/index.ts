@@ -129,7 +129,7 @@ class X32Instance extends InstanceSkel<X32Config> {
       } catch (e) {
         // Ignore
       }
-      delete this.osc
+      // delete this.osc
     }
 
     this.debug('destroy', this.id)

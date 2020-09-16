@@ -2,7 +2,7 @@ import InstanceSkel = require('../../../instance_skel')
 import { CompanionAction, CompanionActionEvent, CompanionActions } from '../../../instance_skel_types'
 import { X32State } from './state'
 import { X32Config } from './config'
-import { dbToFloat, ensureLoaded, trimToFloat, headampGainToFloat } from './util'
+import { dbToFloat, ensureLoaded, trimToFloat, headampGainToFloat, offsetFloatByDb } from './util'
 import {
   CHOICES_TAPE_FUNC,
   CHOICES_COLOR,
@@ -18,10 +18,11 @@ import {
   MuteChoice,
   HeadampGainChoice,
   GetHeadampChoices,
-  GetOscillatorDestinations
+  GetOscillatorDestinations,
+  FaderLevelDeltaChoice
 } from './choices'
 import * as osc from 'osc'
-import { MutePath, MainPath } from './paths'
+import { MutePath, MainPath, MainFaderPath, SendFaderPath } from './paths'
 
 export enum ActionId {
   Mute = 'mute',
@@ -29,7 +30,9 @@ export enum ActionId {
   MuteChannelSend = 'mute_channel_send',
   MuteBusSend = 'mute_bus_send',
   FaderLevel = 'fad',
+  FaderLevelDelta = 'fader_delta',
   ChannelSendLevel = 'level_channel_send',
+  ChannelSendLevelDelta = 'level_channel_send_delta',
   BusSendLevel = 'level_bus_send',
   InputTrim = 'input_trim',
   // InputGain = 'input_gain',
@@ -237,10 +240,36 @@ export function GetActionsList(
         FaderLevelChoice
       ],
       callback: (action): void => {
-        sendOsc(`${MainPath(action.options.target as string)}/fader`, {
+        sendOsc(MainFaderPath(action.options), {
           type: 'f',
           value: dbToFloat(getOptNumber(action, 'fad'))
         })
+      }
+    },
+    [ActionId.FaderLevelDelta]: {
+      label: 'Adjust fader level',
+      options: [
+        {
+          type: 'dropdown',
+          label: 'Target',
+          id: 'target',
+          ...convertChoices(allTargets)
+        },
+        FaderLevelDeltaChoice
+      ],
+      callback: (action): void => {
+        const cmd = MainFaderPath(action.options)
+        const currentState = state.get(cmd)
+        const currentVal = currentState && currentState[0]?.type === 'f' && currentState[0]?.value
+        if (typeof currentVal === 'number') {
+          sendOsc(cmd, {
+            type: 'f',
+            value: offsetFloatByDb(currentVal, getOptNumber(action, 'delta'))
+          })
+        }
+      },
+      subscribe: (evt): void => {
+        ensureLoaded(oscSocket, state, MainFaderPath(evt.options))
       }
     },
     [ActionId.ChannelSendLevel]: {
@@ -261,10 +290,42 @@ export function GetActionsList(
         FaderLevelChoice
       ],
       callback: (action): void => {
-        sendOsc(`${MainPath(action.options.source as string)}/${action.options.target}`, {
+        sendOsc(SendFaderPath(action.options), {
           type: 'f',
           value: dbToFloat(getOptNumber(action, 'fad'))
         })
+      }
+    },
+    [ActionId.ChannelSendLevelDelta]: {
+      label: 'Adjust level of channel to bus send',
+      options: [
+        {
+          type: 'dropdown',
+          label: 'Source',
+          id: 'source',
+          ...convertChoices(allInputs)
+        },
+        {
+          type: 'dropdown',
+          label: 'Target',
+          id: 'target',
+          ...convertChoices(GetChannelSendChoices(state, 'level'))
+        },
+        FaderLevelDeltaChoice
+      ],
+      callback: (action): void => {
+        const cmd = SendFaderPath(action.options)
+        const currentState = state.get(cmd)
+        const currentVal = currentState && currentState[0]?.type === 'f' && currentState[0]?.value
+        if (typeof currentVal === 'number') {
+          sendOsc(cmd, {
+            type: 'f',
+            value: offsetFloatByDb(currentVal, getOptNumber(action, 'delta'))
+          })
+        }
+      },
+      subscribe: (evt): void => {
+        ensureLoaded(oscSocket, state, SendFaderPath(evt.options))
       }
     },
     [ActionId.BusSendLevel]: {
