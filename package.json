@@ -64,6 +64,6 @@
 		"utility-types": "^3.10.0"
 	},
 	"resolutions": {
-		"**/inquirer": "~7.2.0"
+		"eslint/inquirer": "~7.2.0"
 	}
 }
