@@ -38,6 +38,9 @@ class X32Instance extends InstanceSkel<X32Config> {
   })
   private inFlightRequests: { [path: string]: () => void } = {}
 
+  private readonly messageFeedbacks = new Set<FeedbackId>()
+  private readonly debounceMessageFeedbacks: () => void
+
   /**
    * Create an instance of an X32 module.
    */
@@ -59,8 +62,27 @@ class X32Instance extends InstanceSkel<X32Config> {
 
     this.debounceUpdateCompanionBits = debounceFn(this.updateCompanionBits, {
       wait: 100,
-      immediate: false
+      maxWait: 500,
+      before: false,
+      after: true
     })
+
+    this.debounceMessageFeedbacks = debounceFn(
+      () => {
+        console.log('fire feedbacks')
+        const feedbacks = Array.from(this.messageFeedbacks)
+        this.messageFeedbacks.clear()
+        for (const feedback of feedbacks) {
+          this.checkFeedbacks(feedback)
+        }
+      },
+      {
+        wait: 100,
+        maxWait: 500,
+        before: true,
+        after: true
+      }
+    )
   }
 
   // Override base types to make types stricter
@@ -264,6 +286,8 @@ class X32Instance extends InstanceSkel<X32Config> {
     this.osc.on('message', (message): void => {
       // console.log('Message', message)
       const args = message.args as osc.MetaArgument[]
+
+      // TODO - during initial connection this looks to be too heavy...
       this.checkFeedbackChanges(message)
 
       if (this.inFlightRequests[message.address]) {
@@ -329,6 +353,8 @@ class X32Instance extends InstanceSkel<X32Config> {
       .catch(() => {
         delete this.inFlightRequests[path]
         this.log('error', `Request failed for "${path}"`)
+
+        // TODO If a timeout, can/should we retry it?
       })
   }
 
@@ -336,8 +362,10 @@ class X32Instance extends InstanceSkel<X32Config> {
     const args = msg.args as osc.MetaArgument[]
     this.x32State.set(msg.address, args)
 
-    for (const fb of this.x32Subscriptions.getFeedbacks(msg.address)) {
-      this.checkFeedbacks(fb)
+    const toUpdate = this.x32Subscriptions.getFeedbacks(msg.address)
+    if (toUpdate.length > 0) {
+      toUpdate.forEach(f => this.messageFeedbacks.add(f))
+      this.debounceMessageFeedbacks()
     }
 
     if (msg.address.match('/config/name$') || msg.address.match('/fader$')) {
