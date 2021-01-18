@@ -169,8 +169,8 @@ class X32Instance extends InstanceSkel<X32Config> {
   private updateCompanionBits(): void {
     InitVariables(this, this.x32State)
     this.setPresetDefinitions(GetPresetsList(this, this.x32State))
-    this.setFeedbackDefinitions(GetFeedbacksList(this, this.osc, this.x32State, this.x32Subscriptions))
-    this.setActions(GetActionsList(this, this.osc, this.transitions, this.x32State))
+    this.setFeedbackDefinitions(GetFeedbacksList(this, this.x32State, this.x32Subscriptions, this.queueEnsureLoaded))
+    this.setActions(GetActionsList(this, this.transitions, this.x32State, this.queueEnsureLoaded))
     this.checkFeedbacks()
 
     updateNameVariables(this, this.x32State)
@@ -286,14 +286,16 @@ class X32Instance extends InstanceSkel<X32Config> {
     this.osc.on('message', (message): void => {
       // console.log('Message', message)
       const args = message.args as osc.MetaArgument[]
-
-      // TODO - during initial connection this looks to be too heavy...
-      this.checkFeedbackChanges(message)
+      this.x32State.set(message.address, args)
 
       if (this.inFlightRequests[message.address]) {
         this.inFlightRequests[message.address]()
         delete this.inFlightRequests[message.address]
       }
+
+      // setImmediate(() => {
+      this.checkFeedbackChanges(message)
+      // })
 
       switch (message.address) {
         case '/xinfo':
@@ -324,12 +326,12 @@ class X32Instance extends InstanceSkel<X32Config> {
   private loadVariablesData(): void {
     const targets = GetTargetChoices(this.x32State, { includeMain: true, defaultNames: true })
     for (const target of targets) {
-      this.queueOscRequest(`${target.id}/config/name`)
-      this.queueOscRequest(`${MainPath(target.id as string)}/fader`)
+      this.queueEnsureLoaded(`${target.id}/config/name`)
+      this.queueEnsureLoaded(`${MainPath(target.id as string)}/fader`)
     }
   }
 
-  private queueOscRequest(path: string): void {
+  private queueEnsureLoaded = (path: string): void => {
     this.requestQueue
       .add(async () => {
         if (this.inFlightRequests[path]) {
@@ -337,9 +339,14 @@ class X32Instance extends InstanceSkel<X32Config> {
           return
         }
 
+        if (this.x32State.get(path)) {
+          this.debug(`Ignoring request "${path}" as data is already loaded`)
+          return
+        }
+
         // console.log('starting request', path)
 
-        const p = new Promise(resolve => {
+        const p = new Promise<void>(resolve => {
           this.inFlightRequests[path] = resolve
         })
 
@@ -359,9 +366,6 @@ class X32Instance extends InstanceSkel<X32Config> {
   }
 
   private checkFeedbackChanges(msg: osc.OscMessage): void {
-    const args = msg.args as osc.MetaArgument[]
-    this.x32State.set(msg.address, args)
-
     const toUpdate = this.x32Subscriptions.getFeedbacks(msg.address)
     if (toUpdate.length > 0) {
       toUpdate.forEach(f => this.messageFeedbacks.add(f))

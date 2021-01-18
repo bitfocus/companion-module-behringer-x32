@@ -2,7 +2,7 @@ import InstanceSkel = require('../../../instance_skel')
 import { CompanionAction, CompanionActionEvent, CompanionActions } from '../../../instance_skel_types'
 import { X32State } from './state'
 import { X32Config } from './config'
-import { ensureLoaded, trimToFloat, headampGainToFloat, floatToDB } from './util'
+import { trimToFloat, headampGainToFloat, floatToDB } from './util'
 import {
   CHOICES_TAPE_FUNC,
   CHOICES_COLOR,
@@ -64,9 +64,9 @@ type CompanionActionWithCallback = MakeRequired<CompanionAction, 'callback'>
 
 export function GetActionsList(
   self: InstanceSkel<X32Config>,
-  oscSocket: osc.UDPPort,
   transitions: X32Transitions,
-  state: X32State
+  state: X32State,
+  ensureLoaded: (path: string) => void
 ): CompanionActions {
   const levelsChoices = GetLevelsChoiceConfigs(state)
   const muteGroups = GetMuteGroupChoices(state)
@@ -136,7 +136,7 @@ export function GetActionsList(
       },
       subscribe: (evt): void => {
         if (evt.options.mute === MUTE_TOGGLE) {
-          ensureLoaded(oscSocket, state, MutePath(evt.options.target as string))
+          ensureLoaded(MutePath(evt.options.target as string))
         }
       }
     },
@@ -165,7 +165,7 @@ export function GetActionsList(
       },
       subscribe: (evt): void => {
         if (evt.options.mute === MUTE_TOGGLE) {
-          ensureLoaded(oscSocket, state, evt.options.target as string)
+          ensureLoaded(evt.options.target as string)
         }
       }
     },
@@ -195,7 +195,7 @@ export function GetActionsList(
       },
       subscribe: (evt): void => {
         if (evt.options.mute === MUTE_TOGGLE) {
-          ensureLoaded(oscSocket, state, `${MainPath(evt.options.source as string)}/${evt.options.target}`)
+          ensureLoaded(`${MainPath(evt.options.source as string)}/${evt.options.target}`)
         }
       }
     },
@@ -225,7 +225,7 @@ export function GetActionsList(
       },
       subscribe: (evt): void => {
         if (evt.options.mute === MUTE_TOGGLE) {
-          ensureLoaded(oscSocket, state, `${MainPath(evt.options.source as string)}/${evt.options.target}/on`)
+          ensureLoaded(`${MainPath(evt.options.source as string)}/${evt.options.target}/on`)
         }
       }
     },
@@ -249,7 +249,7 @@ export function GetActionsList(
       },
       subscribe: (evt): void => {
         // In case we have a fade time
-        ensureLoaded(oscSocket, state, MainFaderPath(evt.options))
+        ensureLoaded(MainFaderPath(evt.options))
       }
     },
     [ActionId.FaderLevelStore]: {
@@ -271,7 +271,7 @@ export function GetActionsList(
         }
       },
       subscribe: (evt): void => {
-        ensureLoaded(oscSocket, state, MainFaderPath(evt.options))
+        ensureLoaded(MainFaderPath(evt.options))
       }
     },
     [ActionId.FaderLevelRestore]: {
@@ -324,7 +324,7 @@ export function GetActionsList(
         }
       },
       subscribe: (evt): void => {
-        ensureLoaded(oscSocket, state, MainFaderPath(evt.options))
+        ensureLoaded(MainFaderPath(evt.options))
       }
     },
     [ActionId.ChannelSendLevel]: {
@@ -353,7 +353,7 @@ export function GetActionsList(
       },
       subscribe: (evt): void => {
         // In case we have a fade time
-        ensureLoaded(oscSocket, state, SendChannelToBusPath(evt.options))
+        ensureLoaded(SendChannelToBusPath(evt.options))
       }
     },
     [ActionId.ChannelSendLevelDelta]: {
@@ -388,7 +388,7 @@ export function GetActionsList(
         }
       },
       subscribe: (evt): void => {
-        ensureLoaded(oscSocket, state, SendChannelToBusPath(evt.options))
+        ensureLoaded(SendChannelToBusPath(evt.options))
       }
     },
     [ActionId.ChannelSendLevelStore]: {
@@ -416,7 +416,7 @@ export function GetActionsList(
         }
       },
       subscribe: (evt): void => {
-        ensureLoaded(oscSocket, state, SendChannelToBusPath(evt.options))
+        ensureLoaded(SendChannelToBusPath(evt.options))
       }
     },
     [ActionId.ChannelSendLevelRestore]: {
@@ -475,7 +475,7 @@ export function GetActionsList(
       },
       subscribe: (evt): void => {
         // In case we have a fade time
-        ensureLoaded(oscSocket, state, SendBusToMatrixPath(evt.options))
+        ensureLoaded(SendBusToMatrixPath(evt.options))
       }
     },
     [ActionId.BusSendLevelDelta]: {
@@ -510,7 +510,7 @@ export function GetActionsList(
         }
       },
       subscribe: (evt): void => {
-        ensureLoaded(oscSocket, state, SendBusToMatrixPath(evt.options))
+        ensureLoaded(SendBusToMatrixPath(evt.options))
       }
     },
     [ActionId.BusSendLevelStore]: {
@@ -538,7 +538,7 @@ export function GetActionsList(
         }
       },
       subscribe: (evt): void => {
-        ensureLoaded(oscSocket, state, SendBusToMatrixPath(evt.options))
+        ensureLoaded(SendBusToMatrixPath(evt.options))
       }
     },
     [ActionId.BusSendLevelRestore]: {
@@ -792,7 +792,7 @@ export function GetActionsList(
       },
       subscribe: (evt): void => {
         if (evt.options.on === MUTE_TOGGLE) {
-          ensureLoaded(oscSocket, state, `/-stat/talk/${evt.options.channel}`)
+          ensureLoaded(`/-stat/talk/${evt.options.channel}`)
         }
       }
     },
@@ -817,7 +817,7 @@ export function GetActionsList(
       },
       subscribe: (evt): void => {
         if (evt.options.on === MUTE_TOGGLE) {
-          ensureLoaded(oscSocket, state, `/-stat/osc/on`)
+          ensureLoaded(`/-stat/osc/on`)
         }
       }
     },

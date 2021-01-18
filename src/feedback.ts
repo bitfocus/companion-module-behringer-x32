@@ -14,7 +14,7 @@ import {
   FaderLevelChoice,
   GetLevelsChoiceConfigs
 } from './choices'
-import { compareNumber, ensureLoaded, floatToDB } from './util'
+import { compareNumber, floatToDB } from './util'
 import { MutePath, MainPath, MainFaderPath, SendChannelToBusPath, SendBusToMatrixPath } from './paths'
 import * as osc from 'osc'
 import InstanceSkel = require('../../../instance_skel')
@@ -67,14 +67,13 @@ function getDataNumber(data: osc.MetaArgument[] | undefined, index: number): num
 }
 
 function subscribeFeedback(
-  oscSocket: osc.UDPPort,
-  state: X32State,
+  ensureLoaded: (path: string) => void,
   subs: X32Subscriptions,
   path: string,
   evt: CompanionFeedbackEvent
 ): void {
   subs.subscribe(path, evt.id, evt.type as FeedbackId)
-  ensureLoaded(oscSocket, state, path)
+  ensureLoaded(path)
 }
 function unsubscribeFeedback(subs: X32Subscriptions, path: string, evt: CompanionFeedbackEvent): void {
   subs.unsubscribe(path, evt.id)
@@ -82,9 +81,9 @@ function unsubscribeFeedback(subs: X32Subscriptions, path: string, evt: Companio
 
 export function GetFeedbacksList(
   self: InstanceSkel<X32Config>,
-  oscSocket: osc.UDPPort,
   state: X32State,
-  subs: X32Subscriptions
+  subs: X32Subscriptions,
+  ensureLoaded: (path: string) => void
 ): CompanionFeedbacks {
   const levelsChoices = GetLevelsChoiceConfigs(state)
   const muteGroups = GetMuteGroupChoices(state)
@@ -119,7 +118,7 @@ export function GetFeedbacksList(
       },
       subscribe: (evt: CompanionFeedbackEvent): void => {
         const path = MutePath(evt.options.target as string)
-        subscribeFeedback(oscSocket, state, subs, path, evt)
+        subscribeFeedback(ensureLoaded, subs, path, evt)
       },
       unsubscribe: (evt: CompanionFeedbackEvent): void => {
         const path = MutePath(evt.options.target as string)
@@ -155,7 +154,7 @@ export function GetFeedbacksList(
       },
       subscribe: (evt: CompanionFeedbackEvent): void => {
         const path = evt.options.mute_grp as string
-        subscribeFeedback(oscSocket, state, subs, path, evt)
+        subscribeFeedback(ensureLoaded, subs, path, evt)
       },
       unsubscribe: (evt: CompanionFeedbackEvent): void => {
         const path = evt.options.mute_grp as string
@@ -198,7 +197,7 @@ export function GetFeedbacksList(
       },
       subscribe: (evt: CompanionFeedbackEvent): void => {
         const path = `${MainPath(evt.options.source as string)}/${evt.options.target}`
-        subscribeFeedback(oscSocket, state, subs, path, evt)
+        subscribeFeedback(ensureLoaded, subs, path, evt)
       },
       unsubscribe: (evt: CompanionFeedbackEvent): void => {
         const path = `${MainPath(evt.options.source as string)}/${evt.options.target}`
@@ -241,7 +240,7 @@ export function GetFeedbacksList(
       },
       subscribe: (evt: CompanionFeedbackEvent): void => {
         const path = `${MainPath(evt.options.source as string)}/${evt.options.target}/on`
-        subscribeFeedback(oscSocket, state, subs, path, evt)
+        subscribeFeedback(ensureLoaded, subs, path, evt)
       },
       unsubscribe: (evt: CompanionFeedbackEvent): void => {
         const path = `${MainPath(evt.options.source as string)}/${evt.options.target}/on`
@@ -277,7 +276,7 @@ export function GetFeedbacksList(
       },
       subscribe: (evt): void => {
         const path = MainFaderPath(evt.options)
-        subscribeFeedback(oscSocket, state, subs, path, evt)
+        subscribeFeedback(ensureLoaded, subs, path, evt)
       },
       unsubscribe: (evt: CompanionFeedbackEvent): void => {
         const path = MainFaderPath(evt.options)
@@ -319,7 +318,7 @@ export function GetFeedbacksList(
       },
       subscribe: (evt): void => {
         const path = SendChannelToBusPath(evt.options)
-        subscribeFeedback(oscSocket, state, subs, path, evt)
+        subscribeFeedback(ensureLoaded, subs, path, evt)
       },
       unsubscribe: (evt: CompanionFeedbackEvent): void => {
         const path = SendChannelToBusPath(evt.options)
@@ -361,7 +360,7 @@ export function GetFeedbacksList(
       },
       subscribe: (evt): void => {
         const path = SendBusToMatrixPath(evt.options)
-        subscribeFeedback(oscSocket, state, subs, path, evt)
+        subscribeFeedback(ensureLoaded, subs, path, evt)
       },
       unsubscribe: (evt: CompanionFeedbackEvent): void => {
         const path = SendBusToMatrixPath(evt.options)
@@ -407,7 +406,7 @@ export function GetFeedbacksList(
       },
       subscribe: (evt: CompanionFeedbackEvent): void => {
         const path = `/-stat/talk/${evt.options.channel}`
-        subscribeFeedback(oscSocket, state, subs, path, evt)
+        subscribeFeedback(ensureLoaded, subs, path, evt)
       },
       unsubscribe: (evt: CompanionFeedbackEvent): void => {
         const path = `/-stat/talk/${evt.options.channel}`
@@ -438,7 +437,7 @@ export function GetFeedbacksList(
       },
       subscribe: (evt: CompanionFeedbackEvent): void => {
         const path = `/-stat/osc/on`
-        subscribeFeedback(oscSocket, state, subs, path, evt)
+        subscribeFeedback(ensureLoaded, subs, path, evt)
       },
       unsubscribe: (evt: CompanionFeedbackEvent): void => {
         const path = `/-stat/osc/on`
@@ -469,7 +468,7 @@ export function GetFeedbacksList(
       },
       subscribe: (evt: CompanionFeedbackEvent): void => {
         const path = `/config/osc/dest`
-        subscribeFeedback(oscSocket, state, subs, path, evt)
+        subscribeFeedback(ensureLoaded, subs, path, evt)
       },
       unsubscribe: (evt: CompanionFeedbackEvent): void => {
         const path = `/config/osc/dest`
