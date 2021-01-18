@@ -10,6 +10,10 @@ While developing the module, by using `yarn build:watch` the compiler will be ru
 
 ## Changes
 
+### v2.4.1
+
+- Fix state loading when there are many feedbacks or actions starting subscriptions
+
 ### v2.4.0
 
 - Relative fader levels adjustments
