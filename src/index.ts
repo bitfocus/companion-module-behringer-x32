@@ -38,6 +38,9 @@ class X32Instance extends InstanceSkel<X32Config> {
   })
   private inFlightRequests: { [path: string]: () => void } = {}
 
+  private readonly messageFeedbacks = new Set<FeedbackId>()
+  private readonly debounceMessageFeedbacks: () => void
+
   /**
    * Create an instance of an X32 module.
    */
@@ -59,8 +62,27 @@ class X32Instance extends InstanceSkel<X32Config> {
 
     this.debounceUpdateCompanionBits = debounceFn(this.updateCompanionBits, {
       wait: 100,
-      immediate: false
+      maxWait: 500,
+      before: false,
+      after: true
     })
+
+    this.debounceMessageFeedbacks = debounceFn(
+      () => {
+        console.log('fire feedbacks')
+        const feedbacks = Array.from(this.messageFeedbacks)
+        this.messageFeedbacks.clear()
+        for (const feedback of feedbacks) {
+          this.checkFeedbacks(feedback)
+        }
+      },
+      {
+        wait: 100,
+        maxWait: 500,
+        before: true,
+        after: true
+      }
+    )
   }
 
   // Override base types to make types stricter
@@ -147,15 +169,17 @@ class X32Instance extends InstanceSkel<X32Config> {
   private updateCompanionBits(): void {
     InitVariables(this, this.x32State)
     this.setPresetDefinitions(GetPresetsList(this, this.x32State))
-    this.setFeedbackDefinitions(GetFeedbacksList(this, this.osc, this.x32State, this.x32Subscriptions))
-    this.setActions(GetActionsList(this, this.osc, this.transitions, this.x32State))
+    this.setFeedbackDefinitions(GetFeedbacksList(this, this.x32State, this.x32Subscriptions, this.queueEnsureLoaded))
+    this.setActions(GetActionsList(this, this.transitions, this.x32State, this.queueEnsureLoaded))
     this.checkFeedbacks()
 
     updateNameVariables(this, this.x32State)
 
-    // Ensure all feedbacks & actions have an initial value
-    this.subscribeFeedbacks()
-    this.subscribeActions()
+    // Ensure all feedbacks & actions have an initial value, if we are connected
+    if (this.syncInterval) {
+      this.subscribeFeedbacks()
+      this.subscribeActions()
+    }
   }
 
   private pulse(): void {
@@ -264,12 +288,16 @@ class X32Instance extends InstanceSkel<X32Config> {
     this.osc.on('message', (message): void => {
       // console.log('Message', message)
       const args = message.args as osc.MetaArgument[]
-      this.checkFeedbackChanges(message)
+      this.x32State.set(message.address, args)
 
       if (this.inFlightRequests[message.address]) {
         this.inFlightRequests[message.address]()
         delete this.inFlightRequests[message.address]
       }
+
+      // setImmediate(() => {
+      this.checkFeedbackChanges(message)
+      // })
 
       switch (message.address) {
         case '/xinfo':
@@ -300,12 +328,12 @@ class X32Instance extends InstanceSkel<X32Config> {
   private loadVariablesData(): void {
     const targets = GetTargetChoices(this.x32State, { includeMain: true, defaultNames: true })
     for (const target of targets) {
-      this.queueOscRequest(`${target.id}/config/name`)
-      this.queueOscRequest(`${MainPath(target.id as string)}/fader`)
+      this.queueEnsureLoaded(`${target.id}/config/name`)
+      this.queueEnsureLoaded(`${MainPath(target.id as string)}/fader`)
     }
   }
 
-  private queueOscRequest(path: string): void {
+  private queueEnsureLoaded = (path: string): void => {
     this.requestQueue
       .add(async () => {
         if (this.inFlightRequests[path]) {
@@ -313,9 +341,14 @@ class X32Instance extends InstanceSkel<X32Config> {
           return
         }
 
+        if (this.x32State.get(path)) {
+          this.debug(`Ignoring request "${path}" as data is already loaded`)
+          return
+        }
+
         // console.log('starting request', path)
 
-        const p = new Promise(resolve => {
+        const p = new Promise<void>(resolve => {
           this.inFlightRequests[path] = resolve
         })
 
@@ -326,18 +359,19 @@ class X32Instance extends InstanceSkel<X32Config> {
 
         await p
       })
-      .catch(() => {
+      .catch((e: unknown) => {
         delete this.inFlightRequests[path]
-        this.log('error', `Request failed for "${path}"`)
+        this.log('error', `Request failed for "${path}": (${e})`)
+
+        // TODO If a timeout, can/should we retry it?
       })
   }
 
   private checkFeedbackChanges(msg: osc.OscMessage): void {
-    const args = msg.args as osc.MetaArgument[]
-    this.x32State.set(msg.address, args)
-
-    for (const fb of this.x32Subscriptions.getFeedbacks(msg.address)) {
-      this.checkFeedbacks(fb)
+    const toUpdate = this.x32Subscriptions.getFeedbacks(msg.address)
+    if (toUpdate.length > 0) {
+      toUpdate.forEach(f => this.messageFeedbacks.add(f))
+      this.debounceMessageFeedbacks()
     }
 
     if (msg.address.match('/config/name$') || msg.address.match('/fader$')) {

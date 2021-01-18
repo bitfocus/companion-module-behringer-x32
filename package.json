@@ -46,7 +46,7 @@
 		]
 	},
 	"dependencies": {
-		"debounce-fn": "^3.0.1",
+		"debounce-fn": "https://github.com/Julusian/debounce-fn.git",
 		"p-queue": "^6.6.2"
 	},
 	"devDependencies": {
