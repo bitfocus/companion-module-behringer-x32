@@ -175,9 +175,11 @@ class X32Instance extends InstanceSkel<X32Config> {
 
     updateNameVariables(this, this.x32State)
 
-    // Ensure all feedbacks & actions have an initial value
-    this.subscribeFeedbacks()
-    this.subscribeActions()
+    // Ensure all feedbacks & actions have an initial value, if we are connected
+    if (this.syncInterval) {
+      this.subscribeFeedbacks()
+      this.subscribeActions()
+    }
   }
 
   private pulse(): void {
@@ -357,9 +359,9 @@ class X32Instance extends InstanceSkel<X32Config> {
 
         await p
       })
-      .catch(() => {
+      .catch((e: unknown) => {
         delete this.inFlightRequests[path]
-        this.log('error', `Request failed for "${path}"`)
+        this.log('error', `Request failed for "${path}": (${e})`)
 
         // TODO If a timeout, can/should we retry it?
       })
