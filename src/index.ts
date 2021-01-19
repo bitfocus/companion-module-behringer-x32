@@ -176,7 +176,7 @@ class X32Instance extends InstanceSkel<X32Config> {
     updateNameVariables(this, this.x32State)
 
     // Ensure all feedbacks & actions have an initial value, if we are connected
-    if (this.syncInterval) {
+    if (this.heartbeat) {
       this.subscribeFeedbacks()
       this.subscribeActions()
     }
