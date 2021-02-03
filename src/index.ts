@@ -114,12 +114,6 @@ class X32Instance extends InstanceSkel<X32Config> {
     this.transitions = new X32Transitions(this)
 
     if (this.config.host !== undefined) {
-      try {
-        this.osc.close()
-      } catch (e) {
-        // Ignore
-      }
-
       this.status(this.STATUS_WARNING, 'Connecting')
       this.setupOscSocket()
       this.updateCompanionBits()
@@ -215,6 +209,14 @@ class X32Instance extends InstanceSkel<X32Config> {
     if (this.syncInterval) {
       clearInterval(this.syncInterval)
       this.syncInterval = undefined
+    }
+
+    if (this.osc) {
+      try {
+        this.osc.close()
+      } catch (e) {
+        // Ignore
+      }
     }
 
     this.osc = new osc.UDPPort({
