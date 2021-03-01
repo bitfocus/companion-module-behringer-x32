@@ -46,11 +46,12 @@
 		]
 	},
 	"dependencies": {
+		"@types/node": "^12.0.4",
 		"debounce-fn": "https://github.com/Julusian/debounce-fn.git",
-		"p-queue": "^6.6.2"
+		"p-queue": "^6.6.2",
+		"utility-types": "^3.10.0"
 	},
 	"devDependencies": {
-		"@types/node": "^12.0.4",
 		"@typescript-eslint/eslint-plugin": "~2.31.0",
 		"@typescript-eslint/parser": "~2.31.0",
 		"eslint": "^6.8.0",
@@ -60,8 +61,7 @@
 		"lint-staged": "^9.2.5",
 		"prettier": "^1.17.1",
 		"rimraf": "^3.0.2",
-		"typescript": "~4.1.5",
-		"utility-types": "^3.10.0"
+		"typescript": "~4.1.5"
 	},
 	"resolutions": {
 		"eslint/inquirer": "~7.2.0"
