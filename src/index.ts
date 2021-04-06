@@ -10,7 +10,7 @@ import * as osc from 'osc'
 import { MainPath } from './paths'
 import { upgradeV2x0x0 } from './migrations'
 import { GetTargetChoices } from './choices'
-import * as debounceFn from 'debounce-fn'
+import { debounceFn } from './debounce'
 import PQueue from 'p-queue'
 import { X32Transitions } from './transitions'
 
