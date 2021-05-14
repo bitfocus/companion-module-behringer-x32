@@ -9,7 +9,7 @@ import { X32State, X32Subscriptions } from './state'
 // eslint-disable-next-line node/no-extraneous-import
 import * as osc from 'osc'
 import { MainPath } from './paths'
-import { upgradeV2x0x0 } from './migrations'
+import { BooleanFeedbackUpgradeMap, upgradeV2x0x0 } from './migrations'
 import { GetTargetChoices } from './choices'
 import * as debounceFn from 'debounce-fn'
 import PQueue from 'p-queue'
@@ -60,6 +60,7 @@ class X32Instance extends InstanceSkel<X32Config> {
 
 		this.addUpgradeScript(() => false) // Previous version had a script
 		this.addUpgradeScript(upgradeV2x0x0)
+		this.addUpgradeToBooleanFeedbackScript(BooleanFeedbackUpgradeMap)
 
 		this.debounceUpdateCompanionBits = debounceFn(this.updateCompanionBits, {
 			wait: 100,

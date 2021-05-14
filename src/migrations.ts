@@ -5,6 +5,7 @@ import {
 } from '../../../instance_skel_types'
 import { ActionId } from './actions'
 import { X32Config } from './config'
+import { FeedbackId } from './feedback'
 import { padNumber, floatToDB } from './util'
 
 export function upgradeV2x0x0(
@@ -118,4 +119,19 @@ export function upgradeV2x0x0(
 	}
 
 	return changed
+}
+
+export const BooleanFeedbackUpgradeMap: {
+	[id in FeedbackId]?: true
+} = {
+	[FeedbackId.Mute]: true,
+	[FeedbackId.MuteGroup]: true,
+	[FeedbackId.MuteChannelSend]: true,
+	[FeedbackId.MuteBusSend]: true,
+	[FeedbackId.FaderLevel]: true,
+	[FeedbackId.ChannelSendLevel]: true,
+	[FeedbackId.BusSendLevel]: true,
+	[FeedbackId.TalkbackTalk]: true,
+	[FeedbackId.OscillatorEnable]: true,
+	[FeedbackId.OscillatorDestination]: true,
 }

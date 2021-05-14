@@ -1,10 +1,4 @@
-import {
-	CompanionFeedback,
-	CompanionInputFieldColor,
-	CompanionFeedbacks,
-	CompanionFeedbackEvent,
-	CompanionFeedbackResult,
-} from '../../../instance_skel_types'
+import { CompanionFeedbacks, CompanionFeedbackEvent, CompanionFeedbackBoolean } from '../../../instance_skel_types'
 import { X32State, X32Subscriptions } from './state'
 import {
 	GetMuteGroupChoices,
@@ -21,9 +15,9 @@ import * as osc from 'osc'
 import InstanceSkel = require('../../../instance_skel')
 import { X32Config } from './config'
 import { NumberComparitorPicker } from './input'
+import { SetRequired } from 'type-fest'
 
-type CompanionFeedbackWithCallback = CompanionFeedback &
-	Required<Pick<CompanionFeedback, 'callback' | 'subscribe' | 'unsubscribe'>>
+type CompanionFeedbackWithCallback = SetRequired<CompanionFeedbackBoolean, 'callback' | 'subscribe' | 'unsubscribe'>
 
 export enum FeedbackId {
 	Mute = 'mute',
@@ -36,30 +30,6 @@ export enum FeedbackId {
 	TalkbackTalk = 'talkback_talk',
 	OscillatorEnable = 'oscillator-enable',
 	OscillatorDestination = 'oscillator-destination',
-}
-
-export function ForegroundPicker(color: number): CompanionInputFieldColor {
-	return {
-		type: 'colorpicker',
-		label: 'Foreground color',
-		id: 'fg',
-		default: color,
-	}
-}
-export function BackgroundPicker(color: number): CompanionInputFieldColor {
-	return {
-		type: 'colorpicker',
-		label: 'Background color',
-		id: 'bg',
-		default: color,
-	}
-}
-
-function getOptColors(evt: CompanionFeedbackEvent): CompanionFeedbackResult {
-	return {
-		color: Number(evt.options.fg),
-		bgcolor: Number(evt.options.bg),
-	}
 }
 
 function getDataNumber(data: osc.MetaArgument[] | undefined, index: number): number | undefined {
@@ -91,11 +61,10 @@ export function GetFeedbacksList(
 
 	const feedbacks: { [id in FeedbackId]: CompanionFeedbackWithCallback | undefined } = {
 		[FeedbackId.Mute]: {
-			label: 'Change colors from mute state',
-			description: 'If the specified target is muted, change color of the bank',
+			type: 'boolean',
+			label: 'Change from mute state',
+			description: 'If the specified target is muted, change style of the bank',
 			options: [
-				BackgroundPicker(self.rgb(255, 0, 0)),
-				ForegroundPicker(self.rgb(0, 0, 0)),
 				{
 					id: 'target',
 					type: 'dropdown',
@@ -109,13 +78,14 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
+			style: {
+				bgcolor: self.rgb(255, 0, 0),
+				color: self.rgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const data = state.get(MutePath(evt.options.target as string))
 				const muted = getDataNumber(data, 0) === 0
-				if (muted === !!evt.options.state) {
-					return getOptColors(evt)
-				}
-				return {}
+				return muted === !!evt.options.state
 			},
 			subscribe: (evt: CompanionFeedbackEvent): void => {
 				const path = MutePath(evt.options.target as string)
@@ -127,11 +97,10 @@ export function GetFeedbacksList(
 			},
 		},
 		[FeedbackId.MuteGroup]: {
-			label: 'Change colors from mute group state',
-			description: 'If the specified mute group is muted, change color of the bank',
+			type: 'boolean',
+			label: 'Change from mute group state',
+			description: 'If the specified mute group is muted, change style of the bank',
 			options: [
-				BackgroundPicker(self.rgb(255, 0, 0)),
-				ForegroundPicker(self.rgb(0, 0, 0)),
 				{
 					id: 'mute_grp',
 					type: 'dropdown',
@@ -145,13 +114,14 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
+			style: {
+				bgcolor: self.rgb(255, 0, 0),
+				color: self.rgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const data = state.get(evt.options.mute_grp as string)
 				const muted = getDataNumber(data, 0) === 1
-				if (muted === !!evt.options.state) {
-					return getOptColors(evt)
-				}
-				return {}
+				return muted === !!evt.options.state
 			},
 			subscribe: (evt: CompanionFeedbackEvent): void => {
 				const path = evt.options.mute_grp as string
@@ -163,11 +133,10 @@ export function GetFeedbacksList(
 			},
 		},
 		[FeedbackId.MuteChannelSend]: {
-			label: 'Change colors from channel to bus send mute state',
-			description: 'If the specified channel send is muted, change color of the bank',
+			type: 'boolean',
+			label: 'Change from channel to bus send mute state',
+			description: 'If the specified channel send is muted, change style of the bank',
 			options: [
-				BackgroundPicker(self.rgb(255, 0, 0)),
-				ForegroundPicker(self.rgb(0, 0, 0)),
 				{
 					type: 'dropdown',
 					label: 'Source',
@@ -187,14 +156,15 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
+			style: {
+				bgcolor: self.rgb(255, 0, 0),
+				color: self.rgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const path = `${MainPath(evt.options.source as string)}/${evt.options.target}`
 				const data = path ? state.get(path) : undefined
 				const muted = getDataNumber(data, 0) === 0
-				if (muted === !!evt.options.state) {
-					return getOptColors(evt)
-				}
-				return {}
+				return muted === !!evt.options.state
 			},
 			subscribe: (evt: CompanionFeedbackEvent): void => {
 				const path = `${MainPath(evt.options.source as string)}/${evt.options.target}`
@@ -206,11 +176,10 @@ export function GetFeedbacksList(
 			},
 		},
 		[FeedbackId.MuteBusSend]: {
-			label: 'Change colors from bus to matrix send mute state',
-			description: 'If the specified bus send is muted, change color of the bank',
+			type: 'boolean',
+			label: 'Change from bus to matrix send mute state',
+			description: 'If the specified bus send is muted, change style of the bank',
 			options: [
-				BackgroundPicker(self.rgb(255, 0, 0)),
-				ForegroundPicker(self.rgb(0, 0, 0)),
 				{
 					type: 'dropdown',
 					label: 'Source',
@@ -230,14 +199,15 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
+			style: {
+				bgcolor: self.rgb(255, 0, 0),
+				color: self.rgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const path = `${MainPath(evt.options.source as string)}/${evt.options.target}/on`
 				const data = path ? state.get(path) : undefined
 				const muted = getDataNumber(data, 0) === 0
-				if (muted === !!evt.options.state) {
-					return getOptColors(evt)
-				}
-				return {}
+				return muted === !!evt.options.state
 			},
 			subscribe: (evt: CompanionFeedbackEvent): void => {
 				const path = `${MainPath(evt.options.source as string)}/${evt.options.target}/on`
@@ -249,11 +219,10 @@ export function GetFeedbacksList(
 			},
 		},
 		[FeedbackId.FaderLevel]: {
-			label: 'Change colors from fader level',
-			description: 'If the fader level has the specified gain, change color of the bank',
+			type: 'boolean',
+			label: 'Change from fader level',
+			description: 'If the fader level has the specified gain, change style of the bank',
 			options: [
-				ForegroundPicker(self.rgb(0, 0, 0)),
-				BackgroundPicker(self.rgb(0, 255, 0)),
 				{
 					type: 'dropdown',
 					label: 'Target',
@@ -263,17 +232,17 @@ export function GetFeedbacksList(
 				NumberComparitorPicker(),
 				FaderLevelChoice,
 			],
-			callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
+			style: {
+				bgcolor: self.rgb(0, 255, 0),
+				color: self.rgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const currentState = state.get(MainFaderPath(evt.options))
 				const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0]?.value : undefined
-				if (
+				return (
 					typeof currentVal === 'number' &&
 					compareNumber(evt.options.fad, evt.options.comparitor, floatToDB(currentVal))
-				) {
-					return getOptColors(evt)
-				}
-
-				return {}
+				)
 			},
 			subscribe: (evt): void => {
 				const path = MainFaderPath(evt.options)
@@ -285,11 +254,10 @@ export function GetFeedbacksList(
 			},
 		},
 		[FeedbackId.ChannelSendLevel]: {
-			label: 'Change colors from level of channel to bus send',
-			description: 'If the channel to bus send level has the specified gain, change color of the bank',
+			type: 'boolean',
+			label: 'Change from level of channel to bus send',
+			description: 'If the channel to bus send level has the specified gain, change style of the bank',
 			options: [
-				ForegroundPicker(self.rgb(0, 0, 0)),
-				BackgroundPicker(self.rgb(0, 255, 0)),
 				{
 					type: 'dropdown',
 					label: 'Source',
@@ -305,17 +273,17 @@ export function GetFeedbacksList(
 				NumberComparitorPicker(),
 				FaderLevelChoice,
 			],
-			callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
+			style: {
+				bgcolor: self.rgb(0, 255, 0),
+				color: self.rgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const currentState = state.get(SendChannelToBusPath(evt.options))
 				const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0]?.value : undefined
-				if (
+				return (
 					typeof currentVal === 'number' &&
 					compareNumber(evt.options.fad, evt.options.comparitor, floatToDB(currentVal))
-				) {
-					return getOptColors(evt)
-				}
-
-				return {}
+				)
 			},
 			subscribe: (evt): void => {
 				const path = SendChannelToBusPath(evt.options)
@@ -327,11 +295,10 @@ export function GetFeedbacksList(
 			},
 		},
 		[FeedbackId.BusSendLevel]: {
-			label: 'Change colors from level of bus to matrix send',
-			description: 'If the bus to matrix send level has the specified gain, change color of the bank',
+			type: 'boolean',
+			label: 'Change from level of bus to matrix send',
+			description: 'If the bus to matrix send level has the specified gain, change style of the bank',
 			options: [
-				ForegroundPicker(self.rgb(0, 0, 0)),
-				BackgroundPicker(self.rgb(0, 255, 0)),
 				{
 					type: 'dropdown',
 					label: 'Source',
@@ -347,17 +314,17 @@ export function GetFeedbacksList(
 				NumberComparitorPicker(),
 				FaderLevelChoice,
 			],
-			callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
+			style: {
+				bgcolor: self.rgb(0, 255, 0),
+				color: self.rgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const currentState = state.get(SendBusToMatrixPath(evt.options))
 				const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0]?.value : undefined
-				if (
+				return (
 					typeof currentVal === 'number' &&
 					compareNumber(evt.options.fad, evt.options.comparitor, floatToDB(currentVal))
-				) {
-					return getOptColors(evt)
-				}
-
-				return {}
+				)
 			},
 			subscribe: (evt): void => {
 				const path = SendBusToMatrixPath(evt.options)
@@ -369,11 +336,10 @@ export function GetFeedbacksList(
 			},
 		},
 		[FeedbackId.TalkbackTalk]: {
-			label: 'Change colors from talkback talk state',
-			description: 'If the specified talkback is on, change color of the bank',
+			type: 'boolean',
+			label: 'Change from talkback talk state',
+			description: 'If the specified talkback is on, change style of the bank',
 			options: [
-				BackgroundPicker(self.rgb(255, 0, 0)),
-				ForegroundPicker(self.rgb(0, 0, 0)),
 				{
 					type: 'dropdown',
 					label: 'Function',
@@ -396,14 +362,15 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
+			style: {
+				bgcolor: self.rgb(255, 0, 0),
+				color: self.rgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const path = `/-stat/talk/${evt.options.channel}`
 				const data = path ? state.get(path) : undefined
 				const isOn = getDataNumber(data, 0) !== 0
-				if (isOn === !!evt.options.state) {
-					return getOptColors(evt)
-				}
-				return {}
+				return isOn === !!evt.options.state
 			},
 			subscribe: (evt: CompanionFeedbackEvent): void => {
 				const path = `/-stat/talk/${evt.options.channel}`
@@ -415,11 +382,10 @@ export function GetFeedbacksList(
 			},
 		},
 		[FeedbackId.OscillatorEnable]: {
-			label: 'Change colors from oscillator enabled state',
-			description: 'If the oscillator is on, change color of the bank',
+			type: 'boolean',
+			label: 'Change from oscillator enabled state',
+			description: 'If the oscillator is on, change style of the bank',
 			options: [
-				BackgroundPicker(self.rgb(255, 0, 0)),
-				ForegroundPicker(self.rgb(0, 0, 0)),
 				{
 					id: 'state',
 					type: 'checkbox',
@@ -427,14 +393,15 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
+			style: {
+				bgcolor: self.rgb(255, 0, 0),
+				color: self.rgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const path = `/-stat/osc/on`
 				const data = path ? state.get(path) : undefined
 				const isOn = getDataNumber(data, 0) !== 0
-				if (isOn === !!evt.options.state) {
-					return getOptColors(evt)
-				}
-				return {}
+				return isOn === !!evt.options.state
 			},
 			subscribe: (evt: CompanionFeedbackEvent): void => {
 				const path = `/-stat/osc/on`
@@ -446,11 +413,10 @@ export function GetFeedbacksList(
 			},
 		},
 		[FeedbackId.OscillatorDestination]: {
-			label: 'Change colors from oscillator destination state',
-			description: 'If the oscillator destination matches, change color of the bank',
+			type: 'boolean',
+			label: 'Change from oscillator destination state',
+			description: 'If the oscillator destination matches, change style of the bank',
 			options: [
-				BackgroundPicker(self.rgb(255, 0, 0)),
-				ForegroundPicker(self.rgb(0, 0, 0)),
 				{
 					type: 'dropdown',
 					label: 'destination',
@@ -458,14 +424,15 @@ export function GetFeedbacksList(
 					...convertChoices(GetOscillatorDestinations(state)),
 				},
 			],
-			callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
+			style: {
+				bgcolor: self.rgb(255, 0, 0),
+				color: self.rgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const path = `/config/osc/dest`
 				const data = path ? state.get(path) : undefined
 				const destination = getDataNumber(data, 0)
-				if (destination === Number(evt.options.destination)) {
-					return getOptColors(evt)
-				}
-				return {}
+				return destination === Number(evt.options.destination)
 			},
 			subscribe: (evt: CompanionFeedbackEvent): void => {
 				const path = `/config/osc/dest`

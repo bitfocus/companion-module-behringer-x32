@@ -5,12 +5,13 @@ import { X32Config } from './config'
 import { FeedbackId } from './feedback'
 import { X32State } from './state'
 import { GetLevelsChoiceConfigs } from './choices'
+import { SetRequired } from 'type-fest'
 
 interface CompanionPresetExt extends CompanionPreset {
 	feedbacks: Array<
 		{
 			type: FeedbackId
-		} & CompanionPreset['feedbacks'][0]
+		} & SetRequired<CompanionPreset['feedbacks'][0], 'style'>
 	>
 	actions: Array<
 		{
