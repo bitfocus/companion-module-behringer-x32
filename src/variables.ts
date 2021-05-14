@@ -2,6 +2,7 @@ import InstanceSkel = require('../../../instance_skel')
 import { CompanionVariable } from '../../../instance_skel_types'
 import { X32Config } from './config'
 import { X32State } from './state'
+// eslint-disable-next-line node/no-extraneous-import
 import * as osc from 'osc'
 import { GetTargetChoices } from './choices'
 import { MainPath } from './paths'

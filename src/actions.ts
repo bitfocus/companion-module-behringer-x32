@@ -26,7 +26,7 @@ import {
 // eslint-disable-next-line node/no-extraneous-import
 import * as osc from 'osc'
 import { MutePath, MainPath, MainFaderPath, SendChannelToBusPath, SendBusToMatrixPath } from './paths'
-import { Required as MakeRequired } from 'utility-types'
+import { SetRequired } from 'type-fest'
 import { X32Transitions } from './transitions'
 
 export enum ActionId {
@@ -61,7 +61,7 @@ export enum ActionId {
 	OscillatorDestination = 'oscillator-destination',
 }
 
-type CompanionActionWithCallback = MakeRequired<CompanionAction, 'callback'>
+type CompanionActionWithCallback = SetRequired<CompanionAction, 'callback'>
 
 export function GetActionsList(
 	self: InstanceSkel<X32Config>,

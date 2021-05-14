@@ -4,7 +4,6 @@ import { ActionId } from './actions'
 import { X32Config } from './config'
 import { FeedbackId } from './feedback'
 import { X32State } from './state'
-import { ValuesType, NonUndefined } from 'utility-types'
 import { GetLevelsChoiceConfigs } from './choices'
 
 interface CompanionPresetExt extends CompanionPreset {
@@ -21,7 +20,7 @@ interface CompanionPresetExt extends CompanionPreset {
 	release_actions?: Array<
 		{
 			action: ActionId
-		} & ValuesType<NonUndefined<CompanionPreset['release_actions']>>
+		} & NonNullable<CompanionPreset['release_actions']>[0]
 	>
 }
 
