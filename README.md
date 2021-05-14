@@ -10,6 +10,10 @@ While developing the module, by using `yarn build:watch` the compiler will be ru
 
 ## Changes
 
+### v2.5.0
+
+- feedbacks updated to new format. allows more customisation of style
+
 ### v2.4.3
 
 - Fix osc socket not being closed when reconnecting
