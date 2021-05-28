@@ -74,9 +74,7 @@ class X32Instance extends InstanceSkel<X32Config> {
 				console.log('fire feedbacks')
 				const feedbacks = Array.from(this.messageFeedbacks)
 				this.messageFeedbacks.clear()
-				for (const feedback of feedbacks) {
-					this.checkFeedbacks(feedback)
-				}
+				this.checkFeedbacks(...feedbacks)
 			},
 			{
 				wait: 100,
@@ -88,8 +86,8 @@ class X32Instance extends InstanceSkel<X32Config> {
 	}
 
 	// Override base types to make types stricter
-	public checkFeedbacks(feedbackId?: FeedbackId): void {
-		super.checkFeedbacks(feedbackId)
+	public checkFeedbacks(...feedbackTypes: FeedbackId[]): void {
+		super.checkFeedbacks(...feedbackTypes)
 	}
 
 	/**
