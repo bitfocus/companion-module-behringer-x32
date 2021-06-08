@@ -3,7 +3,7 @@
 	"legacy": [
 		"x32"
 	],
-	"version": "2.6.0",
+	"version": "2.6.1",
 	"api_version": "1.0.0",
 	"keywords": [
 		"Audio"
