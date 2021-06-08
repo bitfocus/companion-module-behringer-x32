@@ -52,23 +52,24 @@ export function updateDeviceInfoVariables(instance: InstanceSkel<X32Config>, arg
 			return ''
 		}
 	}
-	instance.setVariable('m_name', getStringArg(1))
-	instance.setVariable('m_model', getStringArg(2))
-	instance.setVariable('m_fw', getStringArg(3))
+	instance.setVariables({
+		m_name: getStringArg(1),
+		m_model: getStringArg(2),
+		m_fw: getStringArg(3),
+	})
 }
 
 export function updateNameVariables(instance: InstanceSkel<X32Config>, state: X32State): void {
+	const variables: { [variableId: string]: string | undefined } = {}
 	const targets = GetTargetChoices(state, { includeMain: true, defaultNames: true })
 	for (const target of targets) {
 		const nameVal = state.get(`${target.id}/config/name`)
 		const nameStr = nameVal && nameVal[0]?.type === 's' ? nameVal[0].value : ''
-		instance.setVariable(`name${sanitiseName(target.id as string)}`, nameStr || target.label)
+		variables[`name${sanitiseName(target.id as string)}`] = nameStr || target.label
 
 		const faderVal = state.get(`${MainPath(target.id as string)}/fader`)
 		const faderNum = faderVal && faderVal[0]?.type === 'f' ? faderVal[0].value : NaN
-		instance.setVariable(
-			`fader${sanitiseName(target.id as string)}`,
-			isNaN(faderNum) ? '-' : formatDb(floatToDB(faderNum))
-		)
+		variables[`fader${sanitiseName(target.id as string)}`] = isNaN(faderNum) ? '-' : formatDb(floatToDB(faderNum))
 	}
+	instance.setVariables(variables)
 }

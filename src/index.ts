@@ -1,5 +1,5 @@
 import InstanceSkel = require('../../../instance_skel')
-import { CompanionConfigField, CompanionSystem } from '../../../instance_skel_types'
+import { CompanionConfigField, CompanionStaticUpgradeScript, CompanionSystem } from '../../../instance_skel_types'
 import { GetActionsList } from './actions'
 import { X32Config, GetConfigFields } from './config'
 import { FeedbackId, GetFeedbacksList } from './feedback'
@@ -9,7 +9,7 @@ import { X32State, X32Subscriptions } from './state'
 // eslint-disable-next-line node/no-extraneous-import
 import * as osc from 'osc'
 import { MainPath } from './paths'
-import { BooleanFeedbackUpgradeMap, upgradeV2x0x0 } from './migrations'
+import { BooleanFeedbackUpgradeMap, upgradeV2x0x0 } from './upgrades'
 import { GetTargetChoices } from './choices'
 import * as debounceFn from 'debounce-fn'
 import PQueue from 'p-queue'
@@ -58,10 +58,6 @@ class X32Instance extends InstanceSkel<X32Config> {
 		this.x32Subscriptions = new X32Subscriptions()
 		this.transitions = new X32Transitions(this)
 
-		this.addUpgradeScript(() => false) // Previous version had a script
-		this.addUpgradeScript(upgradeV2x0x0)
-		this.addUpgradeToBooleanFeedbackScript(BooleanFeedbackUpgradeMap)
-
 		this.debounceUpdateCompanionBits = debounceFn(this.updateCompanionBits, {
 			wait: 100,
 			maxWait: 500,
@@ -83,6 +79,14 @@ class X32Instance extends InstanceSkel<X32Config> {
 				after: true,
 			}
 		)
+	}
+
+	public static GetUpgradeScripts(): CompanionStaticUpgradeScript[] {
+		return [
+			() => false, // Previous version had a script
+			upgradeV2x0x0,
+			X32Instance.CreateConvertToBooleanFeedbackUpgradeScript(BooleanFeedbackUpgradeMap),
+		]
 	}
 
 	// Override base types to make types stricter

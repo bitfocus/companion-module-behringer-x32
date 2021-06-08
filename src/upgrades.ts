@@ -2,6 +2,7 @@ import {
 	CompanionCoreInstanceconfig,
 	CompanionMigrationAction,
 	CompanionMigrationFeedback,
+	CompanionUpgradeContext,
 } from '../../../instance_skel_types'
 import { ActionId } from './actions'
 import { X32Config } from './config'
@@ -9,15 +10,14 @@ import { FeedbackId } from './feedback'
 import { padNumber, floatToDB } from './util'
 
 export function upgradeV2x0x0(
-	_config: CompanionCoreInstanceconfig & X32Config,
+	_context: CompanionUpgradeContext,
+	_config: (CompanionCoreInstanceconfig & X32Config) | null,
 	actions: CompanionMigrationAction[],
-	releaseActions: CompanionMigrationAction[],
 	_feedbacks: CompanionMigrationFeedback[]
 ): boolean {
 	let changed = false
 
-	const allActions = [...actions, ...releaseActions]
-	for (const action of allActions) {
+	for (const action of actions) {
 		switch (action.action) {
 			case ActionId.Mute:
 			case ActionId.Color:
