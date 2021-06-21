@@ -264,11 +264,14 @@ export function GetActionsList(
 				},
 			],
 			callback: (action, info): void => {
-				const cmd = MainFaderPath(action.options)
-				const currentState = state.get(cmd)
-				const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
-				if (currentVal !== undefined) {
-					state.setPressValue(`${info.page}-${info.bank}-${cmd}`, currentVal)
+				if (info) {
+					const cmd = MainFaderPath(action.options)
+					const currentState = state.get(cmd)
+					const currentVal =
+						currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
+					if (currentVal !== undefined) {
+						state.setPressValue(`${info.page}-${info.bank}-${cmd}`, currentVal)
+					}
 				}
 			},
 			subscribe: (evt): void => {
@@ -287,14 +290,16 @@ export function GetActionsList(
 				FadeDurationChoice,
 			],
 			callback: (action, info): void => {
-				const cmd = MainFaderPath(action.options)
-				const storedVal = state.popPressValue(`${info.page}-${info.bank}-${cmd}`)
-				if (storedVal !== undefined) {
-					const currentState = state.get(cmd)
-					const currentVal =
-						currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
-					if (currentVal !== undefined) {
-						transitions.run(cmd, currentVal, storedVal, getOptNumber(action, 'fadeDuration', 0))
+				if (info) {
+					const cmd = MainFaderPath(action.options)
+					const storedVal = state.popPressValue(`${info.page}-${info.bank}-${cmd}`)
+					if (storedVal !== undefined) {
+						const currentState = state.get(cmd)
+						const currentVal =
+							currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
+						if (currentVal !== undefined) {
+							transitions.run(cmd, currentVal, storedVal, getOptNumber(action, 'fadeDuration', 0))
+						}
 					}
 				}
 			},
@@ -409,11 +414,14 @@ export function GetActionsList(
 				},
 			],
 			callback: (action, info): void => {
-				const cmd = SendChannelToBusPath(action.options)
-				const currentState = state.get(cmd)
-				const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
-				if (currentVal !== undefined) {
-					state.setPressValue(`${info.page}-${info.bank}-${cmd}`, currentVal)
+				if (info) {
+					const cmd = SendChannelToBusPath(action.options)
+					const currentState = state.get(cmd)
+					const currentVal =
+						currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
+					if (currentVal !== undefined) {
+						state.setPressValue(`${info.page}-${info.bank}-${cmd}`, currentVal)
+					}
 				}
 			},
 			subscribe: (evt): void => {
@@ -438,14 +446,16 @@ export function GetActionsList(
 				FadeDurationChoice,
 			],
 			callback: (action, info): void => {
-				const cmd = SendChannelToBusPath(action.options)
-				const storedVal = state.popPressValue(`${info.page}-${info.bank}-${cmd}`)
-				if (storedVal !== undefined) {
-					const currentState = state.get(cmd)
-					const currentVal =
-						currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
-					if (currentVal !== undefined) {
-						transitions.run(cmd, currentVal, storedVal, getOptNumber(action, 'fadeDuration', 0))
+				if (info) {
+					const cmd = SendChannelToBusPath(action.options)
+					const storedVal = state.popPressValue(`${info.page}-${info.bank}-${cmd}`)
+					if (storedVal !== undefined) {
+						const currentState = state.get(cmd)
+						const currentVal =
+							currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
+						if (currentVal !== undefined) {
+							transitions.run(cmd, currentVal, storedVal, getOptNumber(action, 'fadeDuration', 0))
+						}
 					}
 				}
 			},
@@ -531,11 +541,14 @@ export function GetActionsList(
 				},
 			],
 			callback: (action, info): void => {
-				const cmd = SendBusToMatrixPath(action.options)
-				const currentState = state.get(cmd)
-				const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
-				if (currentVal !== undefined) {
-					state.setPressValue(`${info.page}-${info.bank}-${cmd}`, currentVal)
+				if (info) {
+					const cmd = SendBusToMatrixPath(action.options)
+					const currentState = state.get(cmd)
+					const currentVal =
+						currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
+					if (currentVal !== undefined) {
+						state.setPressValue(`${info.page}-${info.bank}-${cmd}`, currentVal)
+					}
 				}
 			},
 			subscribe: (evt): void => {
@@ -560,14 +573,16 @@ export function GetActionsList(
 				FadeDurationChoice,
 			],
 			callback: (action, info): void => {
-				const cmd = SendBusToMatrixPath(action.options)
-				const storedVal = state.popPressValue(`${info.page}-${info.bank}-${cmd}`)
-				if (storedVal !== undefined) {
-					const currentState = state.get(cmd)
-					const currentVal =
-						currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
-					if (currentVal !== undefined) {
-						transitions.run(cmd, currentVal, storedVal, getOptNumber(action, 'fadeDuration', 0))
+				if (info) {
+					const cmd = SendBusToMatrixPath(action.options)
+					const storedVal = state.popPressValue(`${info.page}-${info.bank}-${cmd}`)
+					if (storedVal !== undefined) {
+						const currentState = state.get(cmd)
+						const currentVal =
+							currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
+						if (currentVal !== undefined) {
+							transitions.run(cmd, currentVal, storedVal, getOptNumber(action, 'fadeDuration', 0))
+						}
 					}
 				}
 			},
