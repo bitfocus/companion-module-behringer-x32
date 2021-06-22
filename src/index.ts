@@ -14,6 +14,7 @@ import { GetTargetChoices } from './choices'
 import * as debounceFn from 'debounce-fn'
 import PQueue from 'p-queue'
 import { X32Transitions } from './transitions'
+import { X32DeviceDetectorInstance } from './device-detector'
 
 /**
  * Companion instance class for the Behringer X32 Mixers.
@@ -102,6 +103,8 @@ class X32Instance extends InstanceSkel<X32Config> {
 		this.status(this.STATUS_UNKNOWN)
 		this.setupOscSocket()
 
+		X32DeviceDetectorInstance.subscribe(this.id)
+
 		this.updateCompanionBits()
 	}
 
@@ -148,6 +151,8 @@ class X32Instance extends InstanceSkel<X32Config> {
 			clearInterval(this.heartbeat)
 			this.heartbeat = undefined
 		}
+
+		X32DeviceDetectorInstance.unsubscribe(this.id)
 
 		this.transitions.stopAll()
 

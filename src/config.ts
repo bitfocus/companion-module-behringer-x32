@@ -1,5 +1,6 @@
 import InstanceSkel = require('../../../instance_skel')
 import { SomeCompanionConfigField } from '../../../instance_skel_types'
+import { X32DeviceDetectorInstance } from './device-detector'
 
 export const fadeFpsDefault = 10
 
@@ -11,11 +12,16 @@ export interface X32Config {
 export function GetConfigFields(self: InstanceSkel<X32Config>): SomeCompanionConfigField[] {
 	return [
 		{
-			type: 'textinput',
+			type: 'dropdown',
 			id: 'host',
 			label: 'Target IP',
-			tooltip: 'The IP of the M32 / X32 console',
 			width: 6,
+			choices: X32DeviceDetectorInstance.listKnown().map((d) => ({
+				id: d.address,
+				label: `${d.address} (${d.deviceName})`,
+			})),
+			default: '',
+			allowCustom: true,
 			regex: self.REGEX_IP,
 		},
 		{
