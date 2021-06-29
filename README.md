@@ -10,6 +10,12 @@ While developing the module, by using `yarn build:watch` the compiler will be ru
 
 ## Changes
 
+### v2.7.0
+
+- fix typings for actions in triggers changes
+
+- Discover and suggest devices found on the network
+
 ### v2.6.1
 
 - Update for improved module api features
