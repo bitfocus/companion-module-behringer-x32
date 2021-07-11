@@ -61,9 +61,6 @@ class X32Instance extends InstanceSkel<X32Config> {
 
 		this.debounceUpdateCompanionBits = debounceFn(this.updateCompanionBits, {
 			wait: 100,
-			maxWait: 500,
-			before: false,
-			after: true,
 		})
 
 		this.debounceMessageFeedbacks = debounceFn(
@@ -75,9 +72,6 @@ class X32Instance extends InstanceSkel<X32Config> {
 			},
 			{
 				wait: 100,
-				maxWait: 500,
-				before: true,
-				after: true,
 			}
 		)
 	}
