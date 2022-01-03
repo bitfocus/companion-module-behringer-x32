@@ -55,6 +55,8 @@ export enum ActionId {
 	GoScene = 'go_scene',
 	GoSnip = 'go_snip',
 	Select = 'select',
+	Solo = 'solo',
+	ClearSolo = 'clear-solo',
 	Tape = 'tape',
 	TalkbackTalk = 'talkback_talk',
 	OscillatorEnable = 'oscillator-enable',
@@ -72,6 +74,7 @@ export function GetActionsList(
 	const levelsChoices = GetLevelsChoiceConfigs(state)
 	const muteGroups = GetMuteGroupChoices(state)
 	const selectChoices = GetTargetChoices(state, { skipDca: true, includeMain: true, numericIndex: true })
+	const soloChoices = GetTargetChoices(state, {includeMain: true, numericIndex: true })
 
 	const sendOsc = (cmd: string, arg: osc.MetaArgument): void => {
 		try {
@@ -752,6 +755,47 @@ export function GetActionsList(
 				sendOsc(`/-stat/selidx`, {
 					type: 'i',
 					value: getOptNumber(action, 'select'),
+				})
+			},
+		},
+		[ActionId.Solo]: {
+			label: 'Solo On/Off',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Target',
+					id: 'solo',
+					...convertChoices(soloChoices),
+				},
+				{
+					type: 'dropdown',
+					label: 'On / Off',
+					id: 'on',
+					...convertChoices(CHOICES_ON_OFF),
+				},
+			],
+			callback: (action): void => {
+				const cmd = `/-stat/solosw/${action.options.solo}`
+				const onState = getResolveOnOffMute(action, cmd, true, 'on')
+
+				sendOsc(cmd, {
+					type: 'i',
+					value: onState,
+				})
+			},
+			subscribe: (evt): void => {
+				if (evt.options.on === MUTE_TOGGLE) {
+					ensureLoaded(`/-stat/solosw/${evt.options.solo}`)
+				}
+			},
+		},
+		[ActionId.ClearSolo]: {
+			label: 'Clear Solo',
+			options: [],
+			callback: (): void => {
+				sendOsc(`/-action/clearsolo`, {
+					type: 'i',
+					value: 1,
 				})
 			},
 		},
