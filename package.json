@@ -49,6 +49,7 @@
 	"dependencies": {
 		"@types/node": "^14.18.4",
 		"debounce-fn": "https://github.com/Julusian/debounce-fn.git",
+		"moment": "^2.29.1",
 		"p-queue": "^6.6.2",
 		"type-fest": "^2.8.0"
 	},

@@ -862,7 +862,7 @@ export function GetActionsList(
 			callback: (): void => {
 				sendOsc(`/-action/setclock`, {
 					type: 's',
-					value: moment().format('YYYYMMDDHHmmss')
+					value: moment().format('YYYYMMDDHHmmss'),
 				})
 			},
 		},
