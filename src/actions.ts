@@ -877,7 +877,7 @@ export function GetActionsList(
 			},
 			subscribe: (evt): void => {
 				if (evt.options.on === MUTE_TOGGLE) {
-					ensureLoaded(`/config/solo/dim`) ///-stat/solo/dim
+					ensureLoaded(`/config/solo/dim`)
 				}
 			},
 		},
@@ -899,7 +899,7 @@ export function GetActionsList(
 			callback: (action): void => {
 				sendOsc(`/config/solo/dimatt`, {
 					type: 'f',
-					value: trimToFloat(getOptNumber(action, 'dimAtt')),
+					value: getOptNumber(action, 'dimAtt')/40+1
 				})
 			},
 		},
