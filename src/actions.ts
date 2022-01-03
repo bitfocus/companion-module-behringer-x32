@@ -59,6 +59,7 @@ export enum ActionId {
 	TalkbackTalk = 'talkback_talk',
 	OscillatorEnable = 'oscillator-enable',
 	OscillatorDestination = 'oscillator-destination',
+	SendsOnFader = 'sends-on-fader',
 }
 
 type CompanionActionWithCallback = SetRequired<CompanionAction, 'callback'>
@@ -852,6 +853,31 @@ export function GetActionsList(
 					type: 'i',
 					value: getOptNumber(action, 'destination'),
 				})
+			},
+		},
+		[ActionId.SendsOnFader]: {
+			label: 'Sends on Fader/Fader Flip',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'On / Off',
+					id: 'on',
+					...convertChoices(CHOICES_ON_OFF),
+				},
+			],
+			callback: (action): void => {
+				const cmd = `/-stat/sendsonfader`
+				const onState = getResolveOnOffMute(action, cmd, true, 'on')
+
+				sendOsc(cmd, {
+					type: 'i',
+					value: onState,
+				})
+			},
+			subscribe: (evt): void => {
+				if (evt.options.on === MUTE_TOGGLE) {
+					ensureLoaded(`/-stat/sendsonfader`)
+				}
 			},
 		},
 	}
