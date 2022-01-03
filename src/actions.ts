@@ -775,7 +775,8 @@ export function GetActionsList(
 				},
 			],
 			callback: (action): void => {
-				const cmd = `/-stat/solosw/${action.options.solo}`
+				const ch = `${getOptNumber(action, 'solo')+1}`.padStart(2,"0")
+				const cmd = `/-stat/solosw/${ch}`
 				const onState = getResolveOnOffMute(action, cmd, true, 'on')
 
 				sendOsc(cmd, {
@@ -785,7 +786,8 @@ export function GetActionsList(
 			},
 			subscribe: (evt): void => {
 				if (evt.options.on === MUTE_TOGGLE) {
-					ensureLoaded(`/-stat/solosw/${evt.options.solo}`)
+					const ch = `${getOptNumber(evt, 'solo')+1}`.padStart(2,"0")
+					ensureLoaded(`/-stat/solosw/${ch}`)
 				}
 			},
 		},
