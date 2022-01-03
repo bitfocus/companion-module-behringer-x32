@@ -59,6 +59,8 @@ export enum ActionId {
 	TalkbackTalk = 'talkback_talk',
 	OscillatorEnable = 'oscillator-enable',
 	OscillatorDestination = 'oscillator-destination',
+	SoloDim = 'solo_dim',
+	SoloDimAttenuation = 'solo_dim_attenuation',
 }
 
 type CompanionActionWithCallback = SetRequired<CompanionAction, 'callback'>
@@ -851,6 +853,53 @@ export function GetActionsList(
 				sendOsc(`/config/osc/dest`, {
 					type: 'i',
 					value: getOptNumber(action, 'destination'),
+				})
+			},
+		},
+		[ActionId.SoloDim]: {
+			label: 'Solo Dim',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'On / Off',
+					id: 'on',
+					...convertChoices(CHOICES_ON_OFF),
+				},
+			],
+			callback: (action): void => {
+				const cmd = `/config/solo/dim`
+				const onState = getResolveOnOffMute(action, cmd, true, 'on')
+
+				sendOsc(cmd, {
+					type: 'i',
+					value: onState,
+				})
+			},
+			subscribe: (evt): void => {
+				if (evt.options.on === MUTE_TOGGLE) {
+					ensureLoaded(`/config/solo/dim`) ///-stat/solo/dim
+				}
+			},
+		},
+		[ActionId.SoloDimAttenuation]: {
+			label: 'Set Dim Attenuation',
+			options: [
+				{
+					type: 'number',
+					label: 'Dim Attenuation',
+					id: 'dimAtt',
+					range: true,
+					required: true,
+					default: -10,
+					step: 1,
+					min: -40,
+					max: 0,
+				},
+			],
+			callback: (action): void => {
+				sendOsc(`/config/solo/dimatt`, {
+					type: 'f',
+					value: trimToFloat(getOptNumber(action, 'dimAtt')),
 				})
 			},
 		},
