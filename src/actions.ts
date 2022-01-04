@@ -28,6 +28,7 @@ import * as osc from 'osc'
 import { MutePath, MainPath, MainFaderPath, SendChannelToBusPath, SendBusToMatrixPath } from './paths'
 import { SetRequired } from 'type-fest'
 import { X32Transitions } from './transitions'
+import moment = require('moment')
 
 export enum ActionId {
 	Mute = 'mute',
@@ -61,6 +62,7 @@ export enum ActionId {
 	TalkbackTalk = 'talkback_talk',
 	OscillatorEnable = 'oscillator-enable',
 	OscillatorDestination = 'oscillator-destination',
+	SyncClock = 'sync_clock',
 }
 
 type CompanionActionWithCallback = SetRequired<CompanionAction, 'callback'>
@@ -897,6 +899,16 @@ export function GetActionsList(
 				sendOsc(`/config/osc/dest`, {
 					type: 'i',
 					value: getOptNumber(action, 'destination'),
+				})
+			},
+		},
+		[ActionId.SyncClock]: {
+			label: 'Sync console time',
+			options: [],
+			callback: (): void => {
+				sendOsc(`/-action/setclock`, {
+					type: 's',
+					value: moment().format('YYYYMMDDHHmmss'),
 				})
 			},
 		},
