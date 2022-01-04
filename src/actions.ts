@@ -61,6 +61,7 @@ export enum ActionId {
 	OscillatorDestination = 'oscillator-destination',
 	SoloDim = 'solo_dim',
 	SoloDimAttenuation = 'solo_dim_attenuation',
+	MonitorLevel = 'monitor-level',
 }
 
 type CompanionActionWithCallback = SetRequired<CompanionAction, 'callback'>
@@ -901,6 +902,22 @@ export function GetActionsList(
 					type: 'f',
 					value: getOptNumber(action, 'dimAtt')/40+1
 				})
+			},
+		},
+		[ActionId.MonitorLevel]: {
+			label: 'Set monitor level',
+			options: [
+				FaderLevelChoice,
+				FadeDurationChoice,
+			],
+			callback: (action): void => {
+				const cmd = `/config/solo/level`
+				const currentState = state.get(cmd)
+				const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
+				transitions.run(cmd, currentVal, getOptNumber(action, 'fad'), getOptNumber(action, 'fadeDuration', 0))
+			},
+			subscribe: (): void => {
+				ensureLoaded(`/config/solo/level`)
 			},
 		},
 	}
