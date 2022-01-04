@@ -574,15 +574,23 @@ export function GetFeedbacksList(
 			type: 'boolean',
 			label: 'Change from clear solo state',
 			description: 'If atleast one solo is selected the clear solo button is on and will change style of the bank',
-			options:[],
+			options:[
+				{
+					id: 'state',
+					type: 'checkbox',
+					label: 'On',
+					default: true,
+				},
+			],
 			style: {
 				bgcolor: self.rgb(255, 127, 0),
 				color: self.rgb(0, 0, 0),
 			},
-			callback: (): boolean => {
+			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const path = `/-stat/solo`
 				const data = path ? state.get(path) : undefined
-				return getDataNumber(data, 0) !== 0
+				const isOn = getDataNumber(data, 0) !== 0
+				return isOn === !!evt.options.state
 			},
 			subscribe: (evt: CompanionFeedbackEvent): void => {
 				const path = `/-stat/solo`
