@@ -7,6 +7,7 @@ import {
 	GetOscillatorDestinations,
 	FaderLevelChoice,
 	GetLevelsChoiceConfigs,
+	CHOICES_TAPE_FUNC,
 } from './choices'
 import { compareNumber, floatToDB } from './util'
 import { MutePath, MainPath, MainFaderPath, SendChannelToBusPath, SendBusToMatrixPath } from './paths'
@@ -30,6 +31,7 @@ export enum FeedbackId {
 	TalkbackTalk = 'talkback_talk',
 	OscillatorEnable = 'oscillator-enable',
 	OscillatorDestination = 'oscillator-destination',
+	Tape = 'tape',
 }
 
 function getDataNumber(data: osc.MetaArgument[] | undefined, index: number): number | undefined {
@@ -440,6 +442,36 @@ export function GetFeedbacksList(
 			},
 			unsubscribe: (evt: CompanionFeedbackEvent): void => {
 				const path = `/config/osc/dest`
+				unsubscribeFeedback(subs, path, evt)
+			},
+		},
+		[FeedbackId.Tape]: {
+			type: 'boolean',
+			label: 'Change from tape operation state',
+			description: 'If the tape state matches, change style of the bank',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Function',
+					id: 'tapeFunc',
+					...convertChoices(CHOICES_TAPE_FUNC),
+				},
+			],
+			style: {
+				bgcolor: self.rgb(255, 0, 0),
+				color: self.rgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackEvent): boolean => {
+				const path = `/-stat/tape/state`
+				const data = path ? state.get(path) : undefined
+				return getDataNumber(data, 0) == evt.options.tapeFunc
+			},
+			subscribe: (evt: CompanionFeedbackEvent): void => {
+				const path = `/-stat/tape/state`
+				subscribeFeedback(ensureLoaded, subs, path, evt)
+			},
+			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+				const path = `/-stat/tape/state`
 				unsubscribeFeedback(subs, path, evt)
 			},
 		},
