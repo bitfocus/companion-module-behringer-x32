@@ -30,6 +30,8 @@ export enum FeedbackId {
 	TalkbackTalk = 'talkback_talk',
 	OscillatorEnable = 'oscillator-enable',
 	OscillatorDestination = 'oscillator-destination',
+	ChannelBank = 'channel-bank',
+	GroupBank = 'group-bank',
 }
 
 function getDataNumber(data: osc.MetaArgument[] | undefined, index: number): number | undefined {
@@ -440,6 +442,122 @@ export function GetFeedbacksList(
 			},
 			unsubscribe: (evt: CompanionFeedbackEvent): void => {
 				const path = `/config/osc/dest`
+				unsubscribeFeedback(subs, path, evt)
+			},
+		},
+		[FeedbackId.ChannelBank]: {
+			type: 'boolean',
+			label: 'Change from selected channel bank',
+			description: 'If the channel bank matches the selected channel bank, change style of the bank',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Bank',
+					id: 'bank',
+					...convertChoices([
+						{
+							id: '0',
+							label: 'CH 1 - 16',
+						},
+						{
+							id: '1',
+							label: 'CH 17 - 32',
+						},
+						{
+							id: '2',
+							label: 'AUX IN / USB / FX RTN',
+						},
+						{
+							id: '3',
+							label: 'BUS MASTERS',
+						},
+					]),
+				},
+				{
+					id: 'state',
+					type: 'checkbox',
+					label: 'On',
+					default: true,
+				},
+			],
+			style: {
+				bgcolor: self.rgb(0, 255, 127),
+				color: self.rgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackEvent): boolean => {
+				const path = `/-stat/chfaderbank`
+				const data = path ? state.get(path) : undefined
+				const isOn = getDataNumber(data, 0) == evt.options.bank
+				return isOn === !!evt.options.state
+			},
+			subscribe: (evt: CompanionFeedbackEvent): void => {
+				const path = `/-stat/chfaderbank`
+				subscribeFeedback(ensureLoaded, subs, path, evt)
+			},
+			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+				const path = `/-stat/chfaderbank`
+				unsubscribeFeedback(subs, path, evt)
+			},
+		},
+		[FeedbackId.GroupBank]: {
+			type: 'boolean',
+			label: 'Change from selected group bank',
+			description: 'If the group bank matches the selected group bank, change style of the bank',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Bank',
+					id: 'bank',
+					...convertChoices([
+						{
+							id: '0',
+							label: 'GROUP DCA 1 - 8',
+						},
+						{
+							id: '1',
+							label: 'BUS 1 - 8',
+						},
+						{
+							id: '2',
+							label: 'BUS 9 - 16',
+						},
+						{
+							id: '3',
+							label: 'MATRIX 1 - 6 / MAIN C',
+						},
+						/*{
+							id: '4',
+							label: 'TBD',
+						},*/
+						{
+							id: '5',
+							label: 'CH 9-16 (X32 Compact/Producer)',
+						},
+					]),
+				},
+				{
+					id: 'state',
+					type: 'checkbox',
+					label: 'On',
+					default: true,
+				},
+			],
+			style: {
+				bgcolor: self.rgb(0, 255, 127),
+				color: self.rgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackEvent): boolean => {
+				const path = `/-stat/grpfaderbank`
+				const data = path ? state.get(path) : undefined
+				const isOn = getDataNumber(data, 0) == evt.options.bank
+				return isOn === !!evt.options.state
+			},
+			subscribe: (evt: CompanionFeedbackEvent): void => {
+				const path = `/-stat/grpfaderbank`
+				subscribeFeedback(ensureLoaded, subs, path, evt)
+			},
+			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+				const path = `/-stat/grpfaderbank`
 				unsubscribeFeedback(subs, path, evt)
 			},
 		},

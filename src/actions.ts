@@ -61,6 +61,8 @@ export enum ActionId {
 	OscillatorEnable = 'oscillator-enable',
 	OscillatorDestination = 'oscillator-destination',
 	SyncClock = 'sync_clock',
+	ChannelBank = 'channel-bank',
+	GroupBank = 'group-bank',
 }
 
 type CompanionActionWithCallback = SetRequired<CompanionAction, 'callback'>
@@ -863,6 +865,82 @@ export function GetActionsList(
 				sendOsc(`/-action/setclock`, {
 					type: 's',
 					value: moment().format('YYYYMMDDHHmmss'),
+				})
+			},
+		},
+		[ActionId.ChannelBank]: {
+			label: 'Select active channel bank',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Bank',
+					id: 'bank',
+					...convertChoices([
+						{
+							id: '0',
+							label: 'CH 1 - 16',
+						},
+						{
+							id: '1',
+							label: 'CH 17 - 32',
+						},
+						{
+							id: '2',
+							label: 'AUX IN / USB / FX RTN',
+						},
+						{
+							id: '3',
+							label: 'BUS MASTERS',
+						},
+					]),
+				},
+			],
+			callback: (action): void => {
+				sendOsc(`/-stat/chfaderbank`, {
+					type: 'i',
+					value: getOptNumber(action, 'bank'),
+				})
+			},
+		},
+		[ActionId.GroupBank]: {
+			label: 'Select active group bank',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Bank',
+					id: 'bank',
+					...convertChoices([
+						{
+							id: '0',
+							label: 'GROUP DCA 1 - 8',
+						},
+						{
+							id: '1',
+							label: 'BUS 1 - 8',
+						},
+						{
+							id: '2',
+							label: 'BUS 9 - 16',
+						},
+						{
+							id: '3',
+							label: 'MATRIX 1 - 6 / MAIN C',
+						},
+						/*{
+							id: '4',
+							label: 'TBD',
+						},*/
+						{
+							id: '5',
+							label: 'CH 9-16 (X32 Compact/Producer)',
+						},
+					]),
+				},
+			],
+			callback: (action): void => {
+				sendOsc(`/-stat/grpfaderbank`, {
+					type: 'i',
+					value: getOptNumber(action, 'bank'),
 				})
 			},
 		},
