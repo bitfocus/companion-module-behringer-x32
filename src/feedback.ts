@@ -31,6 +31,7 @@ export enum FeedbackId {
 	TalkbackTalk = 'talkback_talk',
 	OscillatorEnable = 'oscillator-enable',
 	OscillatorDestination = 'oscillator-destination',
+	SoloDim = 'solo-dim',
 	Select = 'select',
 	Solo = 'solo',
 	ClearSolo = 'clear',
@@ -630,6 +631,37 @@ export function GetFeedbacksList(
 			},
 			unsubscribe: (evt: CompanionFeedbackEvent): void => {
 				const path = `/-stat/sendsonfader`
+				unsubscribeFeedback(subs, path, evt)
+			},
+		},
+    [FeedbackId.SoloDim]: {
+			type: 'boolean',
+			label: 'Change from Solo Dim enabled state',
+			description: 'If the Solo Dim is on, change style of the bank',
+			options: [
+				{
+					id: 'state',
+					type: 'checkbox',
+					label: 'On',
+					default: true,
+				},
+			],
+			style: {
+				bgcolor: self.rgb(255, 127, 0),
+				color: self.rgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackEvent): boolean => {
+				const path = `/config/solo/dim`
+				const data = path ? state.get(path) : undefined
+				const isOn = getDataNumber(data, 0) !== 0
+				return isOn === !!evt.options.state
+			},
+			subscribe: (evt: CompanionFeedbackEvent): void => {
+				const path = `/config/solo/dim`
+				subscribeFeedback(ensureLoaded, subs, path, evt)
+			},
+			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+				const path = `/config/solo/dim`
 				unsubscribeFeedback(subs, path, evt)
 			},
 		},

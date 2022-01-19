@@ -63,6 +63,9 @@ export enum ActionId {
 	OscillatorEnable = 'oscillator-enable',
 	OscillatorDestination = 'oscillator-destination',
 	SyncClock = 'sync_clock',
+	SoloDim = 'solo_dim',
+	SoloDimAttenuation = 'solo_dim_attenuation',
+	MonitorLevel = 'monitor-level',
 	SendsOnFader = 'sends-on-fader',
 }
 
@@ -903,6 +906,69 @@ export function GetActionsList(
 				})
 			},
 		},
+		[ActionId.SoloDim]: {
+			label: 'Solo Dim',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'On / Off',
+					id: 'on',
+					...convertChoices(CHOICES_ON_OFF),
+				},
+			],
+			callback: (action): void => {
+				const cmd = `/config/solo/dim`
+				const onState = getResolveOnOffMute(action, cmd, true, 'on')
+
+				sendOsc(cmd, {
+					type: 'i',
+					value: onState,
+				})
+			},
+			subscribe: (evt): void => {
+				if (evt.options.on === MUTE_TOGGLE) {
+					ensureLoaded(`/config/solo/dim`)
+				}
+			},
+		},
+		[ActionId.SoloDimAttenuation]: {
+			label: 'Set Dim Attenuation',
+			options: [
+				{
+					type: 'number',
+					label: 'Dim Attenuation',
+					id: 'dimAtt',
+					range: true,
+					required: true,
+					default: -10,
+					step: 1,
+					min: -40,
+					max: 0,
+				},
+			],
+			callback: (action): void => {
+				sendOsc(`/config/solo/dimatt`, {
+					type: 'f',
+					value: getOptNumber(action, 'dimAtt')/40+1
+				})
+			},
+		},
+		[ActionId.MonitorLevel]: {
+			label: 'Set monitor level',
+			options: [
+				FaderLevelChoice,
+				FadeDurationChoice,
+			],
+			callback: (action): void => {
+				const cmd = `/config/solo/level`
+				const currentState = state.get(cmd)
+				const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
+				transitions.run(cmd, currentVal, getOptNumber(action, 'fad'), getOptNumber(action, 'fadeDuration', 0))
+			},
+			subscribe: (): void => {
+				ensureLoaded(`/config/solo/level`)
+			},
+		},
 		[ActionId.SyncClock]: {
 			label: 'Sync console time',
 			options: [],
@@ -911,7 +977,7 @@ export function GetActionsList(
 					type: 's',
 					value: moment().format('YYYYMMDDHHmmss'),
 				})
-			},
+			}
 		},
 		[ActionId.SendsOnFader]: {
 			label: 'Sends on Fader/Fader Flip',
