@@ -26,8 +26,9 @@ export class X32Transitions {
 		try {
 			// HACK: We send commands on a different port than we run /xremote on, so that we get change events for what we send.
 			// Otherwise we can have no confirmation that a command was accepted
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			;(this.instance as any).system.emit('osc_send', this.instance.config.host, 10023, cmd, [arg])
+			if (this.instance.config.host) {
+				this.instance.oscSend(this.instance.config.host, 10023, cmd, [arg])
+			}
 		} catch (e) {
 			this.instance.log('error', `Command send failed: ${e}`)
 		}

@@ -86,8 +86,9 @@ export function GetActionsList(
 		try {
 			// HACK: We send commands on a different port than we run /xremote on, so that we get change events for what we send.
 			// Otherwise we can have no confirmation that a command was accepted
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			;(self as any).system.emit('osc_send', self.config.host, 10023, cmd, [arg])
+			if (self.config.host) {
+				self.oscSend(self.config.host, 10023, cmd, [arg])
+			}
 		} catch (e) {
 			self.log('error', `Command send failed: ${e}`)
 		}
