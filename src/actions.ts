@@ -80,7 +80,7 @@ export function GetActionsList(
 	const levelsChoices = GetLevelsChoiceConfigs(state)
 	const muteGroups = GetMuteGroupChoices(state)
 	const selectChoices = GetTargetChoices(state, { skipDca: true, includeMain: true, numericIndex: true })
-	const soloChoices = GetTargetChoices(state, {includeMain: true, numericIndex: true })
+	const soloChoices = GetTargetChoices(state, { includeMain: true, numericIndex: true })
 
 	const sendOsc = (cmd: string, arg: osc.MetaArgument): void => {
 		try {
@@ -782,7 +782,7 @@ export function GetActionsList(
 				},
 			],
 			callback: (action): void => {
-				const ch = `${getOptNumber(action, 'solo')+1}`.padStart(2,"0")
+				const ch = `${getOptNumber(action, 'solo') + 1}`.padStart(2, '0')
 				const cmd = `/-stat/solosw/${ch}`
 				const onState = getResolveOnOffMute(action, cmd, true, 'on')
 
@@ -793,7 +793,7 @@ export function GetActionsList(
 			},
 			subscribe: (evt): void => {
 				if (evt.options.on === MUTE_TOGGLE) {
-					const ch = `${getOptNumber(evt, 'solo')+1}`.padStart(2,"0")
+					const ch = `${getOptNumber(evt, 'solo') + 1}`.padStart(2, '0')
 					ensureLoaded(`/-stat/solosw/${ch}`)
 				}
 			},
@@ -950,16 +950,13 @@ export function GetActionsList(
 			callback: (action): void => {
 				sendOsc(`/config/solo/dimatt`, {
 					type: 'f',
-					value: getOptNumber(action, 'dimAtt')/40+1
+					value: getOptNumber(action, 'dimAtt') / 40 + 1,
 				})
 			},
 		},
 		[ActionId.MonitorLevel]: {
 			label: 'Set monitor level',
-			options: [
-				FaderLevelChoice,
-				FadeDurationChoice,
-			],
+			options: [FaderLevelChoice, FadeDurationChoice],
 			callback: (action): void => {
 				const cmd = `/config/solo/level`
 				const currentState = state.get(cmd)
@@ -978,7 +975,7 @@ export function GetActionsList(
 					type: 's',
 					value: moment().format('YYYYMMDDHHmmss'),
 				})
-			}
+			},
 		},
 		[ActionId.SendsOnFader]: {
 			label: 'Sends on Fader/Fader Flip',

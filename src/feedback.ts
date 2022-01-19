@@ -2,7 +2,7 @@ import { CompanionFeedbacks, CompanionFeedbackEvent, CompanionFeedbackBoolean } 
 import { X32State, X32Subscriptions } from './state'
 import {
 	GetMuteGroupChoices,
-	GetTargetChoices,	
+	GetTargetChoices,
 	GetChannelSendChoices,
 	convertChoices,
 	GetOscillatorDestinations,
@@ -75,7 +75,7 @@ export function GetFeedbacksList(
 	const levelsChoices = GetLevelsChoiceConfigs(state)
 	const muteGroups = GetMuteGroupChoices(state)
 	const selectChoices = GetTargetChoices(state, { skipDca: true, includeMain: true, numericIndex: true })
-	const soloChoices = GetTargetChoices(state, {includeMain: true, numericIndex: true })
+	const soloChoices = GetTargetChoices(state, { includeMain: true, numericIndex: true })
 
 	const feedbacks: { [id in FeedbackId]: CompanionFeedbackWithCallback | undefined } = {
 		[FeedbackId.Mute]: {
@@ -484,19 +484,19 @@ export function GetFeedbacksList(
 				color: self.rgb(0, 0, 0),
 			},
 			callback: (evt: CompanionFeedbackEvent): boolean => {
-				const ch = `${getOptNumber(evt, 'solo')+1}`.padStart(2,"0")
+				const ch = `${getOptNumber(evt, 'solo') + 1}`.padStart(2, '0')
 				const path = `/-stat/solosw/${ch}`
 				const data = path ? state.get(path) : undefined
 				const isOn = getDataNumber(data, 0) !== 0
 				return isOn === !!evt.options.state
 			},
 			subscribe: (evt: CompanionFeedbackEvent): void => {
-				const ch = `${getOptNumber(evt, 'solo')+1}`.padStart(2,"0")
+				const ch = `${getOptNumber(evt, 'solo') + 1}`.padStart(2, '0')
 				const path = `/-stat/solosw/${ch}`
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
 			unsubscribe: (evt: CompanionFeedbackEvent): void => {
-				const ch = `${getOptNumber(evt, 'solo')+1}`.padStart(2,"0")
+				const ch = `${getOptNumber(evt, 'solo') + 1}`.padStart(2, '0')
 				const path = `/-stat/solosw/${ch}`
 				unsubscribeFeedback(subs, path, evt)
 			},
@@ -555,19 +555,19 @@ export function GetFeedbacksList(
 				color: self.rgb(0, 0, 0),
 			},
 			callback: (evt: CompanionFeedbackEvent): boolean => {
-				const ch = `${getOptNumber(evt, 'solo')+1}`.padStart(2,"0")
+				const ch = `${getOptNumber(evt, 'solo') + 1}`.padStart(2, '0')
 				const path = `/-stat/solosw/${ch}`
 				const data = path ? state.get(path) : undefined
 				const isOn = getDataNumber(data, 0) !== 0
 				return isOn === !!evt.options.state
 			},
 			subscribe: (evt: CompanionFeedbackEvent): void => {
-				const ch = `${getOptNumber(evt, 'solo')+1}`.padStart(2,"0")
+				const ch = `${getOptNumber(evt, 'solo') + 1}`.padStart(2, '0')
 				const path = `/-stat/solosw/${ch}`
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
 			unsubscribe: (evt: CompanionFeedbackEvent): void => {
-				const ch = `${getOptNumber(evt, 'solo')+1}`.padStart(2,"0")
+				const ch = `${getOptNumber(evt, 'solo') + 1}`.padStart(2, '0')
 				const path = `/-stat/solosw/${ch}`
 				unsubscribeFeedback(subs, path, evt)
 			},
@@ -576,7 +576,7 @@ export function GetFeedbacksList(
 			type: 'boolean',
 			label: 'Change from clear solo state',
 			description: 'If atleast one solo is selected the clear solo button is on and will change style of the bank',
-			options:[
+			options: [
 				{
 					id: 'state',
 					type: 'checkbox',
@@ -603,7 +603,7 @@ export function GetFeedbacksList(
 				unsubscribeFeedback(subs, path, evt)
 			},
 		},
-    [FeedbackId.SendsOnFader]: {
+		[FeedbackId.SendsOnFader]: {
 			type: 'boolean',
 			label: 'Change from Sends on Fader/Fader Flip state',
 			description: 'If the Sends on Fader/Fader Flip is on, change style of the bank',
@@ -634,7 +634,7 @@ export function GetFeedbacksList(
 				unsubscribeFeedback(subs, path, evt)
 			},
 		},
-    [FeedbackId.SoloDim]: {
+		[FeedbackId.SoloDim]: {
 			type: 'boolean',
 			label: 'Change from Solo Dim enabled state',
 			description: 'If the Solo Dim is on, change style of the bank',
