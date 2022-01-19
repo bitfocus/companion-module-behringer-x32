@@ -34,6 +34,7 @@ export enum FeedbackId {
 	Select = 'select',
 	Solo = 'solo',
 	ClearSolo = 'clear',
+	SendsOnFader = 'sends-on-fader',
 }
 
 function getDataNumber(data: osc.MetaArgument[] | undefined, index: number): number | undefined {
@@ -598,6 +599,37 @@ export function GetFeedbacksList(
 			},
 			unsubscribe: (evt: CompanionFeedbackEvent): void => {
 				const path = `/-stat/solo`
+				unsubscribeFeedback(subs, path, evt)
+			},
+		},
+    [FeedbackId.SendsOnFader]: {
+			type: 'boolean',
+			label: 'Change from Sends on Fader/Fader Flip state',
+			description: 'If the Sends on Fader/Fader Flip is on, change style of the bank',
+			options: [
+				{
+					id: 'state',
+					type: 'checkbox',
+					label: 'On',
+					default: true,
+				},
+			],
+			style: {
+				bgcolor: self.rgb(255, 127, 0),
+				color: self.rgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackEvent): boolean => {
+				const path = `/-stat/sendsonfader`
+				const data = path ? state.get(path) : undefined
+				const isOn = getDataNumber(data, 0) !== 0
+				return isOn === !!evt.options.state
+			},
+			subscribe: (evt: CompanionFeedbackEvent): void => {
+				const path = `/-stat/sendsonfader`
+				subscribeFeedback(ensureLoaded, subs, path, evt)
+			},
+			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+				const path = `/-stat/sendsonfader`
 				unsubscribeFeedback(subs, path, evt)
 			},
 		},
