@@ -56,6 +56,8 @@ export enum ActionId {
 	GoScene = 'go_scene',
 	GoSnip = 'go_snip',
 	Select = 'select',
+	Solo = 'solo',
+	ClearSolo = 'clear-solo',
 	Tape = 'tape',
 	TalkbackTalk = 'talkback_talk',
 	OscillatorEnable = 'oscillator-enable',
@@ -64,6 +66,7 @@ export enum ActionId {
 	SoloDim = 'solo_dim',
 	SoloDimAttenuation = 'solo_dim_attenuation',
 	MonitorLevel = 'monitor-level',
+	SendsOnFader = 'sends-on-fader',
 }
 
 type CompanionActionWithCallback = SetRequired<CompanionAction, 'callback'>
@@ -77,6 +80,7 @@ export function GetActionsList(
 	const levelsChoices = GetLevelsChoiceConfigs(state)
 	const muteGroups = GetMuteGroupChoices(state)
 	const selectChoices = GetTargetChoices(state, { skipDca: true, includeMain: true, numericIndex: true })
+	const soloChoices = GetTargetChoices(state, {includeMain: true, numericIndex: true })
 
 	const sendOsc = (cmd: string, arg: osc.MetaArgument): void => {
 		try {
@@ -760,6 +764,49 @@ export function GetActionsList(
 				})
 			},
 		},
+		[ActionId.Solo]: {
+			label: 'Solo On/Off',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Target',
+					id: 'solo',
+					...convertChoices(soloChoices),
+				},
+				{
+					type: 'dropdown',
+					label: 'On / Off',
+					id: 'on',
+					...convertChoices(CHOICES_ON_OFF),
+				},
+			],
+			callback: (action): void => {
+				const ch = `${getOptNumber(action, 'solo')+1}`.padStart(2,"0")
+				const cmd = `/-stat/solosw/${ch}`
+				const onState = getResolveOnOffMute(action, cmd, true, 'on')
+
+				sendOsc(cmd, {
+					type: 'i',
+					value: onState,
+				})
+			},
+			subscribe: (evt): void => {
+				if (evt.options.on === MUTE_TOGGLE) {
+					const ch = `${getOptNumber(evt, 'solo')+1}`.padStart(2,"0")
+					ensureLoaded(`/-stat/solosw/${ch}`)
+				}
+			},
+		},
+		[ActionId.ClearSolo]: {
+			label: 'Clear Solo',
+			options: [],
+			callback: (): void => {
+				sendOsc(`/-action/clearsolo`, {
+					type: 'i',
+					value: 1,
+				})
+			},
+		},
 		[ActionId.Tape]: {
 			label: 'Tape Operation',
 			options: [
@@ -931,6 +978,31 @@ export function GetActionsList(
 					value: moment().format('YYYYMMDDHHmmss'),
 				})
 			}
+		},
+		[ActionId.SendsOnFader]: {
+			label: 'Sends on Fader/Fader Flip',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'On / Off',
+					id: 'on',
+					...convertChoices(CHOICES_ON_OFF),
+				},
+			],
+			callback: (action): void => {
+				const cmd = `/-stat/sendsonfader`
+				const onState = getResolveOnOffMute(action, cmd, true, 'on')
+
+				sendOsc(cmd, {
+					type: 'i',
+					value: onState,
+				})
+			},
+			subscribe: (evt): void => {
+				if (evt.options.on === MUTE_TOGGLE) {
+					ensureLoaded(`/-stat/sendsonfader`)
+				}
+			},
 		},
 	}
 

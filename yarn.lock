@@ -433,9 +433,9 @@ cross-spawn@^7.0.2, cross-spawn@^7.0.3:
     shebang-command "^2.0.0"
     which "^2.0.1"
 
-"debounce-fn@https://github.com/Julusian/debounce-fn.git":
-  version "4.0.0"
-  resolved "https://github.com/Julusian/debounce-fn.git#e616868634090b0a900d0604b0e3bc06ea775af0"
+"debounce-fn@github:julusian/debounce-fn#4.0.0-maxWaithack.0":
+  version "4.0.0-maxWaithack.0"
+  resolved "https://codeload.github.com/julusian/debounce-fn/tar.gz/3ca54d1526c19f541fe6f103abbceda31554caa9"
   dependencies:
     mimic-fn "^3.0.0"
 

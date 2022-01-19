@@ -2,6 +2,7 @@ import { CompanionFeedbacks, CompanionFeedbackEvent, CompanionFeedbackBoolean } 
 import { X32State, X32Subscriptions } from './state'
 import {
 	GetMuteGroupChoices,
+	GetTargetChoices,	
 	GetChannelSendChoices,
 	convertChoices,
 	GetOscillatorDestinations,
@@ -31,11 +32,25 @@ export enum FeedbackId {
 	OscillatorEnable = 'oscillator-enable',
 	OscillatorDestination = 'oscillator-destination',
 	SoloDim = 'solo-dim',
+	Select = 'select',
+	Solo = 'solo',
+	ClearSolo = 'clear',
+	SendsOnFader = 'sends-on-fader',
 }
 
 function getDataNumber(data: osc.MetaArgument[] | undefined, index: number): number | undefined {
 	const val = data ? data[index] : undefined
 	return val?.type === 'i' || val?.type === 'f' ? val.value : undefined
+}
+
+const getOptNumber = (event: CompanionFeedbackEvent, key: string, defVal?: number): number => {
+	const rawVal = event.options[key]
+	if (defVal !== undefined && rawVal === undefined) return defVal
+	const val = Number(rawVal)
+	if (isNaN(val)) {
+		throw new Error(`Invalid option '${key}'`)
+	}
+	return val
 }
 
 function subscribeFeedback(
@@ -59,6 +74,8 @@ export function GetFeedbacksList(
 ): CompanionFeedbacks {
 	const levelsChoices = GetLevelsChoiceConfigs(state)
 	const muteGroups = GetMuteGroupChoices(state)
+	const selectChoices = GetTargetChoices(state, { skipDca: true, includeMain: true, numericIndex: true })
+	const soloChoices = GetTargetChoices(state, {includeMain: true, numericIndex: true })
 
 	const feedbacks: { [id in FeedbackId]: CompanionFeedbackWithCallback | undefined } = {
 		[FeedbackId.Mute]: {
@@ -444,7 +461,180 @@ export function GetFeedbacksList(
 				unsubscribeFeedback(subs, path, evt)
 			},
 		},
-		[FeedbackId.SoloDim]: {
+		[FeedbackId.Select]: {
+			type: 'boolean',
+			label: 'Change from solo enabled state',
+			description: 'If the solo is on for specified channel, change style of the bank',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Target',
+					id: 'solo',
+					...convertChoices(soloChoices),
+				},
+				{
+					id: 'state',
+					type: 'checkbox',
+					label: 'On',
+					default: true,
+				},
+			],
+			style: {
+				bgcolor: self.rgb(255, 127, 0),
+				color: self.rgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackEvent): boolean => {
+				const ch = `${getOptNumber(evt, 'solo')+1}`.padStart(2,"0")
+				const path = `/-stat/solosw/${ch}`
+				const data = path ? state.get(path) : undefined
+				const isOn = getDataNumber(data, 0) !== 0
+				return isOn === !!evt.options.state
+			},
+			subscribe: (evt: CompanionFeedbackEvent): void => {
+				const ch = `${getOptNumber(evt, 'solo')+1}`.padStart(2,"0")
+				const path = `/-stat/solosw/${ch}`
+				subscribeFeedback(ensureLoaded, subs, path, evt)
+			},
+			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+				const ch = `${getOptNumber(evt, 'solo')+1}`.padStart(2,"0")
+				const path = `/-stat/solosw/${ch}`
+				unsubscribeFeedback(subs, path, evt)
+			},
+		},
+		[FeedbackId.Select]: {
+			type: 'boolean',
+			label: 'Change from select state',
+			description: 'If specified channel is selected, change style of the bank',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Target',
+					id: 'select',
+					...convertChoices(selectChoices),
+				},
+			],
+			style: {
+				bgcolor: self.rgb(0, 255, 127),
+				color: self.rgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackEvent): boolean => {
+				const path = `/-stat/selidx`
+				const data = path ? state.get(path) : undefined
+				const selectedChannel = getDataNumber(data, 0)
+				return selectedChannel == evt.options.select
+			},
+			subscribe: (evt: CompanionFeedbackEvent): void => {
+				const path = `/-stat/selidx`
+				subscribeFeedback(ensureLoaded, subs, path, evt)
+			},
+			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+				const path = `/-stat/selidx`
+				unsubscribeFeedback(subs, path, evt)
+			},
+		},
+		[FeedbackId.Solo]: {
+			type: 'boolean',
+			label: 'Change from solo enabled state',
+			description: 'If the solo is on for specified channel, change style of the bank',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Target',
+					id: 'solo',
+					...convertChoices(soloChoices),
+				},
+				{
+					id: 'state',
+					type: 'checkbox',
+					label: 'On',
+					default: true,
+				},
+			],
+			style: {
+				bgcolor: self.rgb(255, 127, 0),
+				color: self.rgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackEvent): boolean => {
+				const ch = `${getOptNumber(evt, 'solo')+1}`.padStart(2,"0")
+				const path = `/-stat/solosw/${ch}`
+				const data = path ? state.get(path) : undefined
+				const isOn = getDataNumber(data, 0) !== 0
+				return isOn === !!evt.options.state
+			},
+			subscribe: (evt: CompanionFeedbackEvent): void => {
+				const ch = `${getOptNumber(evt, 'solo')+1}`.padStart(2,"0")
+				const path = `/-stat/solosw/${ch}`
+				subscribeFeedback(ensureLoaded, subs, path, evt)
+			},
+			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+				const ch = `${getOptNumber(evt, 'solo')+1}`.padStart(2,"0")
+				const path = `/-stat/solosw/${ch}`
+				unsubscribeFeedback(subs, path, evt)
+			},
+		},
+		[FeedbackId.ClearSolo]: {
+			type: 'boolean',
+			label: 'Change from clear solo state',
+			description: 'If atleast one solo is selected the clear solo button is on and will change style of the bank',
+			options:[
+				{
+					id: 'state',
+					type: 'checkbox',
+					label: 'On',
+					default: true,
+				},
+			],
+			style: {
+				bgcolor: self.rgb(255, 127, 0),
+				color: self.rgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackEvent): boolean => {
+				const path = `/-stat/solo`
+				const data = path ? state.get(path) : undefined
+				const isOn = getDataNumber(data, 0) !== 0
+				return isOn === !!evt.options.state
+			},
+			subscribe: (evt: CompanionFeedbackEvent): void => {
+				const path = `/-stat/solo`
+				subscribeFeedback(ensureLoaded, subs, path, evt)
+			},
+			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+				const path = `/-stat/solo`
+				unsubscribeFeedback(subs, path, evt)
+			},
+		},
+    [FeedbackId.SendsOnFader]: {
+			type: 'boolean',
+			label: 'Change from Sends on Fader/Fader Flip state',
+			description: 'If the Sends on Fader/Fader Flip is on, change style of the bank',
+			options: [
+				{
+					id: 'state',
+					type: 'checkbox',
+					label: 'On',
+					default: true,
+				},
+			],
+			style: {
+				bgcolor: self.rgb(255, 127, 0),
+				color: self.rgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackEvent): boolean => {
+				const path = `/-stat/sendsonfader`
+				const data = path ? state.get(path) : undefined
+				const isOn = getDataNumber(data, 0) !== 0
+				return isOn === !!evt.options.state
+			},
+			subscribe: (evt: CompanionFeedbackEvent): void => {
+				const path = `/-stat/sendsonfader`
+				subscribeFeedback(ensureLoaded, subs, path, evt)
+			},
+			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+				const path = `/-stat/sendsonfader`
+				unsubscribeFeedback(subs, path, evt)
+			},
+		},
+    [FeedbackId.SoloDim]: {
 			type: 'boolean',
 			label: 'Change from Solo Dim enabled state',
 			description: 'If the Solo Dim is on, change style of the bank',
