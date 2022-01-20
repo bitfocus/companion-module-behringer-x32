@@ -56,11 +56,17 @@ export enum ActionId {
 	GoScene = 'go_scene',
 	GoSnip = 'go_snip',
 	Select = 'select',
+	Solo = 'solo',
+	ClearSolo = 'clear-solo',
 	Tape = 'tape',
 	TalkbackTalk = 'talkback_talk',
 	OscillatorEnable = 'oscillator-enable',
 	OscillatorDestination = 'oscillator-destination',
 	SyncClock = 'sync_clock',
+	SoloDim = 'solo_dim',
+	SoloDimAttenuation = 'solo_dim_attenuation',
+	MonitorLevel = 'monitor-level',
+	SendsOnFader = 'sends-on-fader',
 }
 
 type CompanionActionWithCallback = SetRequired<CompanionAction, 'callback'>
@@ -74,13 +80,15 @@ export function GetActionsList(
 	const levelsChoices = GetLevelsChoiceConfigs(state)
 	const muteGroups = GetMuteGroupChoices(state)
 	const selectChoices = GetTargetChoices(state, { skipDca: true, includeMain: true, numericIndex: true })
+	const soloChoices = GetTargetChoices(state, { includeMain: true, numericIndex: true })
 
 	const sendOsc = (cmd: string, arg: osc.MetaArgument): void => {
 		try {
 			// HACK: We send commands on a different port than we run /xremote on, so that we get change events for what we send.
 			// Otherwise we can have no confirmation that a command was accepted
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			;(self as any).system.emit('osc_send', self.config.host, 10023, cmd, [arg])
+			if (self.config.host) {
+				self.oscSend(self.config.host, 10023, cmd, [arg])
+			}
 		} catch (e) {
 			self.log('error', `Command send failed: ${e}`)
 		}
@@ -757,6 +765,49 @@ export function GetActionsList(
 				})
 			},
 		},
+		[ActionId.Solo]: {
+			label: 'Solo On/Off',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Target',
+					id: 'solo',
+					...convertChoices(soloChoices),
+				},
+				{
+					type: 'dropdown',
+					label: 'On / Off',
+					id: 'on',
+					...convertChoices(CHOICES_ON_OFF),
+				},
+			],
+			callback: (action): void => {
+				const ch = `${getOptNumber(action, 'solo') + 1}`.padStart(2, '0')
+				const cmd = `/-stat/solosw/${ch}`
+				const onState = getResolveOnOffMute(action, cmd, true, 'on')
+
+				sendOsc(cmd, {
+					type: 'i',
+					value: onState,
+				})
+			},
+			subscribe: (evt): void => {
+				if (evt.options.on === MUTE_TOGGLE) {
+					const ch = `${getOptNumber(evt, 'solo') + 1}`.padStart(2, '0')
+					ensureLoaded(`/-stat/solosw/${ch}`)
+				}
+			},
+		},
+		[ActionId.ClearSolo]: {
+			label: 'Clear Solo',
+			options: [],
+			callback: (): void => {
+				sendOsc(`/-action/clearsolo`, {
+					type: 'i',
+					value: 1,
+				})
+			},
+		},
 		[ActionId.Tape]: {
 			label: 'Tape Operation',
 			options: [
@@ -856,6 +907,66 @@ export function GetActionsList(
 				})
 			},
 		},
+		[ActionId.SoloDim]: {
+			label: 'Solo Dim',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'On / Off',
+					id: 'on',
+					...convertChoices(CHOICES_ON_OFF),
+				},
+			],
+			callback: (action): void => {
+				const cmd = `/config/solo/dim`
+				const onState = getResolveOnOffMute(action, cmd, true, 'on')
+
+				sendOsc(cmd, {
+					type: 'i',
+					value: onState,
+				})
+			},
+			subscribe: (evt): void => {
+				if (evt.options.on === MUTE_TOGGLE) {
+					ensureLoaded(`/config/solo/dim`)
+				}
+			},
+		},
+		[ActionId.SoloDimAttenuation]: {
+			label: 'Set Dim Attenuation',
+			options: [
+				{
+					type: 'number',
+					label: 'Dim Attenuation',
+					id: 'dimAtt',
+					range: true,
+					required: true,
+					default: -10,
+					step: 1,
+					min: -40,
+					max: 0,
+				},
+			],
+			callback: (action): void => {
+				sendOsc(`/config/solo/dimatt`, {
+					type: 'f',
+					value: getOptNumber(action, 'dimAtt') / 40 + 1,
+				})
+			},
+		},
+		[ActionId.MonitorLevel]: {
+			label: 'Set monitor level',
+			options: [FaderLevelChoice, FadeDurationChoice],
+			callback: (action): void => {
+				const cmd = `/config/solo/level`
+				const currentState = state.get(cmd)
+				const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
+				transitions.run(cmd, currentVal, getOptNumber(action, 'fad'), getOptNumber(action, 'fadeDuration', 0))
+			},
+			subscribe: (): void => {
+				ensureLoaded(`/config/solo/level`)
+			},
+		},
 		[ActionId.SyncClock]: {
 			label: 'Sync console time',
 			options: [],
@@ -864,6 +975,31 @@ export function GetActionsList(
 					type: 's',
 					value: moment().format('YYYYMMDDHHmmss'),
 				})
+			},
+		},
+		[ActionId.SendsOnFader]: {
+			label: 'Sends on Fader/Fader Flip',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'On / Off',
+					id: 'on',
+					...convertChoices(CHOICES_ON_OFF),
+				},
+			],
+			callback: (action): void => {
+				const cmd = `/-stat/sendsonfader`
+				const onState = getResolveOnOffMute(action, cmd, true, 'on')
+
+				sendOsc(cmd, {
+					type: 'i',
+					value: onState,
+				})
+			},
+			subscribe: (evt): void => {
+				if (evt.options.on === MUTE_TOGGLE) {
+					ensureLoaded(`/-stat/sendsonfader`)
+				}
 			},
 		},
 	}
