@@ -10,6 +10,14 @@ While developing the module, by using `yarn build:watch` the compiler will be ru
 
 ## Changes
 
+### v2.8.0
+
+- Sends on Fader/Fader Flip
+
+- Solo and Clear Solo
+
+- Solo Dim, Solo Dim Attenuation and Monitor Level
+
 ### v2.7.0
 
 - fix typings for actions in triggers changes
