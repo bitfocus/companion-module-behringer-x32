@@ -38,6 +38,8 @@ export enum FeedbackId {
 	SendsOnFader = 'sends-on-fader',
 	ChannelBank = 'channel-bank',
 	GroupBank = 'group-bank',
+	ChannelBankCompact = 'channel-bank-compact',
+	GroupBankCompact = 'group-bank-compact',
 }
 
 function getDataNumber(data: osc.MetaArgument[] | undefined, index: number): number | undefined {
@@ -669,8 +671,9 @@ export function GetFeedbacksList(
 		},
 		[FeedbackId.ChannelBank]: {
 			type: 'boolean',
-			label: 'Change from selected channel bank',
-			description: 'If the channel bank matches the selected channel bank, change style of the bank',
+			label: 'Change from selected channel bank (X32/M32)',
+			description:
+				'If the channel bank matches the selected channel bank, change style of the bank. Please note these will be incorrect if used connected to an X32 Compact/X32 Producer/M32R use the X32 Compact/X32 Producer/M32R feedback instead.',
 			options: [
 				{
 					type: 'dropdown',
@@ -723,8 +726,9 @@ export function GetFeedbacksList(
 		},
 		[FeedbackId.GroupBank]: {
 			type: 'boolean',
-			label: 'Change from selected group bank',
-			description: 'If the group bank matches the selected group bank, change style of the bank',
+			label: 'Change from selected group bank (X32/M32)',
+			description:
+				'If the group bank matches the selected group bank, change style of the bank. Please note these will be incorrect if used connected to an X32 Compact/X32 Producer/M32R use the X32 Compact/X32 Producer/M32R feedback instead.',
 			options: [
 				{
 					type: 'dropdown',
@@ -747,13 +751,155 @@ export function GetFeedbacksList(
 							id: '3',
 							label: 'MATRIX 1 - 6 / MAIN C',
 						},
-						/*{
+					]),
+				},
+				{
+					id: 'state',
+					type: 'checkbox',
+					label: 'On',
+					default: true,
+				},
+			],
+			style: {
+				bgcolor: self.rgb(0, 255, 127),
+				color: self.rgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackEvent): boolean => {
+				const path = `/-stat/grpfaderbank`
+				const data = path ? state.get(path) : undefined
+				const isOn = getDataNumber(data, 0) == evt.options.bank
+				return isOn === !!evt.options.state
+			},
+			subscribe: (evt: CompanionFeedbackEvent): void => {
+				const path = `/-stat/grpfaderbank`
+				subscribeFeedback(ensureLoaded, subs, path, evt)
+			},
+			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+				const path = `/-stat/grpfaderbank`
+				unsubscribeFeedback(subs, path, evt)
+			},
+		},
+		[FeedbackId.ChannelBankCompact]: {
+			type: 'boolean',
+			label: 'Change from selected channel bank (X32 Compact/X32 Producer/M32R)',
+			description:
+				'If the channel bank matches the selected channel bank, change style of the bank. Please note these will be incorrect if used connected to an X32/M32 use the X32/M32 feedback instead.',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Bank',
+					id: 'bank',
+					...convertChoices([
+						{
+							id: '0',
+							label: 'CH 1 - 8',
+						},
+						{
+							id: '1',
+							label: 'CH 9 - 16',
+						},
+						{
+							id: '2',
+							label: 'CH 17 - 24',
+						},
+						{
+							id: '3',
+							label: 'CH 25 - 32',
+						},
+						{
 							id: '4',
-							label: 'TBD',
-						},*/
+							label: 'AUX IN / USB',
+						},
 						{
 							id: '5',
-							label: 'CH 9-16 (X32 Compact/Producer)',
+							label: 'FX RTN',
+						},
+						{
+							id: '6',
+							label: 'BUS 1-8',
+						},
+						{
+							id: '7',
+							label: 'BUS 1-8',
+						},
+					]),
+				},
+				{
+					id: 'state',
+					type: 'checkbox',
+					label: 'On',
+					default: true,
+				},
+			],
+			style: {
+				bgcolor: self.rgb(0, 255, 127),
+				color: self.rgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackEvent): boolean => {
+				const path = `/-stat/chfaderbank`
+				const data = path ? state.get(path) : undefined
+				const isOn = getDataNumber(data, 0) == evt.options.bank
+				return isOn === !!evt.options.state
+			},
+			subscribe: (evt: CompanionFeedbackEvent): void => {
+				const path = `/-stat/chfaderbank`
+				subscribeFeedback(ensureLoaded, subs, path, evt)
+			},
+			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+				const path = `/-stat/chfaderbank`
+				unsubscribeFeedback(subs, path, evt)
+			},
+		},
+		[FeedbackId.GroupBankCompact]: {
+			type: 'boolean',
+			label: 'Change from selected group bank (X32 Compact/X32 Producer/M32R)',
+			description:
+				'If the group bank matches the selected group bank, change style of the bank. Please note these will be incorrect if used connected to an X32/M32 use the X32/M32 feedback instead.',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Bank',
+					id: 'bank',
+					...convertChoices([
+						{
+							id: '0',
+							label: 'GROUP DCA 1 - 8',
+						},
+						{
+							id: '1',
+							label: 'BUS 1 - 8',
+						},
+						{
+							id: '2',
+							label: 'BUS 9 - 16',
+						},
+						{
+							id: '3',
+							label: 'MATRIX 1 - 6 / MAIN C',
+						},
+						{
+							id: '4',
+							label: 'CH 1 - 8',
+						},
+						{
+							id: '5',
+							label: 'CH 9 - 16',
+						},
+						{
+							id: '6',
+							label: 'CH 17 - 24',
+						},
+						{
+							id: '7',
+							label: 'CH 25 - 32',
+						},
+						{
+							id: '8',
+							label: 'AUX IN / USB',
+						},
+						{
+							id: '9',
+							label: 'FX RTN',
 						},
 					]),
 				},

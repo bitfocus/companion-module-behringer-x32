@@ -67,8 +67,10 @@ export enum ActionId {
 	SoloDimAttenuation = 'solo_dim_attenuation',
 	MonitorLevel = 'monitor-level',
 	SendsOnFader = 'sends-on-fader',
-	ChannelBank = 'channel-bank',
-	GroupBank = 'group-bank',
+	ChannelBank = 'channel-bank-full',
+	GroupBank = 'group-bank-full',
+	ChannelBankCompact = 'channel-bank-compact',
+	GroupBankCompact = 'group-bank-compact',
 }
 
 type CompanionActionWithCallback = SetRequired<CompanionAction, 'callback'>
@@ -980,7 +982,9 @@ export function GetActionsList(
 			},
 		},
 		[ActionId.ChannelBank]: {
-			label: 'Select active channel bank',
+			label: 'Select active channel bank (X32/M32)',
+			description:
+				'Select a channel bank for the left hand side of your console. Please note this action is for the X32 and M32. For X32 Compact/X32 Producer/M32R please use the X32 Compact/X32 Producer/M32R action',
 			options: [
 				{
 					type: 'dropdown',
@@ -1014,7 +1018,9 @@ export function GetActionsList(
 			},
 		},
 		[ActionId.GroupBank]: {
-			label: 'Select active group bank',
+			label: 'Select active group bank (X32/M32)',
+			description:
+				'Select a group bank for the right hand side of your console. Please note this action is for the X32 and M32. For X32 Compact/X32 Producer/M32R please use the X32 Compact/X32 Producer/M32R action',
 			options: [
 				{
 					type: 'dropdown',
@@ -1037,13 +1043,117 @@ export function GetActionsList(
 							id: '3',
 							label: 'MATRIX 1 - 6 / MAIN C',
 						},
-						/*{
+					]),
+				},
+			],
+			callback: (action): void => {
+				sendOsc(`/-stat/grpfaderbank`, {
+					type: 'i',
+					value: getOptNumber(action, 'bank'),
+				})
+			},
+		},
+		[ActionId.ChannelBankCompact]: {
+			label: 'Select active channel bank (X32 Compact/X32 Producer/M32R)',
+			description:
+				'Select a channel bank for the left hand side of your console. Please note this action is for X32 Compact/X32 Producer/M32R. For X32 or M32 please use the X32/M32 action',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Bank',
+					id: 'bank',
+					...convertChoices([
+						{
+							id: '0',
+							label: 'CH 1 - 8',
+						},
+						{
+							id: '1',
+							label: 'CH 9 - 16',
+						},
+						{
+							id: '2',
+							label: 'CH 17 - 24',
+						},
+						{
+							id: '3',
+							label: 'CH 25 - 32',
+						},
+						{
 							id: '4',
-							label: 'TBD',
-						},*/
+							label: 'AUX IN / USB',
+						},
 						{
 							id: '5',
-							label: 'CH 9-16 (X32 Compact/Producer)',
+							label: 'FX RTN',
+						},
+						{
+							id: '6',
+							label: 'BUS 1-8',
+						},
+						{
+							id: '7',
+							label: 'BUS 1-8',
+						},
+					]),
+				},
+			],
+			callback: (action): void => {
+				sendOsc(`/-stat/chfaderbank`, {
+					type: 'i',
+					value: getOptNumber(action, 'bank'),
+				})
+			},
+		},
+		[ActionId.GroupBankCompact]: {
+			label: 'Select active group bank (X32 Compact/X32 Producer/M32R)',
+			description:
+				'Select a group bank for the right hand side of your console. Please note this actions is for X32 Compact/X32 Producer/M32R. For X32 or M32 please use the X32/M32 action',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Bank',
+					id: 'bank',
+					...convertChoices([
+						{
+							id: '0',
+							label: 'GROUP DCA 1 - 8',
+						},
+						{
+							id: '1',
+							label: 'BUS 1 - 8',
+						},
+						{
+							id: '2',
+							label: 'BUS 9 - 16',
+						},
+						{
+							id: '3',
+							label: 'MATRIX 1 - 6 / MAIN C',
+						},
+						{
+							id: '4',
+							label: 'CH 1 - 8',
+						},
+						{
+							id: '5',
+							label: 'CH 9 - 16',
+						},
+						{
+							id: '6',
+							label: 'CH 17 - 24',
+						},
+						{
+							id: '7',
+							label: 'CH 25 - 32',
+						},
+						{
+							id: '8',
+							label: 'AUX IN / USB',
+						},
+						{
+							id: '9',
+							label: 'FX RTN',
 						},
 					]),
 				},
