@@ -49,6 +49,10 @@ export function InitVariables(instance: InstanceSkel<X32Config>, state: X32State
 	}
 
 	instance.setVariableDefinitions(variables)
+	instance.setVariables({
+		tape_time_hms: `--:--:--`,
+		tape_time_ms: `--:--`,
+	})
 }
 
 export function updateDeviceInfoVariables(instance: InstanceSkel<X32Config>, args: osc.MetaArgument[]): void {
@@ -70,8 +74,8 @@ export function updateDeviceInfoVariables(instance: InstanceSkel<X32Config>, arg
 export function updateTapeTime(instance: InstanceSkel<X32Config>, state: X32State): void {
 	const etime = state.get('/-stat/tape/etime')
 	const time = etime && etime[0]?.type === 'i' ? etime[0].value : 0
-	const hh = `${time / 3600}`.padStart(2, '0')
-	const mm = `${(time / 60) % 60}`.padStart(2, '0')
+	const hh = `${Math.floor(time / 3600)}`.padStart(2, '0')
+	const mm = `${Math.floor(time / 60) % 60}`.padStart(2, '0')
 	const ss = `${time % 60}`.padStart(2, '0')
 	instance.setVariables({
 		tape_time_hms: `${hh}:${mm}:${ss}`,
