@@ -36,6 +36,19 @@ export enum FeedbackId {
 	Solo = 'solo',
 	ClearSolo = 'clear',
 	SendsOnFader = 'sends-on-fader',
+	Screens = 'screens',
+	MuteGroupScreen = 'mute-group-screen',
+	UtilityScreen = 'utility-screen',
+	ChannelPage = 'channel-page',
+	MeterPage = 'meter-page',
+	RoutePage = 'route-page',
+	SetupPage = 'setup-page',
+	LibPage = 'library-page',
+	FxPage = 'effects-page',
+	MonPage = 'monitor-page',
+	USBPage = 'usb-page',
+	ScenePage = 'scene-page',
+	AssignPage = 'assign-page',
 }
 
 function getDataNumber(data: osc.MetaArgument[] | undefined, index: number): number | undefined {
@@ -663,6 +676,758 @@ export function GetFeedbacksList(
 			unsubscribe: (evt: CompanionFeedbackEvent): void => {
 				const path = `/config/solo/dim`
 				unsubscribeFeedback(subs, path, evt)
+			},
+		},
+		[FeedbackId.Screens]: {
+			type: 'boolean',
+			label: 'Change from screen state',
+			description: 'If the select screen is being shown, change style of the bank',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Screen',
+					id: 'screen',
+					...convertChoices([
+						{
+							id: '0',
+							label: 'HOME',
+						},
+						{
+							id: '1',
+							label: 'METERS',
+						},
+						{
+							id: '2',
+							label: 'ROUTING',
+						},
+						{
+							id: '3',
+							label: 'SETUP',
+						},
+						{
+							id: '4',
+							label: 'LIBRARY',
+						},
+						{
+							id: '5',
+							label: 'EFFECTS',
+						},
+						{
+							id: '6',
+							label: 'MONITOR',
+						},
+						{
+							id: '7',
+							label: 'USB RECORDER',
+						},
+						{
+							id: '8',
+							label: 'SCENES',
+						},
+						{
+							id: '9',
+							label: 'ASSIGN',
+						},
+					]),
+				},
+				{
+					id: 'state',
+					type: 'checkbox',
+					label: 'On',
+					default: true,
+				},
+			],
+			style: {
+				bgcolor: self.rgb(0, 255, 127),
+				color: self.rgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackEvent): boolean => {
+				const path = `/-stat/screen/screen`
+				const data = path ? state.get(path) : undefined
+				const isOn = getDataNumber(data, 0) == evt.options.screen
+				return isOn === !!evt.options.state
+			},
+			subscribe: (evt: CompanionFeedbackEvent): void => {
+				const path = `/-stat/screen/screen`
+				subscribeFeedback(ensureLoaded, subs, path, evt)
+			},
+			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+				const path = `/-stat/screen/screen`
+				unsubscribeFeedback(subs, path, evt)
+			},
+		},
+		[FeedbackId.MuteGroupScreen]: {
+			type: 'boolean',
+			label: 'Change from mute groups screen enabled state',
+			description: 'If mute groups screen is on, change style of the bank',
+			options: [
+				{
+					id: 'state',
+					type: 'checkbox',
+					label: 'On',
+					default: true,
+				},
+			],
+			style: {
+				bgcolor: self.rgb(255, 0, 0),
+				color: self.rgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackEvent): boolean => {
+				const path = `/-stat/screen/mutegrp`
+				const data = path ? state.get(path) : undefined
+				const isOn = getDataNumber(data, 0) !== 0
+				return isOn === !!evt.options.state
+			},
+			subscribe: (evt: CompanionFeedbackEvent): void => {
+				const path = `/-stat/screen/mutegrp`
+				subscribeFeedback(ensureLoaded, subs, path, evt)
+			},
+			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+				const path = `/-stat/screen/mutegrp`
+				unsubscribeFeedback(subs, path, evt)
+			},
+		},
+		[FeedbackId.UtilityScreen]: {
+			type: 'boolean',
+			label: 'Change from Utility enabled state',
+			description: 'If utility screen is on, change style of the bank',
+			options: [
+				{
+					id: 'state',
+					type: 'checkbox',
+					label: 'On',
+					default: true,
+				},
+			],
+			style: {
+				bgcolor: self.rgb(0, 255, 127),
+				color: self.rgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackEvent): boolean => {
+				const path = `/-stat/screen/utils`
+				const data = path ? state.get(path) : undefined
+				const isOn = getDataNumber(data, 0) !== 0
+				return isOn === !!evt.options.state
+			},
+			subscribe: (evt: CompanionFeedbackEvent): void => {
+				const path = `/-stat/screen/utils`
+				subscribeFeedback(ensureLoaded, subs, path, evt)
+			},
+			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+				const path = `/-stat/screen/utils`
+				unsubscribeFeedback(subs, path, evt)
+			},
+		},
+		[FeedbackId.ChannelPage]: {
+			type: 'boolean',
+			label: 'Change from channel page selected state',
+			description: 'If channel screen is on and selected page is active, change style of the bank',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'page',
+					id: 'page',
+					...convertChoices([
+						{
+							id: '0',
+							label: 'HOME',
+						},
+						{
+							id: '1',
+							label: 'CONFIG',
+						},
+						{
+							id: '2',
+							label: 'GATE',
+						},
+						{
+							id: '3',
+							label: 'DYNAMICS',
+						},
+						{
+							id: '4',
+							label: 'EQ',
+						},
+						{
+							id: '5',
+							label: 'SENDS',
+						},
+						{
+							id: '6',
+							label: 'MAIN',
+						},
+					]),
+				},
+				{
+					id: 'state',
+					type: 'checkbox',
+					label: 'On',
+					default: true,
+				},
+			],
+			style: {
+				bgcolor: self.rgb(0, 255, 127),
+				color: self.rgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackEvent): boolean => {
+				const screen = state.get('/-stat/screen/screen')
+				const page = state.get('/-stat/screen/CHAN/page')
+				const isOn = getDataNumber(screen, 0) === 0 && getDataNumber(page, 0) == evt.options.page
+				return isOn === !!evt.options.state
+			},
+			subscribe: (evt: CompanionFeedbackEvent): void => {
+				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/screen', evt)
+				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/CHAN/page', evt)
+			},
+			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+				unsubscribeFeedback(subs, '/-stat/screen/screen', evt)
+				unsubscribeFeedback(subs, '/-stat/screen/CHAN/page', evt)
+			},
+		},
+		[FeedbackId.MeterPage]: {
+			type: 'boolean',
+			label: 'Change from meter page selected state',
+			description: 'If meter screen is on and selected page is active, change style of the bank',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'page',
+					id: 'page',
+					...convertChoices([
+						{
+							id: '0',
+							label: 'CHANNEL',
+						},
+						{
+							id: '1',
+							label: 'MIX BUS',
+						},
+						{
+							id: '2',
+							label: 'AUX/FX',
+						},
+						{
+							id: '3',
+							label: 'IN/OUT',
+						},
+						{
+							id: '4',
+							label: 'RTA',
+						},
+						{
+							id: '5',
+							label: 'AUTOMIX',
+						},
+					]),
+				},
+				{
+					id: 'state',
+					type: 'checkbox',
+					label: 'On',
+					default: true,
+				},
+			],
+			style: {
+				bgcolor: self.rgb(0, 255, 127),
+				color: self.rgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackEvent): boolean => {
+				const screen = state.get('/-stat/screen/screen')
+				const page = state.get('/-stat/screen/METER/page')
+				const isOn = getDataNumber(screen, 0) === 1 && getDataNumber(page, 0) == evt.options.page
+				return isOn === !!evt.options.state
+			},
+			subscribe: (evt: CompanionFeedbackEvent): void => {
+				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/screen', evt)
+				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/METER/page', evt)
+			},
+			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+				unsubscribeFeedback(subs, '/-stat/screen/screen', evt)
+				unsubscribeFeedback(subs, '/-stat/screen/METER/page', evt)
+			},
+		},
+		[FeedbackId.RoutePage]: {
+			type: 'boolean',
+			label: 'Change from route page selected state',
+			description: 'If route screen is on and selected page is active, change style of the bank',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'page',
+					id: 'page',
+					...convertChoices([
+						{
+							id: '0',
+							label: 'INPUT',
+						},
+						{
+							id: '1',
+							label: 'AES-A',
+						},
+						{
+							id: '2',
+							label: 'AES-B',
+						},
+						{
+							id: '3',
+							label: 'CARD',
+						},
+						{
+							id: '4',
+							label: 'XLR',
+						},
+						{
+							id: '5',
+							label: 'PATCH OUT',
+						},
+						{
+							id: '6',
+							label: 'PATCH AUX',
+						},
+						{
+							id: '7',
+							label: 'PATCH P16',
+						},
+						{
+							id: '8',
+							label: 'PATCH USER',
+						},
+					]),
+				},
+				{
+					id: 'state',
+					type: 'checkbox',
+					label: 'On',
+					default: true,
+				},
+			],
+			style: {
+				bgcolor: self.rgb(0, 255, 127),
+				color: self.rgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackEvent): boolean => {
+				const screen = state.get('/-stat/screen/screen')
+				const page = state.get('/-stat/screen/ROUTE/page')
+				const isOn = getDataNumber(screen, 0) === 2 && getDataNumber(page, 0) == evt.options.page
+				return isOn === !!evt.options.state
+			},
+			subscribe: (evt: CompanionFeedbackEvent): void => {
+				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/screen', evt)
+				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/ROUTE/page', evt)
+			},
+			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+				unsubscribeFeedback(subs, '/-stat/screen/screen', evt)
+				unsubscribeFeedback(subs, '/-stat/screen/ROUTE/page', evt)
+			},
+		},
+		[FeedbackId.SetupPage]: {
+			type: 'boolean',
+			label: 'Change from setup page selected state',
+			description: 'If setup screen is on and selected page is active, change style of the bank',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'page',
+					id: 'page',
+					...convertChoices([
+						{
+							id: '0',
+							label: 'GLOBAL',
+						},
+						{
+							id: '1',
+							label: 'CONFIG',
+						},
+						{
+							id: '2',
+							label: 'REMOTE',
+						},
+						{
+							id: '3',
+							label: 'NETWORK',
+						},
+						{
+							id: '4',
+							label: 'SCRIBBLE STRIPS',
+						},
+						{
+							id: '5',
+							label: 'PREAMPS',
+						},
+						{
+							id: '6',
+							label: 'CARD',
+						},
+					]),
+				},
+				{
+					id: 'state',
+					type: 'checkbox',
+					label: 'On',
+					default: true,
+				},
+			],
+			style: {
+				bgcolor: self.rgb(0, 255, 127),
+				color: self.rgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackEvent): boolean => {
+				const screen = state.get('/-stat/screen/screen')
+				const page = state.get('/-stat/screen/SETUP/page')
+				const isOn = getDataNumber(screen, 0) === 3 && getDataNumber(page, 0) == evt.options.page
+				return isOn === !!evt.options.state
+			},
+			subscribe: (evt: CompanionFeedbackEvent): void => {
+				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/screen', evt)
+				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/SETUP/page', evt)
+			},
+			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+				unsubscribeFeedback(subs, '/-stat/screen/screen', evt)
+				unsubscribeFeedback(subs, '/-stat/screen/SETUP/page', evt)
+			},
+		},
+		[FeedbackId.LibPage]: {
+			type: 'boolean',
+			label: 'Change from library page selected state',
+			description: 'If library screen is on and selected page is active, change style of the bank',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'page',
+					id: 'page',
+					...convertChoices([
+						{
+							id: '0',
+							label: 'CHANNEL',
+						},
+						{
+							id: '1',
+							label: 'EFFECTS',
+						},
+						{
+							id: '2',
+							label: 'ROUTING',
+						},
+						{
+							id: '3',
+							label: 'MONITOR',
+						},
+					]),
+				},
+				{
+					id: 'state',
+					type: 'checkbox',
+					label: 'On',
+					default: true,
+				},
+			],
+			style: {
+				bgcolor: self.rgb(0, 255, 127),
+				color: self.rgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackEvent): boolean => {
+				const screen = state.get('/-stat/screen/screen')
+				const page = state.get('/-stat/screen/LIB/page')
+				const isOn = getDataNumber(screen, 0) === 4 && getDataNumber(page, 0) == evt.options.page
+				return isOn === !!evt.options.state
+			},
+			subscribe: (evt: CompanionFeedbackEvent): void => {
+				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/screen', evt)
+				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/LIB/page', evt)
+			},
+			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+				unsubscribeFeedback(subs, '/-stat/screen/screen', evt)
+				unsubscribeFeedback(subs, '/-stat/screen/LIB/page', evt)
+			},
+		},
+		[FeedbackId.FxPage]: {
+			type: 'boolean',
+			label: 'Change from effects page selected state',
+			description: 'If effects screen is on and selected page is active, change style of the bank',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'page',
+					id: 'page',
+					...convertChoices([
+						{
+							id: '0',
+							label: 'HOME',
+						},
+						{
+							id: '1',
+							label: 'FX1',
+						},
+						{
+							id: '2',
+							label: 'FX2',
+						},
+						{
+							id: '3',
+							label: 'FX3',
+						},
+						{
+							id: '4',
+							label: 'FX4',
+						},
+						{
+							id: '5',
+							label: 'FX5',
+						},
+						{
+							id: '6',
+							label: 'FX6',
+						},
+						{
+							id: '7',
+							label: 'FX7',
+						},
+						{
+							id: '8',
+							label: 'FX8',
+						},
+					]),
+				},
+				{
+					id: 'state',
+					type: 'checkbox',
+					label: 'On',
+					default: true,
+				},
+			],
+			style: {
+				bgcolor: self.rgb(0, 255, 127),
+				color: self.rgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackEvent): boolean => {
+				const screen = state.get('/-stat/screen/screen')
+				const page = state.get('/-stat/screen/FX/page')
+				const isOn = getDataNumber(screen, 0) === 5 && getDataNumber(page, 0) == evt.options.page
+				return isOn === !!evt.options.state
+			},
+			subscribe: (evt: CompanionFeedbackEvent): void => {
+				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/screen', evt)
+				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/FX/page', evt)
+			},
+			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+				unsubscribeFeedback(subs, '/-stat/screen/screen', evt)
+				unsubscribeFeedback(subs, '/-stat/screen/FX/page', evt)
+			},
+		},
+		[FeedbackId.MonPage]: {
+			type: 'boolean',
+			label: 'Change from monitor page selected state',
+			description: 'If monitor screen is on and selected page is active, change style of the bank',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'page',
+					id: 'page',
+					...convertChoices([
+						{
+							id: '0',
+							label: 'MONITOR',
+						},
+						{
+							id: '1',
+							label: 'TALK A',
+						},
+						{
+							id: '2',
+							label: 'TALK B',
+						},
+						{
+							id: '3',
+							label: 'OSCILLATOR',
+						},
+					]),
+				},
+				{
+					id: 'state',
+					type: 'checkbox',
+					label: 'On',
+					default: true,
+				},
+			],
+			style: {
+				bgcolor: self.rgb(0, 255, 127),
+				color: self.rgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackEvent): boolean => {
+				const screen = state.get('/-stat/screen/screen')
+				const page = state.get('/-stat/screen/MON/page')
+				const isOn = getDataNumber(screen, 0) === 6 && getDataNumber(page, 0) == evt.options.page
+				return isOn === !!evt.options.state
+			},
+			subscribe: (evt: CompanionFeedbackEvent): void => {
+				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/screen', evt)
+				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/MON/page', evt)
+			},
+			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+				unsubscribeFeedback(subs, '/-stat/screen/screen', evt)
+				unsubscribeFeedback(subs, '/-stat/screen/MON/page', evt)
+			},
+		},
+		[FeedbackId.USBPage]: {
+			type: 'boolean',
+			label: 'Change from USB page selected state',
+			description: 'If USB screen is on and selected page is active, change style of the bank',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'page',
+					id: 'page',
+					...convertChoices([
+						{
+							id: '0',
+							label: 'HOME',
+						},
+						{
+							id: '1',
+							label: 'CONFIG',
+						},
+					]),
+				},
+				{
+					id: 'state',
+					type: 'checkbox',
+					label: 'On',
+					default: true,
+				},
+			],
+			style: {
+				bgcolor: self.rgb(0, 255, 127),
+				color: self.rgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackEvent): boolean => {
+				const screen = state.get('/-stat/screen/screen')
+				const page = state.get('/-stat/screen/USB/page')
+				const isOn = getDataNumber(screen, 0) === 7 && getDataNumber(page, 0) == evt.options.page
+				return isOn === !!evt.options.state
+			},
+			subscribe: (evt: CompanionFeedbackEvent): void => {
+				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/screen', evt)
+				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/USB/page', evt)
+			},
+			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+				unsubscribeFeedback(subs, '/-stat/screen/screen', evt)
+				unsubscribeFeedback(subs, '/-stat/screen/USB/page', evt)
+			},
+		},
+		[FeedbackId.ScenePage]: {
+			type: 'boolean',
+			label: 'Change from scene page selected state',
+			description: 'If scene screen is on and selected page is active, change style of the bank',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'page',
+					id: 'page',
+					...convertChoices([
+						{
+							id: '0',
+							label: 'CUES',
+						},
+						{
+							id: '1',
+							label: 'SCENES',
+						},
+						{
+							id: '2',
+							label: 'SNIPPETS',
+						},
+						{
+							id: '3',
+							label: 'PARAMETER SAFE',
+						},
+						{
+							id: '4',
+							label: 'CHANNEL SAFE',
+						},
+						{
+							id: '5',
+							label: 'MIDI',
+						},
+					]),
+				},
+				{
+					id: 'state',
+					type: 'checkbox',
+					label: 'On',
+					default: true,
+				},
+			],
+			style: {
+				bgcolor: self.rgb(0, 255, 127),
+				color: self.rgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackEvent): boolean => {
+				const screen = state.get('/-stat/screen/screen')
+				const page = state.get('/-stat/screen/SCENE/page')
+				const isOn = getDataNumber(screen, 0) === 8 && getDataNumber(page, 0) == evt.options.page
+				return isOn === !!evt.options.state
+			},
+			subscribe: (evt: CompanionFeedbackEvent): void => {
+				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/screen', evt)
+				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/SCENE/page', evt)
+			},
+			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+				unsubscribeFeedback(subs, '/-stat/screen/screen', evt)
+				unsubscribeFeedback(subs, '/-stat/screen/SCENE/page', evt)
+			},
+		},
+		[FeedbackId.AssignPage]: {
+			type: 'boolean',
+			label: 'Change from assign page selected state',
+			description: 'If assign screen is on and selected page is active, change style of the bank',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'page',
+					id: 'page',
+					...convertChoices([
+						{
+							id: '0',
+							label: 'Home',
+						},
+						{
+							id: '1',
+							label: 'SET A',
+						},
+						{
+							id: '2',
+							label: 'SET B',
+						},
+						{
+							id: '3',
+							label: 'SET C',
+						},
+					]),
+				},
+				{
+					id: 'state',
+					type: 'checkbox',
+					label: 'On',
+					default: true,
+				},
+			],
+			style: {
+				bgcolor: self.rgb(0, 255, 127),
+				color: self.rgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackEvent): boolean => {
+				const screen = state.get('/-stat/screen/screen')
+				const page = state.get('/-stat/screen/ASSIGN/page')
+				const isOn = getDataNumber(screen, 0) === 9 && getDataNumber(page, 0) == evt.options.page
+				return isOn === !!evt.options.state
+			},
+			subscribe: (evt: CompanionFeedbackEvent): void => {
+				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/screen', evt)
+				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/ASSIGN/page', evt)
+			},
+			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+				unsubscribeFeedback(subs, '/-stat/screen/screen', evt)
+				unsubscribeFeedback(subs, '/-stat/screen/ASSIGN/page', evt)
 			},
 		},
 	}

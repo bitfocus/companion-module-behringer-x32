@@ -67,6 +67,20 @@ export enum ActionId {
 	SoloDimAttenuation = 'solo_dim_attenuation',
 	MonitorLevel = 'monitor-level',
 	SendsOnFader = 'sends-on-fader',
+	Screens = 'screens',
+	MuteGroupScreen = 'mute-group-screen',
+	UtilityScreen = 'utility-screen',
+	ChannelPage = 'channel-page',
+	MeterPage = 'meter-page',
+	RoutePage = 'route-page',
+	SetupPage = 'setup-page',
+	LibPage = 'library-page',
+	FxPage = 'effects-page',
+	MonPage = 'monitor-page',
+	USBPage = 'usb-page',
+	ScenePage = 'scene-page',
+	AssignPage = 'assign-page',
+	NextPrevPage = 'next-previous-page',
 }
 
 type CompanionActionWithCallback = SetRequired<CompanionAction, 'callback'>
@@ -1000,6 +1014,642 @@ export function GetActionsList(
 				if (evt.options.on === MUTE_TOGGLE) {
 					ensureLoaded(`/-stat/sendsonfader`)
 				}
+			},
+		},
+		[ActionId.Screens]: {
+			label: 'Select active screen on console',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Screen',
+					id: 'screen',
+					...convertChoices([
+						{
+							id: '0',
+							label: 'HOME',
+						},
+						{
+							id: '1',
+							label: 'METERS',
+						},
+						{
+							id: '2',
+							label: 'ROUTING',
+						},
+						{
+							id: '3',
+							label: 'SETUP',
+						},
+						{
+							id: '4',
+							label: 'LIBRARY',
+						},
+						{
+							id: '5',
+							label: 'EFFECTS',
+						},
+						{
+							id: '6',
+							label: 'MONITOR',
+						},
+						{
+							id: '7',
+							label: 'USB RECORDER',
+						},
+						{
+							id: '8',
+							label: 'SCENES',
+						},
+						{
+							id: '9',
+							label: 'ASSIGN',
+						},
+					]),
+				},
+			],
+			callback: (action): void => {
+				const cmd = `/-stat/screen/screen`
+				sendOsc(cmd, {
+					type: 'i',
+					value: getOptNumber(action, 'screen', 0),
+				})
+			},
+		},
+		[ActionId.MuteGroupScreen]: {
+			label: 'Mute Group Screen',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'On / Off',
+					id: 'on',
+					...convertChoices(CHOICES_ON_OFF),
+				},
+			],
+			callback: (action): void => {
+				const cmd = `/-stat/screen/mutegrp`
+				const onState = getResolveOnOffMute(action, cmd, true, 'on')
+
+				sendOsc(cmd, {
+					type: 'i',
+					value: onState,
+				})
+			},
+			subscribe: (evt): void => {
+				if (evt.options.on === MUTE_TOGGLE) {
+					ensureLoaded(`/-stat/screen/mutegrp`)
+				}
+			},
+		},
+		[ActionId.UtilityScreen]: {
+			label: 'Utilities Screen',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'On / Off',
+					id: 'on',
+					...convertChoices(CHOICES_ON_OFF),
+				},
+			],
+			callback: (action): void => {
+				const cmd = `/-stat/screen/utils`
+				const onState = getResolveOnOffMute(action, cmd, true, 'on')
+
+				sendOsc(cmd, {
+					type: 'i',
+					value: onState,
+				})
+			},
+			subscribe: (evt): void => {
+				if (evt.options.on === MUTE_TOGGLE) {
+					ensureLoaded(`/-stat/screen/utils`)
+				}
+			},
+		},
+		[ActionId.ChannelPage]: {
+			label: 'Navigate to page on channel screen',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'page',
+					id: 'page',
+					...convertChoices([
+						{
+							id: '0',
+							label: 'HOME',
+						},
+						{
+							id: '1',
+							label: 'CONFIG',
+						},
+						{
+							id: '2',
+							label: 'GATE',
+						},
+						{
+							id: '3',
+							label: 'DYNAMICS',
+						},
+						{
+							id: '4',
+							label: 'EQ',
+						},
+						{
+							id: '5',
+							label: 'SENDS',
+						},
+						{
+							id: '6',
+							label: 'MAIN',
+						},
+					]),
+				},
+			],
+			callback: (action): void => {
+				const cmd = `/-stat/screen/CHAN/page`
+				sendOsc(cmd, {
+					type: 'i',
+					value: getOptNumber(action, 'page', 0),
+				})
+				sendOsc('/-stat/screen/screen', { type: 'i', value: 0 })
+			},
+		},
+		[ActionId.MeterPage]: {
+			label: 'Navigate to page on meters screen',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'page',
+					id: 'page',
+					...convertChoices([
+						{
+							id: '0',
+							label: 'CHANNEL',
+						},
+						{
+							id: '1',
+							label: 'MIX BUS',
+						},
+						{
+							id: '2',
+							label: 'AUX/FX',
+						},
+						{
+							id: '3',
+							label: 'IN/OUT',
+						},
+						{
+							id: '4',
+							label: 'RTA',
+						},
+						{
+							id: '5',
+							label: 'AUTOMIX',
+						},
+					]),
+				},
+			],
+			callback: (action): void => {
+				const cmd = `/-stat/screen/METER/page`
+				sendOsc(cmd, {
+					type: 'i',
+					value: getOptNumber(action, 'page', 0),
+				})
+				sendOsc('/-stat/screen/screen', { type: 'i', value: 1 })
+			},
+		},
+		[ActionId.RoutePage]: {
+			label: 'Navigate to page on route screen',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'page',
+					id: 'page',
+					...convertChoices([
+						{
+							id: '0',
+							label: 'INPUT',
+						},
+						{
+							id: '1',
+							label: 'AES-A',
+						},
+						{
+							id: '2',
+							label: 'AES-B',
+						},
+						{
+							id: '3',
+							label: 'CARD',
+						},
+						{
+							id: '4',
+							label: 'XLR',
+						},
+						{
+							id: '5',
+							label: 'PATCH OUT',
+						},
+						{
+							id: '6',
+							label: 'PATCH AUX',
+						},
+						{
+							id: '7',
+							label: 'PATCH P16',
+						},
+						{
+							id: '8',
+							label: 'PATCH USER',
+						},
+					]),
+				},
+			],
+			callback: (action): void => {
+				const cmd = `/-stat/screen/ROUTE/page`
+				sendOsc(cmd, {
+					type: 'i',
+					value: getOptNumber(action, 'page', 0),
+				})
+				sendOsc('/-stat/screen/screen', { type: 'i', value: 2 })
+			},
+		},
+		[ActionId.SetupPage]: {
+			label: 'Navigate to page on setup screen',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'page',
+					id: 'page',
+					...convertChoices([
+						{
+							id: '0',
+							label: 'GLOBAL',
+						},
+						{
+							id: '1',
+							label: 'CONFIG',
+						},
+						{
+							id: '2',
+							label: 'REMOTE',
+						},
+						{
+							id: '3',
+							label: 'NETWORK',
+						},
+						{
+							id: '4',
+							label: 'SCRIBBLE STRIPS',
+						},
+						{
+							id: '5',
+							label: 'PREAMPS',
+						},
+						{
+							id: '6',
+							label: 'CARD',
+						},
+					]),
+				},
+			],
+			callback: (action): void => {
+				const cmd = `/-stat/screen/SETUP/page`
+				sendOsc(cmd, {
+					type: 'i',
+					value: getOptNumber(action, 'page', 0),
+				})
+				sendOsc('/-stat/screen/screen', { type: 'i', value: 3 })
+			},
+		},
+		[ActionId.LibPage]: {
+			label: 'Navigate to page on library screen',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'page',
+					id: 'page',
+					...convertChoices([
+						{
+							id: '0',
+							label: 'CHANNEL',
+						},
+						{
+							id: '1',
+							label: 'EFFECTS',
+						},
+						{
+							id: '2',
+							label: 'ROUTING',
+						},
+						{
+							id: '3',
+							label: 'MONITOR',
+						},
+					]),
+				},
+			],
+			callback: (action): void => {
+				const cmd = `/-stat/screen/LIB/page`
+				sendOsc(cmd, {
+					type: 'i',
+					value: getOptNumber(action, 'page', 0),
+				})
+				sendOsc('/-stat/screen/screen', { type: 'i', value: 4 })
+			},
+		},
+		[ActionId.FxPage]: {
+			label: 'Navigate to page on effects screen',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'page',
+					id: 'page',
+					...convertChoices([
+						{
+							id: '0',
+							label: 'HOME',
+						},
+						{
+							id: '1',
+							label: 'FX1',
+						},
+						{
+							id: '2',
+							label: 'FX2',
+						},
+						{
+							id: '3',
+							label: 'FX3',
+						},
+						{
+							id: '4',
+							label: 'FX4',
+						},
+						{
+							id: '5',
+							label: 'FX5',
+						},
+						{
+							id: '6',
+							label: 'FX6',
+						},
+						{
+							id: '7',
+							label: 'FX7',
+						},
+						{
+							id: '8',
+							label: 'FX8',
+						},
+					]),
+				},
+			],
+			callback: (action): void => {
+				const cmd = `/-stat/screen/FX/page`
+				sendOsc(cmd, {
+					type: 'i',
+					value: getOptNumber(action, 'page', 0),
+				})
+				sendOsc('/-stat/screen/screen', { type: 'i', value: 5 })
+			},
+		},
+		[ActionId.MonPage]: {
+			label: 'Navigate to page on monitor screen',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'page',
+					id: 'page',
+					...convertChoices([
+						{
+							id: '0',
+							label: 'MONITOR',
+						},
+						{
+							id: '1',
+							label: 'TALK A',
+						},
+						{
+							id: '2',
+							label: 'TALK B',
+						},
+						{
+							id: '3',
+							label: 'OSCILLATOR',
+						},
+					]),
+				},
+			],
+			callback: (action): void => {
+				const cmd = `/-stat/screen/MON/page`
+				sendOsc(cmd, {
+					type: 'i',
+					value: getOptNumber(action, 'page', 0),
+				})
+				sendOsc('/-stat/screen/screen', { type: 'i', value: 6 })
+			},
+		},
+		[ActionId.USBPage]: {
+			label: 'Navigate to page on USB screen',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'page',
+					id: 'page',
+					...convertChoices([
+						{
+							id: '0',
+							label: 'HOME',
+						},
+						{
+							id: '1',
+							label: 'CONFIG',
+						},
+					]),
+				},
+			],
+			callback: (action): void => {
+				const cmd = `/-stat/screen/USB/page`
+				sendOsc(cmd, {
+					type: 'i',
+					value: getOptNumber(action, 'page', 0),
+				})
+				sendOsc('/-stat/screen/screen', { type: 'i', value: 7 })
+			},
+		},
+		[ActionId.ScenePage]: {
+			label: 'Navigate to page on scene screen',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'page',
+					id: 'page',
+					...convertChoices([
+						{
+							id: '0',
+							label: 'CUES',
+						},
+						{
+							id: '1',
+							label: 'SCENES',
+						},
+						{
+							id: '2',
+							label: 'SNIPPETS',
+						},
+						{
+							id: '3',
+							label: 'PARAMETER SAFE',
+						},
+						{
+							id: '4',
+							label: 'CHANNEL SAFE',
+						},
+						{
+							id: '5',
+							label: 'MIDI',
+						},
+					]),
+				},
+			],
+			callback: (action): void => {
+				const cmd = `/-stat/screen/SCENE/page`
+				sendOsc(cmd, {
+					type: 'i',
+					value: getOptNumber(action, 'page', 0),
+				})
+				sendOsc('/-stat/screen/screen', { type: 'i', value: 8 })
+			},
+		},
+		[ActionId.AssignPage]: {
+			label: 'Navigate to page on assign screen',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'page',
+					id: 'page',
+					...convertChoices([
+						{
+							id: '0',
+							label: 'Home',
+						},
+						{
+							id: '1',
+							label: 'SET A',
+						},
+						{
+							id: '2',
+							label: 'SET B',
+						},
+						{
+							id: '3',
+							label: 'SET C',
+						},
+					]),
+				},
+			],
+			callback: (action): void => {
+				const cmd = `/-stat/screen/ASSIGN/page`
+				sendOsc(cmd, {
+					type: 'i',
+					value: getOptNumber(action, 'page', 0),
+				})
+				sendOsc('/-stat/screen/screen', { type: 'i', value: 9 })
+			},
+		},
+		[ActionId.NextPrevPage]: {
+			label: 'Navigate to the next or previous page',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Next/Prev',
+					id: 'goto',
+					...convertChoices([
+						{
+							id: '1',
+							label: 'Next',
+						},
+						{
+							id: '-1',
+							label: 'Prev',
+						},
+					]),
+				},
+			],
+			callback: (action): void => {
+				const currentScreen = state.get('/-stat/screen/screen')
+				const currentScreenIndex = currentScreen && currentScreen[0]?.type === 'i' ? Number(currentScreen[0]?.value) : 0
+				let screen = undefined
+				let pages = 0
+				switch (currentScreenIndex) {
+					case 1:
+						screen = 'METER'
+						pages = 6
+						break
+					case 2:
+						screen = 'ROUTE'
+						pages = 9
+						break
+					case 3:
+						screen = 'SETUP'
+						pages = 7
+						break
+					case 4:
+						screen = 'LIB'
+						pages = 4
+						break
+					case 5:
+						screen = 'FX'
+						pages = 9
+						break
+					case 6:
+						screen = 'MON'
+						pages = 4
+						break
+					case 7:
+						screen = 'USB'
+						pages = 2
+						break
+					case 8:
+						screen = 'SCENE'
+						pages = 6
+						break
+					case 9:
+						screen = 'ASSIGN'
+						pages = 5
+						break
+					case 0:
+					default:
+						screen = 'CHAN'
+						pages = 7
+						break
+				}
+
+				const cmd = `/-stat/screen/${screen}/page`
+				const currentPage = state.get(cmd)
+				const currentPageIndex = currentPage && currentPage[0]?.type === 'i' ? Number(currentPage[0]?.value) : 0
+				let gotoPageIndex = currentPageIndex + Number(action.options.goto)
+				if (gotoPageIndex < 0) gotoPageIndex = 0
+				else if (gotoPageIndex >= pages) gotoPageIndex = pages - 1
+
+				sendOsc(cmd, {
+					type: 'i',
+					value: gotoPageIndex,
+				})
+
+				//transitions.run(cmd, currentVal, getOptNumber(action, 'fad'), getOptNumber(action, 'fadeDuration', 0))
+			},
+			subscribe: (): void => {
+				ensureLoaded('/-stat/screen/screen')
+				ensureLoaded('/-stat/screen/CHAN/page')
+				ensureLoaded('/-stat/screen/METER/page')
+				ensureLoaded('/-stat/screen/SETUP/page')
+				ensureLoaded('/-stat/screen/LIB/page')
+				ensureLoaded('/-stat/screen/FX/page')
+				ensureLoaded('/-stat/screen/MON/page')
+				ensureLoaded('/-stat/screen/USB/page')
+				ensureLoaded('/-stat/screen/SCENE/page')
+				ensureLoaded('/-stat/screen/ASSIGN/page')
 			},
 		},
 	}
