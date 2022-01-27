@@ -36,6 +36,8 @@ export enum FeedbackId {
 	Solo = 'solo',
 	ClearSolo = 'clear',
 	SendsOnFader = 'sends-on-fader',
+	BusSendBank = 'bus-send-bank',
+	UserBank = 'user-bank',
 }
 
 function getDataNumber(data: osc.MetaArgument[] | undefined, index: number): number | undefined {
@@ -662,6 +664,110 @@ export function GetFeedbacksList(
 			},
 			unsubscribe: (evt: CompanionFeedbackEvent): void => {
 				const path = `/config/solo/dim`
+				unsubscribeFeedback(subs, path, evt)
+			},
+		},
+		[FeedbackId.BusSendBank]: {
+			type: 'boolean',
+			label: 'Change from selected Bus Send',
+			description: 'If the selected bus send bank is active,, change style of the bank',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Send Bank',
+					id: 'bank',
+					...convertChoices([
+						{
+							id: '0',
+							label: 'Bus 1-4',
+						},
+						{
+							id: '1',
+							label: 'Bus 5-8',
+						},
+						{
+							id: '2',
+							label: 'Bus 9-12',
+						},
+						{
+							id: '3',
+							label: 'Bus 13-16',
+						},
+					]),
+				},
+				{
+					id: 'state',
+					type: 'checkbox',
+					label: 'On',
+					default: true,
+				},
+			],
+			style: {
+				bgcolor: self.rgb(255, 127, 0),
+				color: self.rgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackEvent): boolean => {
+				const path = `/-stat/bussendbank`
+				const data = path ? state.get(path) : undefined
+				const isOn = getDataNumber(data, 0) == evt.options.bank
+				return isOn === !!evt.options.state
+			},
+			subscribe: (evt: CompanionFeedbackEvent): void => {
+				const path = `/-stat/bussendbank`
+				subscribeFeedback(ensureLoaded, subs, path, evt)
+			},
+			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+				const path = `/-stat/bussendbank`
+				unsubscribeFeedback(subs, path, evt)
+			},
+		},
+		[FeedbackId.UserBank]: {
+			type: 'boolean',
+			label: 'Change from selected User Assign Bank',
+			description: 'If the selected assign bank is active, change style of the bank',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'User Bank',
+					id: 'bank',
+					...convertChoices([
+						{
+							id: '0',
+							label: 'Set A',
+						},
+						{
+							id: '1',
+							label: 'Set B',
+						},
+						{
+							id: '2',
+							label: 'Set C',
+						},
+					]),
+				},
+				{
+					id: 'state',
+					type: 'checkbox',
+					label: 'On',
+					default: true,
+				},
+			],
+			style: {
+				bgcolor: self.rgb(255, 127, 0),
+				color: self.rgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackEvent): boolean => {
+				const path = `/-stat/userbank`
+				const data = path ? state.get(path) : undefined
+				const isOn = getDataNumber(data, 0) == evt.options.bank
+				return isOn === !!evt.options.state
+			},
+			subscribe: (evt: CompanionFeedbackEvent): void => {
+				const path = `/-stat/userbank`
+				subscribeFeedback(ensureLoaded, subs, path, evt)
+			},
+			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+				const path = `/-stat/userbank`
 				unsubscribeFeedback(subs, path, evt)
 			},
 		},
