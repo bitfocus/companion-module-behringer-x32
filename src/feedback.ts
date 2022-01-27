@@ -31,6 +31,7 @@ export enum FeedbackId {
 	TalkbackTalk = 'talkback_talk',
 	OscillatorEnable = 'oscillator-enable',
 	OscillatorDestination = 'oscillator-destination',
+	SoloMono = 'solo-mono',
 	SoloDim = 'solo-dim',
 	Select = 'select',
 	Solo = 'solo',
@@ -631,6 +632,37 @@ export function GetFeedbacksList(
 			},
 			unsubscribe: (evt: CompanionFeedbackEvent): void => {
 				const path = `/-stat/sendsonfader`
+				unsubscribeFeedback(subs, path, evt)
+			},
+		},
+		[FeedbackId.SoloMono]: {
+			type: 'boolean',
+			label: 'Change from Solo Mono enabled state',
+			description: 'If the Solo Mono is on, change style of the bank',
+			options: [
+				{
+					id: 'state',
+					type: 'checkbox',
+					label: 'On',
+					default: true,
+				},
+			],
+			style: {
+				bgcolor: self.rgb(255, 127, 0),
+				color: self.rgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackEvent): boolean => {
+				const path = `/config/solo/mono`
+				const data = path ? state.get(path) : undefined
+				const isOn = getDataNumber(data, 0) !== 0
+				return isOn === !!evt.options.state
+			},
+			subscribe: (evt: CompanionFeedbackEvent): void => {
+				const path = `/config/solo/mono`
+				subscribeFeedback(ensureLoaded, subs, path, evt)
+			},
+			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+				const path = `/config/solo/mono`
 				unsubscribeFeedback(subs, path, evt)
 			},
 		},

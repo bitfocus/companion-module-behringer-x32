@@ -63,6 +63,7 @@ export enum ActionId {
 	OscillatorEnable = 'oscillator-enable',
 	OscillatorDestination = 'oscillator-destination',
 	SyncClock = 'sync_clock',
+	SoloMono = 'solo-mono',
 	SoloDim = 'solo_dim',
 	SoloDimAttenuation = 'solo_dim_attenuation',
 	MonitorLevel = 'monitor-level',
@@ -905,6 +906,31 @@ export function GetActionsList(
 					type: 'i',
 					value: getOptNumber(action, 'destination'),
 				})
+			},
+		},
+		[ActionId.SoloMono]: {
+			label: 'Solo Mono',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'On / Off',
+					id: 'on',
+					...convertChoices(CHOICES_ON_OFF),
+				},
+			],
+			callback: (action): void => {
+				const cmd = `/config/solo/mono`
+				const onState = getResolveOnOffMute(action, cmd, true, 'on')
+
+				sendOsc(cmd, {
+					type: 'i',
+					value: onState,
+				})
+			},
+			subscribe: (evt): void => {
+				if (evt.options.on === MUTE_TOGGLE) {
+					ensureLoaded(`/config/solo/mono`)
+				}
 			},
 		},
 		[ActionId.SoloDim]: {
