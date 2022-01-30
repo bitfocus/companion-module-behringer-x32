@@ -67,6 +67,8 @@ export enum ActionId {
 	SoloDimAttenuation = 'solo_dim_attenuation',
 	MonitorLevel = 'monitor-level',
 	SendsOnFader = 'sends-on-fader',
+	BusSendBank = 'bus-send-bank',
+	UserBank = 'user-bank',
 }
 
 type CompanionActionWithCallback = SetRequired<CompanionAction, 'callback'>
@@ -1000,6 +1002,72 @@ export function GetActionsList(
 				if (evt.options.on === MUTE_TOGGLE) {
 					ensureLoaded(`/-stat/sendsonfader`)
 				}
+			},
+		},
+		[ActionId.BusSendBank]: {
+			label: 'Bus send bank',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Send Bank',
+					id: 'bank',
+					...convertChoices([
+						{
+							id: '0',
+							label: 'Bus 1-4',
+						},
+						{
+							id: '1',
+							label: 'Bus 5-8',
+						},
+						{
+							id: '2',
+							label: 'Bus 9-12',
+						},
+						{
+							id: '3',
+							label: 'Bus 13-16',
+						},
+					]),
+				},
+			],
+			callback: (action): void => {
+				const cmd = `/-stat/bussendbank`
+				sendOsc(cmd, {
+					type: 'i',
+					value: getOptNumber(action, 'bank', 0),
+				})
+			},
+		},
+		[ActionId.UserBank]: {
+			label: 'User Assign Bank',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'User Bank',
+					id: 'bank',
+					...convertChoices([
+						{
+							id: '0',
+							label: 'Set A',
+						},
+						{
+							id: '1',
+							label: 'Set B',
+						},
+						{
+							id: '2',
+							label: 'Set C',
+						},
+					]),
+				},
+			],
+			callback: (action): void => {
+				const cmd = `/-stat/userbank`
+				sendOsc(cmd, {
+					type: 'i',
+					value: getOptNumber(action, 'bank', 0),
+				})
 			},
 		},
 	}
