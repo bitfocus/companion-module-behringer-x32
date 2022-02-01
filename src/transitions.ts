@@ -69,7 +69,7 @@ export class X32Transitions {
 		}
 	}
 
-	public run(path: string, from: number | undefined, to: number, duration: number): void {
+	public run(path: string, from: number | undefined, to: number, duration: number, isLinear?: boolean): void {
 		const interval = 1000 / this.fps
 		const stepCount = Math.ceil(duration / interval)
 
@@ -78,7 +78,7 @@ export class X32Transitions {
 			this.transitions.delete(path)
 			this.sendOsc(path, {
 				type: 'f',
-				value: dbToFloat(to),
+				value: isLinear ? to : dbToFloat(to),
 			})
 		} else {
 			const diff = to - from
@@ -86,7 +86,11 @@ export class X32Transitions {
 			const easing = Easing.Linear.None // TODO - dynamic
 			for (let i = 1; i <= stepCount; i++) {
 				const fraction = easing(i / stepCount)
-				steps.push(dbToFloat(from + diff * fraction))
+				if (isLinear) {
+					steps.push(from + diff * fraction)
+				} else {
+					steps.push(dbToFloat(from + diff * fraction))
+				}
 			}
 
 			this.transitions.set(path, {

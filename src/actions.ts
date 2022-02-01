@@ -21,11 +21,23 @@ import {
 	GetOscillatorDestinations,
 	FaderLevelDeltaChoice,
 	FadeDurationChoice,
+	PanningChoice,
+	PanningDelta,
 	GetLevelsChoiceConfigs,
+	GetPanningChoiceConfigs,
 } from './choices'
 // eslint-disable-next-line node/no-extraneous-import
 import * as osc from 'osc'
-import { MutePath, MainPath, MainFaderPath, SendChannelToBusPath, SendBusToMatrixPath } from './paths'
+import {
+	MutePath,
+	MainPath,
+	MainFaderPath,
+	SendChannelToBusPath,
+	SendBusToMatrixPath,
+	MainPanPath,
+	ChannelToBusPanPath,
+	BusToMatrixPanPath,
+} from './paths'
 import { SetRequired } from 'type-fest'
 import { X32Transitions } from './transitions'
 import moment = require('moment')
@@ -39,14 +51,26 @@ export enum ActionId {
 	FaderLevelStore = 'fader_store',
 	FaderLevelRestore = 'fader_restore',
 	FaderLevelDelta = 'fader_delta',
+	Panning = 'panning',
+	PanningDelta = 'panning-delta',
+	PanningStore = 'panning-store',
+	PanningRestore = 'panning-restore',
 	ChannelSendLevel = 'level_channel_send',
 	ChannelSendLevelDelta = 'level_channel_send_delta',
 	ChannelSendLevelStore = 'level_channel_store',
 	ChannelSendLevelRestore = 'level_channel_restore',
+	ChannelSendPanning = 'channel-send-panning',
+	ChannelSendPanningDelta = 'channel-send-panning-delta',
+	ChannelSendPanningStore = 'channel-send-panning-store',
+	ChannelSendPanningRestore = 'channel-send-panning-restore',
 	BusSendLevel = 'level_bus_send',
 	BusSendLevelDelta = 'level_bus_send_delta',
 	BusSendLevelStore = 'level_bus_store',
 	BusSendLevelRestore = 'level_bus_restore',
+	BusSendPanning = 'bus-send-panning',
+	BusSendPanningDelta = 'bus-send-panning-delta',
+	BusSendPanningStore = 'bus-send-panning-store',
+	BusSendPanningRestore = 'bus-send-panning-restore',
 	InputTrim = 'input_trim',
 	// InputGain = 'input_gain',
 	HeadampGain = 'headamp_gain',
@@ -78,6 +102,7 @@ export function GetActionsList(
 	ensureLoaded: (path: string) => void
 ): CompanionActions {
 	const levelsChoices = GetLevelsChoiceConfigs(state)
+	const panningChoices = GetPanningChoiceConfigs(state)
 	const muteGroups = GetMuteGroupChoices(state)
 	const selectChoices = GetTargetChoices(state, { skipDca: true, includeMain: true, numericIndex: true })
 	const soloChoices = GetTargetChoices(state, { includeMain: true, numericIndex: true })
@@ -343,6 +368,114 @@ export function GetActionsList(
 				ensureLoaded(MainFaderPath(evt.options))
 			},
 		},
+		[ActionId.Panning]: {
+			label: 'Set panning',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Target',
+					id: 'target',
+					...convertChoices(panningChoices.allSources),
+				},
+				PanningChoice,
+				FadeDurationChoice,
+			],
+			callback: (action): void => {
+				const cmd = MainPanPath(action.options)
+				const currentState = state.get(cmd)
+				const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0]?.value : undefined
+				transitions.run(
+					cmd,
+					currentVal,
+					getOptNumber(action, 'pan') / 100 + 0.5,
+					getOptNumber(action, 'fadeDuration', 0),
+					true
+				)
+			},
+			subscribe: (evt): void => {
+				ensureLoaded(MainPanPath(evt.options))
+			},
+		},
+		[ActionId.PanningDelta]: {
+			label: 'Adjust panning',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Target',
+					id: 'target',
+					...convertChoices(panningChoices.allSources),
+				},
+				PanningDelta,
+				FadeDurationChoice,
+			],
+			callback: (action): void => {
+				const cmd = MainPanPath(action.options)
+				const currentState = state.get(cmd)
+				const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0]?.value : 0
+				let newVal = currentVal + getOptNumber(action, 'delta') / 100
+				if (newVal < 0) {
+					newVal = 0
+				} else if (newVal > 1) {
+					newVal = 1
+				}
+				transitions.run(cmd, currentVal, newVal, getOptNumber(action, 'fadeDuration', 0), true)
+			},
+			subscribe: (evt): void => {
+				ensureLoaded(MainPanPath(evt.options))
+			},
+		},
+		[ActionId.PanningStore]: {
+			label: 'Store panning',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Target',
+					id: 'target',
+					...convertChoices(panningChoices.allSources),
+				},
+			],
+			callback: (action, info): void => {
+				if (info) {
+					const cmd = MainPanPath(action.options)
+					const currentState = state.get(cmd)
+					const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0].value : undefined
+					if (currentVal !== undefined) {
+						state.setPressValue(`${info.page}-${info.bank}-${cmd}`, currentVal)
+					}
+				}
+			},
+			subscribe: (evt): void => {
+				ensureLoaded(MainPanPath(evt.options))
+			},
+		},
+		[ActionId.PanningRestore]: {
+			label: 'Restore panning',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Target',
+					id: 'target',
+					...convertChoices(panningChoices.allSources),
+				},
+				FadeDurationChoice,
+			],
+			callback: (action, info): void => {
+				if (info) {
+					const cmd = MainPanPath(action.options)
+					const storedVal = state.popPressValue(`${info.page}-${info.bank}-${cmd}`)
+					if (storedVal != undefined) {
+						const currentState = state.get(cmd)
+						const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0].value : undefined
+						if (currentVal !== undefined) {
+							transitions.run(cmd, currentVal, storedVal, getOptNumber(action, 'fadeDuration', 0), true)
+						}
+					}
+				}
+			},
+			subscribe: (evt): void => {
+				ensureLoaded(MainPanPath(evt.options))
+			},
+		},
 		[ActionId.ChannelSendLevel]: {
 			label: 'Set level of channel to bus send',
 			options: [
@@ -470,6 +603,138 @@ export function GetActionsList(
 				}
 			},
 		},
+		[ActionId.ChannelSendPanning]: {
+			label: 'Set panning on channel to bus send',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Source',
+					id: 'source',
+					...convertChoices(panningChoices.allSources),
+				},
+				{
+					type: 'dropdown',
+					label: 'Target',
+					id: 'target',
+					...convertChoices(panningChoices.channelSendTargets),
+				},
+				PanningChoice,
+				FadeDurationChoice,
+			],
+			callback: (action): void => {
+				const cmd = ChannelToBusPanPath(action.options)
+				const currentState = state.get(cmd)
+				const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0]?.value : undefined
+				transitions.run(
+					cmd,
+					currentVal,
+					getOptNumber(action, 'pan') / 100 + 0.5,
+					getOptNumber(action, 'fadeDuration', 0),
+					true
+				)
+			},
+			subscribe: (evt): void => {
+				ensureLoaded(ChannelToBusPanPath(evt.options))
+			},
+		},
+		[ActionId.ChannelSendPanningDelta]: {
+			label: 'Adjust panning on channel to bus send',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Source',
+					id: 'source',
+					...convertChoices(panningChoices.allSources),
+				},
+				{
+					type: 'dropdown',
+					label: 'Target',
+					id: 'target',
+					...convertChoices(panningChoices.channelSendTargets),
+				},
+				PanningDelta,
+				FadeDurationChoice,
+			],
+			callback: (action): void => {
+				const cmd = ChannelToBusPanPath(action.options)
+				const currentState = state.get(cmd)
+				const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0]?.value : 0
+				let newVal = currentVal + getOptNumber(action, 'delta') / 100
+				if (newVal < 0) {
+					newVal = 0
+				} else if (newVal > 1) {
+					newVal = 1
+				}
+				transitions.run(cmd, currentVal, newVal, getOptNumber(action, 'fadeDuration', 0), true)
+			},
+			subscribe: (evt): void => {
+				ensureLoaded(ChannelToBusPanPath(evt.options))
+			},
+		},
+		[ActionId.ChannelSendPanningStore]: {
+			label: 'Store panning on channel to bus send',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Source',
+					id: 'source',
+					...convertChoices(panningChoices.allSources),
+				},
+				{
+					type: 'dropdown',
+					label: 'Target',
+					id: 'target',
+					...convertChoices(panningChoices.channelSendTargets),
+				},
+			],
+			callback: (action, info): void => {
+				if (info) {
+					const cmd = ChannelToBusPanPath(action.options)
+					const currentState = state.get(cmd)
+					const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0].value : undefined
+					if (currentVal !== undefined) {
+						state.setPressValue(`${info.page}-${info.bank}-${cmd}`, currentVal)
+					}
+				}
+			},
+			subscribe: (evt): void => {
+				ensureLoaded(ChannelToBusPanPath(evt.options))
+			},
+		},
+		[ActionId.ChannelSendPanningRestore]: {
+			label: 'Restore panning on channel to bus send',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Source',
+					id: 'source',
+					...convertChoices(panningChoices.allSources),
+				},
+				{
+					type: 'dropdown',
+					label: 'Target',
+					id: 'target',
+					...convertChoices(panningChoices.channelSendTargets),
+				},
+				FadeDurationChoice,
+			],
+			callback: (action, info): void => {
+				if (info) {
+					const cmd = ChannelToBusPanPath(action.options)
+					const storedVal = state.popPressValue(`${info.page}-${info.bank}-${cmd}`)
+					if (storedVal != undefined) {
+						const currentState = state.get(cmd)
+						const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0].value : undefined
+						if (currentVal !== undefined) {
+							transitions.run(cmd, currentVal, storedVal, getOptNumber(action, 'fadeDuration', 0), true)
+						}
+					}
+				}
+			},
+			subscribe: (evt): void => {
+				ensureLoaded(ChannelToBusPanPath(evt.options))
+			},
+		},
 		[ActionId.BusSendLevel]: {
 			label: 'Set level of bus to matrix send',
 			options: [
@@ -595,6 +860,138 @@ export function GetActionsList(
 						}
 					}
 				}
+			},
+		},
+		[ActionId.BusSendPanning]: {
+			label: 'Set panning on bus to matrix send',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Source',
+					id: 'source',
+					...convertChoices(panningChoices.busSendSource),
+				},
+				{
+					type: 'dropdown',
+					label: 'Target',
+					id: 'target',
+					...convertChoices(panningChoices.busSendTarget),
+				},
+				PanningChoice,
+				FadeDurationChoice,
+			],
+			callback: (action): void => {
+				const cmd = BusToMatrixPanPath(action.options)
+				const currentState = state.get(cmd)
+				const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0]?.value : undefined
+				transitions.run(
+					cmd,
+					currentVal,
+					getOptNumber(action, 'pan') / 100 + 0.5,
+					getOptNumber(action, 'fadeDuration', 0),
+					true
+				)
+			},
+			subscribe: (evt): void => {
+				ensureLoaded(BusToMatrixPanPath(evt.options))
+			},
+		},
+		[ActionId.BusSendPanningDelta]: {
+			label: 'Adjust panning on bus to matrix bus send',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Source',
+					id: 'source',
+					...convertChoices(panningChoices.busSendSource),
+				},
+				{
+					type: 'dropdown',
+					label: 'Target',
+					id: 'target',
+					...convertChoices(panningChoices.busSendTarget),
+				},
+				PanningDelta,
+				FadeDurationChoice,
+			],
+			callback: (action): void => {
+				const cmd = BusToMatrixPanPath(action.options)
+				const currentState = state.get(cmd)
+				const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0]?.value : 0
+				let newVal = currentVal + getOptNumber(action, 'delta') / 100
+				if (newVal < 0) {
+					newVal = 0
+				} else if (newVal > 1) {
+					newVal = 1
+				}
+				transitions.run(cmd, currentVal, newVal, getOptNumber(action, 'fadeDuration', 0), true)
+			},
+			subscribe: (evt): void => {
+				ensureLoaded(BusToMatrixPanPath(evt.options))
+			},
+		},
+		[ActionId.BusSendPanningStore]: {
+			label: 'Store panning on bus to matrix send',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Source',
+					id: 'source',
+					...convertChoices(panningChoices.busSendSource),
+				},
+				{
+					type: 'dropdown',
+					label: 'Target',
+					id: 'target',
+					...convertChoices(panningChoices.busSendTarget),
+				},
+			],
+			callback: (action, info): void => {
+				if (info) {
+					const cmd = BusToMatrixPanPath(action.options)
+					const currentState = state.get(cmd)
+					const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0].value : undefined
+					if (currentVal !== undefined) {
+						state.setPressValue(`${info.page}-${info.bank}-${cmd}`, currentVal)
+					}
+				}
+			},
+			subscribe: (evt): void => {
+				ensureLoaded(BusToMatrixPanPath(evt.options))
+			},
+		},
+		[ActionId.BusSendPanningRestore]: {
+			label: 'Restore panning on bus to matrix send',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Source',
+					id: 'source',
+					...convertChoices(panningChoices.busSendSource),
+				},
+				{
+					type: 'dropdown',
+					label: 'Target',
+					id: 'target',
+					...convertChoices(panningChoices.busSendTarget),
+				},
+				FadeDurationChoice,
+			],
+			callback: (action, info): void => {
+				if (info) {
+					const cmd = BusToMatrixPanPath(action.options)
+					const storedVal = state.popPressValue(`${info.page}-${info.bank}-${cmd}`)
+					if (storedVal != undefined) {
+						const currentState = state.get(cmd)
+						const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0].value : undefined
+						if (currentVal !== undefined) {
+							transitions.run(cmd, currentVal, storedVal, getOptNumber(action, 'fadeDuration', 0), true)
+						}
+					}
+				}
+			},
+			subscribe: (evt): void => {
+				ensureLoaded(BusToMatrixPanPath(evt.options))
 			},
 		},
 		[ActionId.InputTrim]: {

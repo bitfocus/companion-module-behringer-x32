@@ -19,3 +19,15 @@ export function SendChannelToBusPath(options: { [key: string]: InputValue | unde
 export function SendBusToMatrixPath(options: { [key: string]: InputValue | undefined }): string {
 	return `${MainPath(options.source as string)}/${options.target}/level`
 }
+
+export function MainPanPath(options: { [key: string]: InputValue | undefined }): string {
+	return `${MainPath(options.target as string)}/pan`
+}
+
+export function ChannelToBusPanPath(options: { [key: string]: InputValue | undefined }): string {
+	return `${MainPath(options.source as string)}/${options.target}`
+}
+
+export function BusToMatrixPanPath(options: { [key: string]: InputValue | undefined }): string {
+	return `${MainPath(options.source as string)}/${options.target}/pan`
+}
