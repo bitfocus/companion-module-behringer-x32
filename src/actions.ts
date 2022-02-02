@@ -63,10 +63,17 @@ export enum ActionId {
 	OscillatorEnable = 'oscillator-enable',
 	OscillatorDestination = 'oscillator-destination',
 	SyncClock = 'sync_clock',
+	SoloMono = 'solo-mono',
 	SoloDim = 'solo_dim',
 	SoloDimAttenuation = 'solo_dim_attenuation',
 	MonitorLevel = 'monitor-level',
 	SendsOnFader = 'sends-on-fader',
+	ChannelBank = 'channel-bank-full',
+	GroupBank = 'group-bank-full',
+	ChannelBankCompact = 'channel-bank-compact',
+	GroupBankCompact = 'group-bank-compact',
+	BusSendBank = 'bus-send-bank',
+	UserBank = 'user-bank',
 	Screens = 'screens',
 	MuteGroupScreen = 'mute-group-screen',
 	UtilityScreen = 'utility-screen',
@@ -921,6 +928,31 @@ export function GetActionsList(
 				})
 			},
 		},
+		[ActionId.SoloMono]: {
+			label: 'Solo Mono',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'On / Off',
+					id: 'on',
+					...convertChoices(CHOICES_ON_OFF),
+				},
+			],
+			callback: (action): void => {
+				const cmd = `/config/solo/mono`
+				const onState = getResolveOnOffMute(action, cmd, true, 'on')
+
+				sendOsc(cmd, {
+					type: 'i',
+					value: onState,
+				})
+			},
+			subscribe: (evt): void => {
+				if (evt.options.on === MUTE_TOGGLE) {
+					ensureLoaded(`/config/solo/mono`)
+				}
+			},
+		},
 		[ActionId.SoloDim]: {
 			label: 'Solo Dim',
 			options: [
@@ -991,6 +1023,190 @@ export function GetActionsList(
 				})
 			},
 		},
+		[ActionId.ChannelBank]: {
+			label: 'Select active channel bank (X32/M32)',
+			description:
+				'Select a channel bank for the left hand side of your console. Please note this action is for the X32 and M32. For X32 Compact/X32 Producer/M32R please use the X32 Compact/X32 Producer/M32R action',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Bank',
+					id: 'bank',
+					...convertChoices([
+						{
+							id: '0',
+							label: 'CH 1 - 16',
+						},
+						{
+							id: '1',
+							label: 'CH 17 - 32',
+						},
+						{
+							id: '2',
+							label: 'AUX IN / USB / FX RTN',
+						},
+						{
+							id: '3',
+							label: 'BUS MASTERS',
+						},
+					]),
+				},
+			],
+			callback: (action): void => {
+				sendOsc(`/-stat/chfaderbank`, {
+					type: 'i',
+					value: getOptNumber(action, 'bank'),
+				})
+			},
+		},
+		[ActionId.GroupBank]: {
+			label: 'Select active group bank (X32/M32)',
+			description:
+				'Select a group bank for the right hand side of your console. Please note this action is for the X32 and M32. For X32 Compact/X32 Producer/M32R please use the X32 Compact/X32 Producer/M32R action',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Bank',
+					id: 'bank',
+					...convertChoices([
+						{
+							id: '0',
+							label: 'GROUP DCA 1 - 8',
+						},
+						{
+							id: '1',
+							label: 'BUS 1 - 8',
+						},
+						{
+							id: '2',
+							label: 'BUS 9 - 16',
+						},
+						{
+							id: '3',
+							label: 'MATRIX 1 - 6 / MAIN C',
+						},
+					]),
+				},
+			],
+			callback: (action): void => {
+				sendOsc(`/-stat/grpfaderbank`, {
+					type: 'i',
+					value: getOptNumber(action, 'bank'),
+				})
+			},
+		},
+		[ActionId.ChannelBankCompact]: {
+			label: 'Select active channel bank (X32 Compact/X32 Producer/M32R)',
+			description:
+				'Select a channel bank for the left hand side of your console. Please note this action is for X32 Compact/X32 Producer/M32R. For X32 or M32 please use the X32/M32 action',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Bank',
+					id: 'bank',
+					...convertChoices([
+						{
+							id: '0',
+							label: 'CH 1 - 8',
+						},
+						{
+							id: '1',
+							label: 'CH 9 - 16',
+						},
+						{
+							id: '2',
+							label: 'CH 17 - 24',
+						},
+						{
+							id: '3',
+							label: 'CH 25 - 32',
+						},
+						{
+							id: '4',
+							label: 'AUX IN / USB',
+						},
+						{
+							id: '5',
+							label: 'FX RTN',
+						},
+						{
+							id: '6',
+							label: 'BUS 1-8',
+						},
+						{
+							id: '7',
+							label: 'BUS 1-8',
+						},
+					]),
+				},
+			],
+			callback: (action): void => {
+				sendOsc(`/-stat/chfaderbank`, {
+					type: 'i',
+					value: getOptNumber(action, 'bank'),
+				})
+			},
+		},
+		[ActionId.GroupBankCompact]: {
+			label: 'Select active group bank (X32 Compact/X32 Producer/M32R)',
+			description:
+				'Select a group bank for the right hand side of your console. Please note this actions is for X32 Compact/X32 Producer/M32R. For X32 or M32 please use the X32/M32 action',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Bank',
+					id: 'bank',
+					...convertChoices([
+						{
+							id: '0',
+							label: 'GROUP DCA 1 - 8',
+						},
+						{
+							id: '1',
+							label: 'BUS 1 - 8',
+						},
+						{
+							id: '2',
+							label: 'BUS 9 - 16',
+						},
+						{
+							id: '3',
+							label: 'MATRIX 1 - 6 / MAIN C',
+						},
+						{
+							id: '4',
+							label: 'CH 1 - 8',
+						},
+						{
+							id: '5',
+							label: 'CH 9 - 16',
+						},
+						{
+							id: '6',
+							label: 'CH 17 - 24',
+						},
+						{
+							id: '7',
+							label: 'CH 25 - 32',
+						},
+						{
+							id: '8',
+							label: 'AUX IN / USB',
+						},
+						{
+							id: '9',
+							label: 'FX RTN',
+						},
+					]),
+				},
+			],
+			callback: (action): void => {
+				sendOsc(`/-stat/grpfaderbank`, {
+					type: 'i',
+					value: getOptNumber(action, 'bank'),
+				})
+			},
+		},
 		[ActionId.SendsOnFader]: {
 			label: 'Sends on Fader/Fader Flip',
 			options: [
@@ -1014,6 +1230,72 @@ export function GetActionsList(
 				if (evt.options.on === MUTE_TOGGLE) {
 					ensureLoaded(`/-stat/sendsonfader`)
 				}
+			},
+		},
+		[ActionId.BusSendBank]: {
+			label: 'Bus send bank',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Send Bank',
+					id: 'bank',
+					...convertChoices([
+						{
+							id: '0',
+							label: 'Bus 1-4',
+						},
+						{
+							id: '1',
+							label: 'Bus 5-8',
+						},
+						{
+							id: '2',
+							label: 'Bus 9-12',
+						},
+						{
+							id: '3',
+							label: 'Bus 13-16',
+						},
+					]),
+				},
+			],
+			callback: (action): void => {
+				const cmd = `/-stat/bussendbank`
+				sendOsc(cmd, {
+					type: 'i',
+					value: getOptNumber(action, 'bank', 0),
+				})
+			},
+		},
+		[ActionId.UserBank]: {
+			label: 'User Assign Bank',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'User Bank',
+					id: 'bank',
+					...convertChoices([
+						{
+							id: '0',
+							label: 'Set A',
+						},
+						{
+							id: '1',
+							label: 'Set B',
+						},
+						{
+							id: '2',
+							label: 'Set C',
+						},
+					]),
+				},
+			],
+			callback: (action): void => {
+				const cmd = `/-stat/userbank`
+				sendOsc(cmd, {
+					type: 'i',
+					value: getOptNumber(action, 'bank', 0),
+				})
 			},
 		},
 		[ActionId.Screens]: {
