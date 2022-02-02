@@ -4,7 +4,7 @@ import { GetActionsList } from './actions'
 import { X32Config, GetConfigFields } from './config'
 import { FeedbackId, GetFeedbacksList } from './feedback'
 import { GetPresetsList } from './presets'
-import { InitVariables, updateDeviceInfoVariables, updateNameVariables } from './variables'
+import { InitVariables, updateDeviceInfoVariables, updateNameVariables, updateTapeTime } from './variables'
 import { X32State, X32Subscriptions } from './state'
 // eslint-disable-next-line node/no-extraneous-import
 import * as osc from 'osc'
@@ -31,6 +31,9 @@ class X32Instance extends InstanceSkel<X32Config> {
 	private reconnectTimer: NodeJS.Timer | undefined
 	/** Once we have an osc socket ready, we send /xinfo on repeat until we get a response */
 	private syncInterval: NodeJS.Timer | undefined
+	/** subscribe interval, we need to resubscribe atleast every 10 seconds to keep the subscription going
+	 * we are using 5 seconds to be safe */
+	private subscribeInterval: NodeJS.Timer | undefined
 
 	private readonly debounceUpdateCompanionBits: () => void
 	private readonly requestQueue: PQueue = new PQueue({
@@ -152,6 +155,10 @@ class X32Instance extends InstanceSkel<X32Config> {
 			this.heartbeat = undefined
 		}
 
+		if (this.subscribeInterval) {
+			clearInterval(this.subscribeInterval)
+			this.subscribeInterval = undefined
+		}
 		X32DeviceDetectorInstance.unsubscribe(this.id)
 
 		this.transitions.stopAll()
@@ -247,6 +254,11 @@ class X32Instance extends InstanceSkel<X32Config> {
 				this.heartbeat = undefined
 			}
 
+			if (this.subscribeInterval) {
+				clearInterval(this.subscribeInterval)
+				this.subscribeInterval = undefined
+			}
+
 			if (!this.reconnectTimer) {
 				this.reconnectTimer = setTimeout(() => {
 					if (this.syncInterval) {
@@ -264,6 +276,11 @@ class X32Instance extends InstanceSkel<X32Config> {
 			this.heartbeat = setInterval(() => {
 				this.pulse()
 			}, 1500)
+
+			this.subscribeForUpdates()
+			this.subscribeInterval = setInterval(() => {
+				this.subscribeForUpdates()
+			}, 5000)
 
 			this.requestQueue.clear()
 			this.inFlightRequests = {}
@@ -329,10 +346,24 @@ class X32Instance extends InstanceSkel<X32Config> {
 						updateDeviceInfoVariables(this, args)
 					}
 					break
+				case '/-stat/tape/etime':
+					updateTapeTime(this, this.x32State)
+					break
 			}
 		})
 
 		this.osc.open()
+	}
+
+	// called every 5 seconds while there is an osc connection to keep subscriptions open
+	private subscribeForUpdates(): void {
+		this.osc.send({
+			address: '/subscribe',
+			args: [
+				{ type: 's', value: '/-stat/tape/etime' },
+				{ type: 'i', value: 20 },
+			],
+		})
 	}
 
 	private loadVariablesData(): void {
