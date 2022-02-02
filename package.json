@@ -44,7 +44,7 @@
 		]
 	},
 	"engines": {
-		"node": "^14"
+		"node": "^14 || ^16"
 	},
 	"dependencies": {
 		"@types/node": "^14.18.9",
@@ -56,5 +56,6 @@
 	"devDependencies": {
 		"@sofie-automation/code-standard-preset": "^1.0.0",
 		"typescript": "~4.5"
-	}
+	},
+	"homepage": "https://github.com/bitfocus/companion-module-behringer-x32#readme"
 }
