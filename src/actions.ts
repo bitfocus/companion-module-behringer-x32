@@ -63,6 +63,7 @@ export enum ActionId {
 	OscillatorEnable = 'oscillator-enable',
 	OscillatorDestination = 'oscillator-destination',
 	SyncClock = 'sync_clock',
+	SoloMono = 'solo-mono',
 	SoloDim = 'solo_dim',
 	SoloDimAttenuation = 'solo_dim_attenuation',
 	MonitorLevel = 'monitor-level',
@@ -71,6 +72,8 @@ export enum ActionId {
 	GroupBank = 'group-bank-full',
 	ChannelBankCompact = 'channel-bank-compact',
 	GroupBankCompact = 'group-bank-compact',
+	BusSendBank = 'bus-send-bank',
+	UserBank = 'user-bank',
 }
 
 type CompanionActionWithCallback = SetRequired<CompanionAction, 'callback'>
@@ -911,6 +914,31 @@ export function GetActionsList(
 				})
 			},
 		},
+		[ActionId.SoloMono]: {
+			label: 'Solo Mono',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'On / Off',
+					id: 'on',
+					...convertChoices(CHOICES_ON_OFF),
+				},
+			],
+			callback: (action): void => {
+				const cmd = `/config/solo/mono`
+				const onState = getResolveOnOffMute(action, cmd, true, 'on')
+
+				sendOsc(cmd, {
+					type: 'i',
+					value: onState,
+				})
+			},
+			subscribe: (evt): void => {
+				if (evt.options.on === MUTE_TOGGLE) {
+					ensureLoaded(`/config/solo/mono`)
+				}
+			},
+		},
 		[ActionId.SoloDim]: {
 			label: 'Solo Dim',
 			options: [
@@ -1188,6 +1216,72 @@ export function GetActionsList(
 				if (evt.options.on === MUTE_TOGGLE) {
 					ensureLoaded(`/-stat/sendsonfader`)
 				}
+			},
+		},
+		[ActionId.BusSendBank]: {
+			label: 'Bus send bank',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Send Bank',
+					id: 'bank',
+					...convertChoices([
+						{
+							id: '0',
+							label: 'Bus 1-4',
+						},
+						{
+							id: '1',
+							label: 'Bus 5-8',
+						},
+						{
+							id: '2',
+							label: 'Bus 9-12',
+						},
+						{
+							id: '3',
+							label: 'Bus 13-16',
+						},
+					]),
+				},
+			],
+			callback: (action): void => {
+				const cmd = `/-stat/bussendbank`
+				sendOsc(cmd, {
+					type: 'i',
+					value: getOptNumber(action, 'bank', 0),
+				})
+			},
+		},
+		[ActionId.UserBank]: {
+			label: 'User Assign Bank',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'User Bank',
+					id: 'bank',
+					...convertChoices([
+						{
+							id: '0',
+							label: 'Set A',
+						},
+						{
+							id: '1',
+							label: 'Set B',
+						},
+						{
+							id: '2',
+							label: 'Set C',
+						},
+					]),
+				},
+			],
+			callback: (action): void => {
+				const cmd = `/-stat/userbank`
+				sendOsc(cmd, {
+					type: 'i',
+					value: getOptNumber(action, 'bank', 0),
+				})
 			},
 		},
 	}
