@@ -10,6 +10,20 @@ While developing the module, by using `yarn build:watch` the compiler will be ru
 
 ## Changes
 
+### v2.9.0
+
+- Channel and bus banks
+
+- Bus send bank and user banks
+
+- Screen pages
+
+- Tape state feedback and elapsed time variable
+
+- Solo mono
+
+- Panning
+
 ### v2.8.0
 
 - Sends on Fader/Fader Flip
@@ -17,6 +31,8 @@ While developing the module, by using `yarn build:watch` the compiler will be ru
 - Solo and Clear Solo
 
 - Solo Dim, Solo Dim Attenuation and Monitor Level
+
+- Sync time
 
 ### v2.7.0
 
