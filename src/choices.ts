@@ -57,6 +57,7 @@ export interface ChannelChoicesOptions {
 	defaultNames?: boolean
 	numericIndex?: boolean
 	includeMain?: boolean
+	includeST?: boolean
 	skipDca?: boolean
 	skipBus?: boolean
 	skipMatrix?: boolean
@@ -84,6 +85,31 @@ export const FaderLevelDeltaChoice: CompanionInputFieldNumber = {
 	max: 100,
 	min: -100,
 }
+
+export const PanningChoice: CompanionInputFieldNumber = {
+	type: 'number',
+	label: 'Panning (-50 = hard left, 0 = center, 50 = hard right)',
+	id: 'pan',
+	range: true,
+	required: true,
+	default: 0,
+	step: 1,
+	min: -50,
+	max: 50,
+}
+
+export const PanningDelta: CompanionInputFieldNumber = {
+	type: 'number',
+	label: 'Delta',
+	id: 'delta',
+	range: true,
+	required: true,
+	default: 0,
+	step: 1,
+	min: -100,
+	max: 100,
+}
+
 export const HeadampGainChoice: CompanionInputFieldNumber = {
 	type: 'number',
 	label: 'Gain',
@@ -145,6 +171,20 @@ export function GetLevelsChoiceConfigs(state: X32State): {
 	}
 }
 
+export function GetPanningChoiceConfigs(state: X32State): {
+	allSources: DropdownChoice[]
+	channelSendTargets: DropdownChoice[]
+	busSendSource: DropdownChoice[]
+	busSendTarget: DropdownChoice[]
+} {
+	return {
+		allSources: GetTargetChoices(state, { skipDca: true, skipMatrix: true, includeST: true }),
+		channelSendTargets: GetChannelSendChoices(state, 'pan'),
+		busSendSource: GetTargetChoices(state, { skipInputs: true, includeST: true, skipDca: true, skipMatrix: true }),
+		busSendTarget: GetBusSendChoices(state, 'pan'),
+	}
+}
+
 export function GetTargetChoices(state: X32State, options?: ChannelChoicesOptions): DropdownChoice[] {
 	const res: DropdownChoice[] = []
 
@@ -198,6 +238,10 @@ export function GetTargetChoices(state: X32State, options?: ChannelChoicesOption
 		appendTarget(`/main/m`, `Main Mono`)
 	}
 
+	if (options?.includeST) {
+		appendTarget(`/main/st`, `Main Stereo`)
+	}
+
 	if (!options?.skipDca) {
 		for (let i = 1; i <= 8; i++) {
 			appendTarget(`/dca/${i}`, `DCA ${i}`)
@@ -226,7 +270,7 @@ export function GetTargetChoices(state: X32State, options?: ChannelChoicesOption
 //   return res
 // }
 
-export function GetChannelSendChoices(state: X32State, type: 'on' | 'level'): DropdownChoice[] {
+export function GetChannelSendChoices(state: X32State, type: 'on' | 'level' | 'pan'): DropdownChoice[] {
 	const res: DropdownChoice[] = []
 
 	const appendTarget = (statePath: string, mixId: string, defaultName: string): void => {
@@ -237,20 +281,21 @@ export function GetChannelSendChoices(state: X32State, type: 'on' | 'level'): Dr
 			label: realname && realname !== defaultName ? `${realname} (${defaultName})` : defaultName,
 		})
 	}
-
-	for (let i = 1; i <= 16; i++) {
+	const increment = type == 'pan' ? 2 : 1
+	for (let i = 1; i <= 16; i += increment) {
 		appendTarget(`/bus/${padNumber(i)}`, `${padNumber(i)}/${type}`, `MixBus ${i}`)
 	}
 
 	if (type === 'on') {
 		appendTarget(`/main/st`, 'st', `Main Stereo`)
 	}
-	appendTarget(`/main/m`, `m${type == 'on' ? '' : type}`, `Main Mono`)
-
+	if (type !== 'pan') {
+		appendTarget(`/main/m`, `m${type == 'on' ? '' : type}`, `Main Mono`)
+	}
 	return res
 }
 
-export function GetBusSendChoices(state: X32State): DropdownChoice[] {
+export function GetBusSendChoices(state: X32State, type: 'pan' | 'other' = 'other'): DropdownChoice[] {
 	const res: DropdownChoice[] = []
 
 	const appendTarget = (statePath: string, mixId: string, defaultName: string): void => {
@@ -261,8 +306,8 @@ export function GetBusSendChoices(state: X32State): DropdownChoice[] {
 			label: realname && realname !== defaultName ? `${realname} (${defaultName})` : defaultName,
 		})
 	}
-
-	for (let i = 1; i <= 6; i++) {
+	const increment = type == 'pan' ? 2 : 1
+	for (let i = 1; i <= 6; i += increment) {
 		appendTarget(`/mtx/${padNumber(i)}`, padNumber(i), `Matrix ${i}`)
 	}
 	return res

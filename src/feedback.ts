@@ -7,11 +7,22 @@ import {
 	convertChoices,
 	GetOscillatorDestinations,
 	FaderLevelChoice,
+	PanningChoice,
 	GetLevelsChoiceConfigs,
+	GetPanningChoiceConfigs,
 	CHOICES_TAPE_FUNC,
 } from './choices'
 import { compareNumber, floatToDB } from './util'
-import { MutePath, MainPath, MainFaderPath, SendChannelToBusPath, SendBusToMatrixPath } from './paths'
+import {
+	MutePath,
+	MainPath,
+	MainFaderPath,
+	SendChannelToBusPath,
+	SendBusToMatrixPath,
+	MainPanPath,
+	ChannelToBusPanPath,
+	BusToMatrixPanPath,
+} from './paths'
 // eslint-disable-next-line node/no-extraneous-import
 import * as osc from 'osc'
 import InstanceSkel = require('../../../instance_skel')
@@ -29,6 +40,9 @@ export enum FeedbackId {
 	FaderLevel = 'fader_level',
 	ChannelSendLevel = 'level_channel_send',
 	BusSendLevel = 'level_bus_send',
+	ChannelPanning = 'channel_panning',
+	ChannelSendPanning = 'channel_send_panning',
+	BusSendPanning = 'bus_send_panning',
 	TalkbackTalk = 'talkback_talk',
 	OscillatorEnable = 'oscillator-enable',
 	OscillatorDestination = 'oscillator-destination',
@@ -95,6 +109,7 @@ export function GetFeedbacksList(
 	ensureLoaded: (path: string) => void
 ): CompanionFeedbacks {
 	const levelsChoices = GetLevelsChoiceConfigs(state)
+	const panningChoices = GetPanningChoiceConfigs(state)
 	const muteGroups = GetMuteGroupChoices(state)
 	const selectChoices = GetTargetChoices(state, { skipDca: true, includeMain: true, numericIndex: true })
 	const soloChoices = GetTargetChoices(state, { includeMain: true, numericIndex: true })
@@ -372,6 +387,124 @@ export function GetFeedbacksList(
 			},
 			unsubscribe: (evt: CompanionFeedbackEvent): void => {
 				const path = SendBusToMatrixPath(evt.options)
+				unsubscribeFeedback(subs, path, evt)
+			},
+		},
+
+		[FeedbackId.ChannelPanning]: {
+			type: 'boolean',
+			label: 'Change from channel panning',
+			description: 'If the channel panning has the specified value, change style of the bank',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Target',
+					id: 'target',
+					...convertChoices(panningChoices.allSources),
+				},
+				NumberComparitorPicker(),
+				PanningChoice,
+			],
+			style: {
+				bgcolor: self.rgb(0, 255, 0),
+				color: self.rgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackEvent): boolean => {
+				const currentState = state.get(MainPanPath(evt.options))
+				const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0]?.value : undefined
+				return (
+					typeof currentVal === 'number' &&
+					compareNumber(evt.options.pan, evt.options.comparitor, currentVal * 100 - 50)
+				)
+			},
+			subscribe: (evt): void => {
+				const path = MainPanPath(evt.options)
+				subscribeFeedback(ensureLoaded, subs, path, evt)
+			},
+			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+				const path = MainPanPath(evt.options)
+				unsubscribeFeedback(subs, path, evt)
+			},
+		},
+		[FeedbackId.ChannelSendPanning]: {
+			type: 'boolean',
+			label: 'Change from channel send panning',
+			description: 'If the channel send panning has the specified value, change style of the bank',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Source',
+					id: 'source',
+					...convertChoices(panningChoices.allSources),
+				},
+				{
+					type: 'dropdown',
+					label: 'Target',
+					id: 'target',
+					...convertChoices(panningChoices.channelSendTargets),
+				},
+				NumberComparitorPicker(),
+				PanningChoice,
+			],
+			style: {
+				bgcolor: self.rgb(0, 255, 0),
+				color: self.rgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackEvent): boolean => {
+				const currentState = state.get(ChannelToBusPanPath(evt.options))
+				const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0]?.value : undefined
+				return (
+					typeof currentVal === 'number' &&
+					compareNumber(evt.options.pan, evt.options.comparitor, currentVal * 100 - 50)
+				)
+			},
+			subscribe: (evt): void => {
+				const path = ChannelToBusPanPath(evt.options)
+				subscribeFeedback(ensureLoaded, subs, path, evt)
+			},
+			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+				const path = ChannelToBusPanPath(evt.options)
+				unsubscribeFeedback(subs, path, evt)
+			},
+		},
+		[FeedbackId.BusSendPanning]: {
+			type: 'boolean',
+			label: 'Change from bus send panning',
+			description: 'If the bus send has the specified value, change style of the bank',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Source',
+					id: 'source',
+					...convertChoices(panningChoices.busSendSource),
+				},
+				{
+					type: 'dropdown',
+					label: 'Target',
+					id: 'target',
+					...convertChoices(panningChoices.busSendTarget),
+				},
+				NumberComparitorPicker(),
+				PanningChoice,
+			],
+			style: {
+				bgcolor: self.rgb(0, 255, 0),
+				color: self.rgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackEvent): boolean => {
+				const currentState = state.get(BusToMatrixPanPath(evt.options))
+				const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0]?.value : undefined
+				return (
+					typeof currentVal === 'number' &&
+					compareNumber(evt.options.pan, evt.options.comparitor, currentVal * 100 - 50)
+				)
+			},
+			subscribe: (evt): void => {
+				const path = BusToMatrixPanPath(evt.options)
+				subscribeFeedback(ensureLoaded, subs, path, evt)
+			},
+			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+				const path = BusToMatrixPanPath(evt.options)
 				unsubscribeFeedback(subs, path, evt)
 			},
 		},
