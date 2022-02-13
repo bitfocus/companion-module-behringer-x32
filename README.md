@@ -10,6 +10,10 @@ While developing the module, by using `yarn build:watch` the compiler will be ru
 
 ## Changes
 
+### v2.9.1
+
+- Fix crash when disabling/deleting instance
+
 ### v2.9.0
 
 - Channel and bus banks
