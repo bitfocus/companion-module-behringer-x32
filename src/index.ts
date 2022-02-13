@@ -310,6 +310,11 @@ class X32Instance extends InstanceSkel<X32Config> {
 				clearInterval(this.heartbeat)
 				this.heartbeat = undefined
 			}
+
+			if (this.subscribeInterval) {
+				clearInterval(this.subscribeInterval)
+				this.subscribeInterval = undefined
+			}
 		})
 
 		this.osc.on('message', (message): void => {
@@ -357,13 +362,19 @@ class X32Instance extends InstanceSkel<X32Config> {
 
 	// called every 5 seconds while there is an osc connection to keep subscriptions open
 	private subscribeForUpdates(): void {
-		this.osc.send({
-			address: '/subscribe',
-			args: [
-				{ type: 's', value: '/-stat/tape/etime' },
-				{ type: 'i', value: 20 },
-			],
-		})
+		if (this.osc) {
+			try {
+				this.osc.send({
+					address: '/subscribe',
+					args: [
+						{ type: 's', value: '/-stat/tape/etime' },
+						{ type: 'i', value: 20 },
+					],
+				})
+			} catch (e) {
+				// Ignore
+			}
+		}
 	}
 
 	private loadVariablesData(): void {
