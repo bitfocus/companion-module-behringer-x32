@@ -1,4 +1,4 @@
-import { CompanionInputFieldDropdown } from '../../../instance_skel_types'
+import { CompanionInputFieldDropdown } from '@companion-module/base'
 import { NumberComparitor } from './util'
 
 export function NumberComparitorPicker(): CompanionInputFieldDropdown {

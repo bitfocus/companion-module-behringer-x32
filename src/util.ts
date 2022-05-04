@@ -1,4 +1,4 @@
-import { InputValue } from '../../../instance_skel_types'
+import { InputValue, InstanceBase } from '@companion-module/base'
 
 export const MEDIA_PLAYER_SOURCE_CLIP_OFFSET = 1000
 
@@ -113,4 +113,8 @@ export function compareNumber(
 		default:
 			return currentValue === targetValue
 	}
+}
+
+export interface InstanceBaseExt<TConfig> extends InstanceBase<TConfig> {
+	config: TConfig
 }

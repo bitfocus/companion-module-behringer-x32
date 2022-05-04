@@ -1,4 +1,3 @@
-import { CompanionFeedbacks, CompanionFeedbackEvent, CompanionFeedbackBoolean } from '../../../instance_skel_types'
 import { X32State, X32Subscriptions } from './state'
 import {
 	GetMuteGroupChoices,
@@ -12,7 +11,7 @@ import {
 	GetPanningChoiceConfigs,
 	CHOICES_TAPE_FUNC,
 } from './choices'
-import { compareNumber, floatToDB } from './util'
+import { compareNumber, floatToDB, InstanceBaseExt } from './util'
 import {
 	MutePath,
 	MainPath,
@@ -23,12 +22,16 @@ import {
 	ChannelToBusPanPath,
 	BusToMatrixPanPath,
 } from './paths'
-// eslint-disable-next-line node/no-extraneous-import
 import * as osc from 'osc'
-import InstanceSkel = require('../../../instance_skel')
 import { X32Config } from './config'
 import { NumberComparitorPicker } from './input'
 import { SetRequired } from 'type-fest'
+import {
+	combineRgb,
+	CompanionFeedbackBoolean,
+	CompanionFeedbackEvent,
+	CompanionFeedbacks,
+} from '@companion-module/base'
 
 type CompanionFeedbackWithCallback = SetRequired<CompanionFeedbackBoolean, 'callback' | 'subscribe' | 'unsubscribe'>
 
@@ -103,7 +106,7 @@ function unsubscribeFeedback(subs: X32Subscriptions, path: string, evt: Companio
 }
 
 export function GetFeedbacksList(
-	self: InstanceSkel<X32Config>,
+	_self: InstanceBaseExt<X32Config>,
 	state: X32State,
 	subs: X32Subscriptions,
 	ensureLoaded: (path: string) => void
@@ -117,7 +120,7 @@ export function GetFeedbacksList(
 	const feedbacks: { [id in FeedbackId]: CompanionFeedbackWithCallback | undefined } = {
 		[FeedbackId.Mute]: {
 			type: 'boolean',
-			label: 'Change from mute state',
+			name: 'Change from mute state',
 			description: 'If the specified target is muted, change style of the bank',
 			options: [
 				{
@@ -133,9 +136,9 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(255, 0, 0),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(255, 0, 0),
+				color: combineRgb(0, 0, 0),
 			},
 			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const data = state.get(MutePath(evt.options.target as string))
@@ -153,7 +156,7 @@ export function GetFeedbacksList(
 		},
 		[FeedbackId.MuteGroup]: {
 			type: 'boolean',
-			label: 'Change from mute group state',
+			name: 'Change from mute group state',
 			description: 'If the specified mute group is muted, change style of the bank',
 			options: [
 				{
@@ -169,9 +172,9 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(255, 0, 0),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(255, 0, 0),
+				color: combineRgb(0, 0, 0),
 			},
 			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const data = state.get(evt.options.mute_grp as string)
@@ -189,7 +192,7 @@ export function GetFeedbacksList(
 		},
 		[FeedbackId.MuteChannelSend]: {
 			type: 'boolean',
-			label: 'Change from channel to bus send mute state',
+			name: 'Change from channel to bus send mute state',
 			description: 'If the specified channel send is muted, change style of the bank',
 			options: [
 				{
@@ -211,9 +214,9 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(255, 0, 0),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(255, 0, 0),
+				color: combineRgb(0, 0, 0),
 			},
 			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const path = `${MainPath(evt.options.source as string)}/${evt.options.target}`
@@ -232,7 +235,7 @@ export function GetFeedbacksList(
 		},
 		[FeedbackId.MuteBusSend]: {
 			type: 'boolean',
-			label: 'Change from bus to matrix send mute state',
+			name: 'Change from bus to matrix send mute state',
 			description: 'If the specified bus send is muted, change style of the bank',
 			options: [
 				{
@@ -254,9 +257,9 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(255, 0, 0),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(255, 0, 0),
+				color: combineRgb(0, 0, 0),
 			},
 			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const path = `${MainPath(evt.options.source as string)}/${evt.options.target}/on`
@@ -275,7 +278,7 @@ export function GetFeedbacksList(
 		},
 		[FeedbackId.FaderLevel]: {
 			type: 'boolean',
-			label: 'Change from fader level',
+			name: 'Change from fader level',
 			description: 'If the fader level has the specified gain, change style of the bank',
 			options: [
 				{
@@ -287,9 +290,9 @@ export function GetFeedbacksList(
 				NumberComparitorPicker(),
 				FaderLevelChoice,
 			],
-			style: {
-				bgcolor: self.rgb(0, 255, 0),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(0, 255, 0),
+				color: combineRgb(0, 0, 0),
 			},
 			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const currentState = state.get(MainFaderPath(evt.options))
@@ -310,7 +313,7 @@ export function GetFeedbacksList(
 		},
 		[FeedbackId.ChannelSendLevel]: {
 			type: 'boolean',
-			label: 'Change from level of channel to bus send',
+			name: 'Change from level of channel to bus send',
 			description: 'If the channel to bus send level has the specified gain, change style of the bank',
 			options: [
 				{
@@ -328,9 +331,9 @@ export function GetFeedbacksList(
 				NumberComparitorPicker(),
 				FaderLevelChoice,
 			],
-			style: {
-				bgcolor: self.rgb(0, 255, 0),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(0, 255, 0),
+				color: combineRgb(0, 0, 0),
 			},
 			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const currentState = state.get(SendChannelToBusPath(evt.options))
@@ -351,7 +354,7 @@ export function GetFeedbacksList(
 		},
 		[FeedbackId.BusSendLevel]: {
 			type: 'boolean',
-			label: 'Change from level of bus to matrix send',
+			name: 'Change from level of bus to matrix send',
 			description: 'If the bus to matrix send level has the specified gain, change style of the bank',
 			options: [
 				{
@@ -369,9 +372,9 @@ export function GetFeedbacksList(
 				NumberComparitorPicker(),
 				FaderLevelChoice,
 			],
-			style: {
-				bgcolor: self.rgb(0, 255, 0),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(0, 255, 0),
+				color: combineRgb(0, 0, 0),
 			},
 			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const currentState = state.get(SendBusToMatrixPath(evt.options))
@@ -393,7 +396,7 @@ export function GetFeedbacksList(
 
 		[FeedbackId.ChannelPanning]: {
 			type: 'boolean',
-			label: 'Change from channel panning',
+			name: 'Change from channel panning',
 			description: 'If the channel panning has the specified value, change style of the bank',
 			options: [
 				{
@@ -405,9 +408,9 @@ export function GetFeedbacksList(
 				NumberComparitorPicker(),
 				PanningChoice,
 			],
-			style: {
-				bgcolor: self.rgb(0, 255, 0),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(0, 255, 0),
+				color: combineRgb(0, 0, 0),
 			},
 			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const currentState = state.get(MainPanPath(evt.options))
@@ -428,7 +431,7 @@ export function GetFeedbacksList(
 		},
 		[FeedbackId.ChannelSendPanning]: {
 			type: 'boolean',
-			label: 'Change from channel send panning',
+			name: 'Change from channel send panning',
 			description: 'If the channel send panning has the specified value, change style of the bank',
 			options: [
 				{
@@ -446,9 +449,9 @@ export function GetFeedbacksList(
 				NumberComparitorPicker(),
 				PanningChoice,
 			],
-			style: {
-				bgcolor: self.rgb(0, 255, 0),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(0, 255, 0),
+				color: combineRgb(0, 0, 0),
 			},
 			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const currentState = state.get(ChannelToBusPanPath(evt.options))
@@ -469,7 +472,7 @@ export function GetFeedbacksList(
 		},
 		[FeedbackId.BusSendPanning]: {
 			type: 'boolean',
-			label: 'Change from bus send panning',
+			name: 'Change from bus send panning',
 			description: 'If the bus send has the specified value, change style of the bank',
 			options: [
 				{
@@ -487,9 +490,9 @@ export function GetFeedbacksList(
 				NumberComparitorPicker(),
 				PanningChoice,
 			],
-			style: {
-				bgcolor: self.rgb(0, 255, 0),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(0, 255, 0),
+				color: combineRgb(0, 0, 0),
 			},
 			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const currentState = state.get(BusToMatrixPanPath(evt.options))
@@ -510,7 +513,7 @@ export function GetFeedbacksList(
 		},
 		[FeedbackId.TalkbackTalk]: {
 			type: 'boolean',
-			label: 'Change from talkback talk state',
+			name: 'Change from talkback talk state',
 			description: 'If the specified talkback is on, change style of the bank',
 			options: [
 				{
@@ -535,9 +538,9 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(255, 0, 0),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(255, 0, 0),
+				color: combineRgb(0, 0, 0),
 			},
 			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const path = `/-stat/talk/${evt.options.channel}`
@@ -556,7 +559,7 @@ export function GetFeedbacksList(
 		},
 		[FeedbackId.OscillatorEnable]: {
 			type: 'boolean',
-			label: 'Change from oscillator enabled state',
+			name: 'Change from oscillator enabled state',
 			description: 'If the oscillator is on, change style of the bank',
 			options: [
 				{
@@ -566,9 +569,9 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(255, 0, 0),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(255, 0, 0),
+				color: combineRgb(0, 0, 0),
 			},
 			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const path = `/-stat/osc/on`
@@ -587,7 +590,7 @@ export function GetFeedbacksList(
 		},
 		[FeedbackId.OscillatorDestination]: {
 			type: 'boolean',
-			label: 'Change from oscillator destination state',
+			name: 'Change from oscillator destination state',
 			description: 'If the oscillator destination matches, change style of the bank',
 			options: [
 				{
@@ -597,9 +600,9 @@ export function GetFeedbacksList(
 					...convertChoices(GetOscillatorDestinations(state)),
 				},
 			],
-			style: {
-				bgcolor: self.rgb(255, 0, 0),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(255, 0, 0),
+				color: combineRgb(0, 0, 0),
 			},
 			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const path = `/config/osc/dest`
@@ -618,7 +621,7 @@ export function GetFeedbacksList(
 		},
 		[FeedbackId.Select]: {
 			type: 'boolean',
-			label: 'Change from solo enabled state',
+			name: 'Change from solo enabled state',
 			description: 'If the solo is on for specified channel, change style of the bank',
 			options: [
 				{
@@ -634,9 +637,9 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(255, 127, 0),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(255, 127, 0),
+				color: combineRgb(0, 0, 0),
 			},
 			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const ch = `${getOptNumber(evt, 'solo') + 1}`.padStart(2, '0')
@@ -658,7 +661,7 @@ export function GetFeedbacksList(
 		},
 		[FeedbackId.Select]: {
 			type: 'boolean',
-			label: 'Change from select state',
+			name: 'Change from select state',
 			description: 'If specified channel is selected, change style of the bank',
 			options: [
 				{
@@ -668,9 +671,9 @@ export function GetFeedbacksList(
 					...convertChoices(selectChoices),
 				},
 			],
-			style: {
-				bgcolor: self.rgb(0, 255, 127),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(0, 255, 127),
+				color: combineRgb(0, 0, 0),
 			},
 			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const path = `/-stat/selidx`
@@ -689,7 +692,7 @@ export function GetFeedbacksList(
 		},
 		[FeedbackId.Solo]: {
 			type: 'boolean',
-			label: 'Change from solo enabled state',
+			name: 'Change from solo enabled state',
 			description: 'If the solo is on for specified channel, change style of the bank',
 			options: [
 				{
@@ -705,9 +708,9 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(255, 127, 0),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(255, 127, 0),
+				color: combineRgb(0, 0, 0),
 			},
 			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const ch = `${getOptNumber(evt, 'solo') + 1}`.padStart(2, '0')
@@ -729,7 +732,7 @@ export function GetFeedbacksList(
 		},
 		[FeedbackId.ClearSolo]: {
 			type: 'boolean',
-			label: 'Change from clear solo state',
+			name: 'Change from clear solo state',
 			description: 'If atleast one solo is selected the clear solo button is on and will change style of the bank',
 			options: [
 				{
@@ -739,9 +742,9 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(255, 127, 0),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(255, 127, 0),
+				color: combineRgb(0, 0, 0),
 			},
 			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const path = `/-stat/solo`
@@ -760,7 +763,7 @@ export function GetFeedbacksList(
 		},
 		[FeedbackId.SendsOnFader]: {
 			type: 'boolean',
-			label: 'Change from Sends on Fader/Fader Flip state',
+			name: 'Change from Sends on Fader/Fader Flip state',
 			description: 'If the Sends on Fader/Fader Flip is on, change style of the bank',
 			options: [
 				{
@@ -770,9 +773,9 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(255, 127, 0),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(255, 127, 0),
+				color: combineRgb(0, 0, 0),
 			},
 			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const path = `/-stat/sendsonfader`
@@ -791,7 +794,7 @@ export function GetFeedbacksList(
 		},
 		[FeedbackId.SoloMono]: {
 			type: 'boolean',
-			label: 'Change from Solo Mono enabled state',
+			name: 'Change from Solo Mono enabled state',
 			description: 'If the Solo Mono is on, change style of the bank',
 			options: [
 				{
@@ -801,9 +804,9 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(255, 127, 0),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(255, 127, 0),
+				color: combineRgb(0, 0, 0),
 			},
 			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const path = `/config/solo/mono`
@@ -822,7 +825,7 @@ export function GetFeedbacksList(
 		},
 		[FeedbackId.SoloDim]: {
 			type: 'boolean',
-			label: 'Change from Solo Dim enabled state',
+			name: 'Change from Solo Dim enabled state',
 			description: 'If the Solo Dim is on, change style of the bank',
 			options: [
 				{
@@ -832,9 +835,9 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(255, 127, 0),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(255, 127, 0),
+				color: combineRgb(0, 0, 0),
 			},
 			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const path = `/config/solo/dim`
@@ -853,7 +856,7 @@ export function GetFeedbacksList(
 		},
 		[FeedbackId.Tape]: {
 			type: 'boolean',
-			label: 'Change from tape operation state',
+			name: 'Change from tape operation state',
 			description: 'If the tape state matches, change style of the bank',
 			options: [
 				{
@@ -863,9 +866,9 @@ export function GetFeedbacksList(
 					...convertChoices(CHOICES_TAPE_FUNC),
 				},
 			],
-			style: {
-				bgcolor: self.rgb(255, 0, 0),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(255, 0, 0),
+				color: combineRgb(0, 0, 0),
 			},
 			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const path = `/-stat/tape/state`
@@ -883,7 +886,7 @@ export function GetFeedbacksList(
 		},
 		[FeedbackId.ChannelBank]: {
 			type: 'boolean',
-			label: 'Change from selected channel bank (X32/M32)',
+			name: 'Change from selected channel bank (X32/M32)',
 			description:
 				'If the channel bank matches the selected channel bank, change style of the bank. Please note these will be incorrect if used connected to an X32 Compact/X32 Producer/M32R use the X32 Compact/X32 Producer/M32R feedback instead.',
 			options: [
@@ -917,9 +920,9 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(0, 255, 127),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(0, 255, 127),
+				color: combineRgb(0, 0, 0),
 			},
 			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const path = `/-stat/chfaderbank`
@@ -938,7 +941,7 @@ export function GetFeedbacksList(
 		},
 		[FeedbackId.GroupBank]: {
 			type: 'boolean',
-			label: 'Change from selected group bank (X32/M32)',
+			name: 'Change from selected group bank (X32/M32)',
 			description:
 				'If the group bank matches the selected group bank, change style of the bank. Please note these will be incorrect if used connected to an X32 Compact/X32 Producer/M32R use the X32 Compact/X32 Producer/M32R feedback instead.',
 			options: [
@@ -972,9 +975,9 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(0, 255, 127),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(0, 255, 127),
+				color: combineRgb(0, 0, 0),
 			},
 			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const path = `/-stat/grpfaderbank`
@@ -993,7 +996,7 @@ export function GetFeedbacksList(
 		},
 		[FeedbackId.ChannelBankCompact]: {
 			type: 'boolean',
-			label: 'Change from selected channel bank (X32 Compact/X32 Producer/M32R)',
+			name: 'Change from selected channel bank (X32 Compact/X32 Producer/M32R)',
 			description:
 				'If the channel bank matches the selected channel bank, change style of the bank. Please note these will be incorrect if used connected to an X32/M32 use the X32/M32 feedback instead.',
 			options: [
@@ -1043,9 +1046,9 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(0, 255, 127),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(0, 255, 127),
+				color: combineRgb(0, 0, 0),
 			},
 			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const path = `/-stat/chfaderbank`
@@ -1064,7 +1067,7 @@ export function GetFeedbacksList(
 		},
 		[FeedbackId.GroupBankCompact]: {
 			type: 'boolean',
-			label: 'Change from selected group bank (X32 Compact/X32 Producer/M32R)',
+			name: 'Change from selected group bank (X32 Compact/X32 Producer/M32R)',
 			description:
 				'If the group bank matches the selected group bank, change style of the bank. Please note these will be incorrect if used connected to an X32/M32 use the X32/M32 feedback instead.',
 			options: [
@@ -1122,9 +1125,9 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(0, 255, 127),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(0, 255, 127),
+				color: combineRgb(0, 0, 0),
 			},
 			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const path = `/-stat/grpfaderbank`
@@ -1143,7 +1146,7 @@ export function GetFeedbacksList(
 		},
 		[FeedbackId.BusSendBank]: {
 			type: 'boolean',
-			label: 'Change from selected Bus Send',
+			name: 'Change from selected Bus Send',
 			description: 'If the selected bus send bank is active,, change style of the bank',
 			options: [
 				{
@@ -1176,9 +1179,9 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(255, 127, 0),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(255, 127, 0),
+				color: combineRgb(0, 0, 0),
 			},
 			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const path = `/-stat/bussendbank`
@@ -1197,7 +1200,7 @@ export function GetFeedbacksList(
 		},
 		[FeedbackId.UserBank]: {
 			type: 'boolean',
-			label: 'Change from selected User Assign Bank',
+			name: 'Change from selected User Assign Bank',
 			description: 'If the selected assign bank is active, change style of the bank',
 			options: [
 				{
@@ -1226,9 +1229,9 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(255, 127, 0),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(255, 127, 0),
+				color: combineRgb(0, 0, 0),
 			},
 			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const path = `/-stat/userbank`
@@ -1247,7 +1250,7 @@ export function GetFeedbacksList(
 		},
 		[FeedbackId.Screens]: {
 			type: 'boolean',
-			label: 'Change from screen state',
+			name: 'Change from screen state',
 			description: 'If the select screen is being shown, change style of the bank',
 			options: [
 				{
@@ -1304,9 +1307,9 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(0, 255, 127),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(0, 255, 127),
+				color: combineRgb(0, 0, 0),
 			},
 			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const path = `/-stat/screen/screen`
@@ -1325,7 +1328,7 @@ export function GetFeedbacksList(
 		},
 		[FeedbackId.MuteGroupScreen]: {
 			type: 'boolean',
-			label: 'Change from mute groups screen enabled state',
+			name: 'Change from mute groups screen enabled state',
 			description: 'If mute groups screen is on, change style of the bank',
 			options: [
 				{
@@ -1335,9 +1338,9 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(255, 0, 0),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(255, 0, 0),
+				color: combineRgb(0, 0, 0),
 			},
 			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const path = `/-stat/screen/mutegrp`
@@ -1356,7 +1359,7 @@ export function GetFeedbacksList(
 		},
 		[FeedbackId.UtilityScreen]: {
 			type: 'boolean',
-			label: 'Change from Utility enabled state',
+			name: 'Change from Utility enabled state',
 			description: 'If utility screen is on, change style of the bank',
 			options: [
 				{
@@ -1366,9 +1369,9 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(0, 255, 127),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(0, 255, 127),
+				color: combineRgb(0, 0, 0),
 			},
 			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const path = `/-stat/screen/utils`
@@ -1387,7 +1390,7 @@ export function GetFeedbacksList(
 		},
 		[FeedbackId.ChannelPage]: {
 			type: 'boolean',
-			label: 'Change from channel page selected state',
+			name: 'Change from channel page selected state',
 			description: 'If channel screen is on and selected page is active, change style of the bank',
 			options: [
 				{
@@ -1432,9 +1435,9 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(0, 255, 127),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(0, 255, 127),
+				color: combineRgb(0, 0, 0),
 			},
 			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const screen = state.get('/-stat/screen/screen')
@@ -1453,7 +1456,7 @@ export function GetFeedbacksList(
 		},
 		[FeedbackId.MeterPage]: {
 			type: 'boolean',
-			label: 'Change from meter page selected state',
+			name: 'Change from meter page selected state',
 			description: 'If meter screen is on and selected page is active, change style of the bank',
 			options: [
 				{
@@ -1494,9 +1497,9 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(0, 255, 127),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(0, 255, 127),
+				color: combineRgb(0, 0, 0),
 			},
 			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const screen = state.get('/-stat/screen/screen')
@@ -1515,7 +1518,7 @@ export function GetFeedbacksList(
 		},
 		[FeedbackId.RoutePage]: {
 			type: 'boolean',
-			label: 'Change from route page selected state',
+			name: 'Change from route page selected state',
 			description: 'If route screen is on and selected page is active, change style of the bank',
 			options: [
 				{
@@ -1568,9 +1571,9 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(0, 255, 127),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(0, 255, 127),
+				color: combineRgb(0, 0, 0),
 			},
 			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const screen = state.get('/-stat/screen/screen')
@@ -1589,7 +1592,7 @@ export function GetFeedbacksList(
 		},
 		[FeedbackId.SetupPage]: {
 			type: 'boolean',
-			label: 'Change from setup page selected state',
+			name: 'Change from setup page selected state',
 			description: 'If setup screen is on and selected page is active, change style of the bank',
 			options: [
 				{
@@ -1634,9 +1637,9 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(0, 255, 127),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(0, 255, 127),
+				color: combineRgb(0, 0, 0),
 			},
 			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const screen = state.get('/-stat/screen/screen')
@@ -1655,7 +1658,7 @@ export function GetFeedbacksList(
 		},
 		[FeedbackId.LibPage]: {
 			type: 'boolean',
-			label: 'Change from library page selected state',
+			name: 'Change from library page selected state',
 			description: 'If library screen is on and selected page is active, change style of the bank',
 			options: [
 				{
@@ -1688,9 +1691,9 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(0, 255, 127),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(0, 255, 127),
+				color: combineRgb(0, 0, 0),
 			},
 			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const screen = state.get('/-stat/screen/screen')
@@ -1709,7 +1712,7 @@ export function GetFeedbacksList(
 		},
 		[FeedbackId.FxPage]: {
 			type: 'boolean',
-			label: 'Change from effects page selected state',
+			name: 'Change from effects page selected state',
 			description: 'If effects screen is on and selected page is active, change style of the bank',
 			options: [
 				{
@@ -1762,9 +1765,9 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(0, 255, 127),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(0, 255, 127),
+				color: combineRgb(0, 0, 0),
 			},
 			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const screen = state.get('/-stat/screen/screen')
@@ -1783,7 +1786,7 @@ export function GetFeedbacksList(
 		},
 		[FeedbackId.MonPage]: {
 			type: 'boolean',
-			label: 'Change from monitor page selected state',
+			name: 'Change from monitor page selected state',
 			description: 'If monitor screen is on and selected page is active, change style of the bank',
 			options: [
 				{
@@ -1816,9 +1819,9 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(0, 255, 127),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(0, 255, 127),
+				color: combineRgb(0, 0, 0),
 			},
 			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const screen = state.get('/-stat/screen/screen')
@@ -1837,7 +1840,7 @@ export function GetFeedbacksList(
 		},
 		[FeedbackId.USBPage]: {
 			type: 'boolean',
-			label: 'Change from USB page selected state',
+			name: 'Change from USB page selected state',
 			description: 'If USB screen is on and selected page is active, change style of the bank',
 			options: [
 				{
@@ -1862,9 +1865,9 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(0, 255, 127),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(0, 255, 127),
+				color: combineRgb(0, 0, 0),
 			},
 			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const screen = state.get('/-stat/screen/screen')
@@ -1883,7 +1886,7 @@ export function GetFeedbacksList(
 		},
 		[FeedbackId.ScenePage]: {
 			type: 'boolean',
-			label: 'Change from scene page selected state',
+			name: 'Change from scene page selected state',
 			description: 'If scene screen is on and selected page is active, change style of the bank',
 			options: [
 				{
@@ -1924,9 +1927,9 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(0, 255, 127),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(0, 255, 127),
+				color: combineRgb(0, 0, 0),
 			},
 			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const screen = state.get('/-stat/screen/screen')
@@ -1945,7 +1948,7 @@ export function GetFeedbacksList(
 		},
 		[FeedbackId.AssignPage]: {
 			type: 'boolean',
-			label: 'Change from assign page selected state',
+			name: 'Change from assign page selected state',
 			description: 'If assign screen is on and selected page is active, change style of the bank',
 			options: [
 				{
@@ -1978,9 +1981,9 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(0, 255, 127),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(0, 255, 127),
+				color: combineRgb(0, 0, 0),
 			},
 			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const screen = state.get('/-stat/screen/screen')

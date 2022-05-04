@@ -1,4 +1,3 @@
-// eslint-disable-next-line node/no-extraneous-import
 import * as osc from 'osc'
 import { FeedbackId } from './feedback'
 

@@ -1,4 +1,4 @@
-import { InputValue } from '../../../instance_skel_types'
+import { InputValue } from '@companion-module/base'
 
 export function MutePath(prefix: string): string {
 	return `${MainPath(prefix)}/on`

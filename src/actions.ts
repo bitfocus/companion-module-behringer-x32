@@ -1,8 +1,6 @@
-import InstanceSkel = require('../../../instance_skel')
-import { CompanionAction, CompanionActionEvent, CompanionActions } from '../../../instance_skel_types'
 import { X32State } from './state'
 import { X32Config } from './config'
-import { trimToFloat, headampGainToFloat, floatToDB } from './util'
+import { trimToFloat, headampGainToFloat, floatToDB, InstanceBaseExt } from './util'
 import {
 	CHOICES_TAPE_FUNC,
 	CHOICES_COLOR,
@@ -26,7 +24,6 @@ import {
 	GetLevelsChoiceConfigs,
 	GetPanningChoiceConfigs,
 } from './choices'
-// eslint-disable-next-line node/no-extraneous-import
 import * as osc from 'osc'
 import {
 	MutePath,
@@ -40,7 +37,8 @@ import {
 } from './paths'
 import { SetRequired } from 'type-fest'
 import { X32Transitions } from './transitions'
-import moment = require('moment')
+import * as moment from 'moment'
+import { CompanionAction, CompanionActionEvent, CompanionActionInfo, CompanionActions } from '@companion-module/base'
 
 export enum ActionId {
 	Mute = 'mute',
@@ -117,7 +115,7 @@ export enum ActionId {
 type CompanionActionWithCallback = SetRequired<CompanionAction, 'callback'>
 
 export function GetActionsList(
-	self: InstanceSkel<X32Config>,
+	self: InstanceBaseExt<X32Config>,
 	transitions: X32Transitions,
 	state: X32State,
 	ensureLoaded: (path: string) => void
@@ -128,18 +126,18 @@ export function GetActionsList(
 	const selectChoices = GetTargetChoices(state, { skipDca: true, includeMain: true, numericIndex: true })
 	const soloChoices = GetTargetChoices(state, { includeMain: true, numericIndex: true })
 
-	const sendOsc = (cmd: string, arg: osc.MetaArgument): void => {
+	const sendOsc = async (cmd: string, arg: osc.MetaArgument): Promise<void> => {
 		try {
 			// HACK: We send commands on a different port than we run /xremote on, so that we get change events for what we send.
 			// Otherwise we can have no confirmation that a command was accepted
 			if (self.config.host) {
-				self.oscSend(self.config.host, 10023, cmd, [arg])
+				await self.oscSend(self.config.host, 10023, cmd, [arg])
 			}
 		} catch (e) {
-			self.log('error', `Command send failed: ${e}`)
+			self.userLog('error', `Command send failed: ${e}`)
 		}
 	}
-	const getOptNumber = (action: CompanionActionEvent, key: string, defVal?: number): number => {
+	const getOptNumber = (action: CompanionActionInfo, key: string, defVal?: number): number => {
 		const rawVal = action.options[key]
 		if (defVal !== undefined && rawVal === undefined) return defVal
 		const val = Number(rawVal)
@@ -174,7 +172,7 @@ export function GetActionsList(
 
 	const actions: { [id in ActionId]: CompanionActionWithCallback | undefined } = {
 		[ActionId.Mute]: {
-			label: 'Set mute',
+			name: 'Set mute',
 			options: [
 				{
 					type: 'dropdown',
@@ -184,9 +182,9 @@ export function GetActionsList(
 				},
 				MuteChoice,
 			],
-			callback: (action): void => {
+			callback: async (action): Promise<void> => {
 				const cmd = MutePath(action.options.target as string)
-				sendOsc(cmd, {
+				await sendOsc(cmd, {
 					type: 'i',
 					value: getResolveOnOffMute(action, cmd, true),
 				})
@@ -198,7 +196,7 @@ export function GetActionsList(
 			},
 		},
 		[ActionId.MuteGroup]: {
-			label: 'Mute Group ON/OFF',
+			name: 'Mute Group ON/OFF',
 			options: [
 				{
 					type: 'dropdown',
@@ -213,9 +211,9 @@ export function GetActionsList(
 					...convertChoices(CHOICES_MUTE_GROUP),
 				},
 			],
-			callback: (action): void => {
+			callback: async (action): Promise<void> => {
 				const cmd = action.options.target as string
-				sendOsc(cmd, {
+				await sendOsc(cmd, {
 					type: 'i',
 					value: getResolveOnOffMute(action, cmd, false),
 				})
@@ -227,7 +225,7 @@ export function GetActionsList(
 			},
 		},
 		[ActionId.MuteChannelSend]: {
-			label: 'Set mute for channel to bus send',
+			name: 'Set mute for channel to bus send',
 			options: [
 				{
 					type: 'dropdown',
@@ -243,9 +241,9 @@ export function GetActionsList(
 				},
 				MuteChoice,
 			],
-			callback: (action): void => {
+			callback: async (action): Promise<void> => {
 				const cmd = `${MainPath(action.options.source as string)}/${action.options.target}`
-				sendOsc(cmd, {
+				await sendOsc(cmd, {
 					type: 'i',
 					value: getResolveOnOffMute(action, cmd, true),
 				})
@@ -257,7 +255,7 @@ export function GetActionsList(
 			},
 		},
 		[ActionId.MuteBusSend]: {
-			label: 'Set mute for bus to matrix send',
+			name: 'Set mute for bus to matrix send',
 			options: [
 				{
 					type: 'dropdown',
@@ -273,9 +271,9 @@ export function GetActionsList(
 				},
 				MuteChoice,
 			],
-			callback: (action): void => {
+			callback: async (action): Promise<void> => {
 				const cmd = `${MainPath(action.options.source as string)}/${action.options.target}/on`
-				sendOsc(cmd, {
+				await sendOsc(cmd, {
 					type: 'i',
 					value: getResolveOnOffMute(action, cmd, true),
 				})
@@ -287,7 +285,7 @@ export function GetActionsList(
 			},
 		},
 		[ActionId.FaderLevel]: {
-			label: 'Set fader level',
+			name: 'Set fader level',
 			options: [
 				{
 					type: 'dropdown',
@@ -298,7 +296,7 @@ export function GetActionsList(
 				FaderLevelChoice,
 				FadeDurationChoice,
 			],
-			callback: (action): void => {
+			callback: async (action): Promise<void> => {
 				const cmd = MainFaderPath(action.options)
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
@@ -310,7 +308,7 @@ export function GetActionsList(
 			},
 		},
 		[ActionId.FaderLevelStore]: {
-			label: 'Store fader level',
+			name: 'Store fader level',
 			options: [
 				{
 					type: 'dropdown',
@@ -319,15 +317,12 @@ export function GetActionsList(
 					...convertChoices(levelsChoices.channels),
 				},
 			],
-			callback: (action, info): void => {
-				if (info) {
-					const cmd = MainFaderPath(action.options)
-					const currentState = state.get(cmd)
-					const currentVal =
-						currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
-					if (currentVal !== undefined) {
-						state.setPressValue(`${info.page}-${info.bank}-${cmd}`, currentVal)
-					}
+			callback: async (action): Promise<void> => {
+				const cmd = MainFaderPath(action.options)
+				const currentState = state.get(cmd)
+				const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
+				if (currentVal !== undefined) {
+					state.setPressValue(`${action.controlId}-${cmd}`, currentVal)
 				}
 			},
 			subscribe: (evt): void => {
@@ -335,7 +330,7 @@ export function GetActionsList(
 			},
 		},
 		[ActionId.FaderLevelRestore]: {
-			label: 'Restore fader level',
+			name: 'Restore fader level',
 			options: [
 				{
 					type: 'dropdown',
@@ -345,23 +340,21 @@ export function GetActionsList(
 				},
 				FadeDurationChoice,
 			],
-			callback: (action, info): void => {
-				if (info) {
-					const cmd = MainFaderPath(action.options)
-					const storedVal = state.popPressValue(`${info.page}-${info.bank}-${cmd}`)
-					if (storedVal !== undefined) {
-						const currentState = state.get(cmd)
-						const currentVal =
-							currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
-						if (currentVal !== undefined) {
-							transitions.run(cmd, currentVal, storedVal, getOptNumber(action, 'fadeDuration', 0))
-						}
+			callback: async (action): Promise<void> => {
+				const cmd = MainFaderPath(action.options)
+				const storedVal = state.popPressValue(`${action.controlId}-${cmd}`)
+				if (storedVal !== undefined) {
+					const currentState = state.get(cmd)
+					const currentVal =
+						currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
+					if (currentVal !== undefined) {
+						transitions.run(cmd, currentVal, storedVal, getOptNumber(action, 'fadeDuration', 0))
 					}
 				}
 			},
 		},
 		[ActionId.FaderLevelDelta]: {
-			label: 'Adjust fader level',
+			name: 'Adjust fader level',
 			options: [
 				{
 					type: 'dropdown',
@@ -372,7 +365,7 @@ export function GetActionsList(
 				FaderLevelDeltaChoice,
 				FadeDurationChoice,
 			],
-			callback: (action): void => {
+			callback: async (action): Promise<void> => {
 				const cmd = MainFaderPath(action.options)
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
@@ -390,7 +383,7 @@ export function GetActionsList(
 			},
 		},
 		[ActionId.Panning]: {
-			label: 'Set panning',
+			name: 'Set panning',
 			options: [
 				{
 					type: 'dropdown',
@@ -401,7 +394,7 @@ export function GetActionsList(
 				PanningChoice,
 				FadeDurationChoice,
 			],
-			callback: (action): void => {
+			callback: async (action): Promise<void> => {
 				const cmd = MainPanPath(action.options)
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0]?.value : undefined
@@ -418,7 +411,7 @@ export function GetActionsList(
 			},
 		},
 		[ActionId.PanningDelta]: {
-			label: 'Adjust panning',
+			name: 'Adjust panning',
 			options: [
 				{
 					type: 'dropdown',
@@ -429,7 +422,7 @@ export function GetActionsList(
 				PanningDelta,
 				FadeDurationChoice,
 			],
-			callback: (action): void => {
+			callback: async (action): Promise<void> => {
 				const cmd = MainPanPath(action.options)
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0]?.value : 0
@@ -446,7 +439,7 @@ export function GetActionsList(
 			},
 		},
 		[ActionId.PanningStore]: {
-			label: 'Store panning',
+			name: 'Store panning',
 			options: [
 				{
 					type: 'dropdown',
@@ -455,14 +448,12 @@ export function GetActionsList(
 					...convertChoices(panningChoices.allSources),
 				},
 			],
-			callback: (action, info): void => {
-				if (info) {
-					const cmd = MainPanPath(action.options)
-					const currentState = state.get(cmd)
-					const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0].value : undefined
-					if (currentVal !== undefined) {
-						state.setPressValue(`${info.page}-${info.bank}-${cmd}`, currentVal)
-					}
+			callback: async (action): Promise<void> => {
+				const cmd = MainPanPath(action.options)
+				const currentState = state.get(cmd)
+				const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0].value : undefined
+				if (currentVal !== undefined) {
+					state.setPressValue(`${action.controlId}-${cmd}`, currentVal)
 				}
 			},
 			subscribe: (evt): void => {
@@ -470,7 +461,7 @@ export function GetActionsList(
 			},
 		},
 		[ActionId.PanningRestore]: {
-			label: 'Restore panning',
+			name: 'Restore panning',
 			options: [
 				{
 					type: 'dropdown',
@@ -480,16 +471,14 @@ export function GetActionsList(
 				},
 				FadeDurationChoice,
 			],
-			callback: (action, info): void => {
-				if (info) {
-					const cmd = MainPanPath(action.options)
-					const storedVal = state.popPressValue(`${info.page}-${info.bank}-${cmd}`)
-					if (storedVal != undefined) {
-						const currentState = state.get(cmd)
-						const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0].value : undefined
-						if (currentVal !== undefined) {
-							transitions.run(cmd, currentVal, storedVal, getOptNumber(action, 'fadeDuration', 0), true)
-						}
+			callback: async (action): Promise<void> => {
+				const cmd = MainPanPath(action.options)
+				const storedVal = state.popPressValue(`${action.controlId}-${cmd}`)
+				if (storedVal != undefined) {
+					const currentState = state.get(cmd)
+					const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0].value : undefined
+					if (currentVal !== undefined) {
+						transitions.run(cmd, currentVal, storedVal, getOptNumber(action, 'fadeDuration', 0), true)
 					}
 				}
 			},
@@ -498,7 +487,7 @@ export function GetActionsList(
 			},
 		},
 		[ActionId.ChannelSendLevel]: {
-			label: 'Set level of channel to bus send',
+			name: 'Set level of channel to bus send',
 			options: [
 				{
 					type: 'dropdown',
@@ -515,7 +504,7 @@ export function GetActionsList(
 				FaderLevelChoice,
 				FadeDurationChoice,
 			],
-			callback: (action): void => {
+			callback: async (action): Promise<void> => {
 				const cmd = SendChannelToBusPath(action.options)
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
@@ -527,7 +516,7 @@ export function GetActionsList(
 			},
 		},
 		[ActionId.ChannelSendLevelDelta]: {
-			label: 'Adjust level of channel to bus send',
+			name: 'Adjust level of channel to bus send',
 			options: [
 				{
 					type: 'dropdown',
@@ -544,7 +533,7 @@ export function GetActionsList(
 				FaderLevelDeltaChoice,
 				FadeDurationChoice,
 			],
-			callback: (action): void => {
+			callback: async (action): Promise<void> => {
 				const cmd = SendChannelToBusPath(action.options)
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
@@ -562,7 +551,7 @@ export function GetActionsList(
 			},
 		},
 		[ActionId.ChannelSendLevelStore]: {
-			label: 'Store level of channel to bus send',
+			name: 'Store level of channel to bus send',
 			options: [
 				{
 					type: 'dropdown',
@@ -577,15 +566,12 @@ export function GetActionsList(
 					...convertChoices(levelsChoices.channelSendTargets),
 				},
 			],
-			callback: (action, info): void => {
-				if (info) {
-					const cmd = SendChannelToBusPath(action.options)
-					const currentState = state.get(cmd)
-					const currentVal =
-						currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
-					if (currentVal !== undefined) {
-						state.setPressValue(`${info.page}-${info.bank}-${cmd}`, currentVal)
-					}
+			callback: async (action): Promise<void> => {
+				const cmd = SendChannelToBusPath(action.options)
+				const currentState = state.get(cmd)
+				const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
+				if (currentVal !== undefined) {
+					state.setPressValue(`${action.controlId}-${cmd}`, currentVal)
 				}
 			},
 			subscribe: (evt): void => {
@@ -593,7 +579,7 @@ export function GetActionsList(
 			},
 		},
 		[ActionId.ChannelSendLevelRestore]: {
-			label: 'Restore level of channel to bus send',
+			name: 'Restore level of channel to bus send',
 			options: [
 				{
 					type: 'dropdown',
@@ -609,23 +595,21 @@ export function GetActionsList(
 				},
 				FadeDurationChoice,
 			],
-			callback: (action, info): void => {
-				if (info) {
-					const cmd = SendChannelToBusPath(action.options)
-					const storedVal = state.popPressValue(`${info.page}-${info.bank}-${cmd}`)
-					if (storedVal !== undefined) {
-						const currentState = state.get(cmd)
-						const currentVal =
-							currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
-						if (currentVal !== undefined) {
-							transitions.run(cmd, currentVal, storedVal, getOptNumber(action, 'fadeDuration', 0))
-						}
+			callback: async (action): Promise<void> => {
+				const cmd = SendChannelToBusPath(action.options)
+				const storedVal = state.popPressValue(`${action.controlId}-${cmd}`)
+				if (storedVal !== undefined) {
+					const currentState = state.get(cmd)
+					const currentVal =
+						currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
+					if (currentVal !== undefined) {
+						transitions.run(cmd, currentVal, storedVal, getOptNumber(action, 'fadeDuration', 0))
 					}
 				}
 			},
 		},
 		[ActionId.ChannelSendPanning]: {
-			label: 'Set panning on channel to bus send',
+			name: 'Set panning on channel to bus send',
 			options: [
 				{
 					type: 'dropdown',
@@ -642,7 +626,7 @@ export function GetActionsList(
 				PanningChoice,
 				FadeDurationChoice,
 			],
-			callback: (action): void => {
+			callback: async (action): Promise<void> => {
 				const cmd = ChannelToBusPanPath(action.options)
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0]?.value : undefined
@@ -659,7 +643,7 @@ export function GetActionsList(
 			},
 		},
 		[ActionId.ChannelSendPanningDelta]: {
-			label: 'Adjust panning on channel to bus send',
+			name: 'Adjust panning on channel to bus send',
 			options: [
 				{
 					type: 'dropdown',
@@ -676,7 +660,7 @@ export function GetActionsList(
 				PanningDelta,
 				FadeDurationChoice,
 			],
-			callback: (action): void => {
+			callback: async (action): Promise<void> => {
 				const cmd = ChannelToBusPanPath(action.options)
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0]?.value : 0
@@ -693,7 +677,7 @@ export function GetActionsList(
 			},
 		},
 		[ActionId.ChannelSendPanningStore]: {
-			label: 'Store panning on channel to bus send',
+			name: 'Store panning on channel to bus send',
 			options: [
 				{
 					type: 'dropdown',
@@ -708,14 +692,12 @@ export function GetActionsList(
 					...convertChoices(panningChoices.channelSendTargets),
 				},
 			],
-			callback: (action, info): void => {
-				if (info) {
-					const cmd = ChannelToBusPanPath(action.options)
-					const currentState = state.get(cmd)
-					const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0].value : undefined
-					if (currentVal !== undefined) {
-						state.setPressValue(`${info.page}-${info.bank}-${cmd}`, currentVal)
-					}
+			callback: async (action): Promise<void> => {
+				const cmd = ChannelToBusPanPath(action.options)
+				const currentState = state.get(cmd)
+				const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0].value : undefined
+				if (currentVal !== undefined) {
+					state.setPressValue(`${action.controlId}-${cmd}`, currentVal)
 				}
 			},
 			subscribe: (evt): void => {
@@ -723,7 +705,7 @@ export function GetActionsList(
 			},
 		},
 		[ActionId.ChannelSendPanningRestore]: {
-			label: 'Restore panning on channel to bus send',
+			name: 'Restore panning on channel to bus send',
 			options: [
 				{
 					type: 'dropdown',
@@ -739,16 +721,14 @@ export function GetActionsList(
 				},
 				FadeDurationChoice,
 			],
-			callback: (action, info): void => {
-				if (info) {
-					const cmd = ChannelToBusPanPath(action.options)
-					const storedVal = state.popPressValue(`${info.page}-${info.bank}-${cmd}`)
-					if (storedVal != undefined) {
-						const currentState = state.get(cmd)
-						const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0].value : undefined
-						if (currentVal !== undefined) {
-							transitions.run(cmd, currentVal, storedVal, getOptNumber(action, 'fadeDuration', 0), true)
-						}
+			callback: async (action): Promise<void> => {
+				const cmd = ChannelToBusPanPath(action.options)
+				const storedVal = state.popPressValue(`${action.controlId}-${cmd}`)
+				if (storedVal != undefined) {
+					const currentState = state.get(cmd)
+					const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0].value : undefined
+					if (currentVal !== undefined) {
+						transitions.run(cmd, currentVal, storedVal, getOptNumber(action, 'fadeDuration', 0), true)
 					}
 				}
 			},
@@ -757,7 +737,7 @@ export function GetActionsList(
 			},
 		},
 		[ActionId.BusSendLevel]: {
-			label: 'Set level of bus to matrix send',
+			name: 'Set level of bus to matrix send',
 			options: [
 				{
 					type: 'dropdown',
@@ -774,7 +754,7 @@ export function GetActionsList(
 				FaderLevelChoice,
 				FadeDurationChoice,
 			],
-			callback: (action): void => {
+			callback: async (action): Promise<void> => {
 				const cmd = SendBusToMatrixPath(action.options)
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
@@ -786,7 +766,7 @@ export function GetActionsList(
 			},
 		},
 		[ActionId.BusSendLevelDelta]: {
-			label: 'Adjust level of bus to matrix send',
+			name: 'Adjust level of bus to matrix send',
 			options: [
 				{
 					type: 'dropdown',
@@ -803,7 +783,7 @@ export function GetActionsList(
 				FaderLevelDeltaChoice,
 				FadeDurationChoice,
 			],
-			callback: (action): void => {
+			callback: async (action): Promise<void> => {
 				const cmd = SendBusToMatrixPath(action.options)
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
@@ -821,7 +801,7 @@ export function GetActionsList(
 			},
 		},
 		[ActionId.BusSendLevelStore]: {
-			label: 'Store level of bus to matrix send',
+			name: 'Store level of bus to matrix send',
 			options: [
 				{
 					type: 'dropdown',
@@ -836,15 +816,12 @@ export function GetActionsList(
 					...convertChoices(levelsChoices.busSendTargets),
 				},
 			],
-			callback: (action, info): void => {
-				if (info) {
-					const cmd = SendBusToMatrixPath(action.options)
-					const currentState = state.get(cmd)
-					const currentVal =
-						currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
-					if (currentVal !== undefined) {
-						state.setPressValue(`${info.page}-${info.bank}-${cmd}`, currentVal)
-					}
+			callback: async (action): Promise<void> => {
+				const cmd = SendBusToMatrixPath(action.options)
+				const currentState = state.get(cmd)
+				const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
+				if (currentVal !== undefined) {
+					state.setPressValue(`${action.controlId}-${cmd}`, currentVal)
 				}
 			},
 			subscribe: (evt): void => {
@@ -852,7 +829,7 @@ export function GetActionsList(
 			},
 		},
 		[ActionId.BusSendLevelRestore]: {
-			label: 'Restore level of bus to matrix send',
+			name: 'Restore level of bus to matrix send',
 			options: [
 				{
 					type: 'dropdown',
@@ -868,23 +845,21 @@ export function GetActionsList(
 				},
 				FadeDurationChoice,
 			],
-			callback: (action, info): void => {
-				if (info) {
-					const cmd = SendBusToMatrixPath(action.options)
-					const storedVal = state.popPressValue(`${info.page}-${info.bank}-${cmd}`)
-					if (storedVal !== undefined) {
-						const currentState = state.get(cmd)
-						const currentVal =
-							currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
-						if (currentVal !== undefined) {
-							transitions.run(cmd, currentVal, storedVal, getOptNumber(action, 'fadeDuration', 0))
-						}
+			callback: async (action): Promise<void> => {
+				const cmd = SendBusToMatrixPath(action.options)
+				const storedVal = state.popPressValue(`${action.controlId}-${cmd}`)
+				if (storedVal !== undefined) {
+					const currentState = state.get(cmd)
+					const currentVal =
+						currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
+					if (currentVal !== undefined) {
+						transitions.run(cmd, currentVal, storedVal, getOptNumber(action, 'fadeDuration', 0))
 					}
 				}
 			},
 		},
 		[ActionId.BusSendPanning]: {
-			label: 'Set panning on bus to matrix send',
+			name: 'Set panning on bus to matrix send',
 			options: [
 				{
 					type: 'dropdown',
@@ -901,7 +876,7 @@ export function GetActionsList(
 				PanningChoice,
 				FadeDurationChoice,
 			],
-			callback: (action): void => {
+			callback: async (action): Promise<void> => {
 				const cmd = BusToMatrixPanPath(action.options)
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0]?.value : undefined
@@ -918,7 +893,7 @@ export function GetActionsList(
 			},
 		},
 		[ActionId.BusSendPanningDelta]: {
-			label: 'Adjust panning on bus to matrix bus send',
+			name: 'Adjust panning on bus to matrix bus send',
 			options: [
 				{
 					type: 'dropdown',
@@ -935,7 +910,7 @@ export function GetActionsList(
 				PanningDelta,
 				FadeDurationChoice,
 			],
-			callback: (action): void => {
+			callback: async (action): Promise<void> => {
 				const cmd = BusToMatrixPanPath(action.options)
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0]?.value : 0
@@ -952,7 +927,7 @@ export function GetActionsList(
 			},
 		},
 		[ActionId.BusSendPanningStore]: {
-			label: 'Store panning on bus to matrix send',
+			name: 'Store panning on bus to matrix send',
 			options: [
 				{
 					type: 'dropdown',
@@ -967,14 +942,12 @@ export function GetActionsList(
 					...convertChoices(panningChoices.busSendTarget),
 				},
 			],
-			callback: (action, info): void => {
-				if (info) {
-					const cmd = BusToMatrixPanPath(action.options)
-					const currentState = state.get(cmd)
-					const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0].value : undefined
-					if (currentVal !== undefined) {
-						state.setPressValue(`${info.page}-${info.bank}-${cmd}`, currentVal)
-					}
+			callback: async (action): Promise<void> => {
+				const cmd = BusToMatrixPanPath(action.options)
+				const currentState = state.get(cmd)
+				const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0].value : undefined
+				if (currentVal !== undefined) {
+					state.setPressValue(`${action.controlId}-${cmd}`, currentVal)
 				}
 			},
 			subscribe: (evt): void => {
@@ -982,7 +955,7 @@ export function GetActionsList(
 			},
 		},
 		[ActionId.BusSendPanningRestore]: {
-			label: 'Restore panning on bus to matrix send',
+			name: 'Restore panning on bus to matrix send',
 			options: [
 				{
 					type: 'dropdown',
@@ -998,16 +971,14 @@ export function GetActionsList(
 				},
 				FadeDurationChoice,
 			],
-			callback: (action, info): void => {
-				if (info) {
-					const cmd = BusToMatrixPanPath(action.options)
-					const storedVal = state.popPressValue(`${info.page}-${info.bank}-${cmd}`)
-					if (storedVal != undefined) {
-						const currentState = state.get(cmd)
-						const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0].value : undefined
-						if (currentVal !== undefined) {
-							transitions.run(cmd, currentVal, storedVal, getOptNumber(action, 'fadeDuration', 0), true)
-						}
+			callback: async (action): Promise<void> => {
+				const cmd = BusToMatrixPanPath(action.options)
+				const storedVal = state.popPressValue(`${action.controlId}-${cmd}`)
+				if (storedVal != undefined) {
+					const currentState = state.get(cmd)
+					const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0].value : undefined
+					if (currentVal !== undefined) {
+						transitions.run(cmd, currentVal, storedVal, getOptNumber(action, 'fadeDuration', 0), true)
 					}
 				}
 			},
@@ -1016,7 +987,7 @@ export function GetActionsList(
 			},
 		},
 		[ActionId.InputTrim]: {
-			label: 'Set input trim',
+			name: 'Set input trim',
 			options: [
 				{
 					type: 'dropdown',
@@ -1036,15 +1007,15 @@ export function GetActionsList(
 					max: 18,
 				},
 			],
-			callback: (action): void => {
-				sendOsc(`${action.options.input}/preamp/trim`, {
+			callback: async (action): Promise<void> => {
+				await sendOsc(`${action.options.input}/preamp/trim`, {
 					type: 'f',
 					value: trimToFloat(getOptNumber(action, 'trim')),
 				})
 			},
 		},
 		[ActionId.HeadampGain]: {
-			label: 'Set Headamp gain',
+			name: 'Set Headamp gain',
 			options: [
 				{
 					type: 'dropdown',
@@ -1054,15 +1025,15 @@ export function GetActionsList(
 				},
 				HeadampGainChoice,
 			],
-			callback: (action): void => {
-				sendOsc(`${action.options.headamp}/gain`, {
+			callback: async (action): Promise<void> => {
+				await sendOsc(`${action.options.headamp}/gain`, {
 					type: 'f',
 					value: headampGainToFloat(getOptNumber(action, 'gain')),
 				})
 			},
 		},
 		[ActionId.Label]: {
-			label: 'Set label',
+			name: 'Set label',
 			options: [
 				{
 					type: 'dropdown',
@@ -1077,8 +1048,8 @@ export function GetActionsList(
 					default: '',
 				},
 			],
-			callback: (action): void => {
-				sendOsc(`${action.options.target}/config/name`, {
+			callback: async (action): Promise<void> => {
+				await sendOsc(`${action.options.target}/config/name`, {
 					type: 's',
 					value: `${action.options.lab}`,
 				})
@@ -1086,7 +1057,7 @@ export function GetActionsList(
 		},
 
 		[ActionId.Color]: {
-			label: 'Set color',
+			name: 'Set color',
 			options: [
 				{
 					type: 'dropdown',
@@ -1101,8 +1072,8 @@ export function GetActionsList(
 					...convertChoices(CHOICES_COLOR),
 				},
 			],
-			callback: (action): void => {
-				sendOsc(`${action.options.target}/config/color`, {
+			callback: async (action): Promise<void> => {
+				await sendOsc(`${action.options.target}/config/color`, {
 					type: 'i',
 					value: getOptNumber(action, 'col'),
 				})
@@ -1110,7 +1081,7 @@ export function GetActionsList(
 		},
 
 		[ActionId.GoCue]: {
-			label: 'Load Console Cue',
+			name: 'Load Console Cue',
 			options: [
 				{
 					type: 'number',
@@ -1121,15 +1092,15 @@ export function GetActionsList(
 					max: 99,
 				},
 			],
-			callback: (action): void => {
-				sendOsc(`/-action/gocue`, {
+			callback: async (action): Promise<void> => {
+				await sendOsc(`/-action/gocue`, {
 					type: 'i',
 					value: getOptNumber(action, 'cue'),
 				})
 			},
 		},
 		[ActionId.GoScene]: {
-			label: 'Load Console Scene',
+			name: 'Load Console Scene',
 			options: [
 				{
 					type: 'number',
@@ -1140,15 +1111,15 @@ export function GetActionsList(
 					max: 99,
 				},
 			],
-			callback: (action): void => {
-				sendOsc(`/-action/goscene`, {
+			callback: async (action): Promise<void> => {
+				await sendOsc(`/-action/goscene`, {
 					type: 'i',
 					value: getOptNumber(action, 'scene'),
 				})
 			},
 		},
 		[ActionId.GoSnip]: {
-			label: 'Load Console snippet',
+			name: 'Load Console snippet',
 			options: [
 				{
 					type: 'number',
@@ -1159,15 +1130,15 @@ export function GetActionsList(
 					max: 99,
 				},
 			],
-			callback: (action): void => {
-				sendOsc(`/-action/gosnippet`, {
+			callback: async (action): Promise<void> => {
+				await sendOsc(`/-action/gosnippet`, {
 					type: 'i',
 					value: getOptNumber(action, 'snip'),
 				})
 			},
 		},
 		[ActionId.Select]: {
-			label: 'Select',
+			name: 'Select',
 			options: [
 				{
 					type: 'dropdown',
@@ -1176,15 +1147,15 @@ export function GetActionsList(
 					...convertChoices(selectChoices),
 				},
 			],
-			callback: (action): void => {
-				sendOsc(`/-stat/selidx`, {
+			callback: async (action): Promise<void> => {
+				await sendOsc(`/-stat/selidx`, {
 					type: 'i',
 					value: getOptNumber(action, 'select'),
 				})
 			},
 		},
 		[ActionId.Solo]: {
-			label: 'Solo On/Off',
+			name: 'Solo On/Off',
 			options: [
 				{
 					type: 'dropdown',
@@ -1199,12 +1170,12 @@ export function GetActionsList(
 					...convertChoices(CHOICES_ON_OFF),
 				},
 			],
-			callback: (action): void => {
+			callback: async (action): Promise<void> => {
 				const ch = `${getOptNumber(action, 'solo') + 1}`.padStart(2, '0')
 				const cmd = `/-stat/solosw/${ch}`
 				const onState = getResolveOnOffMute(action, cmd, true, 'on')
 
-				sendOsc(cmd, {
+				await sendOsc(cmd, {
 					type: 'i',
 					value: onState,
 				})
@@ -1217,17 +1188,17 @@ export function GetActionsList(
 			},
 		},
 		[ActionId.ClearSolo]: {
-			label: 'Clear Solo',
+			name: 'Clear Solo',
 			options: [],
-			callback: (): void => {
-				sendOsc(`/-action/clearsolo`, {
+			callback: async (): Promise<void> => {
+				await sendOsc(`/-action/clearsolo`, {
 					type: 'i',
 					value: 1,
 				})
 			},
 		},
 		[ActionId.Tape]: {
-			label: 'Tape Operation',
+			name: 'Tape Operation',
 			options: [
 				{
 					type: 'dropdown',
@@ -1236,15 +1207,15 @@ export function GetActionsList(
 					...convertChoices(CHOICES_TAPE_FUNC),
 				},
 			],
-			callback: (action): void => {
-				sendOsc(`/-stat/tape/state`, {
+			callback: async (action): Promise<void> => {
+				await sendOsc(`/-stat/tape/state`, {
 					type: 'i',
 					value: getOptNumber(action, 'tFunc'),
 				})
 			},
 		},
 		[ActionId.TalkbackTalk]: {
-			label: 'Talkback Talk',
+			name: 'Talkback Talk',
 			options: [
 				{
 					type: 'dropdown',
@@ -1268,11 +1239,11 @@ export function GetActionsList(
 					...convertChoices(CHOICES_ON_OFF),
 				},
 			],
-			callback: (action): void => {
+			callback: async (action): Promise<void> => {
 				const cmd = `/-stat/talk/${action.options.channel}`
 				const onState = getResolveOnOffMute(action, cmd, true, 'on')
 
-				sendOsc(cmd, {
+				await sendOsc(cmd, {
 					type: 'i',
 					value: onState,
 				})
@@ -1284,7 +1255,7 @@ export function GetActionsList(
 			},
 		},
 		[ActionId.OscillatorEnable]: {
-			label: 'Oscillator Enable',
+			name: 'Oscillator Enable',
 			options: [
 				{
 					type: 'dropdown',
@@ -1293,11 +1264,11 @@ export function GetActionsList(
 					...convertChoices(CHOICES_ON_OFF),
 				},
 			],
-			callback: (action): void => {
+			callback: async (action): Promise<void> => {
 				const cmd = `/-stat/osc/on`
 				const onState = getResolveOnOffMute(action, cmd, true, 'on')
 
-				sendOsc(cmd, {
+				await sendOsc(cmd, {
 					type: 'i',
 					value: onState,
 				})
@@ -1309,7 +1280,7 @@ export function GetActionsList(
 			},
 		},
 		[ActionId.OscillatorDestination]: {
-			label: 'Oscillator Destination',
+			name: 'Oscillator Destination',
 			options: [
 				{
 					type: 'dropdown',
@@ -1318,15 +1289,15 @@ export function GetActionsList(
 					...convertChoices(GetOscillatorDestinations(state)),
 				},
 			],
-			callback: (action): void => {
-				sendOsc(`/config/osc/dest`, {
+			callback: async (action): Promise<void> => {
+				await sendOsc(`/config/osc/dest`, {
 					type: 'i',
 					value: getOptNumber(action, 'destination'),
 				})
 			},
 		},
 		[ActionId.SoloMono]: {
-			label: 'Solo Mono',
+			name: 'Solo Mono',
 			options: [
 				{
 					type: 'dropdown',
@@ -1335,11 +1306,11 @@ export function GetActionsList(
 					...convertChoices(CHOICES_ON_OFF),
 				},
 			],
-			callback: (action): void => {
+			callback: async (action): Promise<void> => {
 				const cmd = `/config/solo/mono`
 				const onState = getResolveOnOffMute(action, cmd, true, 'on')
 
-				sendOsc(cmd, {
+				await sendOsc(cmd, {
 					type: 'i',
 					value: onState,
 				})
@@ -1351,7 +1322,7 @@ export function GetActionsList(
 			},
 		},
 		[ActionId.SoloDim]: {
-			label: 'Solo Dim',
+			name: 'Solo Dim',
 			options: [
 				{
 					type: 'dropdown',
@@ -1360,11 +1331,11 @@ export function GetActionsList(
 					...convertChoices(CHOICES_ON_OFF),
 				},
 			],
-			callback: (action): void => {
+			callback: async (action): Promise<void> => {
 				const cmd = `/config/solo/dim`
 				const onState = getResolveOnOffMute(action, cmd, true, 'on')
 
-				sendOsc(cmd, {
+				await sendOsc(cmd, {
 					type: 'i',
 					value: onState,
 				})
@@ -1376,7 +1347,7 @@ export function GetActionsList(
 			},
 		},
 		[ActionId.SoloDimAttenuation]: {
-			label: 'Set Dim Attenuation',
+			name: 'Set Dim Attenuation',
 			options: [
 				{
 					type: 'number',
@@ -1390,17 +1361,17 @@ export function GetActionsList(
 					max: 0,
 				},
 			],
-			callback: (action): void => {
-				sendOsc(`/config/solo/dimatt`, {
+			callback: async (action): Promise<void> => {
+				await sendOsc(`/config/solo/dimatt`, {
 					type: 'f',
 					value: getOptNumber(action, 'dimAtt') / 40 + 1,
 				})
 			},
 		},
 		[ActionId.MonitorLevel]: {
-			label: 'Set monitor level',
+			name: 'Set monitor level',
 			options: [FaderLevelChoice, FadeDurationChoice],
-			callback: (action): void => {
+			callback: async (action): Promise<void> => {
 				const cmd = `/config/solo/level`
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
@@ -1411,17 +1382,17 @@ export function GetActionsList(
 			},
 		},
 		[ActionId.SyncClock]: {
-			label: 'Sync console time',
+			name: 'Sync console time',
 			options: [],
-			callback: (): void => {
-				sendOsc(`/-action/setclock`, {
+			callback: async (): Promise<void> => {
+				await sendOsc(`/-action/setclock`, {
 					type: 's',
 					value: moment().format('YYYYMMDDHHmmss'),
 				})
 			},
 		},
 		[ActionId.ChannelBank]: {
-			label: 'Select active channel bank (X32/M32)',
+			name: 'Select active channel bank (X32/M32)',
 			description:
 				'Select a channel bank for the left hand side of your console. Please note this action is for the X32 and M32. For X32 Compact/X32 Producer/M32R please use the X32 Compact/X32 Producer/M32R action',
 			options: [
@@ -1449,15 +1420,15 @@ export function GetActionsList(
 					]),
 				},
 			],
-			callback: (action): void => {
-				sendOsc(`/-stat/chfaderbank`, {
+			callback: async (action): Promise<void> => {
+				await sendOsc(`/-stat/chfaderbank`, {
 					type: 'i',
 					value: getOptNumber(action, 'bank'),
 				})
 			},
 		},
 		[ActionId.GroupBank]: {
-			label: 'Select active group bank (X32/M32)',
+			name: 'Select active group bank (X32/M32)',
 			description:
 				'Select a group bank for the right hand side of your console. Please note this action is for the X32 and M32. For X32 Compact/X32 Producer/M32R please use the X32 Compact/X32 Producer/M32R action',
 			options: [
@@ -1485,15 +1456,15 @@ export function GetActionsList(
 					]),
 				},
 			],
-			callback: (action): void => {
-				sendOsc(`/-stat/grpfaderbank`, {
+			callback: async (action): Promise<void> => {
+				await sendOsc(`/-stat/grpfaderbank`, {
 					type: 'i',
 					value: getOptNumber(action, 'bank'),
 				})
 			},
 		},
 		[ActionId.ChannelBankCompact]: {
-			label: 'Select active channel bank (X32 Compact/X32 Producer/M32R)',
+			name: 'Select active channel bank (X32 Compact/X32 Producer/M32R)',
 			description:
 				'Select a channel bank for the left hand side of your console. Please note this action is for X32 Compact/X32 Producer/M32R. For X32 or M32 please use the X32/M32 action',
 			options: [
@@ -1537,15 +1508,15 @@ export function GetActionsList(
 					]),
 				},
 			],
-			callback: (action): void => {
-				sendOsc(`/-stat/chfaderbank`, {
+			callback: async (action): Promise<void> => {
+				await sendOsc(`/-stat/chfaderbank`, {
 					type: 'i',
 					value: getOptNumber(action, 'bank'),
 				})
 			},
 		},
 		[ActionId.GroupBankCompact]: {
-			label: 'Select active group bank (X32 Compact/X32 Producer/M32R)',
+			name: 'Select active group bank (X32 Compact/X32 Producer/M32R)',
 			description:
 				'Select a group bank for the right hand side of your console. Please note this actions is for X32 Compact/X32 Producer/M32R. For X32 or M32 please use the X32/M32 action',
 			options: [
@@ -1597,15 +1568,15 @@ export function GetActionsList(
 					]),
 				},
 			],
-			callback: (action): void => {
-				sendOsc(`/-stat/grpfaderbank`, {
+			callback: async (action): Promise<void> => {
+				await sendOsc(`/-stat/grpfaderbank`, {
 					type: 'i',
 					value: getOptNumber(action, 'bank'),
 				})
 			},
 		},
 		[ActionId.SendsOnFader]: {
-			label: 'Sends on Fader/Fader Flip',
+			name: 'Sends on Fader/Fader Flip',
 			options: [
 				{
 					type: 'dropdown',
@@ -1614,11 +1585,11 @@ export function GetActionsList(
 					...convertChoices(CHOICES_ON_OFF),
 				},
 			],
-			callback: (action): void => {
+			callback: async (action): Promise<void> => {
 				const cmd = `/-stat/sendsonfader`
 				const onState = getResolveOnOffMute(action, cmd, true, 'on')
 
-				sendOsc(cmd, {
+				await sendOsc(cmd, {
 					type: 'i',
 					value: onState,
 				})
@@ -1630,7 +1601,7 @@ export function GetActionsList(
 			},
 		},
 		[ActionId.BusSendBank]: {
-			label: 'Bus send bank',
+			name: 'Bus send bank',
 			options: [
 				{
 					type: 'dropdown',
@@ -1656,16 +1627,16 @@ export function GetActionsList(
 					]),
 				},
 			],
-			callback: (action): void => {
+			callback: async (action): Promise<void> => {
 				const cmd = `/-stat/bussendbank`
-				sendOsc(cmd, {
+				await sendOsc(cmd, {
 					type: 'i',
 					value: getOptNumber(action, 'bank', 0),
 				})
 			},
 		},
 		[ActionId.UserBank]: {
-			label: 'User Assign Bank',
+			name: 'User Assign Bank',
 			options: [
 				{
 					type: 'dropdown',
@@ -1687,16 +1658,16 @@ export function GetActionsList(
 					]),
 				},
 			],
-			callback: (action): void => {
+			callback: async (action): Promise<void> => {
 				const cmd = `/-stat/userbank`
-				sendOsc(cmd, {
+				await sendOsc(cmd, {
 					type: 'i',
 					value: getOptNumber(action, 'bank', 0),
 				})
 			},
 		},
 		[ActionId.Screens]: {
-			label: 'Select active screen on console',
+			name: 'Select active screen on console',
 			options: [
 				{
 					type: 'dropdown',
@@ -1746,16 +1717,16 @@ export function GetActionsList(
 					]),
 				},
 			],
-			callback: (action): void => {
+			callback: async (action): Promise<void> => {
 				const cmd = `/-stat/screen/screen`
-				sendOsc(cmd, {
+				await sendOsc(cmd, {
 					type: 'i',
 					value: getOptNumber(action, 'screen', 0),
 				})
 			},
 		},
 		[ActionId.MuteGroupScreen]: {
-			label: 'Mute Group Screen',
+			name: 'Mute Group Screen',
 			options: [
 				{
 					type: 'dropdown',
@@ -1764,11 +1735,11 @@ export function GetActionsList(
 					...convertChoices(CHOICES_ON_OFF),
 				},
 			],
-			callback: (action): void => {
+			callback: async (action): Promise<void> => {
 				const cmd = `/-stat/screen/mutegrp`
 				const onState = getResolveOnOffMute(action, cmd, true, 'on')
 
-				sendOsc(cmd, {
+				await sendOsc(cmd, {
 					type: 'i',
 					value: onState,
 				})
@@ -1780,7 +1751,7 @@ export function GetActionsList(
 			},
 		},
 		[ActionId.UtilityScreen]: {
-			label: 'Utilities Screen',
+			name: 'Utilities Screen',
 			options: [
 				{
 					type: 'dropdown',
@@ -1789,11 +1760,11 @@ export function GetActionsList(
 					...convertChoices(CHOICES_ON_OFF),
 				},
 			],
-			callback: (action): void => {
+			callback: async (action): Promise<void> => {
 				const cmd = `/-stat/screen/utils`
 				const onState = getResolveOnOffMute(action, cmd, true, 'on')
 
-				sendOsc(cmd, {
+				await sendOsc(cmd, {
 					type: 'i',
 					value: onState,
 				})
@@ -1805,7 +1776,7 @@ export function GetActionsList(
 			},
 		},
 		[ActionId.ChannelPage]: {
-			label: 'Navigate to page on channel screen',
+			name: 'Navigate to page on channel screen',
 			options: [
 				{
 					type: 'dropdown',
@@ -1843,17 +1814,17 @@ export function GetActionsList(
 					]),
 				},
 			],
-			callback: (action): void => {
+			callback: async (action): Promise<void> => {
 				const cmd = `/-stat/screen/CHAN/page`
-				sendOsc(cmd, {
+				await sendOsc(cmd, {
 					type: 'i',
 					value: getOptNumber(action, 'page', 0),
 				})
-				sendOsc('/-stat/screen/screen', { type: 'i', value: 0 })
+				await sendOsc('/-stat/screen/screen', { type: 'i', value: 0 })
 			},
 		},
 		[ActionId.MeterPage]: {
-			label: 'Navigate to page on meters screen',
+			name: 'Navigate to page on meters screen',
 			options: [
 				{
 					type: 'dropdown',
@@ -1887,17 +1858,17 @@ export function GetActionsList(
 					]),
 				},
 			],
-			callback: (action): void => {
+			callback: async (action): Promise<void> => {
 				const cmd = `/-stat/screen/METER/page`
-				sendOsc(cmd, {
+				await sendOsc(cmd, {
 					type: 'i',
 					value: getOptNumber(action, 'page', 0),
 				})
-				sendOsc('/-stat/screen/screen', { type: 'i', value: 1 })
+				await sendOsc('/-stat/screen/screen', { type: 'i', value: 1 })
 			},
 		},
 		[ActionId.RoutePage]: {
-			label: 'Navigate to page on route screen',
+			name: 'Navigate to page on route screen',
 			options: [
 				{
 					type: 'dropdown',
@@ -1943,17 +1914,17 @@ export function GetActionsList(
 					]),
 				},
 			],
-			callback: (action): void => {
+			callback: async (action): Promise<void> => {
 				const cmd = `/-stat/screen/ROUTE/page`
-				sendOsc(cmd, {
+				await sendOsc(cmd, {
 					type: 'i',
 					value: getOptNumber(action, 'page', 0),
 				})
-				sendOsc('/-stat/screen/screen', { type: 'i', value: 2 })
+				await sendOsc('/-stat/screen/screen', { type: 'i', value: 2 })
 			},
 		},
 		[ActionId.SetupPage]: {
-			label: 'Navigate to page on setup screen',
+			name: 'Navigate to page on setup screen',
 			options: [
 				{
 					type: 'dropdown',
@@ -1991,17 +1962,17 @@ export function GetActionsList(
 					]),
 				},
 			],
-			callback: (action): void => {
+			callback: async (action): Promise<void> => {
 				const cmd = `/-stat/screen/SETUP/page`
-				sendOsc(cmd, {
+				await sendOsc(cmd, {
 					type: 'i',
 					value: getOptNumber(action, 'page', 0),
 				})
-				sendOsc('/-stat/screen/screen', { type: 'i', value: 3 })
+				await sendOsc('/-stat/screen/screen', { type: 'i', value: 3 })
 			},
 		},
 		[ActionId.LibPage]: {
-			label: 'Navigate to page on library screen',
+			name: 'Navigate to page on library screen',
 			options: [
 				{
 					type: 'dropdown',
@@ -2027,17 +1998,17 @@ export function GetActionsList(
 					]),
 				},
 			],
-			callback: (action): void => {
+			callback: async (action): Promise<void> => {
 				const cmd = `/-stat/screen/LIB/page`
-				sendOsc(cmd, {
+				await sendOsc(cmd, {
 					type: 'i',
 					value: getOptNumber(action, 'page', 0),
 				})
-				sendOsc('/-stat/screen/screen', { type: 'i', value: 4 })
+				await sendOsc('/-stat/screen/screen', { type: 'i', value: 4 })
 			},
 		},
 		[ActionId.FxPage]: {
-			label: 'Navigate to page on effects screen',
+			name: 'Navigate to page on effects screen',
 			options: [
 				{
 					type: 'dropdown',
@@ -2083,17 +2054,17 @@ export function GetActionsList(
 					]),
 				},
 			],
-			callback: (action): void => {
+			callback: async (action): Promise<void> => {
 				const cmd = `/-stat/screen/FX/page`
-				sendOsc(cmd, {
+				await sendOsc(cmd, {
 					type: 'i',
 					value: getOptNumber(action, 'page', 0),
 				})
-				sendOsc('/-stat/screen/screen', { type: 'i', value: 5 })
+				await sendOsc('/-stat/screen/screen', { type: 'i', value: 5 })
 			},
 		},
 		[ActionId.MonPage]: {
-			label: 'Navigate to page on monitor screen',
+			name: 'Navigate to page on monitor screen',
 			options: [
 				{
 					type: 'dropdown',
@@ -2119,17 +2090,17 @@ export function GetActionsList(
 					]),
 				},
 			],
-			callback: (action): void => {
+			callback: async (action): Promise<void> => {
 				const cmd = `/-stat/screen/MON/page`
-				sendOsc(cmd, {
+				await sendOsc(cmd, {
 					type: 'i',
 					value: getOptNumber(action, 'page', 0),
 				})
-				sendOsc('/-stat/screen/screen', { type: 'i', value: 6 })
+				await sendOsc('/-stat/screen/screen', { type: 'i', value: 6 })
 			},
 		},
 		[ActionId.USBPage]: {
-			label: 'Navigate to page on USB screen',
+			name: 'Navigate to page on USB screen',
 			options: [
 				{
 					type: 'dropdown',
@@ -2147,17 +2118,17 @@ export function GetActionsList(
 					]),
 				},
 			],
-			callback: (action): void => {
+			callback: async (action): Promise<void> => {
 				const cmd = `/-stat/screen/USB/page`
-				sendOsc(cmd, {
+				await sendOsc(cmd, {
 					type: 'i',
 					value: getOptNumber(action, 'page', 0),
 				})
-				sendOsc('/-stat/screen/screen', { type: 'i', value: 7 })
+				await sendOsc('/-stat/screen/screen', { type: 'i', value: 7 })
 			},
 		},
 		[ActionId.ScenePage]: {
-			label: 'Navigate to page on scene screen',
+			name: 'Navigate to page on scene screen',
 			options: [
 				{
 					type: 'dropdown',
@@ -2191,17 +2162,17 @@ export function GetActionsList(
 					]),
 				},
 			],
-			callback: (action): void => {
+			callback: async (action): Promise<void> => {
 				const cmd = `/-stat/screen/SCENE/page`
-				sendOsc(cmd, {
+				await sendOsc(cmd, {
 					type: 'i',
 					value: getOptNumber(action, 'page', 0),
 				})
-				sendOsc('/-stat/screen/screen', { type: 'i', value: 8 })
+				await sendOsc('/-stat/screen/screen', { type: 'i', value: 8 })
 			},
 		},
 		[ActionId.AssignPage]: {
-			label: 'Navigate to page on assign screen',
+			name: 'Navigate to page on assign screen',
 			options: [
 				{
 					type: 'dropdown',
@@ -2214,30 +2185,30 @@ export function GetActionsList(
 						},
 						{
 							id: '1',
-							label: 'SET A',
+							label: 'Set A',
 						},
 						{
 							id: '2',
-							label: 'SET B',
+							label: 'Set B',
 						},
 						{
 							id: '3',
-							label: 'SET C',
+							label: 'Set C',
 						},
 					]),
 				},
 			],
-			callback: (action): void => {
+			callback: async (action): Promise<void> => {
 				const cmd = `/-stat/screen/ASSIGN/page`
-				sendOsc(cmd, {
+				await sendOsc(cmd, {
 					type: 'i',
 					value: getOptNumber(action, 'page', 0),
 				})
-				sendOsc('/-stat/screen/screen', { type: 'i', value: 9 })
+				await sendOsc('/-stat/screen/screen', { type: 'i', value: 9 })
 			},
 		},
 		[ActionId.NextPrevPage]: {
-			label: 'Navigate to the next or previous page',
+			name: 'Navigate to the next or previous page',
 			options: [
 				{
 					type: 'dropdown',
@@ -2255,7 +2226,7 @@ export function GetActionsList(
 					]),
 				},
 			],
-			callback: (action): void => {
+			callback: async (action): Promise<void> => {
 				const currentScreen = state.get('/-stat/screen/screen')
 				const currentScreenIndex = currentScreen && currentScreen[0]?.type === 'i' ? Number(currentScreen[0]?.value) : 0
 				let screen = undefined
@@ -2311,7 +2282,7 @@ export function GetActionsList(
 				if (gotoPageIndex < 0) gotoPageIndex = 0
 				else if (gotoPageIndex >= pages) gotoPageIndex = pages - 1
 
-				sendOsc(cmd, {
+				await sendOsc(cmd, {
 					type: 'i',
 					value: gotoPageIndex,
 				})

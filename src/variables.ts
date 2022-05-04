@@ -1,61 +1,68 @@
-import InstanceSkel = require('../../../instance_skel')
-import { CompanionVariable } from '../../../instance_skel_types'
 import { X32Config } from './config'
 import { X32State } from './state'
-// eslint-disable-next-line node/no-extraneous-import
 import * as osc from 'osc'
 import { GetTargetChoices } from './choices'
 import { MainPath } from './paths'
-import { formatDb, floatToDB } from './util'
+import { formatDb, floatToDB, InstanceBaseExt } from './util'
+import { CompanionVariable, CompanionVariableValue2 } from '@companion-module/base'
 
 function sanitiseName(name: string): string {
 	return name.replace(/\//g, '_')
 }
 
-export function InitVariables(instance: InstanceSkel<X32Config>, state: X32State): void {
+export async function InitVariables(instance: InstanceBaseExt<X32Config>, state: X32State): Promise<void> {
 	const variables: CompanionVariable[] = [
 		{
-			label: 'Device name',
-			name: 'm_name',
+			name: 'Device name',
+			variableId: 'm_name',
 		},
 		{
-			label: 'Device model',
-			name: 'm_model',
+			name: 'Device model',
+			variableId: 'm_model',
 		},
 		{
-			label: 'Device firmware',
-			name: 'm_fw',
+			name: 'Device firmware',
+			variableId: 'm_fw',
 		},
 		{
-			label: 'Tape Timestamp mm:ss',
-			name: 'tape_time_ms',
+			name: 'Tape Timestamp mm:ss',
+			variableId: 'tape_time_ms',
 		},
 		{
-			label: 'Tape Timestamp hh:mm:ss',
-			name: 'tape_time_hms',
+			name: 'Tape Timestamp hh:mm:ss',
+			variableId: 'tape_time_hms',
 		},
 	]
 
 	const targets = GetTargetChoices(state, { includeMain: true, defaultNames: true })
 	for (const target of targets) {
 		variables.push({
-			label: `Name: ${target.label}`,
-			name: `name${sanitiseName(target.id as string)}`,
+			name: `variableId: ${target.label}`,
+			variableId: `name${sanitiseName(target.id as string)}`,
 		})
 		variables.push({
-			label: `Fader: ${target.label}`,
-			name: `fader${sanitiseName(target.id as string)}`,
+			name: `Fader: ${target.label}`,
+			variableId: `fader${sanitiseName(target.id as string)}`,
 		})
 	}
 
-	instance.setVariableDefinitions(variables)
-	instance.setVariables({
-		tape_time_hms: `--:--:--`,
-		tape_time_ms: `--:--`,
-	})
+	await instance.setVariableDefinitions(variables)
+	await instance.setVariableValues([
+		{
+			variableId: 'tape_time_hms',
+			value: `--:--:--`,
+		},
+		{
+			variableId: 'tape_time_ms',
+			value: `--:--`,
+		},
+	])
 }
 
-export function updateDeviceInfoVariables(instance: InstanceSkel<X32Config>, args: osc.MetaArgument[]): void {
+export async function updateDeviceInfoVariables(
+	instance: InstanceBaseExt<X32Config>,
+	args: osc.MetaArgument[]
+): Promise<void> {
 	const getStringArg = (index: number): string => {
 		const raw = args[index]
 		if (raw && raw.type === 's') {
@@ -64,36 +71,57 @@ export function updateDeviceInfoVariables(instance: InstanceSkel<X32Config>, arg
 			return ''
 		}
 	}
-	instance.setVariables({
-		m_name: getStringArg(1),
-		m_model: getStringArg(2),
-		m_fw: getStringArg(3),
-	})
+	await instance.setVariableValues([
+		{
+			variableId: 'm_variableId',
+			value: getStringArg(1),
+		},
+		{
+			variableId: 'm_model',
+			value: getStringArg(2),
+		},
+		{
+			variableId: 'm_fw',
+			value: getStringArg(3),
+		},
+	])
 }
 
-export function updateTapeTime(instance: InstanceSkel<X32Config>, state: X32State): void {
+export async function updateTapeTime(instance: InstanceBaseExt<X32Config>, state: X32State): Promise<void> {
 	const etime = state.get('/-stat/tape/etime')
 	const time = etime && etime[0]?.type === 'i' ? etime[0].value : 0
 	const hh = `${Math.floor(time / 3600)}`.padStart(2, '0')
 	const mm = `${Math.floor(time / 60) % 60}`.padStart(2, '0')
 	const ss = `${time % 60}`.padStart(2, '0')
-	instance.setVariables({
-		tape_time_hms: `${hh}:${mm}:${ss}`,
-		tape_time_ms: `${mm}:${ss}`,
-	})
+	await instance.setVariableValues([
+		{
+			variableId: 'tape_time_hms',
+			value: `${hh}:${mm}:${ss}`,
+		},
+		{
+			variableId: 'tape_time_ms',
+			value: `${mm}:${ss}`,
+		},
+	])
 }
 
-export function updateNameVariables(instance: InstanceSkel<X32Config>, state: X32State): void {
-	const variables: { [variableId: string]: string | undefined } = {}
+export async function updateNameVariables(instance: InstanceBaseExt<X32Config>, state: X32State): Promise<void> {
+	const variables: CompanionVariableValue2[] = []
 	const targets = GetTargetChoices(state, { includeMain: true, defaultNames: true })
 	for (const target of targets) {
 		const nameVal = state.get(`${target.id}/config/name`)
 		const nameStr = nameVal && nameVal[0]?.type === 's' ? nameVal[0].value : ''
-		variables[`name${sanitiseName(target.id as string)}`] = nameStr || target.label
+		variables.push({
+			variableId: `name${sanitiseName(target.id as string)}`,
+			value: nameStr || target.label,
+		})
 
 		const faderVal = state.get(`${MainPath(target.id as string)}/fader`)
 		const faderNum = faderVal && faderVal[0]?.type === 'f' ? faderVal[0].value : NaN
-		variables[`fader${sanitiseName(target.id as string)}`] = isNaN(faderNum) ? '-' : formatDb(floatToDB(faderNum))
+		variables.push({
+			variableId: `fader${sanitiseName(target.id as string)}`,
+			value: isNaN(faderNum) ? '-' : formatDb(floatToDB(faderNum)),
+		})
 	}
-	instance.setVariables(variables)
+	await instance.setVariableValues(variables)
 }

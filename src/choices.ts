@@ -1,9 +1,9 @@
 import {
-	DropdownChoice,
-	ConfigValue,
-	CompanionInputFieldNumber,
 	CompanionInputFieldDropdown,
-} from '../../../instance_skel_types'
+	CompanionInputFieldNumber,
+	ConfigValue,
+	DropdownChoice,
+} from '@companion-module/base'
 import { X32State } from './state'
 import { padNumber } from './util'
 

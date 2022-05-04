@@ -1,31 +1,31 @@
-import InstanceSkel = require('../../../instance_skel')
-import { CompanionPreset } from '../../../instance_skel_types'
 import { ActionId } from './actions'
 import { X32Config } from './config'
 import { FeedbackId } from './feedback'
 import { X32State } from './state'
 import { GetLevelsChoiceConfigs } from './choices'
 import { SetRequired } from 'type-fest'
+import { combineRgb, CompanionPresetFeedback, CompanionPresetPress, SomeCompanionPreset } from '@companion-module/base'
+import { InstanceBaseExt } from './util'
 
-interface CompanionPresetExt extends CompanionPreset {
+interface CompanionPresetExt extends CompanionPresetPress {
 	feedbacks: Array<
 		{
 			type: FeedbackId
-		} & SetRequired<CompanionPreset['feedbacks'][0], 'style'>
+		} & SetRequired<CompanionPresetFeedback, 'style'>
 	>
-	actions: Array<
-		{
-			action: ActionId
-		} & CompanionPreset['actions'][0]
-	>
-	release_actions?: Array<
-		{
-			action: ActionId
-		} & NonNullable<CompanionPreset['release_actions']>[0]
-	>
+	// actions: Array<
+	// 	{
+	// 		action: ActionId
+	// 	} & SomeCompanionPreset['actions'][0]
+	// >
+	// release_actions?: Array<
+	// 	{
+	// 		action: ActionId
+	// 	} & NonNullable<CompanionPreset['release_actions']>[0]
+	// >
 }
 
-export function GetPresetsList(instance: InstanceSkel<X32Config>, state: X32State): CompanionPreset[] {
+export function GetPresetsList(_instance: InstanceBaseExt<X32Config>, state: X32State): SomeCompanionPreset[] {
 	const presets: CompanionPresetExt[] = []
 
 	const levelsChoices = GetLevelsChoiceConfigs(state)
@@ -42,36 +42,38 @@ export function GetPresetsList(instance: InstanceSkel<X32Config>, state: X32Stat
 			category: 'Dip level',
 			bank: {
 				text: 'Dip fader',
-				style: 'text',
+				style: 'press',
 				size: 'auto',
-				color: instance.rgb(255, 255, 255),
-				bgcolor: instance.rgb(0, 0, 0),
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(0, 0, 0),
 			},
-			actions: [
-				{
-					action: ActionId.FaderLevelStore,
-					options: {
-						target: sampleChannel.id,
+			action_sets: {
+				down: [
+					{
+						actionId: ActionId.FaderLevelStore,
+						options: {
+							target: sampleChannel.id,
+						},
 					},
-				},
-				{
-					action: ActionId.FaderLevelDelta,
-					options: {
-						target: sampleChannel.id,
-						delta: -10,
-						duration: 0,
+					{
+						actionId: ActionId.FaderLevelDelta,
+						options: {
+							target: sampleChannel.id,
+							delta: -10,
+							duration: 0,
+						},
 					},
-				},
-			],
-			release_actions: [
-				{
-					action: ActionId.FaderLevelRestore,
-					options: {
-						target: sampleChannel.id,
-						duration: 0,
+				],
+				up: [
+					{
+						actionId: ActionId.FaderLevelRestore,
+						options: {
+							target: sampleChannel.id,
+							duration: 0,
+						},
 					},
-				},
-			],
+				],
+			},
 			feedbacks: [],
 		})
 	}
@@ -82,39 +84,41 @@ export function GetPresetsList(instance: InstanceSkel<X32Config>, state: X32Stat
 			category: 'Dip level',
 			bank: {
 				text: 'Dip channel send',
-				style: 'text',
+				style: 'press',
 				size: 'auto',
-				color: instance.rgb(255, 255, 255),
-				bgcolor: instance.rgb(0, 0, 0),
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(0, 0, 0),
 			},
-			actions: [
-				{
-					action: ActionId.ChannelSendLevelStore,
-					options: {
-						source: sampleInput.id,
-						target: sampleChannelSendTarget.id,
+			action_sets: {
+				down: [
+					{
+						actionId: ActionId.ChannelSendLevelStore,
+						options: {
+							source: sampleInput.id,
+							target: sampleChannelSendTarget.id,
+						},
 					},
-				},
-				{
-					action: ActionId.ChannelSendLevelDelta,
-					options: {
-						source: sampleInput.id,
-						target: sampleChannelSendTarget.id,
-						delta: -10,
-						duration: 0,
+					{
+						actionId: ActionId.ChannelSendLevelDelta,
+						options: {
+							source: sampleInput.id,
+							target: sampleChannelSendTarget.id,
+							delta: -10,
+							duration: 0,
+						},
 					},
-				},
-			],
-			release_actions: [
-				{
-					action: ActionId.ChannelSendLevelRestore,
-					options: {
-						source: sampleInput.id,
-						target: sampleChannelSendTarget.id,
-						duration: 0,
+				],
+				up: [
+					{
+						actionId: ActionId.ChannelSendLevelRestore,
+						options: {
+							source: sampleInput.id,
+							target: sampleChannelSendTarget.id,
+							duration: 0,
+						},
 					},
-				},
-			],
+				],
+			},
 			feedbacks: [],
 		})
 	}
@@ -125,39 +129,41 @@ export function GetPresetsList(instance: InstanceSkel<X32Config>, state: X32Stat
 			category: 'Dip level',
 			bank: {
 				text: 'Dip bus send',
-				style: 'text',
+				style: 'press',
 				size: 'auto',
-				color: instance.rgb(255, 255, 255),
-				bgcolor: instance.rgb(0, 0, 0),
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(0, 0, 0),
 			},
-			actions: [
-				{
-					action: ActionId.BusSendLevelStore,
-					options: {
-						source: sampleBusSendSource.id,
-						target: sampleBusSendTarget.id,
+			action_sets: {
+				down: [
+					{
+						actionId: ActionId.BusSendLevelStore,
+						options: {
+							source: sampleBusSendSource.id,
+							target: sampleBusSendTarget.id,
+						},
 					},
-				},
-				{
-					action: ActionId.BusSendLevelDelta,
-					options: {
-						source: sampleBusSendSource.id,
-						target: sampleBusSendTarget.id,
-						delta: -10,
-						duration: 0,
+					{
+						actionId: ActionId.BusSendLevelDelta,
+						options: {
+							source: sampleBusSendSource.id,
+							target: sampleBusSendTarget.id,
+							delta: -10,
+							duration: 0,
+						},
 					},
-				},
-			],
-			release_actions: [
-				{
-					action: ActionId.BusSendLevelRestore,
-					options: {
-						source: sampleBusSendSource.id,
-						target: sampleBusSendTarget.id,
-						duration: 0,
+				],
+				up: [
+					{
+						actionId: ActionId.BusSendLevelRestore,
+						options: {
+							source: sampleBusSendSource.id,
+							target: sampleBusSendTarget.id,
+							duration: 0,
+						},
 					},
-				},
-			],
+				],
+			},
 			feedbacks: [],
 		})
 	}

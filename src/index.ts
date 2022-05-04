@@ -1,29 +1,34 @@
-import InstanceSkel = require('../../../instance_skel')
-import { CompanionConfigField, CompanionStaticUpgradeScript, CompanionSystem } from '../../../instance_skel_types'
 import { GetActionsList } from './actions'
 import { X32Config, GetConfigFields } from './config'
 import { FeedbackId, GetFeedbacksList } from './feedback'
 import { GetPresetsList } from './presets'
 import { InitVariables, updateDeviceInfoVariables, updateNameVariables, updateTapeTime } from './variables'
 import { X32State, X32Subscriptions } from './state'
-// eslint-disable-next-line node/no-extraneous-import
 import * as osc from 'osc'
 import { MainPath } from './paths'
-import { BooleanFeedbackUpgradeMap, upgradeV2x0x0 } from './upgrades'
+import { upgradeV2x0x0 } from './upgrades'
 import { GetTargetChoices } from './choices'
 import * as debounceFn from 'debounce-fn'
 import PQueue from 'p-queue'
 import { X32Transitions } from './transitions'
 import { X32DeviceDetectorInstance } from './device-detector'
+import {
+	CompanionStaticUpgradeScript,
+	InstanceBase,
+	InstanceStatus,
+	SomeCompanionConfigField,
+} from '@companion-module/base'
+import { InstanceBaseExt } from './util'
 
 /**
  * Companion instance class for the Behringer X32 Mixers.
  */
-class X32Instance extends InstanceSkel<X32Config> {
+export default class X32Instance extends InstanceBase<X32Config> implements InstanceBaseExt<X32Config> {
 	private osc: osc.UDPPort
 	private x32State: X32State
 	private x32Subscriptions: X32Subscriptions
 	private transitions: X32Transitions
+	public config: X32Config = {}
 
 	/** Ping the x32 at a regular interval to tell it to keep sending us info, and for us to check it is still there */
 	private heartbeat: NodeJS.Timer | undefined
@@ -49,8 +54,8 @@ class X32Instance extends InstanceSkel<X32Config> {
 	/**
 	 * Create an instance of an X32 module.
 	 */
-	constructor(system: CompanionSystem, id: string, config: X32Config) {
-		super(system, id, config)
+	constructor(internal: unknown, id: string) {
+		super(internal, id)
 
 		// HACK: for testing upgrade script
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -74,7 +79,9 @@ class X32Instance extends InstanceSkel<X32Config> {
 				console.log('fire feedbacks')
 				const feedbacks = Array.from(this.messageFeedbacks)
 				this.messageFeedbacks.clear()
-				this.checkFeedbacks(...feedbacks)
+				this.checkFeedbacks(...feedbacks).catch((_e) => {
+					// TODO
+				})
 			},
 			{
 				wait: 100,
@@ -89,32 +96,32 @@ class X32Instance extends InstanceSkel<X32Config> {
 		return [
 			() => false, // Previous version had a script
 			upgradeV2x0x0,
-			X32Instance.CreateConvertToBooleanFeedbackUpgradeScript(BooleanFeedbackUpgradeMap),
+			() => false, // HACK X32Instance.CreateConvertToBooleanFeedbackUpgradeScript(BooleanFeedbackUpgradeMap),
 		]
 	}
 
 	// Override base types to make types stricter
-	public checkFeedbacks(...feedbackTypes: FeedbackId[]): void {
-		super.checkFeedbacks(...feedbackTypes)
+	public async checkFeedbacks(...feedbackTypes: FeedbackId[]): Promise<void> {
+		return super.checkFeedbacks(...feedbackTypes)
 	}
 
 	/**
 	 * Main initialization function called once the module
 	 * is OK to start doing things.
 	 */
-	public init(): void {
-		this.status(this.STATUS_UNKNOWN)
+	public async init(): Promise<void> {
+		this.updateStatus(null)
 		this.setupOscSocket()
 
 		X32DeviceDetectorInstance.subscribe(this.id)
 
-		this.updateCompanionBits()
+		await this.updateCompanionBits()
 	}
 
 	/**
 	 * Process an updated configuration array.
 	 */
-	public updateConfig(config: X32Config): void {
+	public async configUpdated(config: X32Config): Promise<void> {
 		this.config = config
 
 		this.x32State = new X32State()
@@ -124,17 +131,17 @@ class X32Instance extends InstanceSkel<X32Config> {
 		this.transitions = new X32Transitions(this)
 
 		if (this.config.host !== undefined) {
-			this.status(this.STATUS_WARNING, 'Connecting')
+			this.updateStatus(InstanceStatus.WARNING, 'Connecting')
 			this.setupOscSocket()
-			this.updateCompanionBits()
+			await this.updateCompanionBits()
 		}
 	}
 
 	/**
 	 * Creates the configuration fields for web config.
 	 */
-	public config_fields(): CompanionConfigField[] {
-		return GetConfigFields(this)
+	public getConfigFields(): SomeCompanionConfigField[] {
+		return GetConfigFields()
 	}
 
 	/**
@@ -172,17 +179,19 @@ class X32Instance extends InstanceSkel<X32Config> {
 			// delete this.osc
 		}
 
-		this.debug('destroy', this.id)
+		this.userLog('debug', 'destroy')
 	}
 
-	private updateCompanionBits(): void {
-		InitVariables(this, this.x32State)
-		this.setPresetDefinitions(GetPresetsList(this, this.x32State))
-		this.setFeedbackDefinitions(GetFeedbacksList(this, this.x32State, this.x32Subscriptions, this.queueEnsureLoaded))
-		this.setActions(GetActionsList(this, this.transitions, this.x32State, this.queueEnsureLoaded))
-		this.checkFeedbacks()
+	private async updateCompanionBits(): Promise<void> {
+		await Promise.all([
+			InitVariables(this, this.x32State),
+			this.setPresetDefinitions(GetPresetsList(this, this.x32State)),
+			this.setFeedbackDefinitions(GetFeedbacksList(this, this.x32State, this.x32Subscriptions, this.queueEnsureLoaded)),
+			this.setActionDefinitions(GetActionsList(this, this.transitions, this.x32State, this.queueEnsureLoaded)),
+		])
 
-		updateNameVariables(this, this.x32State)
+		await this.checkFeedbacks()
+		await updateNameVariables(this, this.x32State)
 
 		// Ensure all feedbacks & actions have an initial value, if we are connected
 		if (this.heartbeat) {
@@ -215,7 +224,7 @@ class X32Instance extends InstanceSkel<X32Config> {
 	}
 
 	private setupOscSocket(): void {
-		this.status(this.STATUS_WARNING, 'Connecting')
+		this.updateStatus(InstanceStatus.WARNING, 'Connecting')
 
 		if (this.reconnectTimer) {
 			clearTimeout(this.reconnectTimer)
@@ -244,8 +253,8 @@ class X32Instance extends InstanceSkel<X32Config> {
 		})
 
 		this.osc.on('error', (err: Error): void => {
-			this.log('error', `Error: ${err.message}`)
-			this.status(this.STATUS_ERROR, err.message)
+			this.userLog('error', `Error: ${err.message}`)
+			this.updateStatus(InstanceStatus.ERROR, err.message)
 			this.requestQueue.clear()
 			this.inFlightRequests = {}
 
@@ -301,7 +310,7 @@ class X32Instance extends InstanceSkel<X32Config> {
 			}
 			doSync()
 
-			this.status(this.STATUS_WARNING, 'Syncing')
+			this.updateStatus(InstanceStatus.WARNING, 'Syncing')
 		})
 
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -333,7 +342,7 @@ class X32Instance extends InstanceSkel<X32Config> {
 
 			switch (message.address) {
 				case '/xinfo':
-					this.status(this.STATUS_OK)
+					this.updateStatus(InstanceStatus.OK)
 
 					if (this.reconnectTimer) {
 						// Clear the timer, as it is alive
@@ -389,12 +398,12 @@ class X32Instance extends InstanceSkel<X32Config> {
 		this.requestQueue
 			.add(async () => {
 				if (this.inFlightRequests[path]) {
-					this.debug(`Ignoring request "${path}" as one in flight`)
+					this.userLog('debug', `Ignoring request "${path}" as one in flight`)
 					return
 				}
 
 				if (this.x32State.get(path)) {
-					this.debug(`Ignoring request "${path}" as data is already loaded`)
+					this.userLog('debug', `Ignoring request "${path}" as data is already loaded`)
 					return
 				}
 
@@ -413,7 +422,7 @@ class X32Instance extends InstanceSkel<X32Config> {
 			})
 			.catch((e: unknown) => {
 				delete this.inFlightRequests[path]
-				this.log('error', `Request failed for "${path}": (${e})`)
+				this.userLog('error', `Request failed for "${path}": (${e})`)
 
 				// TODO If a timeout, can/should we retry it?
 			})
@@ -431,5 +440,3 @@ class X32Instance extends InstanceSkel<X32Config> {
 		}
 	}
 }
-
-export = X32Instance

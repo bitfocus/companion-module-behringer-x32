@@ -1,9 +1,7 @@
-// eslint-disable-next-line node/no-extraneous-import
 import { MetaArgument } from 'osc'
-import InstanceSkel = require('../../../instance_skel')
 import { fadeFpsDefault, X32Config } from './config'
 import { Easing } from './easings'
-import { dbToFloat } from './util'
+import { dbToFloat, InstanceBaseExt } from './util'
 
 export interface TransitionInfo {
 	steps: number[]
@@ -11,12 +9,12 @@ export interface TransitionInfo {
 
 export class X32Transitions {
 	private readonly transitions: Map<string, TransitionInfo>
-	private readonly instance: InstanceSkel<X32Config>
+	private readonly instance: InstanceBaseExt<X32Config>
 	private readonly fps: number
 
 	private tickInterval: NodeJS.Timer | undefined
 
-	constructor(instance: InstanceSkel<X32Config>) {
+	constructor(instance: InstanceBaseExt<X32Config>) {
 		this.transitions = new Map()
 		this.instance = instance
 		this.fps = instance.config.fadeFps ?? fadeFpsDefault
@@ -30,7 +28,7 @@ export class X32Transitions {
 				this.instance.oscSend(this.instance.config.host, 10023, cmd, [arg])
 			}
 		} catch (e) {
-			this.instance.log('error', `Command send failed: ${e}`)
+			this.instance.userLog('error', `Command send failed: ${e}`)
 		}
 	}
 

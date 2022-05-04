@@ -3,7 +3,7 @@ import {
 	CompanionMigrationAction,
 	CompanionMigrationFeedback,
 	CompanionUpgradeContext,
-} from '../../../instance_skel_types'
+} from '@companion-module/base'
 import { ActionId } from './actions'
 import { X32Config } from './config'
 import { FeedbackId } from './feedback'
