@@ -1,7 +1,7 @@
 import { MetaArgument } from 'osc'
-import { fadeFpsDefault, X32Config } from './config'
-import { Easing } from './easings'
-import { dbToFloat, InstanceBaseExt } from './util'
+import { fadeFpsDefault, X32Config } from './config.js'
+import { Easing } from './easings.js'
+import { dbToFloat, InstanceBaseExt } from './util.js'
 
 export interface TransitionInfo {
 	steps: number[]

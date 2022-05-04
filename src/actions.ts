@@ -1,6 +1,6 @@
-import { X32State } from './state'
-import { X32Config } from './config'
-import { trimToFloat, headampGainToFloat, floatToDB, InstanceBaseExt } from './util'
+import { X32State } from './state.js'
+import { X32Config } from './config.js'
+import { trimToFloat, headampGainToFloat, floatToDB, InstanceBaseExt } from './util.js'
 import {
 	CHOICES_TAPE_FUNC,
 	CHOICES_COLOR,
@@ -23,8 +23,8 @@ import {
 	PanningDelta,
 	GetLevelsChoiceConfigs,
 	GetPanningChoiceConfigs,
-} from './choices'
-import * as osc from 'osc'
+} from './choices.js'
+import osc from 'osc'
 import {
 	MutePath,
 	MainPath,
@@ -34,9 +34,9 @@ import {
 	MainPanPath,
 	ChannelToBusPanPath,
 	BusToMatrixPanPath,
-} from './paths'
+} from './paths.js'
 import { SetRequired } from 'type-fest'
-import { X32Transitions } from './transitions'
+import { X32Transitions } from './transitions.js'
 import * as moment from 'moment'
 import { CompanionAction, CompanionActionEvent, CompanionActionInfo, CompanionActions } from '@companion-module/base'
 

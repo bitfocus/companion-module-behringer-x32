@@ -1,9 +1,9 @@
-import { X32Config } from './config'
-import { X32State } from './state'
-import * as osc from 'osc'
-import { GetTargetChoices } from './choices'
-import { MainPath } from './paths'
-import { formatDb, floatToDB, InstanceBaseExt } from './util'
+import { X32Config } from './config.js'
+import { X32State } from './state.js'
+import osc from 'osc'
+import { GetTargetChoices } from './choices.js'
+import { MainPath } from './paths.js'
+import { formatDb, floatToDB, InstanceBaseExt } from './util.js'
 import { CompanionVariable, CompanionVariableValue2 } from '@companion-module/base'
 
 function sanitiseName(name: string): string {

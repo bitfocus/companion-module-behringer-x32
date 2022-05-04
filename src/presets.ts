@@ -1,11 +1,11 @@
-import { ActionId } from './actions'
-import { X32Config } from './config'
-import { FeedbackId } from './feedback'
-import { X32State } from './state'
-import { GetLevelsChoiceConfigs } from './choices'
+import { ActionId } from './actions.js'
+import { X32Config } from './config.js'
+import { FeedbackId } from './feedback.js'
+import { X32State } from './state.js'
+import { GetLevelsChoiceConfigs } from './choices.js'
 import { SetRequired } from 'type-fest'
 import { combineRgb, CompanionPresetFeedback, CompanionPresetPress, SomeCompanionPreset } from '@companion-module/base'
-import { InstanceBaseExt } from './util'
+import { InstanceBaseExt } from './util.js'
 
 interface CompanionPresetExt extends CompanionPresetPress {
 	feedbacks: Array<

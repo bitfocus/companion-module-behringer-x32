@@ -1,5 +1,5 @@
-import * as osc from 'osc'
-import { FeedbackId } from './feedback'
+import osc from 'osc'
+import { FeedbackId } from './feedback.js'
 
 export class X32State {
 	private readonly data: Map<string, osc.MetaArgument[]>

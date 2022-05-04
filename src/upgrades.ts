@@ -4,10 +4,10 @@ import {
 	CompanionMigrationFeedback,
 	CompanionUpgradeContext,
 } from '@companion-module/base'
-import { ActionId } from './actions'
-import { X32Config } from './config'
-import { FeedbackId } from './feedback'
-import { padNumber, floatToDB } from './util'
+import { ActionId } from './actions.js'
+import { X32Config } from './config.js'
+import { FeedbackId } from './feedback.js'
+import { padNumber, floatToDB } from './util.js'
 
 export function upgradeV2x0x0(
 	_context: CompanionUpgradeContext,

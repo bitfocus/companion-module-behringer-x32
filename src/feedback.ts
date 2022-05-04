@@ -1,4 +1,4 @@
-import { X32State, X32Subscriptions } from './state'
+import { X32State, X32Subscriptions } from './state.js'
 import {
 	GetMuteGroupChoices,
 	GetTargetChoices,
@@ -10,8 +10,8 @@ import {
 	GetLevelsChoiceConfigs,
 	GetPanningChoiceConfigs,
 	CHOICES_TAPE_FUNC,
-} from './choices'
-import { compareNumber, floatToDB, InstanceBaseExt } from './util'
+} from './choices.js'
+import { compareNumber, floatToDB, InstanceBaseExt } from './util.js'
 import {
 	MutePath,
 	MainPath,
@@ -21,10 +21,10 @@ import {
 	MainPanPath,
 	ChannelToBusPanPath,
 	BusToMatrixPanPath,
-} from './paths'
-import * as osc from 'osc'
-import { X32Config } from './config'
-import { NumberComparitorPicker } from './input'
+} from './paths.js'
+import osc from 'osc'
+import { X32Config } from './config.js'
+import { NumberComparitorPicker } from './input.js'
 import { SetRequired } from 'type-fest'
 import {
 	combineRgb,

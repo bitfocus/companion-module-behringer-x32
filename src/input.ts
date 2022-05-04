@@ -1,5 +1,5 @@
 import { CompanionInputFieldDropdown } from '@companion-module/base'
-import { NumberComparitor } from './util'
+import { NumberComparitor } from './util.js'
 
 export function NumberComparitorPicker(): CompanionInputFieldDropdown {
 	const options = [

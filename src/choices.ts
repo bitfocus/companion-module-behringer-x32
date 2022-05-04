@@ -4,8 +4,8 @@ import {
 	ConfigValue,
 	DropdownChoice,
 } from '@companion-module/base'
-import { X32State } from './state'
-import { padNumber } from './util'
+import { X32State } from './state.js'
+import { padNumber } from './util.js'
 
 export const MUTE_TOGGLE = 2
 export const CHOICES_MUTE: DropdownChoice[] = [

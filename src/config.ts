@@ -1,5 +1,5 @@
 import { SomeCompanionConfigField } from '@companion-module/base'
-import { X32DeviceDetectorInstance } from './device-detector'
+import { X32DeviceDetectorInstance } from './device-detector.js'
 
 export const fadeFpsDefault = 10
 

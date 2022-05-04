@@ -1,24 +1,25 @@
-import { GetActionsList } from './actions'
-import { X32Config, GetConfigFields } from './config'
-import { FeedbackId, GetFeedbacksList } from './feedback'
-import { GetPresetsList } from './presets'
-import { InitVariables, updateDeviceInfoVariables, updateNameVariables, updateTapeTime } from './variables'
-import { X32State, X32Subscriptions } from './state'
-import * as osc from 'osc'
-import { MainPath } from './paths'
-import { upgradeV2x0x0 } from './upgrades'
-import { GetTargetChoices } from './choices'
-import * as debounceFn from 'debounce-fn'
+import { GetActionsList } from './actions.js'
+import { X32Config, GetConfigFields } from './config.js'
+import { FeedbackId, GetFeedbacksList } from './feedback.js'
+import { GetPresetsList } from './presets.js'
+import { InitVariables, updateDeviceInfoVariables, updateNameVariables, updateTapeTime } from './variables.js'
+import { X32State, X32Subscriptions } from './state.js'
+import osc from 'osc'
+import { MainPath } from './paths.js'
+import { upgradeV2x0x0 } from './upgrades.js'
+import { GetTargetChoices } from './choices.js'
+import debounceFn from 'debounce-fn'
 import PQueue from 'p-queue'
-import { X32Transitions } from './transitions'
-import { X32DeviceDetectorInstance } from './device-detector'
+import { X32Transitions } from './transitions.js'
+import { X32DeviceDetectorInstance } from './device-detector.js'
 import {
 	CompanionStaticUpgradeScript,
 	InstanceBase,
 	InstanceStatus,
 	SomeCompanionConfigField,
+	runEntrypoint,
 } from '@companion-module/base'
-import { InstanceBaseExt } from './util'
+import { InstanceBaseExt } from './util.js'
 
 /**
  * Companion instance class for the Behringer X32 Mixers.
@@ -109,7 +110,11 @@ export default class X32Instance extends InstanceBase<X32Config> implements Inst
 	 * Main initialization function called once the module
 	 * is OK to start doing things.
 	 */
-	public async init(): Promise<void> {
+	public async init(config: X32Config): Promise<void> {
+		this.config = config
+
+		console.log(config)
+
 		this.updateStatus(null)
 		this.setupOscSocket()
 
@@ -440,3 +445,5 @@ export default class X32Instance extends InstanceBase<X32Config> implements Inst
 		}
 	}
 }
+
+runEntrypoint(X32Instance)
