@@ -4,7 +4,7 @@
 	"main": "dist/index.js",
 	"type": "module",
 	"scripts": {
-		"prepare2": "husky install",
+		"prepare": "husky install",
 		"dev": "yarn build:watch",
 		"build": "rimraf dist && tsc -p tsconfig.build.json",
 		"build:main": "tsc -p tsconfig.build.json",
