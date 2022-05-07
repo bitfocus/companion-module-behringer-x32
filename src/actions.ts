@@ -37,7 +37,7 @@ import {
 } from './paths.js'
 import { SetRequired } from 'type-fest'
 import { X32Transitions } from './transitions.js'
-import * as moment from 'moment'
+import { format as formatDate } from 'date-fns'
 import { CompanionAction, CompanionActionEvent, CompanionActionInfo, CompanionActions } from '@companion-module/base'
 
 export enum ActionId {
@@ -1387,7 +1387,7 @@ export function GetActionsList(
 			callback: async (): Promise<void> => {
 				await sendOsc(`/-action/setclock`, {
 					type: 's',
-					value: moment().format('YYYYMMDDHHmmss'),
+					value: formatDate(new Date(), 'YYYYMMddHHmmss'),
 				})
 			},
 		},

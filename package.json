@@ -4,7 +4,7 @@
 	"main": "dist/index.js",
 	"type": "module",
 	"scripts": {
-		"prepare": "husky install",
+		"prepare2": "husky install",
 		"dev": "yarn build:watch",
 		"build": "rimraf dist && tsc -p tsconfig.build.json",
 		"build:main": "tsc -p tsconfig.build.json",
@@ -12,7 +12,6 @@
 		"lint:raw": "eslint --ext .ts --ext .js --ignore-pattern dist",
 		"lint": "yarn lint:raw .",
 		"lint-fix": "yarn lint --fix",
-		"license-validate": "yarn sofie-licensecheck",
 		"dist": ""
 	},
 	"repository": {
@@ -34,16 +33,15 @@
 	},
 	"dependencies": {
 		"@companion-module/base": "link:../../module-base",
+		"date-fns": "^2.28.0",
 		"debounce-fn": "^5.0.0",
 		"debug": "^4.3.4",
-		"moment": "^2.29.3",
 		"osc": "^2.4.3",
 		"p-queue": "^7.2.0",
 		"type-fest": "^2.12.2"
 	},
 	"devDependencies": {
 		"@companion-module/tools": "link:../../module-tools",
-		"@sofie-automation/code-standard-preset": "^1.0.0",
 		"@types/debug": "^4.1.7",
 		"@types/node": "^14.18.9",
 		"rimraf": "^3.0.2",
