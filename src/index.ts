@@ -6,7 +6,7 @@ import { InitVariables, updateDeviceInfoVariables, updateNameVariables, updateTa
 import { X32State, X32Subscriptions } from './state.js'
 import osc from 'osc'
 import { MainPath } from './paths.js'
-import { upgradeV2x0x0 } from './upgrades.js'
+import { BooleanFeedbackUpgradeMap, upgradeV2x0x0 } from './upgrades.js'
 import { GetTargetChoices } from './choices.js'
 import debounceFn from 'debounce-fn'
 import PQueue from 'p-queue'
@@ -15,9 +15,9 @@ import { X32DeviceDetectorInstance } from './device-detector.js'
 import {
 	CompanionStaticUpgradeScript,
 	InstanceBase,
-	InstanceStatus,
 	SomeCompanionConfigField,
 	runEntrypoint,
+	CreateConvertToBooleanFeedbackUpgradeScript,
 } from '@companion-module/base'
 import { InstanceBaseExt } from './util.js'
 
@@ -93,11 +93,11 @@ export default class X32Instance extends InstanceBase<X32Config> implements Inst
 		)
 	}
 
-	public static GetUpgradeScripts(): CompanionStaticUpgradeScript[] {
+	public static GetUpgradeScripts(): CompanionStaticUpgradeScript<X32Config>[] {
 		return [
 			() => false, // Previous version had a script
 			upgradeV2x0x0,
-			() => false, // HACK X32Instance.CreateConvertToBooleanFeedbackUpgradeScript(BooleanFeedbackUpgradeMap),
+			CreateConvertToBooleanFeedbackUpgradeScript(BooleanFeedbackUpgradeMap),
 		]
 	}
 
@@ -113,9 +113,7 @@ export default class X32Instance extends InstanceBase<X32Config> implements Inst
 	public async init(config: X32Config): Promise<void> {
 		this.config = config
 
-		console.log(config)
-
-		this.updateStatus(null)
+		this.updateStatus('connecting')
 		this.setupOscSocket()
 
 		X32DeviceDetectorInstance.subscribe(this.id)
@@ -136,7 +134,7 @@ export default class X32Instance extends InstanceBase<X32Config> implements Inst
 		this.transitions = new X32Transitions(this)
 
 		if (this.config.host !== undefined) {
-			this.updateStatus(InstanceStatus.WARNING, 'Connecting')
+			this.updateStatus('connecting')
 			this.setupOscSocket()
 			await this.updateCompanionBits()
 		}
@@ -184,7 +182,7 @@ export default class X32Instance extends InstanceBase<X32Config> implements Inst
 			// delete this.osc
 		}
 
-		this.userLog('debug', 'destroy')
+		this.log('debug', 'destroy')
 	}
 
 	private async updateCompanionBits(): Promise<void> {
@@ -229,7 +227,7 @@ export default class X32Instance extends InstanceBase<X32Config> implements Inst
 	}
 
 	private setupOscSocket(): void {
-		this.updateStatus(InstanceStatus.WARNING, 'Connecting')
+		this.updateStatus('connecting')
 
 		if (this.reconnectTimer) {
 			clearTimeout(this.reconnectTimer)
@@ -258,8 +256,8 @@ export default class X32Instance extends InstanceBase<X32Config> implements Inst
 		})
 
 		this.osc.on('error', (err: Error): void => {
-			this.userLog('error', `Error: ${err.message}`)
-			this.updateStatus(InstanceStatus.ERROR, err.message)
+			this.log('error', `Error: ${err.message}`)
+			this.updateStatus('connection_failure', err.message)
 			this.requestQueue.clear()
 			this.inFlightRequests = {}
 
@@ -315,7 +313,7 @@ export default class X32Instance extends InstanceBase<X32Config> implements Inst
 			}
 			doSync()
 
-			this.updateStatus(InstanceStatus.WARNING, 'Syncing')
+			this.updateStatus('connecting', 'Syncing')
 		})
 
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -347,7 +345,7 @@ export default class X32Instance extends InstanceBase<X32Config> implements Inst
 
 			switch (message.address) {
 				case '/xinfo':
-					this.updateStatus(InstanceStatus.OK)
+					this.updateStatus('ok')
 
 					if (this.reconnectTimer) {
 						// Clear the timer, as it is alive
@@ -403,12 +401,12 @@ export default class X32Instance extends InstanceBase<X32Config> implements Inst
 		this.requestQueue
 			.add(async () => {
 				if (this.inFlightRequests[path]) {
-					this.userLog('debug', `Ignoring request "${path}" as one in flight`)
+					this.log('debug', `Ignoring request "${path}" as one in flight`)
 					return
 				}
 
 				if (this.x32State.get(path)) {
-					this.userLog('debug', `Ignoring request "${path}" as data is already loaded`)
+					this.log('debug', `Ignoring request "${path}" as data is already loaded`)
 					return
 				}
 
@@ -427,7 +425,7 @@ export default class X32Instance extends InstanceBase<X32Config> implements Inst
 			})
 			.catch((e: unknown) => {
 				delete this.inFlightRequests[path]
-				this.userLog('error', `Request failed for "${path}": (${e})`)
+				this.log('error', `Request failed for "${path}": (${e})`)
 
 				// TODO If a timeout, can/should we retry it?
 			})

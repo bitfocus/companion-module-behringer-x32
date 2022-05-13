@@ -21,14 +21,12 @@ export class X32Transitions {
 	}
 
 	private sendOsc(cmd: string, arg: MetaArgument): void {
-		try {
-			// HACK: We send commands on a different port than we run /xremote on, so that we get change events for what we send.
-			// Otherwise we can have no confirmation that a command was accepted
-			if (this.instance.config.host) {
-				this.instance.oscSend(this.instance.config.host, 10023, cmd, [arg])
-			}
-		} catch (e) {
-			this.instance.userLog('error', `Command send failed: ${e}`)
+		// HACK: We send commands on a different port than we run /xremote on, so that we get change events for what we send.
+		// Otherwise we can have no confirmation that a command was accepted
+		if (this.instance.config.host) {
+			this.instance.oscSend(this.instance.config.host, 10023, cmd, [arg]).catch((e) => {
+				this.instance.log('error', `Command send failed: ${e}`)
+			})
 		}
 	}
 

@@ -127,14 +127,10 @@ export function GetActionsList(
 	const soloChoices = GetTargetChoices(state, { includeMain: true, numericIndex: true })
 
 	const sendOsc = async (cmd: string, arg: osc.MetaArgument): Promise<void> => {
-		try {
-			// HACK: We send commands on a different port than we run /xremote on, so that we get change events for what we send.
-			// Otherwise we can have no confirmation that a command was accepted
-			if (self.config.host) {
-				await self.oscSend(self.config.host, 10023, cmd, [arg])
-			}
-		} catch (e) {
-			self.userLog('error', `Command send failed: ${e}`)
+		// HACK: We send commands on a different port than we run /xremote on, so that we get change events for what we send.
+		// Otherwise we can have no confirmation that a command was accepted
+		if (self.config.host) {
+			await self.oscSend(self.config.host, 10023, cmd, [arg])
 		}
 	}
 	const getOptNumber = (action: CompanionActionInfo, key: string, defVal?: number): number => {

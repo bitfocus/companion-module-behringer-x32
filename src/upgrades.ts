@@ -1,7 +1,7 @@
 import {
-	CompanionCoreInstanceconfig,
 	CompanionMigrationAction,
 	CompanionMigrationFeedback,
+	CompanionStaticUpgradeScript,
 	CompanionUpgradeContext,
 } from '@companion-module/base'
 import { ActionId } from './actions.js'
@@ -9,16 +9,16 @@ import { X32Config } from './config.js'
 import { FeedbackId } from './feedback.js'
 import { padNumber, floatToDB } from './util.js'
 
-export function upgradeV2x0x0(
+export const upgradeV2x0x0: CompanionStaticUpgradeScript<X32Config> = (
 	_context: CompanionUpgradeContext,
-	_config: (CompanionCoreInstanceconfig & X32Config) | null,
+	_config: X32Config | null,
 	actions: CompanionMigrationAction[],
 	_feedbacks: CompanionMigrationFeedback[]
-): boolean {
+): boolean => {
 	let changed = false
 
 	for (const action of actions) {
-		switch (action.action) {
+		switch (action.actionId) {
 			case ActionId.Mute:
 			case ActionId.Color:
 			case ActionId.FaderLevel:
@@ -32,11 +32,11 @@ export function upgradeV2x0x0(
 
 					action.options.target = `${type}${num}`
 
-					if (action.action === ActionId.Mute && action.options.mute === null) {
+					if (action.actionId === ActionId.Mute && action.options.mute === null) {
 						action.options.mute = 0
-					} else if (action.action === ActionId.Color && action.options.col === null) {
+					} else if (action.actionId === ActionId.Color && action.options.col === null) {
 						action.options.col = '0'
-					} else if (action.action === ActionId.FaderLevel) {
+					} else if (action.actionId === ActionId.FaderLevel) {
 						action.options.fad = floatToDB((action.options.fad ?? 0) as number)
 					}
 
@@ -66,8 +66,7 @@ export function upgradeV2x0x0(
 						action.options.mute = 0
 					}
 
-					action.action = ActionId.Mute
-					action.label = `${action.instance}:${action.action}`
+					action.actionId = ActionId.Mute
 
 					changed = true
 				}
@@ -82,8 +81,7 @@ export function upgradeV2x0x0(
 						action.options.col = '0'
 					}
 
-					action.action = ActionId.Color
-					action.label = `${action.instance}:${action.action}`
+					action.actionId = ActionId.Color
 
 					changed = true
 				}
@@ -94,8 +92,7 @@ export function upgradeV2x0x0(
 					action.options.target = action.options.type
 					delete action.options.type
 
-					action.action = ActionId.Label
-					action.label = `${action.instance}:${action.action}`
+					action.actionId = ActionId.Label
 
 					changed = true
 				}
@@ -108,8 +105,7 @@ export function upgradeV2x0x0(
 
 					action.options.fad = floatToDB((action.options.fad ?? 0) as number)
 
-					action.action = ActionId.FaderLevel
-					action.label = `${action.instance}:${action.action}`
+					action.actionId = ActionId.FaderLevel
 
 					changed = true
 				}
