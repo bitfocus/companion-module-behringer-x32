@@ -10,7 +10,7 @@ function sanitiseName(name: string): string {
 	return name.replace(/\//g, '_')
 }
 
-export async function InitVariables(instance: InstanceBaseExt<X32Config>, state: X32State): Promise<void> {
+export function InitVariables(instance: InstanceBaseExt<X32Config>, state: X32State): void {
 	const variables: CompanionVariableDefinition[] = [
 		{
 			name: 'Device name',
@@ -46,17 +46,14 @@ export async function InitVariables(instance: InstanceBaseExt<X32Config>, state:
 		})
 	}
 
-	await instance.setVariableDefinitions(variables)
-	await instance.setVariableValues({
+	instance.setVariableDefinitions(variables)
+	instance.setVariableValues({
 		tape_time_hms: `--:--:--`,
 		tape_time_ms: `--:--`,
 	})
 }
 
-export async function updateDeviceInfoVariables(
-	instance: InstanceBaseExt<X32Config>,
-	args: osc.MetaArgument[]
-): Promise<void> {
+export function updateDeviceInfoVariables(instance: InstanceBaseExt<X32Config>, args: osc.MetaArgument[]): void {
 	const getStringArg = (index: number): string => {
 		const raw = args[index]
 		if (raw && raw.type === 's') {
@@ -65,26 +62,26 @@ export async function updateDeviceInfoVariables(
 			return ''
 		}
 	}
-	await instance.setVariableValues({
+	instance.setVariableValues({
 		m_variableId: getStringArg(1),
 		m_model: getStringArg(2),
 		m_fw: getStringArg(3),
 	})
 }
 
-export async function updateTapeTime(instance: InstanceBaseExt<X32Config>, state: X32State): Promise<void> {
+export function updateTapeTime(instance: InstanceBaseExt<X32Config>, state: X32State): void {
 	const etime = state.get('/-stat/tape/etime')
 	const time = etime && etime[0]?.type === 'i' ? etime[0].value : 0
 	const hh = `${Math.floor(time / 3600)}`.padStart(2, '0')
 	const mm = `${Math.floor(time / 60) % 60}`.padStart(2, '0')
 	const ss = `${time % 60}`.padStart(2, '0')
-	await instance.setVariableValues({
+	instance.setVariableValues({
 		tape_time_hms: `${hh}:${mm}:${ss}`,
 		tape_time_ms: `${mm}:${ss}`,
 	})
 }
 
-export async function updateNameVariables(instance: InstanceBaseExt<X32Config>, state: X32State): Promise<void> {
+export function updateNameVariables(instance: InstanceBaseExt<X32Config>, state: X32State): void {
 	const variables: CompanionVariableValues = {}
 	const targets = GetTargetChoices(state, { includeMain: true, defaultNames: true })
 	for (const target of targets) {
@@ -96,5 +93,5 @@ export async function updateNameVariables(instance: InstanceBaseExt<X32Config>, 
 		const faderNum = faderVal && faderVal[0]?.type === 'f' ? faderVal[0].value : NaN
 		variables[`fader${sanitiseName(target.id as string)}`] = isNaN(faderNum) ? '-' : formatDb(floatToDB(faderNum))
 	}
-	await instance.setVariableValues(variables)
+	instance.setVariableValues(variables)
 }

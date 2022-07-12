@@ -24,9 +24,7 @@ export class X32Transitions {
 		// HACK: We send commands on a different port than we run /xremote on, so that we get change events for what we send.
 		// Otherwise we can have no confirmation that a command was accepted
 		if (this.instance.config.host) {
-			this.instance.oscSend(this.instance.config.host, 10023, cmd, [arg]).catch((e) => {
-				this.instance.log('error', `Command send failed: ${e}`)
-			})
+			this.instance.oscSend(this.instance.config.host, 10023, cmd, [arg])
 		}
 	}
 
@@ -79,6 +77,7 @@ export class X32Transitions {
 		} else {
 			const diff = to - from
 			const steps: number[] = []
+			// eslint-disable-next-line @typescript-eslint/unbound-method
 			const easing = Easing.Linear.None // TODO - dynamic
 			for (let i = 1; i <= stepCount; i++) {
 				const fraction = easing(i / stepCount)

@@ -131,11 +131,11 @@ export function GetActionsList(
 	const selectChoices = GetTargetChoices(state, { skipDca: true, includeMain: true, numericIndex: true })
 	const soloChoices = GetTargetChoices(state, { includeMain: true, numericIndex: true })
 
-	const sendOsc = async (cmd: string, arg: osc.MetaArgument): Promise<void> => {
+	const sendOsc = (cmd: string, arg: osc.MetaArgument): void => {
 		// HACK: We send commands on a different port than we run /xremote on, so that we get change events for what we send.
 		// Otherwise we can have no confirmation that a command was accepted
 		if (self.config.host) {
-			await self.oscSend(self.config.host, 10023, cmd, [arg])
+			self.oscSend(self.config.host, 10023, cmd, [arg])
 		}
 	}
 	const getOptNumber = (action: CompanionActionInfo, key: string, defVal?: number): number => {
@@ -185,7 +185,7 @@ export function GetActionsList(
 			],
 			callback: async (action): Promise<void> => {
 				const cmd = MutePath(action.options.target as string)
-				await sendOsc(cmd, {
+				sendOsc(cmd, {
 					type: 'i',
 					value: getResolveOnOffMute(action, cmd, true),
 				})
@@ -214,7 +214,7 @@ export function GetActionsList(
 			],
 			callback: async (action): Promise<void> => {
 				const cmd = action.options.target as string
-				await sendOsc(cmd, {
+				sendOsc(cmd, {
 					type: 'i',
 					value: getResolveOnOffMute(action, cmd, false),
 				})
@@ -244,7 +244,7 @@ export function GetActionsList(
 			],
 			callback: async (action): Promise<void> => {
 				const cmd = `${MainPath(action.options.source as string)}/${action.options.target}`
-				await sendOsc(cmd, {
+				sendOsc(cmd, {
 					type: 'i',
 					value: getResolveOnOffMute(action, cmd, true),
 				})
@@ -274,7 +274,7 @@ export function GetActionsList(
 			],
 			callback: async (action): Promise<void> => {
 				const cmd = `${MainPath(action.options.source as string)}/${action.options.target}/on`
-				await sendOsc(cmd, {
+				sendOsc(cmd, {
 					type: 'i',
 					value: getResolveOnOffMute(action, cmd, true),
 				})
@@ -1009,7 +1009,7 @@ export function GetActionsList(
 				},
 			],
 			callback: async (action): Promise<void> => {
-				await sendOsc(`${action.options.input}/preamp/trim`, {
+				sendOsc(`${action.options.input}/preamp/trim`, {
 					type: 'f',
 					value: trimToFloat(getOptNumber(action, 'trim')),
 				})
@@ -1027,7 +1027,7 @@ export function GetActionsList(
 				HeadampGainChoice,
 			],
 			callback: async (action): Promise<void> => {
-				await sendOsc(`${action.options.headamp}/gain`, {
+				sendOsc(`${action.options.headamp}/gain`, {
 					type: 'f',
 					value: headampGainToFloat(getOptNumber(action, 'gain')),
 				})
@@ -1050,7 +1050,7 @@ export function GetActionsList(
 				},
 			],
 			callback: async (action): Promise<void> => {
-				await sendOsc(`${action.options.target}/config/name`, {
+				sendOsc(`${action.options.target}/config/name`, {
 					type: 's',
 					value: `${action.options.lab}`,
 				})
@@ -1074,7 +1074,7 @@ export function GetActionsList(
 				},
 			],
 			callback: async (action): Promise<void> => {
-				await sendOsc(`${action.options.target}/config/color`, {
+				sendOsc(`${action.options.target}/config/color`, {
 					type: 'i',
 					value: getOptNumber(action, 'col'),
 				})
@@ -1094,7 +1094,7 @@ export function GetActionsList(
 				},
 			],
 			callback: async (action): Promise<void> => {
-				await sendOsc(`/-action/gocue`, {
+				sendOsc(`/-action/gocue`, {
 					type: 'i',
 					value: getOptNumber(action, 'cue'),
 				})
@@ -1113,7 +1113,7 @@ export function GetActionsList(
 				},
 			],
 			callback: async (action): Promise<void> => {
-				await sendOsc(`/-action/goscene`, {
+				sendOsc(`/-action/goscene`, {
 					type: 'i',
 					value: getOptNumber(action, 'scene'),
 				})
@@ -1132,7 +1132,7 @@ export function GetActionsList(
 				},
 			],
 			callback: async (action): Promise<void> => {
-				await sendOsc(`/-action/gosnippet`, {
+				sendOsc(`/-action/gosnippet`, {
 					type: 'i',
 					value: getOptNumber(action, 'snip'),
 				})
@@ -1149,7 +1149,7 @@ export function GetActionsList(
 				},
 			],
 			callback: async (action): Promise<void> => {
-				await sendOsc(`/-stat/selidx`, {
+				sendOsc(`/-stat/selidx`, {
 					type: 'i',
 					value: getOptNumber(action, 'select'),
 				})
@@ -1176,7 +1176,7 @@ export function GetActionsList(
 				const cmd = `/-stat/solosw/${ch}`
 				const onState = getResolveOnOffMute(action, cmd, true, 'on')
 
-				await sendOsc(cmd, {
+				sendOsc(cmd, {
 					type: 'i',
 					value: onState,
 				})
@@ -1192,7 +1192,7 @@ export function GetActionsList(
 			name: 'Clear Solo',
 			options: [],
 			callback: async (): Promise<void> => {
-				await sendOsc(`/-action/clearsolo`, {
+				sendOsc(`/-action/clearsolo`, {
 					type: 'i',
 					value: 1,
 				})
@@ -1209,7 +1209,7 @@ export function GetActionsList(
 				},
 			],
 			callback: async (action): Promise<void> => {
-				await sendOsc(`/-stat/tape/state`, {
+				sendOsc(`/-stat/tape/state`, {
 					type: 'i',
 					value: getOptNumber(action, 'tFunc'),
 				})
@@ -1244,7 +1244,7 @@ export function GetActionsList(
 				const cmd = `/-stat/talk/${action.options.channel}`
 				const onState = getResolveOnOffMute(action, cmd, true, 'on')
 
-				await sendOsc(cmd, {
+				sendOsc(cmd, {
 					type: 'i',
 					value: onState,
 				})
@@ -1269,7 +1269,7 @@ export function GetActionsList(
 				const cmd = `/-stat/osc/on`
 				const onState = getResolveOnOffMute(action, cmd, true, 'on')
 
-				await sendOsc(cmd, {
+				sendOsc(cmd, {
 					type: 'i',
 					value: onState,
 				})
@@ -1291,7 +1291,7 @@ export function GetActionsList(
 				},
 			],
 			callback: async (action): Promise<void> => {
-				await sendOsc(`/config/osc/dest`, {
+				sendOsc(`/config/osc/dest`, {
 					type: 'i',
 					value: getOptNumber(action, 'destination'),
 				})
@@ -1311,7 +1311,7 @@ export function GetActionsList(
 				const cmd = `/config/solo/mono`
 				const onState = getResolveOnOffMute(action, cmd, true, 'on')
 
-				await sendOsc(cmd, {
+				sendOsc(cmd, {
 					type: 'i',
 					value: onState,
 				})
@@ -1336,7 +1336,7 @@ export function GetActionsList(
 				const cmd = `/config/solo/dim`
 				const onState = getResolveOnOffMute(action, cmd, true, 'on')
 
-				await sendOsc(cmd, {
+				sendOsc(cmd, {
 					type: 'i',
 					value: onState,
 				})
@@ -1363,7 +1363,7 @@ export function GetActionsList(
 				},
 			],
 			callback: async (action): Promise<void> => {
-				await sendOsc(`/config/solo/dimatt`, {
+				sendOsc(`/config/solo/dimatt`, {
 					type: 'f',
 					value: getOptNumber(action, 'dimAtt') / 40 + 1,
 				})
@@ -1386,7 +1386,7 @@ export function GetActionsList(
 			name: 'Sync console time',
 			options: [],
 			callback: async (): Promise<void> => {
-				await sendOsc(`/-action/setclock`, {
+				sendOsc(`/-action/setclock`, {
 					type: 's',
 					value: formatDate(new Date(), 'YYYYMMddHHmmss'),
 				})
@@ -1422,7 +1422,7 @@ export function GetActionsList(
 				},
 			],
 			callback: async (action): Promise<void> => {
-				await sendOsc(`/-stat/chfaderbank`, {
+				sendOsc(`/-stat/chfaderbank`, {
 					type: 'i',
 					value: getOptNumber(action, 'bank'),
 				})
@@ -1458,7 +1458,7 @@ export function GetActionsList(
 				},
 			],
 			callback: async (action): Promise<void> => {
-				await sendOsc(`/-stat/grpfaderbank`, {
+				sendOsc(`/-stat/grpfaderbank`, {
 					type: 'i',
 					value: getOptNumber(action, 'bank'),
 				})
@@ -1510,7 +1510,7 @@ export function GetActionsList(
 				},
 			],
 			callback: async (action): Promise<void> => {
-				await sendOsc(`/-stat/chfaderbank`, {
+				sendOsc(`/-stat/chfaderbank`, {
 					type: 'i',
 					value: getOptNumber(action, 'bank'),
 				})
@@ -1570,7 +1570,7 @@ export function GetActionsList(
 				},
 			],
 			callback: async (action): Promise<void> => {
-				await sendOsc(`/-stat/grpfaderbank`, {
+				sendOsc(`/-stat/grpfaderbank`, {
 					type: 'i',
 					value: getOptNumber(action, 'bank'),
 				})
@@ -1590,7 +1590,7 @@ export function GetActionsList(
 				const cmd = `/-stat/sendsonfader`
 				const onState = getResolveOnOffMute(action, cmd, true, 'on')
 
-				await sendOsc(cmd, {
+				sendOsc(cmd, {
 					type: 'i',
 					value: onState,
 				})
@@ -1630,7 +1630,7 @@ export function GetActionsList(
 			],
 			callback: async (action): Promise<void> => {
 				const cmd = `/-stat/bussendbank`
-				await sendOsc(cmd, {
+				sendOsc(cmd, {
 					type: 'i',
 					value: getOptNumber(action, 'bank', 0),
 				})
@@ -1661,7 +1661,7 @@ export function GetActionsList(
 			],
 			callback: async (action): Promise<void> => {
 				const cmd = `/-stat/userbank`
-				await sendOsc(cmd, {
+				sendOsc(cmd, {
 					type: 'i',
 					value: getOptNumber(action, 'bank', 0),
 				})
@@ -1720,7 +1720,7 @@ export function GetActionsList(
 			],
 			callback: async (action): Promise<void> => {
 				const cmd = `/-stat/screen/screen`
-				await sendOsc(cmd, {
+				sendOsc(cmd, {
 					type: 'i',
 					value: getOptNumber(action, 'screen', 0),
 				})
@@ -1740,7 +1740,7 @@ export function GetActionsList(
 				const cmd = `/-stat/screen/mutegrp`
 				const onState = getResolveOnOffMute(action, cmd, true, 'on')
 
-				await sendOsc(cmd, {
+				sendOsc(cmd, {
 					type: 'i',
 					value: onState,
 				})
@@ -1765,7 +1765,7 @@ export function GetActionsList(
 				const cmd = `/-stat/screen/utils`
 				const onState = getResolveOnOffMute(action, cmd, true, 'on')
 
-				await sendOsc(cmd, {
+				sendOsc(cmd, {
 					type: 'i',
 					value: onState,
 				})
@@ -1817,11 +1817,11 @@ export function GetActionsList(
 			],
 			callback: async (action): Promise<void> => {
 				const cmd = `/-stat/screen/CHAN/page`
-				await sendOsc(cmd, {
+				sendOsc(cmd, {
 					type: 'i',
 					value: getOptNumber(action, 'page', 0),
 				})
-				await sendOsc('/-stat/screen/screen', { type: 'i', value: 0 })
+				sendOsc('/-stat/screen/screen', { type: 'i', value: 0 })
 			},
 		},
 		[ActionId.MeterPage]: {
@@ -1861,11 +1861,11 @@ export function GetActionsList(
 			],
 			callback: async (action): Promise<void> => {
 				const cmd = `/-stat/screen/METER/page`
-				await sendOsc(cmd, {
+				sendOsc(cmd, {
 					type: 'i',
 					value: getOptNumber(action, 'page', 0),
 				})
-				await sendOsc('/-stat/screen/screen', { type: 'i', value: 1 })
+				sendOsc('/-stat/screen/screen', { type: 'i', value: 1 })
 			},
 		},
 		[ActionId.RoutePage]: {
@@ -1917,11 +1917,11 @@ export function GetActionsList(
 			],
 			callback: async (action): Promise<void> => {
 				const cmd = `/-stat/screen/ROUTE/page`
-				await sendOsc(cmd, {
+				sendOsc(cmd, {
 					type: 'i',
 					value: getOptNumber(action, 'page', 0),
 				})
-				await sendOsc('/-stat/screen/screen', { type: 'i', value: 2 })
+				sendOsc('/-stat/screen/screen', { type: 'i', value: 2 })
 			},
 		},
 		[ActionId.SetupPage]: {
@@ -1965,11 +1965,11 @@ export function GetActionsList(
 			],
 			callback: async (action): Promise<void> => {
 				const cmd = `/-stat/screen/SETUP/page`
-				await sendOsc(cmd, {
+				sendOsc(cmd, {
 					type: 'i',
 					value: getOptNumber(action, 'page', 0),
 				})
-				await sendOsc('/-stat/screen/screen', { type: 'i', value: 3 })
+				sendOsc('/-stat/screen/screen', { type: 'i', value: 3 })
 			},
 		},
 		[ActionId.LibPage]: {
@@ -2001,11 +2001,11 @@ export function GetActionsList(
 			],
 			callback: async (action): Promise<void> => {
 				const cmd = `/-stat/screen/LIB/page`
-				await sendOsc(cmd, {
+				sendOsc(cmd, {
 					type: 'i',
 					value: getOptNumber(action, 'page', 0),
 				})
-				await sendOsc('/-stat/screen/screen', { type: 'i', value: 4 })
+				sendOsc('/-stat/screen/screen', { type: 'i', value: 4 })
 			},
 		},
 		[ActionId.FxPage]: {
@@ -2057,11 +2057,11 @@ export function GetActionsList(
 			],
 			callback: async (action): Promise<void> => {
 				const cmd = `/-stat/screen/FX/page`
-				await sendOsc(cmd, {
+				sendOsc(cmd, {
 					type: 'i',
 					value: getOptNumber(action, 'page', 0),
 				})
-				await sendOsc('/-stat/screen/screen', { type: 'i', value: 5 })
+				sendOsc('/-stat/screen/screen', { type: 'i', value: 5 })
 			},
 		},
 		[ActionId.MonPage]: {
@@ -2093,11 +2093,11 @@ export function GetActionsList(
 			],
 			callback: async (action): Promise<void> => {
 				const cmd = `/-stat/screen/MON/page`
-				await sendOsc(cmd, {
+				sendOsc(cmd, {
 					type: 'i',
 					value: getOptNumber(action, 'page', 0),
 				})
-				await sendOsc('/-stat/screen/screen', { type: 'i', value: 6 })
+				sendOsc('/-stat/screen/screen', { type: 'i', value: 6 })
 			},
 		},
 		[ActionId.USBPage]: {
@@ -2121,11 +2121,11 @@ export function GetActionsList(
 			],
 			callback: async (action): Promise<void> => {
 				const cmd = `/-stat/screen/USB/page`
-				await sendOsc(cmd, {
+				sendOsc(cmd, {
 					type: 'i',
 					value: getOptNumber(action, 'page', 0),
 				})
-				await sendOsc('/-stat/screen/screen', { type: 'i', value: 7 })
+				sendOsc('/-stat/screen/screen', { type: 'i', value: 7 })
 			},
 		},
 		[ActionId.ScenePage]: {
@@ -2165,11 +2165,11 @@ export function GetActionsList(
 			],
 			callback: async (action): Promise<void> => {
 				const cmd = `/-stat/screen/SCENE/page`
-				await sendOsc(cmd, {
+				sendOsc(cmd, {
 					type: 'i',
 					value: getOptNumber(action, 'page', 0),
 				})
-				await sendOsc('/-stat/screen/screen', { type: 'i', value: 8 })
+				sendOsc('/-stat/screen/screen', { type: 'i', value: 8 })
 			},
 		},
 		[ActionId.AssignPage]: {
@@ -2201,11 +2201,11 @@ export function GetActionsList(
 			],
 			callback: async (action): Promise<void> => {
 				const cmd = `/-stat/screen/ASSIGN/page`
-				await sendOsc(cmd, {
+				sendOsc(cmd, {
 					type: 'i',
 					value: getOptNumber(action, 'page', 0),
 				})
-				await sendOsc('/-stat/screen/screen', { type: 'i', value: 9 })
+				sendOsc('/-stat/screen/screen', { type: 'i', value: 9 })
 			},
 		},
 		[ActionId.NextPrevPage]: {
@@ -2283,7 +2283,7 @@ export function GetActionsList(
 				if (gotoPageIndex < 0) gotoPageIndex = 0
 				else if (gotoPageIndex >= pages) gotoPageIndex = pages - 1
 
-				await sendOsc(cmd, {
+				sendOsc(cmd, {
 					type: 'i',
 					value: gotoPageIndex,
 				})

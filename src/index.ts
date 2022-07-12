@@ -71,7 +71,7 @@ class X32Instance extends InstanceBase<X32Config> implements InstanceBaseExt<X32
 		this.x32Subscriptions = new X32Subscriptions()
 		this.transitions = new X32Transitions(this)
 
-		this.debounceUpdateCompanionBits = debounceFn(this.updateCompanionBits, {
+		this.debounceUpdateCompanionBits = debounceFn(this.updateCompanionBits.bind(this), {
 			wait: 100,
 			maxWait: 500,
 			before: false,
@@ -83,9 +83,7 @@ class X32Instance extends InstanceBase<X32Config> implements InstanceBaseExt<X32
 				console.log('fire feedbacks')
 				const feedbacks = Array.from(this.messageFeedbacks)
 				this.messageFeedbacks.clear()
-				this.checkFeedbacks(...feedbacks).catch((_e) => {
-					// TODO
-				})
+				this.checkFeedbacks(...feedbacks)
 			},
 			{
 				wait: 100,
@@ -97,7 +95,7 @@ class X32Instance extends InstanceBase<X32Config> implements InstanceBaseExt<X32
 	}
 
 	// Override base types to make types stricter
-	public async checkFeedbacks(...feedbackTypes: FeedbackId[]): Promise<void> {
+	public checkFeedbacks(...feedbackTypes: FeedbackId[]): void {
 		return super.checkFeedbacks(...feedbackTypes)
 	}
 
@@ -113,7 +111,7 @@ class X32Instance extends InstanceBase<X32Config> implements InstanceBaseExt<X32
 
 		X32DeviceDetectorInstance.subscribe(this.id)
 
-		await this.updateCompanionBits()
+		this.updateCompanionBits()
 	}
 
 	/**
@@ -131,7 +129,7 @@ class X32Instance extends InstanceBase<X32Config> implements InstanceBaseExt<X32
 		if (this.config.host !== undefined) {
 			this.updateStatus('connecting')
 			this.setupOscSocket()
-			await this.updateCompanionBits()
+			this.updateCompanionBits()
 		}
 	}
 
@@ -145,7 +143,7 @@ class X32Instance extends InstanceBase<X32Config> implements InstanceBaseExt<X32
 	/**
 	 * Clean up the instance before it is destroyed.
 	 */
-	public destroy(): void {
+	public async destroy(): Promise<void> {
 		if (this.reconnectTimer) {
 			clearTimeout(this.reconnectTimer)
 			this.reconnectTimer = undefined
@@ -180,21 +178,18 @@ class X32Instance extends InstanceBase<X32Config> implements InstanceBaseExt<X32
 		this.log('debug', 'destroy')
 	}
 
-	private async updateCompanionBits(): Promise<void> {
-		await Promise.all([
-			InitVariables(this, this.x32State),
-			this.setPresetDefinitions(GetPresetsList(this, this.x32State)),
-			this.setFeedbackDefinitions(GetFeedbacksList(this, this.x32State, this.x32Subscriptions, this.queueEnsureLoaded)),
-			this.setActionDefinitions(GetActionsList(this, this.transitions, this.x32State, this.queueEnsureLoaded)),
-		])
-
-		await this.checkFeedbacks()
-		await updateNameVariables(this, this.x32State)
+	private updateCompanionBits(): void {
+		InitVariables(this, this.x32State)
+		this.setPresetDefinitions(GetPresetsList(this, this.x32State))
+		this.setFeedbackDefinitions(GetFeedbacksList(this, this.x32State, this.x32Subscriptions, this.queueEnsureLoaded))
+		this.setActionDefinitions(GetActionsList(this, this.transitions, this.x32State, this.queueEnsureLoaded))
+		this.checkFeedbacks()
+		updateNameVariables(this, this.x32State)
 
 		// Ensure all feedbacks & actions have an initial value, if we are connected
 		if (this.heartbeat) {
-			this.subscribeFeedbacks()
-			this.subscribeActions()
+			this._subscribeFeedbacks()
+			this._subscribeActions()
 		}
 	}
 

@@ -1,4 +1,5 @@
 **/node_modules
-dist/
-pkg/
+/dist/
+/pkg/
+/pkg.tgz
 *.log
