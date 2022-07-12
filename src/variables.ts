@@ -4,14 +4,14 @@ import osc from 'osc'
 import { GetTargetChoices } from './choices.js'
 import { MainPath } from './paths.js'
 import { formatDb, floatToDB, InstanceBaseExt } from './util.js'
-import { CompanionVariable, CompanionVariableValue2 } from '@companion-module/base'
+import { CompanionVariableDefinition, CompanionVariableValues } from '@companion-module/base'
 
 function sanitiseName(name: string): string {
 	return name.replace(/\//g, '_')
 }
 
 export async function InitVariables(instance: InstanceBaseExt<X32Config>, state: X32State): Promise<void> {
-	const variables: CompanionVariable[] = [
+	const variables: CompanionVariableDefinition[] = [
 		{
 			name: 'Device name',
 			variableId: 'm_name',
@@ -47,16 +47,10 @@ export async function InitVariables(instance: InstanceBaseExt<X32Config>, state:
 	}
 
 	await instance.setVariableDefinitions(variables)
-	await instance.setVariableValues([
-		{
-			variableId: 'tape_time_hms',
-			value: `--:--:--`,
-		},
-		{
-			variableId: 'tape_time_ms',
-			value: `--:--`,
-		},
-	])
+	await instance.setVariableValues({
+		tape_time_hms: `--:--:--`,
+		tape_time_ms: `--:--`,
+	})
 }
 
 export async function updateDeviceInfoVariables(
@@ -71,20 +65,11 @@ export async function updateDeviceInfoVariables(
 			return ''
 		}
 	}
-	await instance.setVariableValues([
-		{
-			variableId: 'm_variableId',
-			value: getStringArg(1),
-		},
-		{
-			variableId: 'm_model',
-			value: getStringArg(2),
-		},
-		{
-			variableId: 'm_fw',
-			value: getStringArg(3),
-		},
-	])
+	await instance.setVariableValues({
+		m_variableId: getStringArg(1),
+		m_model: getStringArg(2),
+		m_fw: getStringArg(3),
+	})
 }
 
 export async function updateTapeTime(instance: InstanceBaseExt<X32Config>, state: X32State): Promise<void> {
@@ -93,35 +78,23 @@ export async function updateTapeTime(instance: InstanceBaseExt<X32Config>, state
 	const hh = `${Math.floor(time / 3600)}`.padStart(2, '0')
 	const mm = `${Math.floor(time / 60) % 60}`.padStart(2, '0')
 	const ss = `${time % 60}`.padStart(2, '0')
-	await instance.setVariableValues([
-		{
-			variableId: 'tape_time_hms',
-			value: `${hh}:${mm}:${ss}`,
-		},
-		{
-			variableId: 'tape_time_ms',
-			value: `${mm}:${ss}`,
-		},
-	])
+	await instance.setVariableValues({
+		tape_time_hms: `${hh}:${mm}:${ss}`,
+		tape_time_ms: `${mm}:${ss}`,
+	})
 }
 
 export async function updateNameVariables(instance: InstanceBaseExt<X32Config>, state: X32State): Promise<void> {
-	const variables: CompanionVariableValue2[] = []
+	const variables: CompanionVariableValues = {}
 	const targets = GetTargetChoices(state, { includeMain: true, defaultNames: true })
 	for (const target of targets) {
 		const nameVal = state.get(`${target.id}/config/name`)
 		const nameStr = nameVal && nameVal[0]?.type === 's' ? nameVal[0].value : ''
-		variables.push({
-			variableId: `name${sanitiseName(target.id as string)}`,
-			value: nameStr || target.label,
-		})
+		variables[`name${sanitiseName(target.id as string)}`] = nameStr || target.label
 
 		const faderVal = state.get(`${MainPath(target.id as string)}/fader`)
 		const faderNum = faderVal && faderVal[0]?.type === 'f' ? faderVal[0].value : NaN
-		variables.push({
-			variableId: `fader${sanitiseName(target.id as string)}`,
-			value: isNaN(faderNum) ? '-' : formatDb(floatToDB(faderNum)),
-		})
+		variables[`fader${sanitiseName(target.id as string)}`] = isNaN(faderNum) ? '-' : formatDb(floatToDB(faderNum))
 	}
 	await instance.setVariableValues(variables)
 }

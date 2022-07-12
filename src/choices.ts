@@ -1,8 +1,8 @@
 import {
 	CompanionInputFieldDropdown,
 	CompanionInputFieldNumber,
-	ConfigValue,
 	DropdownChoice,
+	DropdownChoiceId,
 } from '@companion-module/base'
 import { X32State } from './state.js'
 import { padNumber } from './util.js'
@@ -137,7 +137,7 @@ export const FadeDurationChoice: CompanionInputFieldNumber = {
 	max: 60000,
 }
 
-export function convertChoices(choices: DropdownChoice[]): { choices: DropdownChoice[]; default: ConfigValue } {
+export function convertChoices(choices: DropdownChoice[]): { choices: DropdownChoice[]; default: DropdownChoiceId } {
 	return {
 		choices,
 		default: choices[0].id,

@@ -28,12 +28,15 @@ import { NumberComparitorPicker } from './input.js'
 import { SetRequired } from 'type-fest'
 import {
 	combineRgb,
-	CompanionFeedbackBoolean,
-	CompanionFeedbackEvent,
-	CompanionFeedbacks,
+	CompanionBooleanFeedbackDefinition,
+	CompanionFeedbackDefinitions,
+	CompanionFeedbackInfo,
 } from '@companion-module/base'
 
-type CompanionFeedbackWithCallback = SetRequired<CompanionFeedbackBoolean, 'callback' | 'subscribe' | 'unsubscribe'>
+type CompanionFeedbackWithCallback = SetRequired<
+	CompanionBooleanFeedbackDefinition,
+	'callback' | 'subscribe' | 'unsubscribe'
+>
 
 export enum FeedbackId {
 	Mute = 'mute',
@@ -82,7 +85,7 @@ function getDataNumber(data: osc.MetaArgument[] | undefined, index: number): num
 	return val?.type === 'i' || val?.type === 'f' ? val.value : undefined
 }
 
-const getOptNumber = (event: CompanionFeedbackEvent, key: string, defVal?: number): number => {
+const getOptNumber = (event: CompanionFeedbackInfo, key: string, defVal?: number): number => {
 	const rawVal = event.options[key]
 	if (defVal !== undefined && rawVal === undefined) return defVal
 	const val = Number(rawVal)
@@ -96,12 +99,12 @@ function subscribeFeedback(
 	ensureLoaded: (path: string) => void,
 	subs: X32Subscriptions,
 	path: string,
-	evt: CompanionFeedbackEvent
+	evt: CompanionFeedbackInfo
 ): void {
 	subs.subscribe(path, evt.id, evt.type as FeedbackId)
 	ensureLoaded(path)
 }
-function unsubscribeFeedback(subs: X32Subscriptions, path: string, evt: CompanionFeedbackEvent): void {
+function unsubscribeFeedback(subs: X32Subscriptions, path: string, evt: CompanionFeedbackInfo): void {
 	subs.unsubscribe(path, evt.id)
 }
 
@@ -110,7 +113,7 @@ export function GetFeedbacksList(
 	state: X32State,
 	subs: X32Subscriptions,
 	ensureLoaded: (path: string) => void
-): CompanionFeedbacks {
+): CompanionFeedbackDefinitions {
 	const levelsChoices = GetLevelsChoiceConfigs(state)
 	const panningChoices = GetPanningChoiceConfigs(state)
 	const muteGroups = GetMuteGroupChoices(state)
@@ -140,16 +143,16 @@ export function GetFeedbacksList(
 				bgcolor: combineRgb(255, 0, 0),
 				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const data = state.get(MutePath(evt.options.target as string))
 				const muted = getDataNumber(data, 0) === 0
 				return muted === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = MutePath(evt.options.target as string)
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = MutePath(evt.options.target as string)
 				unsubscribeFeedback(subs, path, evt)
 			},
@@ -176,16 +179,16 @@ export function GetFeedbacksList(
 				bgcolor: combineRgb(255, 0, 0),
 				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const data = state.get(evt.options.mute_grp as string)
 				const muted = getDataNumber(data, 0) === 1
 				return muted === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = evt.options.mute_grp as string
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = evt.options.mute_grp as string
 				unsubscribeFeedback(subs, path, evt)
 			},
@@ -218,17 +221,17 @@ export function GetFeedbacksList(
 				bgcolor: combineRgb(255, 0, 0),
 				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const path = `${MainPath(evt.options.source as string)}/${evt.options.target}`
 				const data = path ? state.get(path) : undefined
 				const muted = getDataNumber(data, 0) === 0
 				return muted === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `${MainPath(evt.options.source as string)}/${evt.options.target}`
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `${MainPath(evt.options.source as string)}/${evt.options.target}`
 				unsubscribeFeedback(subs, path, evt)
 			},
@@ -261,17 +264,17 @@ export function GetFeedbacksList(
 				bgcolor: combineRgb(255, 0, 0),
 				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const path = `${MainPath(evt.options.source as string)}/${evt.options.target}/on`
 				const data = path ? state.get(path) : undefined
 				const muted = getDataNumber(data, 0) === 0
 				return muted === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `${MainPath(evt.options.source as string)}/${evt.options.target}/on`
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `${MainPath(evt.options.source as string)}/${evt.options.target}/on`
 				unsubscribeFeedback(subs, path, evt)
 			},
@@ -294,7 +297,7 @@ export function GetFeedbacksList(
 				bgcolor: combineRgb(0, 255, 0),
 				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const currentState = state.get(MainFaderPath(evt.options))
 				const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0]?.value : undefined
 				return (
@@ -306,7 +309,7 @@ export function GetFeedbacksList(
 				const path = MainFaderPath(evt.options)
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = MainFaderPath(evt.options)
 				unsubscribeFeedback(subs, path, evt)
 			},
@@ -335,7 +338,7 @@ export function GetFeedbacksList(
 				bgcolor: combineRgb(0, 255, 0),
 				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const currentState = state.get(SendChannelToBusPath(evt.options))
 				const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0]?.value : undefined
 				return (
@@ -347,7 +350,7 @@ export function GetFeedbacksList(
 				const path = SendChannelToBusPath(evt.options)
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = SendChannelToBusPath(evt.options)
 				unsubscribeFeedback(subs, path, evt)
 			},
@@ -376,7 +379,7 @@ export function GetFeedbacksList(
 				bgcolor: combineRgb(0, 255, 0),
 				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const currentState = state.get(SendBusToMatrixPath(evt.options))
 				const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0]?.value : undefined
 				return (
@@ -388,7 +391,7 @@ export function GetFeedbacksList(
 				const path = SendBusToMatrixPath(evt.options)
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = SendBusToMatrixPath(evt.options)
 				unsubscribeFeedback(subs, path, evt)
 			},
@@ -412,7 +415,7 @@ export function GetFeedbacksList(
 				bgcolor: combineRgb(0, 255, 0),
 				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const currentState = state.get(MainPanPath(evt.options))
 				const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0]?.value : undefined
 				return (
@@ -424,7 +427,7 @@ export function GetFeedbacksList(
 				const path = MainPanPath(evt.options)
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = MainPanPath(evt.options)
 				unsubscribeFeedback(subs, path, evt)
 			},
@@ -453,7 +456,7 @@ export function GetFeedbacksList(
 				bgcolor: combineRgb(0, 255, 0),
 				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const currentState = state.get(ChannelToBusPanPath(evt.options))
 				const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0]?.value : undefined
 				return (
@@ -465,7 +468,7 @@ export function GetFeedbacksList(
 				const path = ChannelToBusPanPath(evt.options)
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = ChannelToBusPanPath(evt.options)
 				unsubscribeFeedback(subs, path, evt)
 			},
@@ -494,7 +497,7 @@ export function GetFeedbacksList(
 				bgcolor: combineRgb(0, 255, 0),
 				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const currentState = state.get(BusToMatrixPanPath(evt.options))
 				const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0]?.value : undefined
 				return (
@@ -506,7 +509,7 @@ export function GetFeedbacksList(
 				const path = BusToMatrixPanPath(evt.options)
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = BusToMatrixPanPath(evt.options)
 				unsubscribeFeedback(subs, path, evt)
 			},
@@ -542,17 +545,17 @@ export function GetFeedbacksList(
 				bgcolor: combineRgb(255, 0, 0),
 				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const path = `/-stat/talk/${evt.options.channel}`
 				const data = path ? state.get(path) : undefined
 				const isOn = getDataNumber(data, 0) !== 0
 				return isOn === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/talk/${evt.options.channel}`
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/talk/${evt.options.channel}`
 				unsubscribeFeedback(subs, path, evt)
 			},
@@ -573,17 +576,17 @@ export function GetFeedbacksList(
 				bgcolor: combineRgb(255, 0, 0),
 				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const path = `/-stat/osc/on`
 				const data = path ? state.get(path) : undefined
 				const isOn = getDataNumber(data, 0) !== 0
 				return isOn === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/osc/on`
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/osc/on`
 				unsubscribeFeedback(subs, path, evt)
 			},
@@ -604,17 +607,17 @@ export function GetFeedbacksList(
 				bgcolor: combineRgb(255, 0, 0),
 				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const path = `/config/osc/dest`
 				const data = path ? state.get(path) : undefined
 				const destination = getDataNumber(data, 0)
 				return destination === Number(evt.options.destination)
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/config/osc/dest`
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/config/osc/dest`
 				unsubscribeFeedback(subs, path, evt)
 			},
@@ -641,19 +644,19 @@ export function GetFeedbacksList(
 				bgcolor: combineRgb(255, 127, 0),
 				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const ch = `${getOptNumber(evt, 'solo') + 1}`.padStart(2, '0')
 				const path = `/-stat/solosw/${ch}`
 				const data = path ? state.get(path) : undefined
 				const isOn = getDataNumber(data, 0) !== 0
 				return isOn === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const ch = `${getOptNumber(evt, 'solo') + 1}`.padStart(2, '0')
 				const path = `/-stat/solosw/${ch}`
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const ch = `${getOptNumber(evt, 'solo') + 1}`.padStart(2, '0')
 				const path = `/-stat/solosw/${ch}`
 				unsubscribeFeedback(subs, path, evt)
@@ -675,17 +678,17 @@ export function GetFeedbacksList(
 				bgcolor: combineRgb(0, 255, 127),
 				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const path = `/-stat/selidx`
 				const data = path ? state.get(path) : undefined
 				const selectedChannel = getDataNumber(data, 0)
 				return selectedChannel == evt.options.select
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/selidx`
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/selidx`
 				unsubscribeFeedback(subs, path, evt)
 			},
@@ -712,19 +715,19 @@ export function GetFeedbacksList(
 				bgcolor: combineRgb(255, 127, 0),
 				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const ch = `${getOptNumber(evt, 'solo') + 1}`.padStart(2, '0')
 				const path = `/-stat/solosw/${ch}`
 				const data = path ? state.get(path) : undefined
 				const isOn = getDataNumber(data, 0) !== 0
 				return isOn === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const ch = `${getOptNumber(evt, 'solo') + 1}`.padStart(2, '0')
 				const path = `/-stat/solosw/${ch}`
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const ch = `${getOptNumber(evt, 'solo') + 1}`.padStart(2, '0')
 				const path = `/-stat/solosw/${ch}`
 				unsubscribeFeedback(subs, path, evt)
@@ -746,17 +749,17 @@ export function GetFeedbacksList(
 				bgcolor: combineRgb(255, 127, 0),
 				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const path = `/-stat/solo`
 				const data = path ? state.get(path) : undefined
 				const isOn = getDataNumber(data, 0) !== 0
 				return isOn === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/solo`
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/solo`
 				unsubscribeFeedback(subs, path, evt)
 			},
@@ -777,17 +780,17 @@ export function GetFeedbacksList(
 				bgcolor: combineRgb(255, 127, 0),
 				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const path = `/-stat/sendsonfader`
 				const data = path ? state.get(path) : undefined
 				const isOn = getDataNumber(data, 0) !== 0
 				return isOn === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/sendsonfader`
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/sendsonfader`
 				unsubscribeFeedback(subs, path, evt)
 			},
@@ -808,17 +811,17 @@ export function GetFeedbacksList(
 				bgcolor: combineRgb(255, 127, 0),
 				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const path = `/config/solo/mono`
 				const data = path ? state.get(path) : undefined
 				const isOn = getDataNumber(data, 0) !== 0
 				return isOn === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/config/solo/mono`
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/config/solo/mono`
 				unsubscribeFeedback(subs, path, evt)
 			},
@@ -839,17 +842,17 @@ export function GetFeedbacksList(
 				bgcolor: combineRgb(255, 127, 0),
 				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const path = `/config/solo/dim`
 				const data = path ? state.get(path) : undefined
 				const isOn = getDataNumber(data, 0) !== 0
 				return isOn === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/config/solo/dim`
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/config/solo/dim`
 				unsubscribeFeedback(subs, path, evt)
 			},
@@ -870,16 +873,16 @@ export function GetFeedbacksList(
 				bgcolor: combineRgb(255, 0, 0),
 				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const path = `/-stat/tape/state`
 				const data = path ? state.get(path) : undefined
 				return getDataNumber(data, 0) == evt.options.tapeFunc
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/tape/state`
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/tape/state`
 				unsubscribeFeedback(subs, path, evt)
 			},
@@ -924,17 +927,17 @@ export function GetFeedbacksList(
 				bgcolor: combineRgb(0, 255, 127),
 				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const path = `/-stat/chfaderbank`
 				const data = path ? state.get(path) : undefined
 				const isOn = getDataNumber(data, 0) == evt.options.bank
 				return isOn === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/chfaderbank`
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/chfaderbank`
 				unsubscribeFeedback(subs, path, evt)
 			},
@@ -979,17 +982,17 @@ export function GetFeedbacksList(
 				bgcolor: combineRgb(0, 255, 127),
 				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const path = `/-stat/grpfaderbank`
 				const data = path ? state.get(path) : undefined
 				const isOn = getDataNumber(data, 0) == evt.options.bank
 				return isOn === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/grpfaderbank`
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/grpfaderbank`
 				unsubscribeFeedback(subs, path, evt)
 			},
@@ -1050,17 +1053,17 @@ export function GetFeedbacksList(
 				bgcolor: combineRgb(0, 255, 127),
 				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const path = `/-stat/chfaderbank`
 				const data = path ? state.get(path) : undefined
 				const isOn = getDataNumber(data, 0) == evt.options.bank
 				return isOn === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/chfaderbank`
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/chfaderbank`
 				unsubscribeFeedback(subs, path, evt)
 			},
@@ -1129,17 +1132,17 @@ export function GetFeedbacksList(
 				bgcolor: combineRgb(0, 255, 127),
 				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const path = `/-stat/grpfaderbank`
 				const data = path ? state.get(path) : undefined
 				const isOn = getDataNumber(data, 0) == evt.options.bank
 				return isOn === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/grpfaderbank`
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/grpfaderbank`
 				unsubscribeFeedback(subs, path, evt)
 			},
@@ -1183,17 +1186,17 @@ export function GetFeedbacksList(
 				bgcolor: combineRgb(255, 127, 0),
 				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const path = `/-stat/bussendbank`
 				const data = path ? state.get(path) : undefined
 				const isOn = getDataNumber(data, 0) == evt.options.bank
 				return isOn === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/bussendbank`
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/bussendbank`
 				unsubscribeFeedback(subs, path, evt)
 			},
@@ -1233,17 +1236,17 @@ export function GetFeedbacksList(
 				bgcolor: combineRgb(255, 127, 0),
 				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const path = `/-stat/userbank`
 				const data = path ? state.get(path) : undefined
 				const isOn = getDataNumber(data, 0) == evt.options.bank
 				return isOn === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/userbank`
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/userbank`
 				unsubscribeFeedback(subs, path, evt)
 			},
@@ -1311,17 +1314,17 @@ export function GetFeedbacksList(
 				bgcolor: combineRgb(0, 255, 127),
 				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const path = `/-stat/screen/screen`
 				const data = path ? state.get(path) : undefined
 				const isOn = getDataNumber(data, 0) == evt.options.screen
 				return isOn === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/screen/screen`
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/screen/screen`
 				unsubscribeFeedback(subs, path, evt)
 			},
@@ -1342,17 +1345,17 @@ export function GetFeedbacksList(
 				bgcolor: combineRgb(255, 0, 0),
 				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const path = `/-stat/screen/mutegrp`
 				const data = path ? state.get(path) : undefined
 				const isOn = getDataNumber(data, 0) !== 0
 				return isOn === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/screen/mutegrp`
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/screen/mutegrp`
 				unsubscribeFeedback(subs, path, evt)
 			},
@@ -1373,17 +1376,17 @@ export function GetFeedbacksList(
 				bgcolor: combineRgb(0, 255, 127),
 				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const path = `/-stat/screen/utils`
 				const data = path ? state.get(path) : undefined
 				const isOn = getDataNumber(data, 0) !== 0
 				return isOn === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/screen/utils`
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/screen/utils`
 				unsubscribeFeedback(subs, path, evt)
 			},
@@ -1439,17 +1442,17 @@ export function GetFeedbacksList(
 				bgcolor: combineRgb(0, 255, 127),
 				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const screen = state.get('/-stat/screen/screen')
 				const page = state.get('/-stat/screen/CHAN/page')
 				const isOn = getDataNumber(screen, 0) === 0 && getDataNumber(page, 0) == evt.options.page
 				return isOn === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/screen', evt)
 				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/CHAN/page', evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				unsubscribeFeedback(subs, '/-stat/screen/screen', evt)
 				unsubscribeFeedback(subs, '/-stat/screen/CHAN/page', evt)
 			},
@@ -1501,17 +1504,17 @@ export function GetFeedbacksList(
 				bgcolor: combineRgb(0, 255, 127),
 				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const screen = state.get('/-stat/screen/screen')
 				const page = state.get('/-stat/screen/METER/page')
 				const isOn = getDataNumber(screen, 0) === 1 && getDataNumber(page, 0) == evt.options.page
 				return isOn === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/screen', evt)
 				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/METER/page', evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				unsubscribeFeedback(subs, '/-stat/screen/screen', evt)
 				unsubscribeFeedback(subs, '/-stat/screen/METER/page', evt)
 			},
@@ -1575,17 +1578,17 @@ export function GetFeedbacksList(
 				bgcolor: combineRgb(0, 255, 127),
 				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const screen = state.get('/-stat/screen/screen')
 				const page = state.get('/-stat/screen/ROUTE/page')
 				const isOn = getDataNumber(screen, 0) === 2 && getDataNumber(page, 0) == evt.options.page
 				return isOn === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/screen', evt)
 				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/ROUTE/page', evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				unsubscribeFeedback(subs, '/-stat/screen/screen', evt)
 				unsubscribeFeedback(subs, '/-stat/screen/ROUTE/page', evt)
 			},
@@ -1641,17 +1644,17 @@ export function GetFeedbacksList(
 				bgcolor: combineRgb(0, 255, 127),
 				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const screen = state.get('/-stat/screen/screen')
 				const page = state.get('/-stat/screen/SETUP/page')
 				const isOn = getDataNumber(screen, 0) === 3 && getDataNumber(page, 0) == evt.options.page
 				return isOn === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/screen', evt)
 				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/SETUP/page', evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				unsubscribeFeedback(subs, '/-stat/screen/screen', evt)
 				unsubscribeFeedback(subs, '/-stat/screen/SETUP/page', evt)
 			},
@@ -1695,17 +1698,17 @@ export function GetFeedbacksList(
 				bgcolor: combineRgb(0, 255, 127),
 				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const screen = state.get('/-stat/screen/screen')
 				const page = state.get('/-stat/screen/LIB/page')
 				const isOn = getDataNumber(screen, 0) === 4 && getDataNumber(page, 0) == evt.options.page
 				return isOn === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/screen', evt)
 				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/LIB/page', evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				unsubscribeFeedback(subs, '/-stat/screen/screen', evt)
 				unsubscribeFeedback(subs, '/-stat/screen/LIB/page', evt)
 			},
@@ -1769,17 +1772,17 @@ export function GetFeedbacksList(
 				bgcolor: combineRgb(0, 255, 127),
 				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const screen = state.get('/-stat/screen/screen')
 				const page = state.get('/-stat/screen/FX/page')
 				const isOn = getDataNumber(screen, 0) === 5 && getDataNumber(page, 0) == evt.options.page
 				return isOn === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/screen', evt)
 				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/FX/page', evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				unsubscribeFeedback(subs, '/-stat/screen/screen', evt)
 				unsubscribeFeedback(subs, '/-stat/screen/FX/page', evt)
 			},
@@ -1823,17 +1826,17 @@ export function GetFeedbacksList(
 				bgcolor: combineRgb(0, 255, 127),
 				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const screen = state.get('/-stat/screen/screen')
 				const page = state.get('/-stat/screen/MON/page')
 				const isOn = getDataNumber(screen, 0) === 6 && getDataNumber(page, 0) == evt.options.page
 				return isOn === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/screen', evt)
 				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/MON/page', evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				unsubscribeFeedback(subs, '/-stat/screen/screen', evt)
 				unsubscribeFeedback(subs, '/-stat/screen/MON/page', evt)
 			},
@@ -1869,17 +1872,17 @@ export function GetFeedbacksList(
 				bgcolor: combineRgb(0, 255, 127),
 				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const screen = state.get('/-stat/screen/screen')
 				const page = state.get('/-stat/screen/USB/page')
 				const isOn = getDataNumber(screen, 0) === 7 && getDataNumber(page, 0) == evt.options.page
 				return isOn === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/screen', evt)
 				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/USB/page', evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				unsubscribeFeedback(subs, '/-stat/screen/screen', evt)
 				unsubscribeFeedback(subs, '/-stat/screen/USB/page', evt)
 			},
@@ -1931,17 +1934,17 @@ export function GetFeedbacksList(
 				bgcolor: combineRgb(0, 255, 127),
 				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const screen = state.get('/-stat/screen/screen')
 				const page = state.get('/-stat/screen/SCENE/page')
 				const isOn = getDataNumber(screen, 0) === 8 && getDataNumber(page, 0) == evt.options.page
 				return isOn === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/screen', evt)
 				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/SCENE/page', evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				unsubscribeFeedback(subs, '/-stat/screen/screen', evt)
 				unsubscribeFeedback(subs, '/-stat/screen/SCENE/page', evt)
 			},
@@ -1985,17 +1988,17 @@ export function GetFeedbacksList(
 				bgcolor: combineRgb(0, 255, 127),
 				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const screen = state.get('/-stat/screen/screen')
 				const page = state.get('/-stat/screen/ASSIGN/page')
 				const isOn = getDataNumber(screen, 0) === 9 && getDataNumber(page, 0) == evt.options.page
 				return isOn === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/screen', evt)
 				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/ASSIGN/page', evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				unsubscribeFeedback(subs, '/-stat/screen/screen', evt)
 				unsubscribeFeedback(subs, '/-stat/screen/ASSIGN/page', evt)
 			},

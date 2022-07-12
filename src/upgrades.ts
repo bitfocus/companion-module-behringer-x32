@@ -1,6 +1,6 @@
 import {
-	CompanionMigrationAction,
-	CompanionMigrationFeedback,
+	CompanionStaticUpgradeProps,
+	CompanionStaticUpgradeResult,
 	CompanionStaticUpgradeScript,
 	CompanionUpgradeContext,
 } from '@companion-module/base'
@@ -11,13 +11,11 @@ import { padNumber, floatToDB } from './util.js'
 
 export const upgradeV2x0x0: CompanionStaticUpgradeScript<X32Config> = (
 	_context: CompanionUpgradeContext,
-	_config: X32Config | null,
-	actions: CompanionMigrationAction[],
-	_feedbacks: CompanionMigrationFeedback[]
-): boolean => {
-	let changed = false
+	props: CompanionStaticUpgradeProps<X32Config>
+): CompanionStaticUpgradeResult<X32Config> => {
+	const updatedActions: CompanionStaticUpgradeResult<X32Config>['updatedActions'] = []
 
-	for (const action of actions) {
+	for (const action of props.actions) {
 		switch (action.actionId) {
 			case ActionId.Mute:
 			case ActionId.Color:
@@ -40,7 +38,7 @@ export const upgradeV2x0x0: CompanionStaticUpgradeScript<X32Config> = (
 						action.options.fad = floatToDB((action.options.fad ?? 0) as number)
 					}
 
-					changed = true
+					updatedActions.push(action)
 				}
 				break
 			}
@@ -53,7 +51,7 @@ export const upgradeV2x0x0: CompanionStaticUpgradeScript<X32Config> = (
 						action.options.mute = 0
 					}
 
-					changed = true
+					updatedActions.push(action)
 				}
 				break
 			}
@@ -68,7 +66,7 @@ export const upgradeV2x0x0: CompanionStaticUpgradeScript<X32Config> = (
 
 					action.actionId = ActionId.Mute
 
-					changed = true
+					updatedActions.push(action)
 				}
 				break
 			}
@@ -83,7 +81,7 @@ export const upgradeV2x0x0: CompanionStaticUpgradeScript<X32Config> = (
 
 					action.actionId = ActionId.Color
 
-					changed = true
+					updatedActions.push(action)
 				}
 				break
 			}
@@ -94,7 +92,7 @@ export const upgradeV2x0x0: CompanionStaticUpgradeScript<X32Config> = (
 
 					action.actionId = ActionId.Label
 
-					changed = true
+					updatedActions.push(action)
 				}
 				break
 			}
@@ -107,14 +105,18 @@ export const upgradeV2x0x0: CompanionStaticUpgradeScript<X32Config> = (
 
 					action.actionId = ActionId.FaderLevel
 
-					changed = true
+					updatedActions.push(action)
 				}
 				break
 			}
 		}
 	}
 
-	return changed
+	return {
+		updatedConfig: null,
+		updatedFeedbacks: [],
+		updatedActions,
+	}
 }
 
 export const BooleanFeedbackUpgradeMap: {

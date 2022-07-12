@@ -4,10 +4,15 @@ import { FeedbackId } from './feedback.js'
 import { X32State } from './state.js'
 import { GetLevelsChoiceConfigs } from './choices.js'
 import { SetRequired } from 'type-fest'
-import { combineRgb, CompanionPresetFeedback, CompanionPresetPress, SomeCompanionPreset } from '@companion-module/base'
+import {
+	combineRgb,
+	CompanionPresetDefinitions,
+	CompanionPresetFeedback,
+	CompanionPressButtonPresetDefinition,
+} from '@companion-module/base'
 import { InstanceBaseExt } from './util.js'
 
-interface CompanionPresetExt extends CompanionPresetPress {
+interface CompanionPresetExt extends CompanionPressButtonPresetDefinition {
 	feedbacks: Array<
 		{
 			type: FeedbackId
@@ -25,8 +30,10 @@ interface CompanionPresetExt extends CompanionPresetPress {
 	// >
 }
 
-export function GetPresetsList(_instance: InstanceBaseExt<X32Config>, state: X32State): SomeCompanionPreset[] {
-	const presets: CompanionPresetExt[] = []
+export function GetPresetsList(_instance: InstanceBaseExt<X32Config>, state: X32State): CompanionPresetDefinitions {
+	const presets: {
+		[id: string]: CompanionPresetExt | undefined
+	} = {}
 
 	const levelsChoices = GetLevelsChoiceConfigs(state)
 
@@ -37,17 +44,17 @@ export function GetPresetsList(_instance: InstanceBaseExt<X32Config>, state: X32
 	const sampleBusSendTarget = levelsChoices.busSendTargets[0]
 
 	if (sampleChannel) {
-		presets.push({
-			label: 'Dip fader level',
+		presets['dip-fader-level'] = {
+			name: 'Dip fader level',
 			category: 'Dip level',
-			bank: {
+			type: 'press',
+			style: {
 				text: 'Dip fader',
-				style: 'press',
 				size: 'auto',
 				color: combineRgb(255, 255, 255),
 				bgcolor: combineRgb(0, 0, 0),
 			},
-			action_sets: {
+			actions: {
 				down: [
 					{
 						actionId: ActionId.FaderLevelStore,
@@ -75,21 +82,21 @@ export function GetPresetsList(_instance: InstanceBaseExt<X32Config>, state: X32
 				],
 			},
 			feedbacks: [],
-		})
+		}
 	}
 
 	if (sampleInput && sampleChannelSendTarget) {
-		presets.push({
-			label: 'Dip channel to bus send',
+		presets['dip-channel-to-bus-send'] = {
+			name: 'Dip channel to bus send',
 			category: 'Dip level',
-			bank: {
+			type: 'press',
+			style: {
 				text: 'Dip channel send',
-				style: 'press',
 				size: 'auto',
 				color: combineRgb(255, 255, 255),
 				bgcolor: combineRgb(0, 0, 0),
 			},
-			action_sets: {
+			actions: {
 				down: [
 					{
 						actionId: ActionId.ChannelSendLevelStore,
@@ -120,21 +127,21 @@ export function GetPresetsList(_instance: InstanceBaseExt<X32Config>, state: X32
 				],
 			},
 			feedbacks: [],
-		})
+		}
 	}
 
 	if (sampleBusSendSource && sampleBusSendTarget) {
-		presets.push({
-			label: 'Dip bus to matrix send',
+		presets['dip-bus-to-matrix-send'] = {
+			name: 'Dip bus to matrix send',
 			category: 'Dip level',
-			bank: {
+			type: 'press',
+			style: {
 				text: 'Dip bus send',
-				style: 'press',
 				size: 'auto',
 				color: combineRgb(255, 255, 255),
 				bgcolor: combineRgb(0, 0, 0),
 			},
-			action_sets: {
+			actions: {
 				down: [
 					{
 						actionId: ActionId.BusSendLevelStore,
@@ -165,7 +172,7 @@ export function GetPresetsList(_instance: InstanceBaseExt<X32Config>, state: X32
 				],
 			},
 			feedbacks: [],
-		})
+		}
 	}
 
 	return presets

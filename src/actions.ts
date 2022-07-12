@@ -38,7 +38,12 @@ import {
 import { SetRequired } from 'type-fest'
 import { X32Transitions } from './transitions.js'
 import { format as formatDate } from 'date-fns'
-import { CompanionAction, CompanionActionEvent, CompanionActionInfo, CompanionActions } from '@companion-module/base'
+import {
+	CompanionActionDefinition,
+	CompanionActionEvent,
+	CompanionActionInfo,
+	CompanionActionDefinitions,
+} from '@companion-module/base'
 
 export enum ActionId {
 	Mute = 'mute',
@@ -112,14 +117,14 @@ export enum ActionId {
 	NextPrevPage = 'next-previous-page',
 }
 
-type CompanionActionWithCallback = SetRequired<CompanionAction, 'callback'>
+type CompanionActionWithCallback = SetRequired<CompanionActionDefinition, 'callback'>
 
 export function GetActionsList(
 	self: InstanceBaseExt<X32Config>,
 	transitions: X32Transitions,
 	state: X32State,
 	ensureLoaded: (path: string) => void
-): CompanionActions {
+): CompanionActionDefinitions {
 	const levelsChoices = GetLevelsChoiceConfigs(state)
 	const panningChoices = GetPanningChoiceConfigs(state)
 	const muteGroups = GetMuteGroupChoices(state)

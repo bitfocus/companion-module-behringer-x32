@@ -18,13 +18,20 @@ import {
 	SomeCompanionConfigField,
 	runEntrypoint,
 	CreateConvertToBooleanFeedbackUpgradeScript,
+	EmptyUpgradeScript,
 } from '@companion-module/base'
 import { InstanceBaseExt } from './util.js'
+
+const UpgradeScripts: CompanionStaticUpgradeScript<X32Config>[] = [
+	EmptyUpgradeScript, // Previous version had a script
+	upgradeV2x0x0,
+	CreateConvertToBooleanFeedbackUpgradeScript(BooleanFeedbackUpgradeMap),
+]
 
 /**
  * Companion instance class for the Behringer X32 Mixers.
  */
-export default class X32Instance extends InstanceBase<X32Config> implements InstanceBaseExt<X32Config> {
+class X32Instance extends InstanceBase<X32Config> implements InstanceBaseExt<X32Config> {
 	private osc: osc.UDPPort
 	private x32State: X32State
 	private x32Subscriptions: X32Subscriptions
@@ -55,12 +62,8 @@ export default class X32Instance extends InstanceBase<X32Config> implements Inst
 	/**
 	 * Create an instance of an X32 module.
 	 */
-	constructor(internal: unknown, id: string) {
-		super(internal, id)
-
-		// HACK: for testing upgrade script
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		// ;(config as any)._configIdx = -1
+	constructor(internal: unknown) {
+		super(internal)
 
 		this.osc = new osc.UDPPort({})
 
@@ -91,14 +94,6 @@ export default class X32Instance extends InstanceBase<X32Config> implements Inst
 				after: true,
 			}
 		)
-	}
-
-	public static GetUpgradeScripts(): CompanionStaticUpgradeScript<X32Config>[] {
-		return [
-			() => false, // Previous version had a script
-			upgradeV2x0x0,
-			CreateConvertToBooleanFeedbackUpgradeScript(BooleanFeedbackUpgradeMap),
-		]
 	}
 
 	// Override base types to make types stricter
@@ -444,4 +439,4 @@ export default class X32Instance extends InstanceBase<X32Config> implements Inst
 	}
 }
 
-runEntrypoint(X32Instance)
+runEntrypoint(X32Instance, UpgradeScripts)
