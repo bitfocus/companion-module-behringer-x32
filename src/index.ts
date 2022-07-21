@@ -188,8 +188,8 @@ class X32Instance extends InstanceBase<X32Config> implements InstanceBaseExt<X32
 
 		// Ensure all feedbacks & actions have an initial value, if we are connected
 		if (this.heartbeat) {
-			this._subscribeFeedbacks()
-			this._subscribeActions()
+			this.subscribeFeedbacks()
+			this.subscribeActions()
 		}
 	}
 

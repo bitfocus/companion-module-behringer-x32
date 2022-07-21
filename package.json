@@ -30,7 +30,7 @@
 		"node": "^14"
 	},
 	"dependencies": {
-		"@companion-module/base": "~0.1.0",
+		"@companion-module/base": "~0.1.1",
 		"date-fns": "^2.28.0",
 		"debounce-fn": "^5.1.2",
 		"debug": "^4.3.4",
@@ -39,7 +39,7 @@
 		"type-fest": "^2.16.0"
 	},
 	"devDependencies": {
-		"@companion-module/tools": "^0.1.0",
+		"@companion-module/tools": "^0.1.1",
 		"@types/debug": "^4.1.7",
 		"@types/node": "^14.18.21",
 		"husky": "^8.0.1",

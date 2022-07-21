@@ -1,5 +1,5 @@
 {
-	"id": "bitfocus.behringer-x32",
+	"id": "behringer-x32",
 	"name": "behringer-x32",
 	"shortname": "x32",
 	"description": "Module for controling the Midas M32 and Behringer X32 consoles",
@@ -13,7 +13,7 @@
 			"email": "julian@superfly.tv"
 		}
 	],
-	"legacyIds": ["behringer-x32", "x32"],
+	"legacyIds": ["x32"],
 	"runtime": {
 		"type": "node14",
 		"api": "socket.io",
