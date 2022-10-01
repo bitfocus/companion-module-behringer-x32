@@ -19,6 +19,7 @@ import {
 	runEntrypoint,
 	CreateConvertToBooleanFeedbackUpgradeScript,
 	EmptyUpgradeScript,
+	InstanceStatus,
 } from '@companion-module/base'
 import { InstanceBaseExt } from './util.js'
 
@@ -106,7 +107,7 @@ class X32Instance extends InstanceBase<X32Config> implements InstanceBaseExt<X32
 	public async init(config: X32Config): Promise<void> {
 		this.config = config
 
-		this.updateStatus('connecting')
+		this.updateStatus(InstanceStatus.Connecting)
 		this.setupOscSocket()
 
 		X32DeviceDetectorInstance.subscribe(this.id)
@@ -127,7 +128,7 @@ class X32Instance extends InstanceBase<X32Config> implements InstanceBaseExt<X32
 		this.transitions = new X32Transitions(this)
 
 		if (this.config.host !== undefined) {
-			this.updateStatus('connecting')
+			this.updateStatus(InstanceStatus.Connecting)
 			this.setupOscSocket()
 			this.updateCompanionBits()
 		}
@@ -217,7 +218,7 @@ class X32Instance extends InstanceBase<X32Config> implements InstanceBaseExt<X32
 	}
 
 	private setupOscSocket(): void {
-		this.updateStatus('connecting')
+		this.updateStatus(InstanceStatus.Connecting)
 
 		if (this.reconnectTimer) {
 			clearTimeout(this.reconnectTimer)
@@ -247,7 +248,7 @@ class X32Instance extends InstanceBase<X32Config> implements InstanceBaseExt<X32
 
 		this.osc.on('error', (err: Error): void => {
 			this.log('error', `Error: ${err.message}`)
-			this.updateStatus('connection_failure', err.message)
+			this.updateStatus(InstanceStatus.ConnectionFailure, err.message)
 			this.requestQueue.clear()
 			this.inFlightRequests = {}
 
@@ -303,7 +304,7 @@ class X32Instance extends InstanceBase<X32Config> implements InstanceBaseExt<X32
 			}
 			doSync()
 
-			this.updateStatus('connecting', 'Syncing')
+			this.updateStatus(InstanceStatus.Connecting, 'Syncing')
 		})
 
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -335,7 +336,7 @@ class X32Instance extends InstanceBase<X32Config> implements InstanceBaseExt<X32
 
 			switch (message.address) {
 				case '/xinfo':
-					this.updateStatus('ok')
+					this.updateStatus(InstanceStatus.Ok)
 
 					if (this.reconnectTimer) {
 						// Clear the timer, as it is alive
