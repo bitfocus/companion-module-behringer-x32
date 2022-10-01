@@ -31,3 +31,13 @@ export function ChannelToBusPanPath(options: { [key: string]: InputValue | undef
 export function BusToMatrixPanPath(options: { [key: string]: InputValue | undefined }): string {
 	return `${MainPath(options.source as string)}/${options.target}/pan`
 }
+
+export function UserRouteInPath(channel: InputValue | undefined): string {
+	const paddedChannel = `${channel}`.padStart(2, '0')
+	return `/config/userrout/in/${paddedChannel}`
+}
+
+export function UserRouteOutPath(channel: InputValue | undefined): string {
+	const paddedChannel = `${channel}`.padStart(2, '0')
+	return `/config/userrout/out/${paddedChannel}`
+}
