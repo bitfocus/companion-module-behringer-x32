@@ -34,6 +34,10 @@ export function InitVariables(instance: InstanceSkel<X32Config>, state: X32State
 			label: 'Tape Timestamp hh:mm:ss',
 			name: 'tape_time_hms',
 		},
+		{
+			label: 'Stored channel',
+			name: 'stored_channel',
+		},
 	]
 
 	const targets = GetTargetChoices(state, { includeMain: true, defaultNames: true })
@@ -52,6 +56,7 @@ export function InitVariables(instance: InstanceSkel<X32Config>, state: X32State
 	instance.setVariables({
 		tape_time_hms: `--:--:--`,
 		tape_time_ms: `--:--`,
+		stored_channel: `${state.getStoredChannel()}`,
 	})
 }
 
@@ -96,4 +101,8 @@ export function updateNameVariables(instance: InstanceSkel<X32Config>, state: X3
 		variables[`fader${sanitiseName(target.id as string)}`] = isNaN(faderNum) ? '-' : formatDb(floatToDB(faderNum))
 	}
 	instance.setVariables(variables)
+}
+
+export function updateStoredChannelVariable(instance: InstanceSkel<X32Config>, state: X32State): void {
+	instance.setVariable('stored_channel', `${state.getStoredChannel()}`)
 }

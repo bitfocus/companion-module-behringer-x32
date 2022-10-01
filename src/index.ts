@@ -4,8 +4,14 @@ import { GetActionsList } from './actions'
 import { X32Config, GetConfigFields } from './config'
 import { FeedbackId, GetFeedbacksList } from './feedback'
 import { GetPresetsList } from './presets'
-import { InitVariables, updateDeviceInfoVariables, updateNameVariables, updateTapeTime } from './variables'
-import { X32State, X32Subscriptions } from './state'
+import {
+	InitVariables,
+	updateDeviceInfoVariables,
+	updateNameVariables,
+	updateStoredChannelVariable,
+	updateTapeTime,
+} from './variables'
+import { X32State, X32Subscriptions, IStoredChannelObserver } from './state'
 // eslint-disable-next-line node/no-extraneous-import
 import * as osc from 'osc'
 import { MainPath } from './paths'
@@ -16,10 +22,10 @@ import PQueue from 'p-queue'
 import { X32Transitions } from './transitions'
 import { X32DeviceDetectorInstance } from './device-detector'
 
-/**
- * Companion instance class for the Behringer X32 Mixers.
- */
-class X32Instance extends InstanceSkel<X32Config> {
+class X32Instance extends InstanceSkel<X32Config> implements IStoredChannelObserver {
+	/**
+	 * Companion instance class for the Behringer X32 Mixers.
+	 */
 	private osc: osc.UDPPort
 	private x32State: X32State
 	private x32Subscriptions: X32Subscriptions
@@ -57,10 +63,10 @@ class X32Instance extends InstanceSkel<X32Config> {
 		// ;(config as any)._configIdx = -1
 
 		this.osc = new osc.UDPPort({})
-
 		this.x32State = new X32State()
 		this.x32Subscriptions = new X32Subscriptions()
 		this.transitions = new X32Transitions(this)
+		this.x32State.attach(this)
 
 		this.debounceUpdateCompanionBits = debounceFn(this.updateCompanionBits, {
 			wait: 100,
@@ -83,6 +89,14 @@ class X32Instance extends InstanceSkel<X32Config> {
 				after: true,
 			}
 		)
+	}
+
+	// IStoredChannelObserver
+	storedChannelChanged(): void {
+		updateStoredChannelVariable(this, this.x32State)
+		const list = [FeedbackId.StoredChannel, FeedbackId.RouteUserIn, FeedbackId.RouteUserOut]
+		list.forEach((f) => this.messageFeedbacks.add(f))
+		this.debounceMessageFeedbacks()
 	}
 
 	public static GetUpgradeScripts(): CompanionStaticUpgradeScript[] {
@@ -116,8 +130,10 @@ class X32Instance extends InstanceSkel<X32Config> {
 	 */
 	public updateConfig(config: X32Config): void {
 		this.config = config
-
+		this.x32State.detach(this)
 		this.x32State = new X32State()
+		this.x32State.attach(this)
+
 		this.x32Subscriptions = new X32Subscriptions()
 
 		this.transitions.stopAll()
@@ -162,6 +178,7 @@ class X32Instance extends InstanceSkel<X32Config> {
 		X32DeviceDetectorInstance.unsubscribe(this.id)
 
 		this.transitions.stopAll()
+		this.x32State.detach(this)
 
 		if (this.osc) {
 			try {

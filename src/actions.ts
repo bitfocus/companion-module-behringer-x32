@@ -25,6 +25,17 @@ import {
 	PanningDelta,
 	GetLevelsChoiceConfigs,
 	GetPanningChoiceConfigs,
+	GetUserInSources,
+	GetUserInTargets,
+	GetUserOutSources,
+	GetUserOutTargets,
+	GetInputBlocks,
+	GetInputBlockRoutes,
+	GetAuxBlockRoutes,
+	GetAesBlocks,
+	GetAesCardRouteBlocks,
+	GetLeftOutputBlockRoutes,
+	GetRightOutputBlockRoutes,
 } from './choices'
 // eslint-disable-next-line node/no-extraneous-import
 import * as osc from 'osc'
@@ -37,6 +48,8 @@ import {
 	MainPanPath,
 	ChannelToBusPanPath,
 	BusToMatrixPanPath,
+	UserRouteInPath,
+	UserRouteOutPath,
 } from './paths'
 import { SetRequired } from 'type-fest'
 import { X32Transitions } from './transitions'
@@ -112,6 +125,16 @@ export enum ActionId {
 	ScenePage = 'scene-page',
 	AssignPage = 'assign-page',
 	NextPrevPage = 'next-previous-page',
+	StoreChannel = 'store_channel',
+	RouteUserIn = 'route-user-in',
+	RouteUserOut = 'route-user-out',
+	RouteInputBlockMode = 'route-input-block-mode',
+	RouteInputBlocks = 'route-input-blocks',
+	RouteAuxBlocks = 'route-aux-blocks',
+	RouteAES50Blocks = 'route-aes50-blocks',
+	RouteCardBlocks = 'route-card-blocks',
+	RouteXLRLeftOutputs = 'route-xlr-left-outputs',
+	RouteXLRRightOutputs = 'route-xlr-right-outputs',
 }
 
 type CompanionActionWithCallback = SetRequired<CompanionAction, 'callback'>
@@ -2315,8 +2338,6 @@ export function GetActionsList(
 					type: 'i',
 					value: gotoPageIndex,
 				})
-
-				//transitions.run(cmd, currentVal, getOptNumber(action, 'fad'), getOptNumber(action, 'fadeDuration', 0))
 			},
 			subscribe: (): void => {
 				ensureLoaded('/-stat/screen/screen')
@@ -2331,7 +2352,310 @@ export function GetActionsList(
 				ensureLoaded('/-stat/screen/ASSIGN/page')
 			},
 		},
+		[ActionId.RouteUserIn]: {
+			label: 'Route User Input',
+			description:
+				"Use at own risk. (Maybe don't accidently press during a show?) Please make sure your settings are correct when setting up. Protip: You can use `Store channel for routing` with and then select `STORED CHNANNEL` to chain screens",
+			options: [
+				{
+					type: 'dropdown',
+					label: 'source',
+					id: 'source',
+					...convertChoices([...GetUserInSources()]),
+				},
+				{
+					type: 'dropdown',
+					label: 'destination channel',
+					id: 'channel',
+					default: 1,
+					choices: [
+						{
+							id: -1,
+							label: 'STORED CHANNEL',
+						},
+						...GetUserInTargets(),
+					],
+				},
+			],
+			callback: (action): void => {
+				let channel = action.options.channel as number
+				if (channel == -1) {
+					channel = state.getStoredChannel()
+					if (channel == undefined || channel > 31) return
+				}
+				sendOsc(UserRouteInPath(channel), {
+					type: 'i',
+					value: getOptNumber(action, 'source'),
+				})
+			},
+		},
+		[ActionId.RouteUserOut]: {
+			label: 'Route User Output ',
+			description:
+				"Use at own risk. (Maybe don't accidently press during a show?) Please make sure your settings are correct when setting up. Protip: You can use `Store channel for routing` with and then select `STORED CHANNEL` to chain screens",
+			options: [
+				{
+					type: 'dropdown',
+					label: 'source',
+					id: 'source',
+					...convertChoices([...GetUserOutSources()]),
+				},
+				{
+					type: 'dropdown',
+					label: 'destination output',
+					id: 'channel',
+					default: 1,
+					choices: [
+						{
+							id: -1,
+							label: 'STORED CHANNEL',
+						},
+						...GetUserOutTargets(),
+					],
+				},
+			],
+			callback: (action): void => {
+				let channel = action.options.channel as number
+				if (channel == -1) {
+					channel = state.getStoredChannel()
+					if (channel == undefined) return
+				}
+				sendOsc(UserRouteOutPath(channel), {
+					type: 'i',
+					value: getOptNumber(action, 'source'),
+				})
+			},
+		},
+		[ActionId.StoreChannel]: {
+			label: 'Store channel for routing',
+			description:
+				"Store channel for use with `User Input Routing`and `User Output Routing`. Use at own riskv. (Maybe don't accidently press during a show?) Please make sure your settings are correct when setting up.",
+			options: [
+				{
+					type: 'dropdown',
+					label: 'destination output',
+					id: 'channel',
+					default: 1,
+					choices: [...GetUserOutTargets(true)],
+				},
+			],
+			callback: (action): void => {
+				state.setStoredChannel(action.options.channel as number)
+			},
+		},
+		[ActionId.RouteInputBlockMode]: {
+			label: 'Route Input Block Mode',
+			description:
+				"Setup which routing block set to use. Use at own risk. (Maybe don't accidently press during a show?)",
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Input mode',
+					id: 'mode',
+					default: 2,
+					choices: [
+						{ label: 'TOGGLE', id: 2 },
+						{ label: 'RECORD', id: 0 },
+						{ label: 'PLAY', id: 1 },
+					],
+				},
+			],
+			callback: (action): void => {
+				const cmd = `/config/routing/routswitch`
+				const mode = getOptNumber(action, 'mode', 2)
+				if (mode === 2) {
+					const currentState = state.get(cmd)
+					const currentVal = currentState && currentState[0]?.type === 'i' ? currentState[0]?.value : 1
+					sendOsc(cmd, { type: 'i', value: currentVal === 0 ? 1 : 0 })
+				} else {
+					sendOsc(cmd, { type: 'i', value: mode })
+				}
+			},
+			subscribe: (): void => {
+				ensureLoaded(`/config/routing/routswitch`)
+			},
+		},
+		[ActionId.RouteInputBlocks]: {
+			label: 'Route Input Blocks',
+			description:
+				"Setup input routing blocks. Use at own risk. (Maybe don't accidently press during a show?) Please make sure your settings are correct when setting up.",
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Input mode',
+					id: 'mode',
+					...convertChoices([
+						{ label: 'RECORD', id: 'IN' },
+						{ label: 'PLAY', id: 'PLAY' },
+					]),
+				},
+				{
+					type: 'dropdown',
+					label: 'Input blocks',
+					id: 'block',
+					...convertChoices([...GetInputBlocks()]),
+				},
+				{
+					type: 'dropdown',
+					label: 'Routing source block',
+					id: 'routing',
+					default: 0,
+					choices: [...GetInputBlockRoutes()],
+				},
+			],
+			callback: (action): void => {
+				const mode = action.options.mode
+				const block = action.options.block
+				const routing = getOptNumber(action, 'routing', 0)
+				const cmd = `/config/routing/${mode}/${block}`
+				sendOsc(cmd, { type: 'i', value: routing })
+			},
+		},
+		[ActionId.RouteAuxBlocks]: {
+			label: 'Route Aux Blocks',
+			description:
+				"Setup aux input routing blocks. Use at own risk. (Maybe don't accidently press during a show?) Please make sure your settings are correct when setting up.",
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Input mode',
+					id: 'mode',
+					...convertChoices([
+						{ label: 'RECORD', id: 'IN' },
+						{ label: 'PLAY', id: 'PLAY' },
+					]),
+				},
+				{
+					type: 'dropdown',
+					label: 'Routing source block',
+					id: 'routing',
+					...convertChoices([...GetAuxBlockRoutes()]),
+				},
+			],
+			callback: (action): void => {
+				const mode = action.options.mode
+				const routing = getOptNumber(action, 'routing', 0)
+				const cmd = `/config/routing/${mode}/AUX`
+				sendOsc(cmd, { type: 'i', value: routing })
+			},
+		},
+		[ActionId.RouteAES50Blocks]: {
+			label: 'Route AES50 Blocks',
+			description:
+				"Setup aes50 routing blocks. Use at own risk. (Maybe don't accidently press during a show?) Please make sure your settings are correct when setting up.",
+			options: [
+				{
+					type: 'dropdown',
+					label: 'AES50 A or B',
+					id: 'mode',
+					default: 'A',
+					choices: [
+						{ label: 'AES50 A', id: 'A' },
+						{ label: 'AES50 B', id: 'B' },
+					],
+				},
+				{
+					type: 'dropdown',
+					label: 'Input blocks',
+					id: 'block',
+					...convertChoices([...GetAesBlocks()]),
+				},
+				{
+					type: 'dropdown',
+					label: 'Routing source block',
+					id: 'routing',
+					...convertChoices([...GetAesCardRouteBlocks()]),
+				},
+			],
+			callback: (action): void => {
+				const mode = action.options.mode
+				const block = action.options.block
+				const routing = getOptNumber(action, 'routing', 0)
+				const cmd = `/config/routing/AES50${mode}/${block}`
+				sendOsc(cmd, { type: 'i', value: routing })
+			},
+		},
+		[ActionId.RouteCardBlocks]: {
+			label: 'Route Card Blocks',
+			description:
+				"Setup card routing blocks. Use at own risk. (Maybe don't accidently press during a show?) Please make sure your settings are correct when setting up.",
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Input blocks',
+					id: 'block',
+					...convertChoices([...GetInputBlocks()]),
+				},
+				{
+					type: 'dropdown',
+					label: 'Routing source block',
+					id: 'routing',
+					...convertChoices([...GetAesCardRouteBlocks()]),
+				},
+			],
+			callback: (action): void => {
+				const block = action.options.block
+				const routing = getOptNumber(action, 'routing', 0)
+				const cmd = `/config/routing/CARD/${block}`
+				sendOsc(cmd, { type: 'i', value: routing })
+			},
+		},
+		[ActionId.RouteXLRLeftOutputs]: {
+			label: 'Route Left XLR Output Blocks',
+			description:
+				"Setup left (1-4 and 9-12) XLR Out routing blocks. (for 5-8 and 13-16 use `Route Right XLR Output Blocks`) Use at own risk. (Maybe don't accidently press during a show?) Please make sure your settings are correct when setting up.",
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Input blocks',
+					id: 'block',
+					...convertChoices([
+						{ id: '1-4', label: '1-4' },
+						{ id: '9-12', label: '9-12' },
+					]),
+				},
+				{
+					type: 'dropdown',
+					label: 'Routing source block',
+					id: 'routing',
+					...convertChoices([...GetLeftOutputBlockRoutes()]),
+				},
+			],
+			callback: (action): void => {
+				const block = action.options.block
+				const routing = getOptNumber(action, 'routing', 0)
+				const cmd = `/config/routing/OUT/${block}`
+				sendOsc(cmd, { type: 'i', value: routing })
+			},
+		},
+		[ActionId.RouteXLRRightOutputs]: {
+			label: 'Route Right XLR Output Blocks',
+			description:
+				"Setup right (5-8 and 13-16) XLR Out routing blocks. (for 1-4 and 9-12 use `Route Left XLR Output Blocks`) Use at own risk. (Maybe don't accidently press during a show?) Please make sure your settings are correct when setting up.",
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Input blocks',
+					id: 'block',
+					...convertChoices([
+						{ id: '5-8', label: '5-8' },
+						{ id: '13-16', label: '13-16' },
+					]),
+				},
+				{
+					type: 'dropdown',
+					label: 'Routing source block',
+					id: 'routing',
+					...convertChoices([...GetRightOutputBlockRoutes()]),
+				},
+			],
+			callback: (action): void => {
+				const block = action.options.block
+				const routing = getOptNumber(action, 'routing', 0)
+				const cmd = `/config/routing/OUT/${block}`
+				sendOsc(cmd, { type: 'i', value: routing })
+			},
+		},
 	}
-
 	return actions
 }
