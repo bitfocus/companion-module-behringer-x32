@@ -95,6 +95,7 @@ export enum FeedbackId {
 	RouteCardBlocks = 'route-card-blocks',
 	RouteXLRLeftOutputs = 'route-xlr-left-outputs',
 	RouteXLRRightOutputs = 'route-xlr-right-outputs',
+	LockAndShutdown = 'lock-and-shutdown',
 }
 
 function getDataNumber(data: osc.MetaArgument[] | undefined, index: number): number | undefined {
@@ -2547,6 +2548,48 @@ export function GetFeedbacksList(
 			unsubscribe: (evt: CompanionFeedbackEvent): void => {
 				const block = evt.options.block
 				const path = `/config/routing/OUT/${block}`
+				unsubscribeFeedback(subs, path, evt)
+			},
+		},
+
+		[FeedbackId.LockAndShutdown]: {
+			type: 'boolean',
+			label: 'Lock/Shutdown',
+			description: 'If the specified staye is active, change style of the bank.',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Lock/Shutdown state',
+					id: 'lockState',
+					...convertChoices([
+						{ id: 0, label: 'Unlock' },
+						{ id: 1, label: 'Lock' },
+						{ id: 2, label: 'Shutdown' },
+					]),
+				},
+				{
+					id: 'state',
+					type: 'checkbox',
+					label: 'Is active',
+					default: true,
+				},
+			],
+			style: {
+				bgcolor: self.rgb(255, 0, 0),
+				color: self.rgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackEvent): boolean => {
+				const cmd = `/-stat/lock`
+				const data = state.get(cmd)
+				const isRouted = getDataNumber(data, 0) === (evt.options.lockState as number)
+				return isRouted === !!evt.options.state
+			},
+			subscribe: (evt: CompanionFeedbackEvent): void => {
+				const path = `/-stat/lock`
+				subscribeFeedback(ensureLoaded, subs, path, evt)
+			},
+			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+				const path = `/-stat/lock`
 				unsubscribeFeedback(subs, path, evt)
 			},
 		},
