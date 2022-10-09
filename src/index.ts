@@ -6,6 +6,7 @@ import {
 	InitVariables,
 	updateDeviceInfoVariables,
 	updateNameVariables,
+	updateSelectedVariables,
 	updateStoredChannelVariable,
 	updateTapeTime,
 	updateUReceTime,
@@ -205,6 +206,7 @@ class X32Instance extends InstanceBase<X32Config> implements InstanceBaseExt<X32
 		this.setActionDefinitions(GetActionsList(this, this.transitions, this.x32State, this.queueEnsureLoaded))
 		this.checkFeedbacks()
 		updateNameVariables(this, this.x32State)
+		updateSelectedVariables(this, this.x32State)
 
 		// Ensure all feedbacks & actions have an initial value, if we are connected
 		if (this.heartbeat) {
@@ -371,6 +373,7 @@ class X32Instance extends InstanceBase<X32Config> implements InstanceBaseExt<X32
 						// Load the initial data
 						this.loadVariablesData()
 						updateDeviceInfoVariables(this, args)
+						this.loadPresetData()
 					}
 					break
 				case '/-stat/tape/etime':
@@ -413,6 +416,17 @@ class X32Instance extends InstanceBase<X32Config> implements InstanceBaseExt<X32
 			this.queueEnsureLoaded(`${target.id}/config/name`)
 			this.queueEnsureLoaded(`${MainPath(target.id as string)}/fader`)
 		}
+		this.queueEnsureLoaded('/-stat/selidx')
+	}
+
+	private loadPresetData(): void {
+		const options = [...Array(100).keys()].map((x) => `${x + 1}`.padStart(3, '0'))
+		options.forEach((option) => {
+			;['ch', 'fx', 'r', 'mon'].forEach((lib) => {
+				this.queueEnsureLoaded(`/-libs/${lib}/${option}/hasdata`)
+				this.queueEnsureLoaded(`/-libs/${lib}/${option}/name`)
+			})
+		})
 	}
 
 	private queueEnsureLoaded = (path: string): void => {
@@ -455,8 +469,7 @@ class X32Instance extends InstanceBase<X32Config> implements InstanceBaseExt<X32
 			toUpdate.forEach((f) => this.messageFeedbacks.add(f))
 			this.debounceMessageFeedbacks()
 		}
-
-		if (msg.address.match('/config/name$') || msg.address.match('/fader$')) {
+		if (msg.address.match('/config/name$') || msg.address.match('/fader$') || msg.address.match('/-stat/selidx') || msg.address.match('/-libs/')) {
 			this.debounceUpdateCompanionBits()
 		}
 	}

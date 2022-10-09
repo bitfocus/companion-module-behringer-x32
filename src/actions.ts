@@ -36,6 +36,7 @@ import {
 	GetUserOutTargets,
 	GetInsertDestinationChoices,
 	GetTalkbackDestinations,
+	GetPresetsChoices,
 } from './choices.js'
 import {
 	MutePath,
@@ -162,6 +163,10 @@ export enum ActionId {
 	InsertOn = 'insert-on',
 	InsertPos = 'insert-pos',
 	InsertSelect = 'insert-select',
+	LoadChannelPreset = 'load-channel-preset',
+	LoadFXPreset = 'load-fx-preset',
+	// LoadRoutingPreset = 'load-route-preset',
+	LoadAESPreset = 'load-aes-preset',
 }
 
 type CompanionActionWithCallback = SetRequired<CompanionActionDefinition, 'callback'>
@@ -187,6 +192,8 @@ export function GetActionsList(
 	const sendOsc = (cmd: string, args: OSCSomeArguments): void => {
 		// HACK: We send commands on a different port than we run /xremote on, so that we get change events for what we send.
 		// Otherwise we can have no confirmation that a command was accepted
+		// console.log(`osc command: ${cmd} ${JSON.stringify(args)}`)	
+		
 		if (self.config.host) {
 			self.oscSend(self.config.host, 10023, cmd, args)
 		}
@@ -1523,8 +1530,6 @@ export function GetActionsList(
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'i' ? currentState[0]?.value : 0
 				const mask = Math.pow(2, action.options.dest as number)
-
-				console.log(`current: ${currentVal}, mask: ${mask}`)
 				let bitmap: number
 				switch (action.options.on) {
 					case 0:
@@ -3296,6 +3301,190 @@ export function GetActionsList(
 			callback: (action): void => {
 				const cmd = `${action.options.src as string}/insert/sel`
 				sendOsc(cmd, { type: 'i', value: convertAnyToNumber(action.options.dest) })
+			},
+		},
+		[ActionId.LoadChannelPreset]: {
+			name: 'Load channel preset',
+			description:
+				"Load channel preset either into specified channel or into selected channel. Use at own risk. (Maybe don't accidently press during a show?)",
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Preset to load',
+					id: 'preset',
+					...convertChoices(GetPresetsChoices('ch', state)),
+				},
+				{
+					type: 'dropdown',
+					label: 'Target channel',
+					id: 'channel',
+					default: 0,
+					choices: [
+						{
+							id: -1,
+							label: 'SELECTED CHANNEL',
+						},
+						...selectChoices,
+					],
+				},
+				{
+					id: 'ha',
+					type: 'checkbox',
+					label: 'Load headamp data',
+					default: true,
+				},
+				{
+					id: 'config',
+					type: 'checkbox',
+					label: 'Load configuration data',
+					default: true,
+				},
+				{
+					id: 'gate',
+					type: 'checkbox',
+					label: 'Load gate data',
+					default: true,
+				},
+				{
+					id: 'dyn',
+					type: 'checkbox',
+					label: 'Load compressor data',
+					default: true,
+				},
+				{
+					id: 'eq',
+					type: 'checkbox',
+					label: 'Load equalizer data',
+					default: true,
+				},
+				{
+					id: 'sends',
+					type: 'checkbox',
+					label: 'Load sends data',
+					default: true,
+				},
+			],
+			callback: (action): void => {
+				const preset = getOptNumber(action, 'preset', 0)
+				const paddedPreset = `${preset}`.padStart(3, '0')
+				const hasDataState = state.get(`/-libs/ch/${paddedPreset}/hasdata`)
+				const hasDataValue = hasDataState && hasDataState[0]?.type === 'i' && hasDataState[0].value === 1
+				if (!hasDataValue) {
+					return
+				}
+
+				const scopeBits = [
+					!!action.options.sends,
+					!!action.options.eq,
+					!!action.options.dyn,
+					!!action.options.gate,
+					!!action.options.config,
+					!!action.options.ha,
+				].reduce<number>((acc, cur) => (acc << 1) | (cur ? 1 : 0), 0)
+				let channel = getOptNumber(action, 'channel', 0)
+				if (channel == -1) {
+					const selected = state.get('/-stat/selidx')
+					channel = selected && selected[0].type === 'i' ? selected[0]?.value : 0
+				}
+				sendOsc('/load', [
+					{ type: 's', value: 'libchan' },
+					{ type: 'i', value: preset - 1 },
+					{ type: 'i', value: channel },
+					{ type: 'i', value: scopeBits },
+				])
+			},
+		},
+		[ActionId.LoadFXPreset]: {
+			name: 'Load effects preset',
+			description:
+				"Load effects preset either into specified channel. Use at own risk. (Maybe don't accidently press during a show?)",
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Preset to load',
+					id: 'preset',
+					...convertChoices(GetPresetsChoices('fx', state)),
+				},
+				{
+					type: 'dropdown',
+					label: 'Target channel',
+					id: 'channel',
+					default: 0,
+					choices: [...[...Array(8).keys()].map((x) => ({ label: `${x + 1}`, id: x }))],
+				},
+			],
+			callback: (action): void => {
+				const preset = getOptNumber(action, 'preset', 0)
+				const paddedPreset = `${preset}`.padStart(3, '0')
+				const hasDataState = state.get(`/-libs/fx/${paddedPreset}/hasdata`)
+				const hasDataValue = hasDataState && hasDataState[0]?.type === 'i' && hasDataState[0].value === 1
+				if (!hasDataValue) {
+					return
+				}
+
+				let channel = getOptNumber(action, 'channel', 0)
+				if (channel == -1) {
+					const selected = state.get('/-stat/selidx')
+					channel = selected && selected[0].type === 'i' ? selected[0]?.value : 0
+				}
+				sendOsc('/load', [
+					{ type: 's', value: 'libfx' },
+					{ type: 'i', value: preset - 1 },
+					{ type: 'i', value: channel },
+				])
+			},
+		},
+		// Not currently working... investigating
+		// [ActionId.LoadRoutingPreset]: {
+		// 	name: 'Load routing preset',
+		// 	description: "Load routing preset. Use at own risk. (Maybe don't accidently press during a show?)",
+		// 	options: [
+		// 		{
+		// 			type: 'dropdown',
+		// 			label: 'Preset to load',
+		// 			id: 'preset',
+		// 			...convertChoices(GetPresetsChoices('r', state)),
+		// 		},
+		// 	],
+		// 	callback: (action): void => {
+		// 		const preset = getOptNumber(action, 'preset', 0)
+		// 		const paddedPreset = `${preset}`.padStart(3, '0')
+		// 		const hasDataState = state.get(`/-libs/r/${paddedPreset}/hasdata`)
+		// 		const hasDataValue = hasDataState && hasDataState[0]?.type === 'i' && hasDataState[0].value === 1
+		// 		if (!hasDataValue) {
+		// 			return
+		// 		}
+
+		// 		sendOsc('/load', [
+		// 			{ type: 's', value: 'librout' },
+		// 			{ type: 'i', value: preset - 1 },
+		// 		])
+		// 	},
+		// },
+		[ActionId.LoadAESPreset]: {
+			name: 'Load AES/DP48 preset',
+			description: "Load AES/DP48 preset. Use at own risk. (Maybe don't accidently press during a show?)",
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Preset to load',
+					id: 'preset',
+					...convertChoices(GetPresetsChoices('mon', state)),
+				},
+			],
+			callback: (action): void => {
+				const preset = getOptNumber(action, 'preset', 0)
+				const paddedPreset = `${preset}`.padStart(3, '0')
+				const hasDataState = state.get(`/-libs/mon/${paddedPreset}/hasdata`)
+				const hasDataValue = hasDataState && hasDataState[0]?.type === 'i' && hasDataState[0].value === 1
+				if (!hasDataValue) {
+					return
+				}
+
+				sendOsc('/load', [
+					{ type: 's', value: 'libmon' },
+					{ type: 'i', value: preset - 1 },
+				])
 			},
 		},
 	}
