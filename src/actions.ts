@@ -135,6 +135,7 @@ export enum ActionId {
 	RouteCardBlocks = 'route-card-blocks',
 	RouteXLRLeftOutputs = 'route-xlr-left-outputs',
 	RouteXLRRightOutputs = 'route-xlr-right-outputs',
+	LockAndShutdown = 'lock-and-shutdown',
 }
 
 type CompanionActionWithCallback = SetRequired<CompanionAction, 'callback'>
@@ -2654,6 +2655,49 @@ export function GetActionsList(
 				const routing = getOptNumber(action, 'routing', 0)
 				const cmd = `/config/routing/OUT/${block}`
 				sendOsc(cmd, { type: 'i', value: routing })
+			},
+		},
+		[ActionId.LockAndShutdown]: {
+			label: 'Lock/Shutdown',
+			description: 'Lock the X32 or shut it down',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Lock/Shutdown state',
+					id: 'newState',
+					...convertChoices([
+						{ id: 0, label: 'Unlock' },
+						{ id: 1, label: 'Lock' },
+						{ id: 3, label: 'Toggle Lock' },
+						{ id: 2, label: 'Shutdown' },
+					]),
+				},
+			],
+			callback: (action): void => {
+				const path = `/-stat/lock`
+				const lockState = state.get(path)
+				const lockValue = lockState && lockState[0].type === 'i' ? lockState[0].value : 0
+				let newState = action.options.newState ? (action.options.newState as number) : 0
+
+				if (lockValue == newState) {
+					return
+				}
+
+				// set to unlocked first to avoid nondeterministic state on X32
+				sendOsc(path, { type: 'i', value: 0 })
+				if (newState == 3) {
+					newState = lockValue > 0 ? 0 : 1
+				}
+
+				// wait 100ms if locking or shutting down to ensure not going from lock to shutdown or vice versa
+				if (newState > 0) {
+					setTimeout(() => {
+						sendOsc(path, { type: 'i', value: newState })
+					}, 100)
+				}
+			},
+			subscribe: (): void => {
+				ensureLoaded(`/-stat/lock`)
 			},
 		},
 	}
