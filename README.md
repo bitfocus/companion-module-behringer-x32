@@ -10,9 +10,10 @@ While developing the module, by using `yarn build:watch` the compiler will be ru
 
 ## Changes
 
-### v2.9.2 (WIP)
+### v2.10 (WIP)
 
 - Routing
+- Lock/Shutdown
 
 ### v2.9.1
 
