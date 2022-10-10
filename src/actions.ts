@@ -138,6 +138,13 @@ export enum ActionId {
 	RouteXLRLeftOutputs = 'route-xlr-left-outputs',
 	RouteXLRRightOutputs = 'route-xlr-right-outputs',
 	LockAndShutdown = 'lock-and-shutdown',
+	SelectActiveSDCard = 'select-active-sdcard',
+	RecordedTracks = 'recorded-tracks',
+	SelectPlaybackDevice = 'select-playback-device',
+	FormatSDCard = 'format-sdcard',
+	XLiveRouting = 'x-live-routing',
+	XLivePosition = 'x-live-position',
+	XLiveClearAlert = 'x-live-clear-alert',
 }
 
 type CompanionActionWithCallback = SetRequired<CompanionAction, 'callback'>
@@ -175,7 +182,7 @@ export function GetActionsList(
 		return val
 	}
 	// Easy dirty fix
-	const getRecordState = (state: any): number => {
+	const convertAnyToNumber = (state: any): number => {
 		return parseInt(state)
 	}
 	// const getOptBool = (key: string): boolean => {
@@ -218,7 +225,7 @@ export function GetActionsList(
 				const cmd = `/-stat/urec/state`
 				sendOsc(cmd, {
 					type: 'i',
-					value: getRecordState(action.options.state),
+					value: convertAnyToNumber(action.options.state),
 				})
 			},
 			subscribe: (): void => {
@@ -2739,6 +2746,147 @@ export function GetActionsList(
 			subscribe: (): void => {
 				ensureLoaded(`/-stat/lock`)
 			},
+		},
+		[ActionId.SelectActiveSDCard]: {
+			label: 'Select Active SD Card',
+			description: 'Select Active SD Card',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'SD Card',
+					id: 'card',
+					...convertChoices([
+						{ id: 0, label: 'SD1' },
+						{ id: 1, label: 'SD2' },
+					]),
+				},
+			],
+			callback: (action): void => {
+				const path = `/‐prefs/card/URECsdsel`
+				sendOsc(path, { type: 'i', value: convertAnyToNumber(action.options.card) })
+			},
+			subscribe: (): void => {},
+		},
+		[ActionId.RecordedTracks]: {
+			label: 'Select number of recorded tracks',
+			description: 'Select number of recorded tracks',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Number of tracks',
+					id: 'tracks',
+					...convertChoices([
+						{ id: 0, label: '32 tracks' },
+						{ id: 1, label: '16 tracks' },
+						{ id: 2, label: '8 tracks' },
+					]),
+				},
+			],
+			callback: (action): void => {
+				const path = `/‐prefs/card/URECtracks`
+				sendOsc(path, { type: 'i', value: convertAnyToNumber(action.options.tracks) })
+			},
+			subscribe: (): void => {},
+		},
+		[ActionId.SelectPlaybackDevice]: {
+			label: 'Select playback device',
+			description: 'Select playback device',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'device',
+					id: 'device',
+					...convertChoices([
+						{ id: 0, label: 'SD' },
+						{ id: 1, label: 'USB' },
+					]),
+				},
+			],
+			callback: (action): void => {
+				const path = `/‐prefs/card/URECplayb`
+				sendOsc(path, { type: 'i', value: convertAnyToNumber(action.options.device) })
+			},
+			subscribe: (): void => {},
+		},
+		[ActionId.FormatSDCard]: {
+			label: 'Format SD Card',
+			description: 'Format SD Card',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'device',
+					id: 'card',
+					...convertChoices([
+						{ id: 0, label: 'SD1' },
+						{ id: 1, label: 'SD2' },
+					]),
+				},
+			],
+			callback: (action): void => {
+				const path = `/‐action/formatcard`
+				sendOsc(path, { type: 'i', value: convertAnyToNumber(action.options.card) })
+			},
+			subscribe: (): void => {},
+		},
+		[ActionId.XLiveRouting]: {
+			label: 'X-Live routing',
+			description: 'X-Live routing',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'X-Live route',
+					id: 'route',
+					...convertChoices([
+						{ id: 0, label: 'Rec' },
+						{ id: 1, label: 'Play' },
+						{ id: 2, label: 'Auto' },
+					]),
+				},
+			],
+			callback: (action): void => {
+				const path = `/‐prefs/card/URECrout`
+				sendOsc(path, { type: 'i', value: convertAnyToNumber(action.options.route) })
+			},
+			subscribe: (): void => {},
+		},
+		[ActionId.XLiveClearAlert]: {
+			label: 'X-Live Clear Alert',
+			description: 'X-Live Clear Alert',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'X-Live Clear Alert',
+					id: 'alert',
+					...convertChoices([
+						{ id: 0, label: 'No-op' },
+						{ id: 1, label: 'Clear alert' },
+					]),
+				},
+			],
+			callback: (action): void => {
+				const path = `/‐action/clearalert`
+				sendOsc(path, { type: 'i', value: convertAnyToNumber(action.options.alert) })
+			},
+			subscribe: (): void => {},
+		},
+		[ActionId.XLivePosition]: {
+			label: 'X-Live Position',
+			description: 'X-Live Position',
+			options: [
+				{
+					type: 'number',
+					label: 'X-Live Position on sdcard',
+					id: 'position',
+					min: 0,
+					max: 86399999,
+					default: 0,
+				},
+			],
+			callback: (action): void => {
+				const path = `/‐action/setposition`
+				sendOsc(path, { type: 'i', value: convertAnyToNumber(action.options.position) })
+			},
+			subscribe: (): void => {},
 		},
 	}
 	return actions
