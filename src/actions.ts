@@ -56,6 +56,7 @@ import { X32Transitions } from './transitions'
 import moment = require('moment')
 
 export enum ActionId {
+	AddMarker = 'add_marker',
 	Mute = 'mute',
 	MuteGroup = 'mute_grp',
 	MuteChannelSend = 'mute_channel_send',
@@ -126,6 +127,7 @@ export enum ActionId {
 	AssignPage = 'assign-page',
 	NextPrevPage = 'next-previous-page',
 	StoreChannel = 'store_channel',
+	Record = 'record',
 	RouteUserIn = 'route-user-in',
 	RouteUserOut = 'route-user-out',
 	RouteInputBlockMode = 'route-input-block-mode',
@@ -171,6 +173,10 @@ export function GetActionsList(
 		}
 		return val
 	}
+	// Easy dirty fix
+	const getRecordState = (state: any): number => {
+		return parseInt(state)
+	}
 	// const getOptBool = (key: string): boolean => {
 	//   return !!opt[key]
 	// }
@@ -196,6 +202,40 @@ export function GetActionsList(
 	}
 
 	const actions: { [id in ActionId]: CompanionActionWithCallback | undefined } = {
+		[ActionId.Record]: {
+			label: 'Set X-live State',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'State',
+					id: 'state',
+					choices: [{id: 3, label: 'Record'},{id: 2, label: 'Play'},{id: 1, label: 'Pause'},{id: 0, label: 'Stop'}],
+					default: 3
+				},
+			],
+			callback: (action): void => {
+				const cmd = `/-stat/urec/state`
+				sendOsc(cmd, {
+					type: 'i',
+					value: getRecordState(action.options.state),
+				})
+			},
+			subscribe: (): void => {
+			},
+		},
+		[ActionId.AddMarker]: {
+			label: 'Add marker in recording',
+			options: [],
+			callback: (): void => {
+				const cmd = `/-action/addmarker`
+				sendOsc(cmd, {
+					type: 'i',
+					value: 1,
+				})
+			},
+			subscribe: (): void => {
+			},
+		},
 		[ActionId.Mute]: {
 			label: 'Set mute',
 			options: [
