@@ -10,6 +10,8 @@ import {
 	updateNameVariables,
 	updateStoredChannelVariable,
 	updateTapeTime,
+	updateUReceTime,
+	updateURecrTime,
 } from './variables'
 import { X32State, X32Subscriptions, IStoredChannelObserver } from './state'
 // eslint-disable-next-line node/no-extraneous-import
@@ -370,6 +372,14 @@ class X32Instance extends InstanceSkel<X32Config> implements IStoredChannelObser
 					break
 				case '/-stat/tape/etime':
 					updateTapeTime(this, this.x32State)
+					break
+
+				case '/-stat/urec/etime':
+					updateUReceTime(this, this.x32State)
+					break
+
+				case '/-stat/urec/rtime':
+					updateURecrTime(this, this.x32State)
 					break
 			}
 		})

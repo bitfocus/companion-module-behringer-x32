@@ -88,6 +88,7 @@ export enum FeedbackId {
 	RouteUserIn = 'route-user-in',
 	RouteUserOut = 'route-user-out',
 	StoredChannel = 'stored-channel',
+	Record = 'record',
 	RouteInputBlockMode = 'route-input-block-mode',
 	RouteInputBlocks = 'route-input-blocks',
 	RouteAuxBlocks = 'route-aux-blocks',
@@ -139,6 +140,42 @@ export function GetFeedbacksList(
 	const soloChoices = GetTargetChoices(state, { includeMain: true, numericIndex: true })
 
 	const feedbacks: { [id in FeedbackId]: CompanionFeedbackWithCallback | undefined } = {
+		[FeedbackId.Record]: {
+			type: 'boolean',
+			label: 'Change from X-Live state',
+			description: 'If the X-Live state has changed, change style of the bank',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'State',
+					id: 'state',
+					choices: [
+						{ id: 3, label: 'Record' },
+						{ id: 2, label: 'Play' },
+						{ id: 1, label: 'Pause' },
+						{ id: 0, label: 'Stop' },
+					],
+					default: 3,
+				},
+			],
+			style: {
+				bgcolor: self.rgb(255, 0, 0),
+				color: self.rgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackEvent): boolean => {
+				const data = state.get(`/-stat/urec/state`)
+				const record = getDataNumber(data, 0) === 3
+				return record === !!evt.options.state
+			},
+			subscribe: (evt: CompanionFeedbackEvent): void => {
+				const path = `/-stat/urec/state`
+				subscribeFeedback(ensureLoaded, subs, path, evt)
+			},
+			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+				const path = `/-stat/urec/state`
+				unsubscribeFeedback(subs, path, evt)
+			},
+		},
 		[FeedbackId.Mute]: {
 			type: 'boolean',
 			label: 'Change from mute state',
