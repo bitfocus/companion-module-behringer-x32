@@ -149,8 +149,13 @@ export function GetFeedbacksList(
 					type: 'dropdown',
 					label: 'State',
 					id: 'state',
-					choices: [{id: 3, label: 'Record'},{id: 2, label: 'Play'},{id: 1, label: 'Pause'},{id: 0, label: 'Stop'}],
-					default: 3
+					choices: [
+						{ id: 3, label: 'Record' },
+						{ id: 2, label: 'Play' },
+						{ id: 1, label: 'Pause' },
+						{ id: 0, label: 'Stop' },
+					],
+					default: 3,
 				},
 			],
 			style: {

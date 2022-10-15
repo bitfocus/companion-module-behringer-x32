@@ -110,10 +110,10 @@ export function updateTapeTime(instance: InstanceSkel<X32Config>, state: X32Stat
 
 export function updateUReceTime(instance: InstanceSkel<X32Config>, state: X32State): void {
 	const etime = state.get('/-stat/urec/etime')
-	const time = etime && etime[0]?.type === 'i' ? (etime[0].value) : 0
-	const mm = `${Math.floor((time / 1000)/60) % 60}`.padStart(2, '0')
+	const time = etime && etime[0]?.type === 'i' ? etime[0].value : 0
+	const mm = `${Math.floor(time / 1000 / 60) % 60}`.padStart(2, '0')
 	const ss = `${Math.floor(time / 1000) % 60}`.padStart(2, '0')
-	const hh = `${Math.floor(((time / 1000)/60)/60) % 60 }`.padStart(2, '0')
+	const hh = `${Math.floor(time / 1000 / 60 / 60) % 60}`.padStart(2, '0')
 	instance.setVariables({
 		urec_etime_hms: `${hh}:${mm}:${ss}`,
 		urec_etime_ms: `${mm}:${ss}`,
@@ -123,9 +123,9 @@ export function updateUReceTime(instance: InstanceSkel<X32Config>, state: X32Sta
 export function updateURecrTime(instance: InstanceSkel<X32Config>, state: X32State): void {
 	const etime = state.get('/-stat/urec/rtime')
 	const time = etime && etime[0]?.type === 'i' ? etime[0].value : 0
-	const mm = `${Math.floor((time / 1000)/60) % 60}`.padStart(2, '0')
+	const mm = `${Math.floor(time / 1000 / 60) % 60}`.padStart(2, '0')
 	const ss = `${Math.floor(time / 1000) % 60}`.padStart(2, '0')
-	const hh = `${Math.floor(((time / 1000)/60)/60) % 60 }`.padStart(2, '0')
+	const hh = `${Math.floor(time / 1000 / 60 / 60) % 60}`.padStart(2, '0')
 	instance.setVariables({
 		urec_rtime_hms: `${hh}:${mm}:${ss}`,
 		urec_rtime_ms: `${mm}:${ss}`,

@@ -373,7 +373,7 @@ class X32Instance extends InstanceSkel<X32Config> implements IStoredChannelObser
 				case '/-stat/tape/etime':
 					updateTapeTime(this, this.x32State)
 					break
-				
+
 				case '/-stat/urec/etime':
 					updateUReceTime(this, this.x32State)
 					break

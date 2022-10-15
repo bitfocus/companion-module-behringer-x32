@@ -54,6 +54,7 @@ import {
 import { SetRequired } from 'type-fest'
 import { X32Transitions } from './transitions'
 import moment = require('moment')
+import { Easing } from './easings'
 
 export enum ActionId {
 	AddMarker = 'add_marker',
@@ -181,6 +182,23 @@ export function GetActionsList(
 		}
 		return val
 	}
+
+	const getOptAlgorithm = (action: CompanionActionEvent, key: string): Easing.algorithm | undefined => {
+		const rawVal = action.options[key]
+		if (rawVal === undefined) {
+			return rawVal
+		}
+		return rawVal as Easing.algorithm
+	}
+
+	const getOptCurve = (action: CompanionActionEvent, key: string): Easing.curve | undefined => {
+		const rawVal = action.options[key]
+		if (rawVal === undefined) {
+			return rawVal
+		}
+		return rawVal as Easing.curve
+	}
+
 	// Easy dirty fix
 	const convertAnyToNumber = (state: any): number => {
 		return parseInt(state)
@@ -217,8 +235,13 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'State',
 					id: 'state',
-					choices: [{id: 3, label: 'Record'},{id: 2, label: 'Play'},{id: 1, label: 'Pause'},{id: 0, label: 'Stop'}],
-					default: 3
+					choices: [
+						{ id: 3, label: 'Record' },
+						{ id: 2, label: 'Play' },
+						{ id: 1, label: 'Pause' },
+						{ id: 0, label: 'Stop' },
+					],
+					default: 3,
 				},
 			],
 			callback: (action): void => {
@@ -227,8 +250,6 @@ export function GetActionsList(
 					type: 'i',
 					value: convertAnyToNumber(action.options.state),
 				})
-			},
-			subscribe: (): void => {
 			},
 		},
 		[ActionId.AddMarker]: {
@@ -240,8 +261,6 @@ export function GetActionsList(
 					type: 'i',
 					value: 1,
 				})
-			},
-			subscribe: (): void => {
 			},
 		},
 		[ActionId.Mute]: {
@@ -367,13 +386,20 @@ export function GetActionsList(
 					...convertChoices(levelsChoices.channels),
 				},
 				FaderLevelChoice,
-				FadeDurationChoice,
+				...FadeDurationChoice,
 			],
 			callback: (action): void => {
 				const cmd = MainFaderPath(action.options)
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
-				transitions.run(cmd, currentVal, getOptNumber(action, 'fad'), getOptNumber(action, 'fadeDuration', 0))
+				transitions.runForDb(
+					cmd,
+					currentVal,
+					getOptNumber(action, 'fad'),
+					getOptNumber(action, 'fadeDuration', 0),
+					getOptAlgorithm(action, 'fadeAlgorithm'),
+					getOptCurve(action, 'fadeType')
+				)
 			},
 			subscribe: (evt): void => {
 				// In case we have a fade time
@@ -414,7 +440,7 @@ export function GetActionsList(
 					id: 'target',
 					...convertChoices(levelsChoices.channels),
 				},
-				FadeDurationChoice,
+				...FadeDurationChoice,
 			],
 			callback: (action, info): void => {
 				if (info) {
@@ -425,7 +451,7 @@ export function GetActionsList(
 						const currentVal =
 							currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
 						if (currentVal !== undefined) {
-							transitions.run(cmd, currentVal, storedVal, getOptNumber(action, 'fadeDuration', 0))
+							transitions.runForDb(cmd, currentVal, storedVal, getOptNumber(action, 'fadeDuration', 0))
 						}
 					}
 				}
@@ -441,18 +467,20 @@ export function GetActionsList(
 					...convertChoices(levelsChoices.channels),
 				},
 				FaderLevelDeltaChoice,
-				FadeDurationChoice,
+				...FadeDurationChoice,
 			],
 			callback: (action): void => {
 				const cmd = MainFaderPath(action.options)
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
 				if (typeof currentVal === 'number') {
-					transitions.run(
+					transitions.runForDb(
 						cmd,
 						currentVal,
 						currentVal + getOptNumber(action, 'delta'),
-						getOptNumber(action, 'fadeDuration', 0)
+						getOptNumber(action, 'fadeDuration', 0),
+						getOptAlgorithm(action, 'fadeAlgorithm'),
+						getOptCurve(action, 'fadeType')
 					)
 				}
 			},
@@ -470,7 +498,7 @@ export function GetActionsList(
 					...convertChoices(panningChoices.allSources),
 				},
 				PanningChoice,
-				FadeDurationChoice,
+				...FadeDurationChoice,
 			],
 			callback: (action): void => {
 				const cmd = MainPanPath(action.options)
@@ -481,7 +509,8 @@ export function GetActionsList(
 					currentVal,
 					getOptNumber(action, 'pan') / 100 + 0.5,
 					getOptNumber(action, 'fadeDuration', 0),
-					true
+					getOptAlgorithm(action, 'fadeAlgorithm'),
+					getOptCurve(action, 'fadeType')
 				)
 			},
 			subscribe: (evt): void => {
@@ -498,7 +527,7 @@ export function GetActionsList(
 					...convertChoices(panningChoices.allSources),
 				},
 				PanningDelta,
-				FadeDurationChoice,
+				...FadeDurationChoice,
 			],
 			callback: (action): void => {
 				const cmd = MainPanPath(action.options)
@@ -510,7 +539,14 @@ export function GetActionsList(
 				} else if (newVal > 1) {
 					newVal = 1
 				}
-				transitions.run(cmd, currentVal, newVal, getOptNumber(action, 'fadeDuration', 0), true)
+				transitions.run(
+					cmd,
+					currentVal,
+					newVal,
+					getOptNumber(action, 'fadeDuration', 0),
+					getOptAlgorithm(action, 'fadeAlgorithm'),
+					getOptCurve(action, 'fadeType')
+				)
 			},
 			subscribe: (evt): void => {
 				ensureLoaded(MainPanPath(evt.options))
@@ -549,7 +585,7 @@ export function GetActionsList(
 					id: 'target',
 					...convertChoices(panningChoices.allSources),
 				},
-				FadeDurationChoice,
+				...FadeDurationChoice,
 			],
 			callback: (action, info): void => {
 				if (info) {
@@ -559,7 +595,14 @@ export function GetActionsList(
 						const currentState = state.get(cmd)
 						const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0].value : undefined
 						if (currentVal !== undefined) {
-							transitions.run(cmd, currentVal, storedVal, getOptNumber(action, 'fadeDuration', 0), true)
+							transitions.run(
+								cmd,
+								currentVal,
+								storedVal,
+								getOptNumber(action, 'fadeDuration', 0),
+								getOptAlgorithm(action, 'fadeAlgorithm'),
+								getOptCurve(action, 'fadeType')
+							)
 						}
 					}
 				}
@@ -584,13 +627,20 @@ export function GetActionsList(
 					...convertChoices(levelsChoices.channelSendTargets),
 				},
 				FaderLevelChoice,
-				FadeDurationChoice,
+				...FadeDurationChoice,
 			],
 			callback: (action): void => {
 				const cmd = SendChannelToBusPath(action.options)
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
-				transitions.run(cmd, currentVal, getOptNumber(action, 'fad'), getOptNumber(action, 'fadeDuration', 0))
+				transitions.runForDb(
+					cmd,
+					currentVal,
+					getOptNumber(action, 'fad'),
+					getOptNumber(action, 'fadeDuration', 0),
+					getOptAlgorithm(action, 'fadeAlgorithm'),
+					getOptCurve(action, 'fadeType')
+				)
 			},
 			subscribe: (evt): void => {
 				// In case we have a fade time
@@ -613,14 +663,14 @@ export function GetActionsList(
 					...convertChoices(levelsChoices.channelSendTargets),
 				},
 				FaderLevelDeltaChoice,
-				FadeDurationChoice,
+				...FadeDurationChoice,
 			],
 			callback: (action): void => {
 				const cmd = SendChannelToBusPath(action.options)
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
 				if (typeof currentVal === 'number') {
-					transitions.run(
+					transitions.runForDb(
 						cmd,
 						currentVal,
 						currentVal + getOptNumber(action, 'delta'),
@@ -678,7 +728,7 @@ export function GetActionsList(
 					id: 'target',
 					...convertChoices(levelsChoices.channelSendTargets),
 				},
-				FadeDurationChoice,
+				...FadeDurationChoice,
 			],
 			callback: (action, info): void => {
 				if (info) {
@@ -689,7 +739,14 @@ export function GetActionsList(
 						const currentVal =
 							currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
 						if (currentVal !== undefined) {
-							transitions.run(cmd, currentVal, storedVal, getOptNumber(action, 'fadeDuration', 0))
+							transitions.runForDb(
+								cmd,
+								currentVal,
+								storedVal,
+								getOptNumber(action, 'fadeDuration', 0),
+								getOptAlgorithm(action, 'fadeAlgorithm'),
+								getOptCurve(action, 'fadeType')
+							)
 						}
 					}
 				}
@@ -711,7 +768,7 @@ export function GetActionsList(
 					...convertChoices(panningChoices.channelSendTargets),
 				},
 				PanningChoice,
-				FadeDurationChoice,
+				...FadeDurationChoice,
 			],
 			callback: (action): void => {
 				const cmd = ChannelToBusPanPath(action.options)
@@ -722,7 +779,8 @@ export function GetActionsList(
 					currentVal,
 					getOptNumber(action, 'pan') / 100 + 0.5,
 					getOptNumber(action, 'fadeDuration', 0),
-					true
+					getOptAlgorithm(action, 'fadeAlgorithm'),
+					getOptCurve(action, 'fadeType')
 				)
 			},
 			subscribe: (evt): void => {
@@ -745,7 +803,7 @@ export function GetActionsList(
 					...convertChoices(panningChoices.channelSendTargets),
 				},
 				PanningDelta,
-				FadeDurationChoice,
+				...FadeDurationChoice,
 			],
 			callback: (action): void => {
 				const cmd = ChannelToBusPanPath(action.options)
@@ -757,7 +815,14 @@ export function GetActionsList(
 				} else if (newVal > 1) {
 					newVal = 1
 				}
-				transitions.run(cmd, currentVal, newVal, getOptNumber(action, 'fadeDuration', 0), true)
+				transitions.run(
+					cmd,
+					currentVal,
+					newVal,
+					getOptNumber(action, 'fadeDuration', 0),
+					getOptAlgorithm(action, 'fadeAlgorithm'),
+					getOptCurve(action, 'fadeType')
+				)
 			},
 			subscribe: (evt): void => {
 				ensureLoaded(ChannelToBusPanPath(evt.options))
@@ -808,7 +873,7 @@ export function GetActionsList(
 					id: 'target',
 					...convertChoices(panningChoices.channelSendTargets),
 				},
-				FadeDurationChoice,
+				...FadeDurationChoice,
 			],
 			callback: (action, info): void => {
 				if (info) {
@@ -818,7 +883,14 @@ export function GetActionsList(
 						const currentState = state.get(cmd)
 						const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0].value : undefined
 						if (currentVal !== undefined) {
-							transitions.run(cmd, currentVal, storedVal, getOptNumber(action, 'fadeDuration', 0), true)
+							transitions.run(
+								cmd,
+								currentVal,
+								storedVal,
+								getOptNumber(action, 'fadeDuration', 0),
+								getOptAlgorithm(action, 'fadeAlgorithm'),
+								getOptCurve(action, 'fadeType')
+							)
 						}
 					}
 				}
@@ -843,13 +915,13 @@ export function GetActionsList(
 					...convertChoices(levelsChoices.busSendTargets),
 				},
 				FaderLevelChoice,
-				FadeDurationChoice,
+				...FadeDurationChoice,
 			],
 			callback: (action): void => {
 				const cmd = SendBusToMatrixPath(action.options)
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
-				transitions.run(cmd, currentVal, getOptNumber(action, 'fad'), getOptNumber(action, 'fadeDuration', 0))
+				transitions.runForDb(cmd, currentVal, getOptNumber(action, 'fad'), getOptNumber(action, 'fadeDuration', 0))
 			},
 			subscribe: (evt): void => {
 				// In case we have a fade time
@@ -872,14 +944,14 @@ export function GetActionsList(
 					...convertChoices(levelsChoices.busSendTargets),
 				},
 				FaderLevelDeltaChoice,
-				FadeDurationChoice,
+				...FadeDurationChoice,
 			],
 			callback: (action): void => {
 				const cmd = SendBusToMatrixPath(action.options)
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
 				if (typeof currentVal === 'number') {
-					transitions.run(
+					transitions.runForDb(
 						cmd,
 						currentVal,
 						currentVal + getOptNumber(action, 'delta'),
@@ -937,7 +1009,7 @@ export function GetActionsList(
 					id: 'target',
 					...convertChoices(levelsChoices.busSendTargets),
 				},
-				FadeDurationChoice,
+				...FadeDurationChoice,
 			],
 			callback: (action, info): void => {
 				if (info) {
@@ -948,7 +1020,14 @@ export function GetActionsList(
 						const currentVal =
 							currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
 						if (currentVal !== undefined) {
-							transitions.run(cmd, currentVal, storedVal, getOptNumber(action, 'fadeDuration', 0))
+							transitions.runForDb(
+								cmd,
+								currentVal,
+								storedVal,
+								getOptNumber(action, 'fadeDuration', 0),
+								getOptAlgorithm(action, 'fadeAlgorithm'),
+								getOptCurve(action, 'fadeType')
+							)
 						}
 					}
 				}
@@ -970,7 +1049,7 @@ export function GetActionsList(
 					...convertChoices(panningChoices.busSendTarget),
 				},
 				PanningChoice,
-				FadeDurationChoice,
+				...FadeDurationChoice,
 			],
 			callback: (action): void => {
 				const cmd = BusToMatrixPanPath(action.options)
@@ -981,7 +1060,8 @@ export function GetActionsList(
 					currentVal,
 					getOptNumber(action, 'pan') / 100 + 0.5,
 					getOptNumber(action, 'fadeDuration', 0),
-					true
+					getOptAlgorithm(action, 'fadeAlgorithm'),
+					getOptCurve(action, 'fadeType')
 				)
 			},
 			subscribe: (evt): void => {
@@ -1004,7 +1084,7 @@ export function GetActionsList(
 					...convertChoices(panningChoices.busSendTarget),
 				},
 				PanningDelta,
-				FadeDurationChoice,
+				...FadeDurationChoice,
 			],
 			callback: (action): void => {
 				const cmd = BusToMatrixPanPath(action.options)
@@ -1016,7 +1096,14 @@ export function GetActionsList(
 				} else if (newVal > 1) {
 					newVal = 1
 				}
-				transitions.run(cmd, currentVal, newVal, getOptNumber(action, 'fadeDuration', 0), true)
+				transitions.run(
+					cmd,
+					currentVal,
+					newVal,
+					getOptNumber(action, 'fadeDuration', 0),
+					getOptAlgorithm(action, 'fadeAlgorithm'),
+					getOptCurve(action, 'fadeType')
+				)
 			},
 			subscribe: (evt): void => {
 				ensureLoaded(BusToMatrixPanPath(evt.options))
@@ -1067,7 +1154,7 @@ export function GetActionsList(
 					id: 'target',
 					...convertChoices(panningChoices.busSendTarget),
 				},
-				FadeDurationChoice,
+				...FadeDurationChoice,
 			],
 			callback: (action, info): void => {
 				if (info) {
@@ -1077,7 +1164,14 @@ export function GetActionsList(
 						const currentState = state.get(cmd)
 						const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0].value : undefined
 						if (currentVal !== undefined) {
-							transitions.run(cmd, currentVal, storedVal, getOptNumber(action, 'fadeDuration', 0), true)
+							transitions.run(
+								cmd,
+								currentVal,
+								storedVal,
+								getOptNumber(action, 'fadeDuration', 0),
+								getOptAlgorithm(action, 'algorithm'),
+								getOptCurve(action, 'fadeType')
+							)
 						}
 					}
 				}
@@ -1470,12 +1564,12 @@ export function GetActionsList(
 		},
 		[ActionId.MonitorLevel]: {
 			label: 'Set monitor level',
-			options: [FaderLevelChoice, FadeDurationChoice],
+			options: [FaderLevelChoice, ...FadeDurationChoice],
 			callback: (action): void => {
 				const cmd = `/config/solo/level`
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
-				transitions.run(cmd, currentVal, getOptNumber(action, 'fad'), getOptNumber(action, 'fadeDuration', 0))
+				transitions.runForDb(cmd, currentVal, getOptNumber(action, 'fad'), getOptNumber(action, 'fadeDuration', 0))
 			},
 			subscribe: (): void => {
 				ensureLoaded(`/config/solo/level`)
@@ -2765,7 +2859,6 @@ export function GetActionsList(
 				const path = `/‐prefs/card/URECsdsel`
 				sendOsc(path, { type: 'i', value: convertAnyToNumber(action.options.card) })
 			},
-			subscribe: (): void => {},
 		},
 		[ActionId.RecordedTracks]: {
 			label: 'Select number of recorded tracks',
@@ -2786,7 +2879,6 @@ export function GetActionsList(
 				const path = `/‐prefs/card/URECtracks`
 				sendOsc(path, { type: 'i', value: convertAnyToNumber(action.options.tracks) })
 			},
-			subscribe: (): void => {},
 		},
 		[ActionId.SelectPlaybackDevice]: {
 			label: 'Select playback device',
@@ -2806,7 +2898,6 @@ export function GetActionsList(
 				const path = `/‐prefs/card/URECplayb`
 				sendOsc(path, { type: 'i', value: convertAnyToNumber(action.options.device) })
 			},
-			subscribe: (): void => {},
 		},
 		[ActionId.FormatSDCard]: {
 			label: 'Format SD Card',
@@ -2826,7 +2917,6 @@ export function GetActionsList(
 				const path = `/‐action/formatcard`
 				sendOsc(path, { type: 'i', value: convertAnyToNumber(action.options.card) })
 			},
-			subscribe: (): void => {},
 		},
 		[ActionId.XLiveRouting]: {
 			label: 'X-Live routing',
@@ -2847,7 +2937,6 @@ export function GetActionsList(
 				const path = `/‐prefs/card/URECrout`
 				sendOsc(path, { type: 'i', value: convertAnyToNumber(action.options.route) })
 			},
-			subscribe: (): void => {},
 		},
 		[ActionId.XLiveClearAlert]: {
 			label: 'X-Live Clear Alert',
@@ -2867,7 +2956,6 @@ export function GetActionsList(
 				const path = `/‐action/clearalert`
 				sendOsc(path, { type: 'i', value: convertAnyToNumber(action.options.alert) })
 			},
-			subscribe: (): void => {},
 		},
 		[ActionId.XLivePosition]: {
 			label: 'X-Live Position',
@@ -2886,7 +2974,6 @@ export function GetActionsList(
 				const path = `/‐action/setposition`
 				sendOsc(path, { type: 'i', value: convertAnyToNumber(action.options.position) })
 			},
-			subscribe: (): void => {},
 		},
 	}
 	return actions
