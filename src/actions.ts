@@ -1,5 +1,5 @@
 import InstanceSkel = require('../../../instance_skel')
-import { CompanionAction, CompanionActionEvent, CompanionActions } from '../../../instance_skel_types'
+import { CompanionAction, CompanionActionEvent, CompanionActions, OSCSomeArguments } from '../../../instance_skel_types'
 import { X32State } from './state'
 import { X32Config } from './config'
 import { trimToFloat, headampGainToFloat, floatToDB } from './util'
@@ -38,7 +38,6 @@ import {
 	GetRightOutputBlockRoutes,
 } from './choices'
 // eslint-disable-next-line node/no-extraneous-import
-import * as osc from 'osc'
 import {
 	MutePath,
 	MainPath,
@@ -138,6 +137,7 @@ export enum ActionId {
 	RouteXLRLeftOutputs = 'route-xlr-left-outputs',
 	RouteXLRRightOutputs = 'route-xlr-right-outputs',
 	LockAndShutdown = 'lock-and-shutdown',
+	SaveScene = 'save-scene',
 	SelectActiveSDCard = 'select-active-sdcard',
 	RecordedTracks = 'recorded-tracks',
 	SelectPlaybackDevice = 'select-playback-device',
@@ -161,12 +161,12 @@ export function GetActionsList(
 	const selectChoices = GetTargetChoices(state, { skipDca: true, includeMain: true, numericIndex: true })
 	const soloChoices = GetTargetChoices(state, { includeMain: true, numericIndex: true })
 
-	const sendOsc = (cmd: string, arg: osc.MetaArgument): void => {
+	function sendOsc(cmd: string, arg: OSCSomeArguments) {
 		try {
 			// HACK: We send commands on a different port than we run /xremote on, so that we get change events for what we send.
 			// Otherwise we can have no confirmation that a command was accepted
 			if (self.config.host) {
-				self.oscSend(self.config.host, 10023, cmd, [arg])
+				self.oscSend(self.config.host, 10023, cmd, arg)
 			}
 		} catch (e) {
 			self.log('error', `Command send failed: ${e}`)
@@ -217,8 +217,13 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'State',
 					id: 'state',
-					choices: [{id: 3, label: 'Record'},{id: 2, label: 'Play'},{id: 1, label: 'Pause'},{id: 0, label: 'Stop'}],
-					default: 3
+					choices: [
+						{ id: 3, label: 'Record' },
+						{ id: 2, label: 'Play' },
+						{ id: 1, label: 'Pause' },
+						{ id: 0, label: 'Stop' },
+					],
+					default: 3,
 				},
 			],
 			callback: (action): void => {
@@ -227,8 +232,6 @@ export function GetActionsList(
 					type: 'i',
 					value: convertAnyToNumber(action.options.state),
 				})
-			},
-			subscribe: (): void => {
 			},
 		},
 		[ActionId.AddMarker]: {
@@ -240,8 +243,6 @@ export function GetActionsList(
 					type: 'i',
 					value: 1,
 				})
-			},
-			subscribe: (): void => {
 			},
 		},
 		[ActionId.Mute]: {
@@ -2747,6 +2748,40 @@ export function GetActionsList(
 				ensureLoaded(`/-stat/lock`)
 			},
 		},
+		[ActionId.SaveScene]: {
+			label: 'Save scene',
+			description:
+				'Use at own risk. This will over write whatever scene is saved in that index. Please make sure your settings are correct when setting up.',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'scene number (0-99)',
+					id: 'sceneIndex',
+					...convertChoices([...[...Array(100).keys()].map((x) => ({ id: x, label: `${x}`.padStart(2, '0') }))]),
+				},
+				{
+					type: 'textinput',
+					label: 'Scene name',
+					id: 'sceneName',
+				},
+				{
+					type: 'textinput',
+					label: 'Scene note',
+					id: 'sceneNote',
+				},
+			],
+			callback: (action): void => {
+				const index = action.options.sceneIndex as number
+				const name = action.options.sceneName ? (action.options.sceneName as string) : ''
+				const note = action.options.sceneNote ? (action.options.sceneNote as string) : ''
+				sendOsc('/save', [
+					{ type: 's', value: 'scene' },
+					{ type: 'i', value: index },
+					{ type: 's', value: name },
+					{ type: 's', value: note },
+				])
+			},
+		},
 		[ActionId.SelectActiveSDCard]: {
 			label: 'Select Active SD Card',
 			description: 'Select Active SD Card',
@@ -2765,7 +2800,6 @@ export function GetActionsList(
 				const path = `/‐prefs/card/URECsdsel`
 				sendOsc(path, { type: 'i', value: convertAnyToNumber(action.options.card) })
 			},
-			subscribe: (): void => {},
 		},
 		[ActionId.RecordedTracks]: {
 			label: 'Select number of recorded tracks',
@@ -2786,7 +2820,6 @@ export function GetActionsList(
 				const path = `/‐prefs/card/URECtracks`
 				sendOsc(path, { type: 'i', value: convertAnyToNumber(action.options.tracks) })
 			},
-			subscribe: (): void => {},
 		},
 		[ActionId.SelectPlaybackDevice]: {
 			label: 'Select playback device',
@@ -2806,7 +2839,6 @@ export function GetActionsList(
 				const path = `/‐prefs/card/URECplayb`
 				sendOsc(path, { type: 'i', value: convertAnyToNumber(action.options.device) })
 			},
-			subscribe: (): void => {},
 		},
 		[ActionId.FormatSDCard]: {
 			label: 'Format SD Card',
@@ -2826,8 +2858,8 @@ export function GetActionsList(
 				const path = `/‐action/formatcard`
 				sendOsc(path, { type: 'i', value: convertAnyToNumber(action.options.card) })
 			},
-			subscribe: (): void => {},
 		},
+
 		[ActionId.XLiveRouting]: {
 			label: 'X-Live routing',
 			description: 'X-Live routing',
@@ -2847,7 +2879,6 @@ export function GetActionsList(
 				const path = `/‐prefs/card/URECrout`
 				sendOsc(path, { type: 'i', value: convertAnyToNumber(action.options.route) })
 			},
-			subscribe: (): void => {},
 		},
 		[ActionId.XLiveClearAlert]: {
 			label: 'X-Live Clear Alert',
@@ -2867,7 +2898,6 @@ export function GetActionsList(
 				const path = `/‐action/clearalert`
 				sendOsc(path, { type: 'i', value: convertAnyToNumber(action.options.alert) })
 			},
-			subscribe: (): void => {},
 		},
 		[ActionId.XLivePosition]: {
 			label: 'X-Live Position',
@@ -2886,7 +2916,6 @@ export function GetActionsList(
 				const path = `/‐action/setposition`
 				sendOsc(path, { type: 'i', value: convertAnyToNumber(action.options.position) })
 			},
-			subscribe: (): void => {},
 		},
 	}
 	return actions
