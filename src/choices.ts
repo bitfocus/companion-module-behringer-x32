@@ -3,6 +3,9 @@ import {
 	ConfigValue,
 	CompanionInputFieldNumber,
 	CompanionInputFieldDropdown,
+	SomeCompanionInputField,
+	CompanionActionEvent,
+	CompanionFeedbackEvent,
 } from '../../../instance_skel_types'
 import { X32State } from './state'
 import { padNumber } from './util'
@@ -127,15 +130,58 @@ export const MuteChoice: CompanionInputFieldDropdown = {
 	id: 'mute',
 	...convertChoices(CHOICES_MUTE),
 }
-export const FadeDurationChoice: CompanionInputFieldNumber = {
-	type: 'number',
-	label: 'Fade Duration (ms)',
-	id: 'fadeDuration',
-	default: 0,
-	min: 0,
-	step: 10,
-	max: 60000,
-}
+export const FadeDurationChoice: SomeCompanionInputField[] = [
+	{
+		type: 'number',
+		label: 'Fade Duration (ms)',
+		id: 'fadeDuration',
+		default: 0,
+		min: 0,
+		step: 10,
+		max: 60000,
+	},
+	{
+		type: 'dropdown',
+		label: 'Algorithm',
+		id: 'fadeAlgorithm',
+		default: 'linear',
+		choices: [
+			{ id: 'linear', label: 'Linear' },
+			{ id: 'quadratic', label: 'Quadratic' },
+			{ id: 'cubic', label: 'Cubic' },
+			{ id: 'quartic', label: 'Quartic' },
+			{ id: 'quintic', label: 'Quintic' },
+			{ id: 'sinusoidal', label: 'Sinusoidal' },
+			{ id: 'exponential', label: 'Exponential' },
+			{ id: 'circular', label: 'Circular' },
+			{ id: 'elastic', label: 'Elastic' },
+			{ id: 'back', label: 'Back' },
+			{ id: 'bounce', label: 'Bounce' },
+		],
+		isVisible: (options: CompanionActionEvent | CompanionFeedbackEvent): boolean => {
+			return options.options.fadeDuration != null && (options.options.fadeDuration as number) > 0
+		},
+	},
+	{
+		type: 'dropdown',
+		label: 'Fade type',
+		id: 'fadeType',
+		default: 'ease-in',
+		choices: [
+			{ id: 'ease-in', label: 'Ease-in' },
+			{ id: 'ease-out', label: 'Ease-out' },
+			{ id: 'ease-in-out', label: 'Ease-in-out' },
+		],
+		isVisible: (options: CompanionActionEvent | CompanionFeedbackEvent): boolean => {
+			return (
+				options.options.fadeDuration != null &&
+				options.options.fadeAlgorithm != null &&
+				(options.options.fadeDuration as number) > 0 &&
+				(options.options.fadeAlgorithm as string) !== 'linear'
+			)
+		},
+	},
+]
 
 export function convertChoices(choices: DropdownChoice[]): { choices: DropdownChoice[]; default: ConfigValue } {
 	return {

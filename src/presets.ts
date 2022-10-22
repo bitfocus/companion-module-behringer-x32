@@ -67,13 +67,13 @@ export function GetPresetsList(instance: InstanceSkel<X32Config>, state: X32Stat
 			{
 				type: FeedbackId.Record,
 				options: {
-					state: 3
+					state: 3,
 				},
 				style: {
 					color: instance.rgb(255, 255, 255),
 					bgcolor: instance.rgb(255, 0, 0),
-				}
-			}
+				},
+			},
 		],
 	})
 	presets.push({

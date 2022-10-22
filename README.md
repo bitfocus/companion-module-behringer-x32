@@ -14,6 +14,8 @@ While developing the module, by using `yarn build:watch` the compiler will be ru
 
 - Routing
 - Lock/Shutdown
+- Xlive functionality
+- Updated fader curves
 
 ### v2.9.1
 
