@@ -662,3 +662,10 @@ export function GetRightOutputBlockRoutes(): DropdownChoice[] {
 		'User In 29-32',
 	].map((src, i) => ({ id: i, label: src }))
 }
+
+export function GetTalkbackDestinations(): DropdownChoice[] {
+	const bus = [...Array(16).keys()].map((x) => `${x + 1}`)
+	const main = ['LR', 'M/C']
+
+	return [...bus, ...main].map((src, i) => ({ id: i, label: src }))
+}

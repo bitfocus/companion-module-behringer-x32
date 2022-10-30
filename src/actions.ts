@@ -34,6 +34,7 @@ import {
 	GetUserInTargets,
 	GetUserOutSources,
 	GetUserOutTargets,
+	GetTalkbackDestinations,
 } from './choices.js'
 import {
 	MutePath,
@@ -102,6 +103,9 @@ export enum ActionId {
 	ClearSolo = 'clear-solo',
 	Tape = 'tape',
 	TalkbackTalk = 'talkback_talk',
+	TalkbackConfig = 'talkback_config',
+	TalkbackConfigStore = 'talkback_config_store',
+	TalkbackConfigRestore = 'talkback_restore',
 	OscillatorEnable = 'oscillator-enable',
 	OscillatorDestination = 'oscillator-destination',
 	SyncClock = 'sync_clock',
@@ -1421,6 +1425,111 @@ export function GetActionsList(
 				}
 			},
 		},
+		[ActionId.TalkbackConfig]: {
+			label: 'Talkback Config',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Function',
+					id: 'function',
+					...convertChoices([
+						{
+							id: 'A',
+							label: 'A',
+						},
+						{
+							id: 'B',
+							label: 'B',
+						},
+					]),
+				},
+				{
+					type: 'dropdown',
+					label: 'Destinations',
+					id: 'dest',
+					multiple: true,
+					default: [],
+					choices: GetTalkbackDestinations(),
+				},
+			],
+			callback: (action): void => {
+				const cmd = `/config/talk/${action.options.function}/destmap`
+				const bitmap = (action.options.dest as number[]).reduce((acc, x) => acc + Math.pow(2, x), 0)
+				sendOsc(cmd, {
+					type: 'i',
+					value: bitmap,
+				})
+			},
+		},
+		[ActionId.TalkbackConfigStore]: {
+			label: 'Talkback Store Config',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Function',
+					id: 'function',
+					...convertChoices([
+						{
+							id: 'A',
+							label: 'A',
+						},
+						{
+							id: 'B',
+							label: 'B',
+						},
+					]),
+				},
+			],
+			callback: (action, info): void => {
+				if (info) {
+					const cmd = `/config/talk/${action.options.function}/destmap`
+					const currentState = state.get(cmd)
+					const currentVal = currentState && currentState[0]?.type === 'i' ? currentState[0]?.value : undefined
+					if (currentVal !== undefined) {
+						state.setPressValue(`${info.page}-${info.bank}-${cmd}`, currentVal)
+					}
+				}
+			},
+			subscribe: (evt): void => {
+				ensureLoaded(`/config/talk/${evt.options.function}/destmap`)
+			},
+		},
+		[ActionId.TalkbackConfigRestore]: {
+			label: 'Talkback Restore Config',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Function',
+					id: 'function',
+					...convertChoices([
+						{
+							id: 'A',
+							label: 'A',
+						},
+						{
+							id: 'B',
+							label: 'B',
+						},
+					]),
+				},
+			],
+			callback: (action, info): void => {
+				if (info) {
+					const cmd = `/config/talk/${action.options.function}/destmap`
+					const storedVal = state.popPressValue(`${info.page}-${info.bank}-${cmd}`)
+					if (storedVal !== undefined) {
+						sendOsc(cmd, {
+							type: 'i',
+							value: storedVal,
+						})
+					}
+				}
+			},
+			subscribe: (evt): void => {
+				ensureLoaded(`/config/talk/${evt.options.function}/destmap`)
+			},
+		},
+
 		[ActionId.OscillatorEnable]: {
 			name: 'Oscillator Enable',
 			options: [
@@ -2476,7 +2585,7 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'source',
 					id: 'source',
-					...convertChoices([...GetUserInSources()]),
+					...convertChoices(GetUserInSources()),
 				},
 				{
 					type: 'dropdown',
@@ -2513,7 +2622,7 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'source',
 					id: 'source',
-					...convertChoices([...GetUserOutSources()]),
+					...convertChoices(GetUserOutSources()),
 				},
 				{
 					type: 'dropdown',
@@ -2551,7 +2660,7 @@ export function GetActionsList(
 					label: 'destination output',
 					id: 'channel',
 					default: 1,
-					choices: [...GetUserOutTargets(true)],
+					choices: GetUserOutTargets(true),
 				},
 			],
 			callback: (action): void => {
@@ -2608,14 +2717,14 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'Input blocks',
 					id: 'block',
-					...convertChoices([...GetInputBlocks()]),
+					...convertChoices(GetInputBlocks()),
 				},
 				{
 					type: 'dropdown',
 					label: 'Routing source block',
 					id: 'routing',
 					default: 0,
-					choices: [...GetInputBlockRoutes()],
+					choices: GetInputBlockRoutes(),
 				},
 			],
 			callback: (action): void => {
@@ -2644,7 +2753,7 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'Routing source block',
 					id: 'routing',
-					...convertChoices([...GetAuxBlockRoutes()]),
+					...convertChoices(GetAuxBlockRoutes()),
 				},
 			],
 			callback: (action): void => {
@@ -2673,13 +2782,13 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'Input blocks',
 					id: 'block',
-					...convertChoices([...GetAesBlocks()]),
+					...convertChoices(GetAesBlocks()),
 				},
 				{
 					type: 'dropdown',
 					label: 'Routing source block',
 					id: 'routing',
-					...convertChoices([...GetAesCardRouteBlocks()]),
+					...convertChoices(GetAesCardRouteBlocks()),
 				},
 			],
 			callback: (action): void => {
@@ -2699,13 +2808,13 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'Input blocks',
 					id: 'block',
-					...convertChoices([...GetInputBlocks()]),
+					...convertChoices(GetInputBlocks()),
 				},
 				{
 					type: 'dropdown',
 					label: 'Routing source block',
 					id: 'routing',
-					...convertChoices([...GetAesCardRouteBlocks()]),
+					...convertChoices(GetAesCardRouteBlocks()),
 				},
 			],
 			callback: (action): void => {
@@ -2733,7 +2842,7 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'Routing source block',
 					id: 'routing',
-					...convertChoices([...GetLeftOutputBlockRoutes()]),
+					...convertChoices(GetLeftOutputBlockRoutes()),
 				},
 			],
 			callback: (action): void => {
@@ -2761,7 +2870,7 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'Routing source block',
 					id: 'routing',
-					...convertChoices([...GetRightOutputBlockRoutes()]),
+					...convertChoices(GetRightOutputBlockRoutes()),
 				},
 			],
 			callback: (action): void => {
@@ -2823,7 +2932,7 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'scene number (0-99)',
 					id: 'sceneIndex',
-					...convertChoices([...[...Array(100).keys()].map((x) => ({ id: x, label: `${x}`.padStart(2, '0') }))]),
+					...convertChoices([...Array(100).keys()].map((x) => ({ id: x, label: `${x}`.padStart(2, '0') }))),
 				},
 				{
 					type: 'textinput',
