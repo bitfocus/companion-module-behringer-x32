@@ -335,9 +335,16 @@ export function GetChannelSendChoices(state: X32State, type: 'on' | 'level' | 'p
 	if (type === 'on') {
 		appendTarget(`/main/st`, 'st', `Main Stereo`)
 	}
-	if (type !== 'pan') {
-		appendTarget(`/main/m`, `m${type == 'on' ? '' : type}`, `Main Mono`)
+
+	switch (type) {
+		case 'on':
+			appendTarget(`/main/m`, `mono`, `Main Mono`)
+			break
+		case 'level':
+			appendTarget(`/main/m`, `m${type}`, `Main Mono`)
+			break
 	}
+
 	return res
 }
 
