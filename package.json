@@ -3,7 +3,7 @@
 	"legacy": [
 		"x32"
 	],
-	"version": "2.11.0",
+	"version": "2.11.1",
 	"api_version": "1.0.0",
 	"keywords": [
 		"Audio"
@@ -16,7 +16,7 @@
 	"scripts": {
 		"prepare": "husky install",
 		"dev": "yarn build:watch",
-		"build": "npx rimraf dist && npx --package=typescript@~4.5 -y -c 'tsc -p tsconfig.build.json'",
+		"build": "npx rimraf dist && npx typescript@~4.5 -p tsconfig.build.json",
 		"build:main": "tsc -p tsconfig.build.json",
 		"build:watch": "tsc -p tsconfig.build.json --watch",
 		"lint:raw": "eslint --ext .ts --ext .js --ignore-pattern dist",
