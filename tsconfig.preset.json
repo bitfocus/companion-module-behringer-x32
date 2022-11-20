@@ -1,7 +1,8 @@
 {
+	// lib and target based on https://www.npmjs.com/package/@tsconfig/node12
 	"compilerOptions": {
 		"module": "commonjs",
-		"target": "es2018",
+		"target": "es2020",
 		"noImplicitAny": true,
 		"moduleResolution": "node",
 		"sourceMap": true,
@@ -13,7 +14,7 @@
 		"listFiles": false,
 		"traceResolution": false,
 		"pretty": true,
-		"lib": ["es2018"],
+		"lib": ["es2020"],
 		"types": ["node"],
 		"strict": true,
 		"alwaysStrict": false,
