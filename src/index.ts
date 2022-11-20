@@ -70,7 +70,7 @@ class X32Instance extends InstanceSkel<X32Config> implements IStoredChannelObser
 		this.transitions = new X32Transitions(this)
 		this.x32State.attach(this)
 
-		this.debounceUpdateCompanionBits = debounceFn(this.updateCompanionBits, {
+		this.debounceUpdateCompanionBits = debounceFn(this.updateCompanionBits.bind(this), {
 			wait: 100,
 			maxWait: 500,
 			before: false,
