@@ -8,11 +8,11 @@ import {
 	combineRgb,
 	CompanionPresetDefinitions,
 	CompanionPresetFeedback,
-	CompanionPressButtonPresetDefinition,
+	CompanionButtonPresetDefinition,
 } from '@companion-module/base'
 import { InstanceBaseExt } from './util.js'
 
-interface CompanionPresetExt extends CompanionPressButtonPresetDefinition {
+interface CompanionPresetExt extends CompanionButtonPresetDefinition {
 	feedbacks: Array<
 		{
 			type: FeedbackId
@@ -47,40 +47,42 @@ export function GetPresetsList(_instance: InstanceBaseExt<X32Config>, state: X32
 		presets['dip-fader-level'] = {
 			name: 'Dip fader level',
 			category: 'Dip level',
-			type: 'press',
+			type: 'button',
 			style: {
 				text: 'Dip fader',
 				size: 'auto',
 				color: combineRgb(255, 255, 255),
 				bgcolor: combineRgb(0, 0, 0),
 			},
-			actions: {
-				down: [
-					{
-						actionId: ActionId.FaderLevelStore,
-						options: {
-							target: sampleChannel.id,
+			steps: [
+				{
+					down: [
+						{
+							actionId: ActionId.FaderLevelStore,
+							options: {
+								target: sampleChannel.id,
+							},
 						},
-					},
-					{
-						actionId: ActionId.FaderLevelDelta,
-						options: {
-							target: sampleChannel.id,
-							delta: -10,
-							duration: 0,
+						{
+							actionId: ActionId.FaderLevelDelta,
+							options: {
+								target: sampleChannel.id,
+								delta: -10,
+								duration: 0,
+							},
 						},
-					},
-				],
-				up: [
-					{
-						actionId: ActionId.FaderLevelRestore,
-						options: {
-							target: sampleChannel.id,
-							duration: 0,
+					],
+					up: [
+						{
+							actionId: ActionId.FaderLevelRestore,
+							options: {
+								target: sampleChannel.id,
+								duration: 0,
+							},
 						},
-					},
-				],
-			},
+					],
+				},
+			],
 			feedbacks: [],
 		}
 	}
@@ -89,43 +91,45 @@ export function GetPresetsList(_instance: InstanceBaseExt<X32Config>, state: X32
 		presets['dip-channel-to-bus-send'] = {
 			name: 'Dip channel to bus send',
 			category: 'Dip level',
-			type: 'press',
+			type: 'button',
 			style: {
 				text: 'Dip channel send',
 				size: 'auto',
 				color: combineRgb(255, 255, 255),
 				bgcolor: combineRgb(0, 0, 0),
 			},
-			actions: {
-				down: [
-					{
-						actionId: ActionId.ChannelSendLevelStore,
-						options: {
-							source: sampleInput.id,
-							target: sampleChannelSendTarget.id,
+			steps: [
+				{
+					down: [
+						{
+							actionId: ActionId.ChannelSendLevelStore,
+							options: {
+								source: sampleInput.id,
+								target: sampleChannelSendTarget.id,
+							},
 						},
-					},
-					{
-						actionId: ActionId.ChannelSendLevelDelta,
-						options: {
-							source: sampleInput.id,
-							target: sampleChannelSendTarget.id,
-							delta: -10,
-							duration: 0,
+						{
+							actionId: ActionId.ChannelSendLevelDelta,
+							options: {
+								source: sampleInput.id,
+								target: sampleChannelSendTarget.id,
+								delta: -10,
+								duration: 0,
+							},
 						},
-					},
-				],
-				up: [
-					{
-						actionId: ActionId.ChannelSendLevelRestore,
-						options: {
-							source: sampleInput.id,
-							target: sampleChannelSendTarget.id,
-							duration: 0,
+					],
+					up: [
+						{
+							actionId: ActionId.ChannelSendLevelRestore,
+							options: {
+								source: sampleInput.id,
+								target: sampleChannelSendTarget.id,
+								duration: 0,
+							},
 						},
-					},
-				],
-			},
+					],
+				},
+			],
 			feedbacks: [],
 		}
 	}
@@ -134,43 +138,45 @@ export function GetPresetsList(_instance: InstanceBaseExt<X32Config>, state: X32
 		presets['dip-bus-to-matrix-send'] = {
 			name: 'Dip bus to matrix send',
 			category: 'Dip level',
-			type: 'press',
+			type: 'button',
 			style: {
 				text: 'Dip bus send',
 				size: 'auto',
 				color: combineRgb(255, 255, 255),
 				bgcolor: combineRgb(0, 0, 0),
 			},
-			actions: {
-				down: [
-					{
-						actionId: ActionId.BusSendLevelStore,
-						options: {
-							source: sampleBusSendSource.id,
-							target: sampleBusSendTarget.id,
+			steps: [
+				{
+					down: [
+						{
+							actionId: ActionId.BusSendLevelStore,
+							options: {
+								source: sampleBusSendSource.id,
+								target: sampleBusSendTarget.id,
+							},
 						},
-					},
-					{
-						actionId: ActionId.BusSendLevelDelta,
-						options: {
-							source: sampleBusSendSource.id,
-							target: sampleBusSendTarget.id,
-							delta: -10,
-							duration: 0,
+						{
+							actionId: ActionId.BusSendLevelDelta,
+							options: {
+								source: sampleBusSendSource.id,
+								target: sampleBusSendTarget.id,
+								delta: -10,
+								duration: 0,
+							},
 						},
-					},
-				],
-				up: [
-					{
-						actionId: ActionId.BusSendLevelRestore,
-						options: {
-							source: sampleBusSendSource.id,
-							target: sampleBusSendTarget.id,
-							duration: 0,
+					],
+					up: [
+						{
+							actionId: ActionId.BusSendLevelRestore,
+							options: {
+								source: sampleBusSendSource.id,
+								target: sampleBusSendTarget.id,
+								duration: 0,
+							},
 						},
-					},
-				],
-			},
+					],
+				},
+			],
 			feedbacks: [],
 		}
 	}
