@@ -15,7 +15,7 @@ import { InstanceBaseExt } from './util.js'
 interface CompanionPresetExt extends CompanionButtonPresetDefinition {
 	feedbacks: Array<
 		{
-			type: FeedbackId
+			feedbackId: FeedbackId
 		} & SetRequired<CompanionPresetFeedback, 'style'>
 	>
 	// actions: Array<
@@ -43,64 +43,79 @@ export function GetPresetsList(_instance: InstanceBaseExt<X32Config>, state: X32
 	const sampleBusSendSource = levelsChoices.busSendSources[0]
 	const sampleBusSendTarget = levelsChoices.busSendTargets[0]
 
-	presets.push({
-		label: 'X-Live Record',
+	presets['xlive-record'] = {
+		name: 'X-Live Record',
 		category: 'X-Live',
-		bank: {
+		type: 'button',
+		style: {
 			text: 'X-Live\\nRecord',
-			style: 'text',
 			size: 'auto',
-			latch: true,
-			color: instance.rgb(255, 255, 255),
-			bgcolor: instance.rgb(0, 0, 0),
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
 		},
-		actions: [
+		options: {
+			stepAutoProgress: true,
+		},
+		steps: [
 			{
-				action: ActionId.Record,
-				options: {
-					state: 3,
-				},
+				down: [
+					{
+						actionId: ActionId.Record,
+						options: {
+							state: 3,
+						},
+					},
+				],
+				up: [],
 			},
-		],
-		release_actions: [
 			{
-				action: ActionId.Record,
-				options: {
-					state: 0,
-				},
+				down: [
+					{
+						actionId: ActionId.Record,
+						options: {
+							state: 0,
+						},
+					},
+				],
+				up: [],
 			},
 		],
 		feedbacks: [
 			{
-				type: FeedbackId.Record,
+				feedbackId: FeedbackId.Record,
 				options: {
 					state: 3,
 				},
 				style: {
-					color: instance.rgb(255, 255, 255),
-					bgcolor: instance.rgb(255, 0, 0),
+					color: combineRgb(255, 255, 255),
+					bgcolor: combineRgb(255, 0, 0),
 				},
 			},
 		],
-	})
-	presets.push({
-		label: 'Add marker',
+	}
+	presets['xlive-add-marker'] = {
+		name: 'Add marker',
 		category: 'X-Live',
-		bank: {
+		type: 'button',
+		style: {
 			text: 'Add marker',
-			style: 'text',
 			size: 'auto',
-			color: instance.rgb(255, 255, 255),
-			bgcolor: instance.rgb(0, 0, 0),
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
 		},
-		actions: [
+		steps: [
 			{
-				action: ActionId.AddMarker,
-				options: {},
+				down: [
+					{
+						actionId: ActionId.AddMarker,
+						options: {},
+					},
+				],
+				up: [],
 			},
 		],
 		feedbacks: [],
-	})
+	}
 
 	if (sampleChannel) {
 		presets['dip-fader-level'] = {
