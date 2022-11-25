@@ -23,8 +23,18 @@ import {
 	PanningDelta,
 	GetLevelsChoiceConfigs,
 	GetPanningChoiceConfigs,
+	GetAesBlocks,
+	GetAesCardRouteBlocks,
+	GetAuxBlockRoutes,
+	GetInputBlockRoutes,
+	GetInputBlocks,
+	GetLeftOutputBlockRoutes,
+	GetRightOutputBlockRoutes,
+	GetUserInSources,
+	GetUserInTargets,
+	GetUserOutSources,
+	GetUserOutTargets,
 } from './choices.js'
-import osc from 'osc'
 import {
 	MutePath,
 	MainPath,
@@ -34,6 +44,8 @@ import {
 	MainPanPath,
 	ChannelToBusPanPath,
 	BusToMatrixPanPath,
+	UserRouteInPath,
+	UserRouteOutPath,
 } from './paths.js'
 import { SetRequired } from 'type-fest'
 import { X32Transitions } from './transitions.js'
@@ -43,9 +55,12 @@ import {
 	CompanionActionEvent,
 	CompanionActionInfo,
 	CompanionActionDefinitions,
+	OSCSomeArguments,
 } from '@companion-module/base'
+import { Easing } from './easings.js'
 
 export enum ActionId {
+	AddMarker = 'add_marker',
 	Mute = 'mute',
 	MuteGroup = 'mute_grp',
 	MuteChannelSend = 'mute_channel_send',
@@ -115,6 +130,26 @@ export enum ActionId {
 	ScenePage = 'scene-page',
 	AssignPage = 'assign-page',
 	NextPrevPage = 'next-previous-page',
+	StoreChannel = 'store_channel',
+	Record = 'record',
+	RouteUserIn = 'route-user-in',
+	RouteUserOut = 'route-user-out',
+	RouteInputBlockMode = 'route-input-block-mode',
+	RouteInputBlocks = 'route-input-blocks',
+	RouteAuxBlocks = 'route-aux-blocks',
+	RouteAES50Blocks = 'route-aes50-blocks',
+	RouteCardBlocks = 'route-card-blocks',
+	RouteXLRLeftOutputs = 'route-xlr-left-outputs',
+	RouteXLRRightOutputs = 'route-xlr-right-outputs',
+	LockAndShutdown = 'lock-and-shutdown',
+	SaveScene = 'save-scene',
+	SelectActiveSDCard = 'select-active-sdcard',
+	RecordedTracks = 'recorded-tracks',
+	SelectPlaybackDevice = 'select-playback-device',
+	FormatSDCard = 'format-sdcard',
+	XLiveRouting = 'x-live-routing',
+	XLivePosition = 'x-live-position',
+	XLiveClearAlert = 'x-live-clear-alert',
 }
 
 type CompanionActionWithCallback = SetRequired<CompanionActionDefinition, 'callback'>
@@ -131,11 +166,11 @@ export function GetActionsList(
 	const selectChoices = GetTargetChoices(state, { skipDca: true, includeMain: true, numericIndex: true })
 	const soloChoices = GetTargetChoices(state, { includeMain: true, numericIndex: true })
 
-	const sendOsc = (cmd: string, arg: osc.MetaArgument): void => {
+	const sendOsc = (cmd: string, args: OSCSomeArguments): void => {
 		// HACK: We send commands on a different port than we run /xremote on, so that we get change events for what we send.
 		// Otherwise we can have no confirmation that a command was accepted
 		if (self.config.host) {
-			self.oscSend(self.config.host, 10023, cmd, [arg])
+			self.oscSend(self.config.host, 10023, cmd, args)
 		}
 	}
 	const getOptNumber = (action: CompanionActionInfo, key: string, defVal?: number): number => {
@@ -146,6 +181,27 @@ export function GetActionsList(
 			throw new Error(`Invalid option '${key}'`)
 		}
 		return val
+	}
+
+	const getOptAlgorithm = (action: CompanionActionEvent, key: string): Easing.algorithm | undefined => {
+		const rawVal = action.options[key]
+		if (rawVal === undefined) {
+			return rawVal
+		}
+		return rawVal as Easing.algorithm
+	}
+
+	const getOptCurve = (action: CompanionActionEvent, key: string): Easing.curve | undefined => {
+		const rawVal = action.options[key]
+		if (rawVal === undefined) {
+			return rawVal
+		}
+		return rawVal as Easing.curve
+	}
+
+	// Easy dirty fix
+	const convertAnyToNumber = (state: any): number => {
+		return parseInt(state)
 	}
 	// const getOptBool = (key: string): boolean => {
 	//   return !!opt[key]
@@ -172,6 +228,41 @@ export function GetActionsList(
 	}
 
 	const actions: { [id in ActionId]: CompanionActionWithCallback | undefined } = {
+		[ActionId.Record]: {
+			name: 'Set X-live State',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'State',
+					id: 'state',
+					choices: [
+						{ id: 3, label: 'Record' },
+						{ id: 2, label: 'Play' },
+						{ id: 1, label: 'Pause' },
+						{ id: 0, label: 'Stop' },
+					],
+					default: 3,
+				},
+			],
+			callback: (action): void => {
+				const cmd = `/-stat/urec/state`
+				sendOsc(cmd, {
+					type: 'i',
+					value: convertAnyToNumber(action.options.state),
+				})
+			},
+		},
+		[ActionId.AddMarker]: {
+			name: 'Add marker in recording',
+			options: [],
+			callback: (): void => {
+				const cmd = `/-action/addmarker`
+				sendOsc(cmd, {
+					type: 'i',
+					value: 1,
+				})
+			},
+		},
 		[ActionId.Mute]: {
 			name: 'Set mute',
 			options: [
@@ -295,13 +386,20 @@ export function GetActionsList(
 					...convertChoices(levelsChoices.channels),
 				},
 				FaderLevelChoice,
-				FadeDurationChoice,
+				...FadeDurationChoice,
 			],
 			callback: async (action): Promise<void> => {
 				const cmd = MainFaderPath(action.options)
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
-				transitions.run(cmd, currentVal, getOptNumber(action, 'fad'), getOptNumber(action, 'fadeDuration', 0))
+				transitions.runForDb(
+					cmd,
+					currentVal,
+					getOptNumber(action, 'fad'),
+					getOptNumber(action, 'fadeDuration', 0),
+					getOptAlgorithm(action, 'fadeAlgorithm'),
+					getOptCurve(action, 'fadeType')
+				)
 			},
 			subscribe: (evt): void => {
 				// In case we have a fade time
@@ -339,7 +437,7 @@ export function GetActionsList(
 					id: 'target',
 					...convertChoices(levelsChoices.channels),
 				},
-				FadeDurationChoice,
+				...FadeDurationChoice,
 			],
 			callback: async (action): Promise<void> => {
 				const cmd = MainFaderPath(action.options)
@@ -349,7 +447,7 @@ export function GetActionsList(
 					const currentVal =
 						currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
 					if (currentVal !== undefined) {
-						transitions.run(cmd, currentVal, storedVal, getOptNumber(action, 'fadeDuration', 0))
+						transitions.runForDb(cmd, currentVal, storedVal, getOptNumber(action, 'fadeDuration', 0))
 					}
 				}
 			},
@@ -364,18 +462,20 @@ export function GetActionsList(
 					...convertChoices(levelsChoices.channels),
 				},
 				FaderLevelDeltaChoice,
-				FadeDurationChoice,
+				...FadeDurationChoice,
 			],
 			callback: async (action): Promise<void> => {
 				const cmd = MainFaderPath(action.options)
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
 				if (typeof currentVal === 'number') {
-					transitions.run(
+					transitions.runForDb(
 						cmd,
 						currentVal,
 						currentVal + getOptNumber(action, 'delta'),
-						getOptNumber(action, 'fadeDuration', 0)
+						getOptNumber(action, 'fadeDuration', 0),
+						getOptAlgorithm(action, 'fadeAlgorithm'),
+						getOptCurve(action, 'fadeType')
 					)
 				}
 			},
@@ -393,7 +493,7 @@ export function GetActionsList(
 					...convertChoices(panningChoices.allSources),
 				},
 				PanningChoice,
-				FadeDurationChoice,
+				...FadeDurationChoice,
 			],
 			callback: async (action): Promise<void> => {
 				const cmd = MainPanPath(action.options)
@@ -404,7 +504,8 @@ export function GetActionsList(
 					currentVal,
 					getOptNumber(action, 'pan') / 100 + 0.5,
 					getOptNumber(action, 'fadeDuration', 0),
-					true
+					getOptAlgorithm(action, 'fadeAlgorithm'),
+					getOptCurve(action, 'fadeType')
 				)
 			},
 			subscribe: (evt): void => {
@@ -421,7 +522,7 @@ export function GetActionsList(
 					...convertChoices(panningChoices.allSources),
 				},
 				PanningDelta,
-				FadeDurationChoice,
+				...FadeDurationChoice,
 			],
 			callback: async (action): Promise<void> => {
 				const cmd = MainPanPath(action.options)
@@ -433,7 +534,14 @@ export function GetActionsList(
 				} else if (newVal > 1) {
 					newVal = 1
 				}
-				transitions.run(cmd, currentVal, newVal, getOptNumber(action, 'fadeDuration', 0), true)
+				transitions.run(
+					cmd,
+					currentVal,
+					newVal,
+					getOptNumber(action, 'fadeDuration', 0),
+					getOptAlgorithm(action, 'fadeAlgorithm'),
+					getOptCurve(action, 'fadeType')
+				)
 			},
 			subscribe: (evt): void => {
 				ensureLoaded(MainPanPath(evt.options))
@@ -470,7 +578,7 @@ export function GetActionsList(
 					id: 'target',
 					...convertChoices(panningChoices.allSources),
 				},
-				FadeDurationChoice,
+				...FadeDurationChoice,
 			],
 			callback: async (action): Promise<void> => {
 				const cmd = MainPanPath(action.options)
@@ -479,7 +587,14 @@ export function GetActionsList(
 					const currentState = state.get(cmd)
 					const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0].value : undefined
 					if (currentVal !== undefined) {
-						transitions.run(cmd, currentVal, storedVal, getOptNumber(action, 'fadeDuration', 0), true)
+						transitions.run(
+							cmd,
+							currentVal,
+							storedVal,
+							getOptNumber(action, 'fadeDuration', 0),
+							getOptAlgorithm(action, 'fadeAlgorithm'),
+							getOptCurve(action, 'fadeType')
+						)
 					}
 				}
 			},
@@ -503,13 +618,20 @@ export function GetActionsList(
 					...convertChoices(levelsChoices.channelSendTargets),
 				},
 				FaderLevelChoice,
-				FadeDurationChoice,
+				...FadeDurationChoice,
 			],
 			callback: async (action): Promise<void> => {
 				const cmd = SendChannelToBusPath(action.options)
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
-				transitions.run(cmd, currentVal, getOptNumber(action, 'fad'), getOptNumber(action, 'fadeDuration', 0))
+				transitions.runForDb(
+					cmd,
+					currentVal,
+					getOptNumber(action, 'fad'),
+					getOptNumber(action, 'fadeDuration', 0),
+					getOptAlgorithm(action, 'fadeAlgorithm'),
+					getOptCurve(action, 'fadeType')
+				)
 			},
 			subscribe: (evt): void => {
 				// In case we have a fade time
@@ -532,14 +654,14 @@ export function GetActionsList(
 					...convertChoices(levelsChoices.channelSendTargets),
 				},
 				FaderLevelDeltaChoice,
-				FadeDurationChoice,
+				...FadeDurationChoice,
 			],
 			callback: async (action): Promise<void> => {
 				const cmd = SendChannelToBusPath(action.options)
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
 				if (typeof currentVal === 'number') {
-					transitions.run(
+					transitions.runForDb(
 						cmd,
 						currentVal,
 						currentVal + getOptNumber(action, 'delta'),
@@ -594,7 +716,7 @@ export function GetActionsList(
 					id: 'target',
 					...convertChoices(levelsChoices.channelSendTargets),
 				},
-				FadeDurationChoice,
+				...FadeDurationChoice,
 			],
 			callback: async (action): Promise<void> => {
 				const cmd = SendChannelToBusPath(action.options)
@@ -604,7 +726,14 @@ export function GetActionsList(
 					const currentVal =
 						currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
 					if (currentVal !== undefined) {
-						transitions.run(cmd, currentVal, storedVal, getOptNumber(action, 'fadeDuration', 0))
+						transitions.runForDb(
+							cmd,
+							currentVal,
+							storedVal,
+							getOptNumber(action, 'fadeDuration', 0),
+							getOptAlgorithm(action, 'fadeAlgorithm'),
+							getOptCurve(action, 'fadeType')
+						)
 					}
 				}
 			},
@@ -625,7 +754,7 @@ export function GetActionsList(
 					...convertChoices(panningChoices.channelSendTargets),
 				},
 				PanningChoice,
-				FadeDurationChoice,
+				...FadeDurationChoice,
 			],
 			callback: async (action): Promise<void> => {
 				const cmd = ChannelToBusPanPath(action.options)
@@ -636,7 +765,8 @@ export function GetActionsList(
 					currentVal,
 					getOptNumber(action, 'pan') / 100 + 0.5,
 					getOptNumber(action, 'fadeDuration', 0),
-					true
+					getOptAlgorithm(action, 'fadeAlgorithm'),
+					getOptCurve(action, 'fadeType')
 				)
 			},
 			subscribe: (evt): void => {
@@ -659,7 +789,7 @@ export function GetActionsList(
 					...convertChoices(panningChoices.channelSendTargets),
 				},
 				PanningDelta,
-				FadeDurationChoice,
+				...FadeDurationChoice,
 			],
 			callback: async (action): Promise<void> => {
 				const cmd = ChannelToBusPanPath(action.options)
@@ -671,7 +801,14 @@ export function GetActionsList(
 				} else if (newVal > 1) {
 					newVal = 1
 				}
-				transitions.run(cmd, currentVal, newVal, getOptNumber(action, 'fadeDuration', 0), true)
+				transitions.run(
+					cmd,
+					currentVal,
+					newVal,
+					getOptNumber(action, 'fadeDuration', 0),
+					getOptAlgorithm(action, 'fadeAlgorithm'),
+					getOptCurve(action, 'fadeType')
+				)
 			},
 			subscribe: (evt): void => {
 				ensureLoaded(ChannelToBusPanPath(evt.options))
@@ -720,7 +857,7 @@ export function GetActionsList(
 					id: 'target',
 					...convertChoices(panningChoices.channelSendTargets),
 				},
-				FadeDurationChoice,
+				...FadeDurationChoice,
 			],
 			callback: async (action): Promise<void> => {
 				const cmd = ChannelToBusPanPath(action.options)
@@ -729,7 +866,14 @@ export function GetActionsList(
 					const currentState = state.get(cmd)
 					const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0].value : undefined
 					if (currentVal !== undefined) {
-						transitions.run(cmd, currentVal, storedVal, getOptNumber(action, 'fadeDuration', 0), true)
+						transitions.run(
+							cmd,
+							currentVal,
+							storedVal,
+							getOptNumber(action, 'fadeDuration', 0),
+							getOptAlgorithm(action, 'fadeAlgorithm'),
+							getOptCurve(action, 'fadeType')
+						)
 					}
 				}
 			},
@@ -753,13 +897,13 @@ export function GetActionsList(
 					...convertChoices(levelsChoices.busSendTargets),
 				},
 				FaderLevelChoice,
-				FadeDurationChoice,
+				...FadeDurationChoice,
 			],
 			callback: async (action): Promise<void> => {
 				const cmd = SendBusToMatrixPath(action.options)
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
-				transitions.run(cmd, currentVal, getOptNumber(action, 'fad'), getOptNumber(action, 'fadeDuration', 0))
+				transitions.runForDb(cmd, currentVal, getOptNumber(action, 'fad'), getOptNumber(action, 'fadeDuration', 0))
 			},
 			subscribe: (evt): void => {
 				// In case we have a fade time
@@ -782,14 +926,14 @@ export function GetActionsList(
 					...convertChoices(levelsChoices.busSendTargets),
 				},
 				FaderLevelDeltaChoice,
-				FadeDurationChoice,
+				...FadeDurationChoice,
 			],
 			callback: async (action): Promise<void> => {
 				const cmd = SendBusToMatrixPath(action.options)
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
 				if (typeof currentVal === 'number') {
-					transitions.run(
+					transitions.runForDb(
 						cmd,
 						currentVal,
 						currentVal + getOptNumber(action, 'delta'),
@@ -844,7 +988,7 @@ export function GetActionsList(
 					id: 'target',
 					...convertChoices(levelsChoices.busSendTargets),
 				},
-				FadeDurationChoice,
+				...FadeDurationChoice,
 			],
 			callback: async (action): Promise<void> => {
 				const cmd = SendBusToMatrixPath(action.options)
@@ -854,7 +998,14 @@ export function GetActionsList(
 					const currentVal =
 						currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
 					if (currentVal !== undefined) {
-						transitions.run(cmd, currentVal, storedVal, getOptNumber(action, 'fadeDuration', 0))
+						transitions.runForDb(
+							cmd,
+							currentVal,
+							storedVal,
+							getOptNumber(action, 'fadeDuration', 0),
+							getOptAlgorithm(action, 'fadeAlgorithm'),
+							getOptCurve(action, 'fadeType')
+						)
 					}
 				}
 			},
@@ -875,7 +1026,7 @@ export function GetActionsList(
 					...convertChoices(panningChoices.busSendTarget),
 				},
 				PanningChoice,
-				FadeDurationChoice,
+				...FadeDurationChoice,
 			],
 			callback: async (action): Promise<void> => {
 				const cmd = BusToMatrixPanPath(action.options)
@@ -886,7 +1037,8 @@ export function GetActionsList(
 					currentVal,
 					getOptNumber(action, 'pan') / 100 + 0.5,
 					getOptNumber(action, 'fadeDuration', 0),
-					true
+					getOptAlgorithm(action, 'fadeAlgorithm'),
+					getOptCurve(action, 'fadeType')
 				)
 			},
 			subscribe: (evt): void => {
@@ -909,7 +1061,7 @@ export function GetActionsList(
 					...convertChoices(panningChoices.busSendTarget),
 				},
 				PanningDelta,
-				FadeDurationChoice,
+				...FadeDurationChoice,
 			],
 			callback: async (action): Promise<void> => {
 				const cmd = BusToMatrixPanPath(action.options)
@@ -921,7 +1073,14 @@ export function GetActionsList(
 				} else if (newVal > 1) {
 					newVal = 1
 				}
-				transitions.run(cmd, currentVal, newVal, getOptNumber(action, 'fadeDuration', 0), true)
+				transitions.run(
+					cmd,
+					currentVal,
+					newVal,
+					getOptNumber(action, 'fadeDuration', 0),
+					getOptAlgorithm(action, 'fadeAlgorithm'),
+					getOptCurve(action, 'fadeType')
+				)
 			},
 			subscribe: (evt): void => {
 				ensureLoaded(BusToMatrixPanPath(evt.options))
@@ -970,7 +1129,7 @@ export function GetActionsList(
 					id: 'target',
 					...convertChoices(panningChoices.busSendTarget),
 				},
-				FadeDurationChoice,
+				...FadeDurationChoice,
 			],
 			callback: async (action): Promise<void> => {
 				const cmd = BusToMatrixPanPath(action.options)
@@ -979,7 +1138,14 @@ export function GetActionsList(
 					const currentState = state.get(cmd)
 					const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0].value : undefined
 					if (currentVal !== undefined) {
-						transitions.run(cmd, currentVal, storedVal, getOptNumber(action, 'fadeDuration', 0), true)
+						transitions.run(
+							cmd,
+							currentVal,
+							storedVal,
+							getOptNumber(action, 'fadeDuration', 0),
+							getOptAlgorithm(action, 'fadeAlgorithm'),
+							getOptCurve(action, 'fadeType')
+						)
 					}
 				}
 			},
@@ -1371,12 +1537,12 @@ export function GetActionsList(
 		},
 		[ActionId.MonitorLevel]: {
 			name: 'Set monitor level',
-			options: [FaderLevelChoice, FadeDurationChoice],
+			options: [FaderLevelChoice, ...FadeDurationChoice],
 			callback: async (action): Promise<void> => {
 				const cmd = `/config/solo/level`
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
-				transitions.run(cmd, currentVal, getOptNumber(action, 'fad'), getOptNumber(action, 'fadeDuration', 0))
+				transitions.runForDb(cmd, currentVal, getOptNumber(action, 'fad'), getOptNumber(action, 'fadeDuration', 0))
 			},
 			subscribe: (): void => {
 				ensureLoaded(`/config/solo/level`)
@@ -2287,8 +2453,6 @@ export function GetActionsList(
 					type: 'i',
 					value: gotoPageIndex,
 				})
-
-				//transitions.run(cmd, currentVal, getOptNumber(action, 'fad'), getOptNumber(action, 'fadeDuration', 0))
 			},
 			subscribe: (): void => {
 				ensureLoaded('/-stat/screen/screen')
@@ -2303,7 +2467,522 @@ export function GetActionsList(
 				ensureLoaded('/-stat/screen/ASSIGN/page')
 			},
 		},
-	}
+		[ActionId.RouteUserIn]: {
+			name: 'Route User Input',
+			description:
+				"Use at own risk. (Maybe don't accidently press during a show?) Please make sure your settings are correct when setting up. Protip: You can use `Store channel for routing` with and then select `STORED CHNANNEL` to chain screens",
+			options: [
+				{
+					type: 'dropdown',
+					label: 'source',
+					id: 'source',
+					...convertChoices([...GetUserInSources()]),
+				},
+				{
+					type: 'dropdown',
+					label: 'destination channel',
+					id: 'channel',
+					default: 1,
+					choices: [
+						{
+							id: -1,
+							label: 'STORED CHANNEL',
+						},
+						...GetUserInTargets(),
+					],
+				},
+			],
+			callback: (action): void => {
+				let channel = action.options.channel as number
+				if (channel == -1) {
+					channel = state.getStoredChannel()
+					if (channel == undefined || channel > 31) return
+				}
+				sendOsc(UserRouteInPath(channel), {
+					type: 'i',
+					value: getOptNumber(action, 'source'),
+				})
+			},
+		},
+		[ActionId.RouteUserOut]: {
+			name: 'Route User Output ',
+			description:
+				"Use at own risk. (Maybe don't accidently press during a show?) Please make sure your settings are correct when setting up. Protip: You can use `Store channel for routing` with and then select `STORED CHANNEL` to chain screens",
+			options: [
+				{
+					type: 'dropdown',
+					label: 'source',
+					id: 'source',
+					...convertChoices([...GetUserOutSources()]),
+				},
+				{
+					type: 'dropdown',
+					label: 'destination output',
+					id: 'channel',
+					default: 1,
+					choices: [
+						{
+							id: -1,
+							label: 'STORED CHANNEL',
+						},
+						...GetUserOutTargets(),
+					],
+				},
+			],
+			callback: (action): void => {
+				let channel = action.options.channel as number
+				if (channel == -1) {
+					channel = state.getStoredChannel()
+					if (channel == undefined) return
+				}
+				sendOsc(UserRouteOutPath(channel), {
+					type: 'i',
+					value: getOptNumber(action, 'source'),
+				})
+			},
+		},
+		[ActionId.StoreChannel]: {
+			name: 'Store channel for routing',
+			description:
+				"Store channel for use with `User Input Routing`and `User Output Routing`. Use at own riskv. (Maybe don't accidently press during a show?) Please make sure your settings are correct when setting up.",
+			options: [
+				{
+					type: 'dropdown',
+					label: 'destination output',
+					id: 'channel',
+					default: 1,
+					choices: [...GetUserOutTargets(true)],
+				},
+			],
+			callback: (action): void => {
+				state.setStoredChannel(action.options.channel as number)
+			},
+		},
+		[ActionId.RouteInputBlockMode]: {
+			name: 'Route Input Block Mode',
+			description:
+				"Setup which routing block set to use. Use at own risk. (Maybe don't accidently press during a show?)",
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Input mode',
+					id: 'mode',
+					default: 2,
+					choices: [
+						{ label: 'TOGGLE', id: 2 },
+						{ label: 'RECORD', id: 0 },
+						{ label: 'PLAY', id: 1 },
+					],
+				},
+			],
+			callback: (action): void => {
+				const cmd = `/config/routing/routswitch`
+				const mode = getOptNumber(action, 'mode', 2)
+				if (mode === 2) {
+					const currentState = state.get(cmd)
+					const currentVal = currentState && currentState[0]?.type === 'i' ? currentState[0]?.value : 1
+					sendOsc(cmd, { type: 'i', value: currentVal === 0 ? 1 : 0 })
+				} else {
+					sendOsc(cmd, { type: 'i', value: mode })
+				}
+			},
+			subscribe: (): void => {
+				ensureLoaded(`/config/routing/routswitch`)
+			},
+		},
+		[ActionId.RouteInputBlocks]: {
+			name: 'Route Input Blocks',
+			description:
+				"Setup input routing blocks. Use at own risk. (Maybe don't accidently press during a show?) Please make sure your settings are correct when setting up.",
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Input mode',
+					id: 'mode',
+					...convertChoices([
+						{ label: 'RECORD', id: 'IN' },
+						{ label: 'PLAY', id: 'PLAY' },
+					]),
+				},
+				{
+					type: 'dropdown',
+					label: 'Input blocks',
+					id: 'block',
+					...convertChoices([...GetInputBlocks()]),
+				},
+				{
+					type: 'dropdown',
+					label: 'Routing source block',
+					id: 'routing',
+					default: 0,
+					choices: [...GetInputBlockRoutes()],
+				},
+			],
+			callback: (action): void => {
+				const mode = action.options.mode
+				const block = action.options.block
+				const routing = getOptNumber(action, 'routing', 0)
+				const cmd = `/config/routing/${mode}/${block}`
+				sendOsc(cmd, { type: 'i', value: routing })
+			},
+		},
+		[ActionId.RouteAuxBlocks]: {
+			name: 'Route Aux Blocks',
+			description:
+				"Setup aux input routing blocks. Use at own risk. (Maybe don't accidently press during a show?) Please make sure your settings are correct when setting up.",
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Input mode',
+					id: 'mode',
+					...convertChoices([
+						{ label: 'RECORD', id: 'IN' },
+						{ label: 'PLAY', id: 'PLAY' },
+					]),
+				},
+				{
+					type: 'dropdown',
+					label: 'Routing source block',
+					id: 'routing',
+					...convertChoices([...GetAuxBlockRoutes()]),
+				},
+			],
+			callback: (action): void => {
+				const mode = action.options.mode
+				const routing = getOptNumber(action, 'routing', 0)
+				const cmd = `/config/routing/${mode}/AUX`
+				sendOsc(cmd, { type: 'i', value: routing })
+			},
+		},
+		[ActionId.RouteAES50Blocks]: {
+			name: 'Route AES50 Blocks',
+			description:
+				"Setup aes50 routing blocks. Use at own risk. (Maybe don't accidently press during a show?) Please make sure your settings are correct when setting up.",
+			options: [
+				{
+					type: 'dropdown',
+					label: 'AES50 A or B',
+					id: 'mode',
+					default: 'A',
+					choices: [
+						{ label: 'AES50 A', id: 'A' },
+						{ label: 'AES50 B', id: 'B' },
+					],
+				},
+				{
+					type: 'dropdown',
+					label: 'Input blocks',
+					id: 'block',
+					...convertChoices([...GetAesBlocks()]),
+				},
+				{
+					type: 'dropdown',
+					label: 'Routing source block',
+					id: 'routing',
+					...convertChoices([...GetAesCardRouteBlocks()]),
+				},
+			],
+			callback: (action): void => {
+				const mode = action.options.mode
+				const block = action.options.block
+				const routing = getOptNumber(action, 'routing', 0)
+				const cmd = `/config/routing/AES50${mode}/${block}`
+				sendOsc(cmd, { type: 'i', value: routing })
+			},
+		},
+		[ActionId.RouteCardBlocks]: {
+			name: 'Route Card Blocks',
+			description:
+				"Setup card routing blocks. Use at own risk. (Maybe don't accidently press during a show?) Please make sure your settings are correct when setting up.",
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Input blocks',
+					id: 'block',
+					...convertChoices([...GetInputBlocks()]),
+				},
+				{
+					type: 'dropdown',
+					label: 'Routing source block',
+					id: 'routing',
+					...convertChoices([...GetAesCardRouteBlocks()]),
+				},
+			],
+			callback: (action): void => {
+				const block = action.options.block
+				const routing = getOptNumber(action, 'routing', 0)
+				const cmd = `/config/routing/CARD/${block}`
+				sendOsc(cmd, { type: 'i', value: routing })
+			},
+		},
+		[ActionId.RouteXLRLeftOutputs]: {
+			name: 'Route Left XLR Output Blocks',
+			description:
+				"Setup left (1-4 and 9-12) XLR Out routing blocks. (for 5-8 and 13-16 use `Route Right XLR Output Blocks`) Use at own risk. (Maybe don't accidently press during a show?) Please make sure your settings are correct when setting up.",
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Input blocks',
+					id: 'block',
+					...convertChoices([
+						{ id: '1-4', label: '1-4' },
+						{ id: '9-12', label: '9-12' },
+					]),
+				},
+				{
+					type: 'dropdown',
+					label: 'Routing source block',
+					id: 'routing',
+					...convertChoices([...GetLeftOutputBlockRoutes()]),
+				},
+			],
+			callback: (action): void => {
+				const block = action.options.block
+				const routing = getOptNumber(action, 'routing', 0)
+				const cmd = `/config/routing/OUT/${block}`
+				sendOsc(cmd, { type: 'i', value: routing })
+			},
+		},
+		[ActionId.RouteXLRRightOutputs]: {
+			name: 'Route Right XLR Output Blocks',
+			description:
+				"Setup right (5-8 and 13-16) XLR Out routing blocks. (for 1-4 and 9-12 use `Route Left XLR Output Blocks`) Use at own risk. (Maybe don't accidently press during a show?) Please make sure your settings are correct when setting up.",
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Input blocks',
+					id: 'block',
+					...convertChoices([
+						{ id: '5-8', label: '5-8' },
+						{ id: '13-16', label: '13-16' },
+					]),
+				},
+				{
+					type: 'dropdown',
+					label: 'Routing source block',
+					id: 'routing',
+					...convertChoices([...GetRightOutputBlockRoutes()]),
+				},
+			],
+			callback: (action): void => {
+				const block = action.options.block
+				const routing = getOptNumber(action, 'routing', 0)
+				const cmd = `/config/routing/OUT/${block}`
+				sendOsc(cmd, { type: 'i', value: routing })
+			},
+		},
+		[ActionId.LockAndShutdown]: {
+			name: 'Lock/Shutdown',
+			description: 'Lock the X32 or shut it down',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Lock/Shutdown state',
+					id: 'newState',
+					...convertChoices([
+						{ id: 0, label: 'Unlock' },
+						{ id: 1, label: 'Lock' },
+						{ id: 3, label: 'Toggle Lock' },
+						{ id: 2, label: 'Shutdown' },
+					]),
+				},
+			],
+			callback: (action): void => {
+				const path = `/-stat/lock`
+				const lockState = state.get(path)
+				const lockValue = lockState && lockState[0].type === 'i' ? lockState[0].value : 0
+				let newState = action.options.newState ? (action.options.newState as number) : 0
 
+				if (lockValue == newState) {
+					return
+				}
+
+				// set to unlocked first to avoid nondeterministic state on X32
+				sendOsc(path, { type: 'i', value: 0 })
+				if (newState == 3) {
+					newState = lockValue > 0 ? 0 : 1
+				}
+
+				// wait 100ms if locking or shutting down to ensure not going from lock to shutdown or vice versa
+				if (newState > 0) {
+					setTimeout(() => {
+						sendOsc(path, { type: 'i', value: newState })
+					}, 100)
+				}
+			},
+			subscribe: (): void => {
+				ensureLoaded(`/-stat/lock`)
+			},
+		},
+		[ActionId.SaveScene]: {
+			name: 'Save scene',
+			description:
+				'Use at own risk. This will over write whatever scene is saved in that index. Please make sure your settings are correct when setting up.',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'scene number (0-99)',
+					id: 'sceneIndex',
+					...convertChoices([...[...Array(100).keys()].map((x) => ({ id: x, label: `${x}`.padStart(2, '0') }))]),
+				},
+				{
+					type: 'textinput',
+					label: 'Scene name',
+					id: 'sceneName',
+				},
+				{
+					type: 'textinput',
+					label: 'Scene note',
+					id: 'sceneNote',
+				},
+			],
+			callback: (action): void => {
+				const index = action.options.sceneIndex as number
+				const name = action.options.sceneName ? (action.options.sceneName as string) : ''
+				const note = action.options.sceneNote ? (action.options.sceneNote as string) : ''
+				sendOsc('/save', [
+					{ type: 's', value: 'scene' },
+					{ type: 'i', value: index },
+					{ type: 's', value: name },
+					{ type: 's', value: note },
+				])
+			},
+		},
+		[ActionId.SelectActiveSDCard]: {
+			name: 'Select Active SD Card',
+			description: 'Select Active SD Card',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'SD Card',
+					id: 'card',
+					...convertChoices([
+						{ id: 0, label: 'SD1' },
+						{ id: 1, label: 'SD2' },
+					]),
+				},
+			],
+			callback: (action): void => {
+				const path = `/‐prefs/card/URECsdsel`
+				sendOsc(path, { type: 'i', value: convertAnyToNumber(action.options.card) })
+			},
+		},
+		[ActionId.RecordedTracks]: {
+			name: 'Select number of recorded tracks',
+			description: 'Select number of recorded tracks',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Number of tracks',
+					id: 'tracks',
+					...convertChoices([
+						{ id: 0, label: '32 tracks' },
+						{ id: 1, label: '16 tracks' },
+						{ id: 2, label: '8 tracks' },
+					]),
+				},
+			],
+			callback: (action): void => {
+				const path = `/‐prefs/card/URECtracks`
+				sendOsc(path, { type: 'i', value: convertAnyToNumber(action.options.tracks) })
+			},
+		},
+		[ActionId.SelectPlaybackDevice]: {
+			name: 'Select playback device',
+			description: 'Select playback device',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'device',
+					id: 'device',
+					...convertChoices([
+						{ id: 0, label: 'SD' },
+						{ id: 1, label: 'USB' },
+					]),
+				},
+			],
+			callback: (action): void => {
+				const path = `/‐prefs/card/URECplayb`
+				sendOsc(path, { type: 'i', value: convertAnyToNumber(action.options.device) })
+			},
+		},
+		[ActionId.FormatSDCard]: {
+			name: 'Format SD Card',
+			description: 'Format SD Card',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'device',
+					id: 'card',
+					...convertChoices([
+						{ id: 0, label: 'SD1' },
+						{ id: 1, label: 'SD2' },
+					]),
+				},
+			],
+			callback: (action): void => {
+				const path = `/‐action/formatcard`
+				sendOsc(path, { type: 'i', value: convertAnyToNumber(action.options.card) })
+			},
+		},
+
+		[ActionId.XLiveRouting]: {
+			name: 'X-Live routing',
+			description: 'X-Live routing',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'X-Live route',
+					id: 'route',
+					...convertChoices([
+						{ id: 0, label: 'Rec' },
+						{ id: 1, label: 'Play' },
+						{ id: 2, label: 'Auto' },
+					]),
+				},
+			],
+			callback: (action): void => {
+				const path = `/‐prefs/card/URECrout`
+				sendOsc(path, { type: 'i', value: convertAnyToNumber(action.options.route) })
+			},
+		},
+		[ActionId.XLiveClearAlert]: {
+			name: 'X-Live Clear Alert',
+			description: 'X-Live Clear Alert',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'X-Live Clear Alert',
+					id: 'alert',
+					...convertChoices([
+						{ id: 0, label: 'No-op' },
+						{ id: 1, label: 'Clear alert' },
+					]),
+				},
+			],
+			callback: (action): void => {
+				const path = `/‐action/clearalert`
+				sendOsc(path, { type: 'i', value: convertAnyToNumber(action.options.alert) })
+			},
+		},
+		[ActionId.XLivePosition]: {
+			name: 'X-Live Position',
+			description: 'X-Live Position',
+			options: [
+				{
+					type: 'number',
+					label: 'X-Live Position on sdcard',
+					id: 'position',
+					min: 0,
+					max: 86399999,
+					default: 0,
+				},
+			],
+			callback: (action): void => {
+				const path = `/‐action/setposition`
+				sendOsc(path, { type: 'i', value: convertAnyToNumber(action.options.position) })
+			},
+		},
+	}
 	return actions
 }

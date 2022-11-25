@@ -1,13 +1,36 @@
 import osc from 'osc'
 import { FeedbackId } from './feedback.js'
 
-export class X32State {
+export class X32State implements IStoredChannelSubject {
 	private readonly data: Map<string, osc.MetaArgument[]>
 	private readonly pressStorage: Map<string, number>
+	private storedChannel: number
 
 	constructor() {
 		this.data = new Map()
 		this.pressStorage = new Map()
+		this.storedChannel = 1
+	}
+
+	// StoredChannelSubject
+	private observers: IStoredChannelObserver[] = []
+
+	attach(observer: IStoredChannelObserver): void {
+		if (!this.observers.includes(observer)) {
+			this.observers.push(observer)
+		}
+	}
+	detach(observer: IStoredChannelObserver): void {
+		const observerIndex = this.observers.indexOf(observer)
+		if (observerIndex !== -1) {
+			this.observers.splice(observerIndex, 1)
+		}
+	}
+
+	notify(): void {
+		for (const observer of this.observers) {
+			observer.storedChannelChanged()
+		}
 	}
 
 	// TODO better typings
@@ -25,6 +48,15 @@ export class X32State {
 		const val = this.pressStorage.get(path)
 		if (val !== undefined) this.pressStorage.delete(path)
 		return val
+	}
+
+	public setStoredChannel(channel: number): void {
+		this.storedChannel = channel
+		this.notify()
+	}
+
+	public getStoredChannel(): number {
+		return this.storedChannel
 	}
 }
 
@@ -57,4 +89,14 @@ export class X32Subscriptions {
 			entries.delete(feedbackId)
 		}
 	}
+}
+
+interface IStoredChannelSubject {
+	attach(observer: IStoredChannelObserver): void
+	detach(observer: IStoredChannelObserver): void
+	notify(): void
+}
+
+export interface IStoredChannelObserver {
+	storedChannelChanged(): void
 }

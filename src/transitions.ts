@@ -63,34 +63,44 @@ export class X32Transitions {
 		}
 	}
 
-	public run(path: string, from: number | undefined, to: number, duration: number, isLinear?: boolean): void {
+	public runForDb(
+		path: string,
+		from: number | undefined,
+		to: number,
+		duration: number,
+		algorithm?: Easing.algorithm,
+		curve?: Easing.curve
+	): void {
+		const floatTo = dbToFloat(to)
+		const floatFrom = from ? dbToFloat(from) : undefined
+		this.run(path, floatFrom, floatTo, duration, algorithm, curve)
+	}
+
+	public run(
+		path: string,
+		from: number | undefined,
+		to: number,
+		duration: number,
+		algorithm?: Easing.algorithm,
+		curve?: Easing.curve
+	): void {
 		const interval = 1000 / this.fps
 		const stepCount = Math.ceil(duration / interval)
 
-		// TODO - what if not sending db
 		if (stepCount <= 1 || typeof from !== 'number') {
 			this.transitions.delete(path)
-			this.sendOsc(path, {
-				type: 'f',
-				value: isLinear ? to : dbToFloat(to),
-			})
+			this.sendOsc(path, { type: 'f', value: to })
 		} else {
 			const diff = to - from
 			const steps: number[] = []
-			// eslint-disable-next-line @typescript-eslint/unbound-method
-			const easing = Easing.Linear.None // TODO - dynamic
+
+			const easing = Easing.getEasing(algorithm, curve)
 			for (let i = 1; i <= stepCount; i++) {
 				const fraction = easing(i / stepCount)
-				if (isLinear) {
-					steps.push(from + diff * fraction)
-				} else {
-					steps.push(dbToFloat(from + diff * fraction))
-				}
+				steps.push(from + diff * fraction)
 			}
 
-			this.transitions.set(path, {
-				steps,
-			})
+			this.transitions.set(path, { steps })
 
 			if (!this.tickInterval) {
 				// Start the tick if not already running

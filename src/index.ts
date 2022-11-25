@@ -2,8 +2,16 @@ import { GetActionsList } from './actions.js'
 import { X32Config, GetConfigFields } from './config.js'
 import { FeedbackId, GetFeedbacksList } from './feedback.js'
 import { GetPresetsList } from './presets.js'
-import { InitVariables, updateDeviceInfoVariables, updateNameVariables, updateTapeTime } from './variables.js'
-import { X32State, X32Subscriptions } from './state.js'
+import {
+	InitVariables,
+	updateDeviceInfoVariables,
+	updateNameVariables,
+	updateStoredChannelVariable,
+	updateTapeTime,
+	updateUReceTime,
+	updateURecrTime,
+} from './variables.js'
+import { IStoredChannelObserver, X32State, X32Subscriptions } from './state.js'
 import osc from 'osc'
 import { MainPath } from './paths.js'
 import { BooleanFeedbackUpgradeMap, upgradeV2x0x0 } from './upgrades.js'
@@ -32,7 +40,7 @@ const UpgradeScripts: CompanionStaticUpgradeScript<X32Config>[] = [
 /**
  * Companion instance class for the Behringer X32 Mixers.
  */
-class X32Instance extends InstanceBase<X32Config> implements InstanceBaseExt<X32Config> {
+class X32Instance extends InstanceBase<X32Config> implements InstanceBaseExt<X32Config>, IStoredChannelObserver {
 	private osc: osc.UDPPort
 	private x32State: X32State
 	private x32Subscriptions: X32Subscriptions
@@ -67,10 +75,10 @@ class X32Instance extends InstanceBase<X32Config> implements InstanceBaseExt<X32
 		super(internal)
 
 		this.osc = new osc.UDPPort({})
-
 		this.x32State = new X32State()
 		this.x32Subscriptions = new X32Subscriptions()
 		this.transitions = new X32Transitions(this)
+		this.x32State.attach(this)
 
 		this.debounceUpdateCompanionBits = debounceFn(this.updateCompanionBits.bind(this), {
 			wait: 100,
@@ -93,6 +101,14 @@ class X32Instance extends InstanceBase<X32Config> implements InstanceBaseExt<X32
 				after: true,
 			}
 		)
+	}
+
+	// IStoredChannelObserver
+	storedChannelChanged(): void {
+		updateStoredChannelVariable(this, this.x32State)
+		const list = [FeedbackId.StoredChannel, FeedbackId.RouteUserIn, FeedbackId.RouteUserOut]
+		list.forEach((f) => this.messageFeedbacks.add(f))
+		this.debounceMessageFeedbacks()
 	}
 
 	// Override base types to make types stricter
@@ -120,8 +136,10 @@ class X32Instance extends InstanceBase<X32Config> implements InstanceBaseExt<X32
 	 */
 	public async configUpdated(config: X32Config): Promise<void> {
 		this.config = config
-
+		this.x32State.detach(this)
 		this.x32State = new X32State()
+		this.x32State.attach(this)
+
 		this.x32Subscriptions = new X32Subscriptions()
 
 		this.transitions.stopAll()
@@ -166,6 +184,7 @@ class X32Instance extends InstanceBase<X32Config> implements InstanceBaseExt<X32
 		X32DeviceDetectorInstance.unsubscribe(this.id)
 
 		this.transitions.stopAll()
+		this.x32State.detach(this)
 
 		if (this.osc) {
 			try {
@@ -356,6 +375,14 @@ class X32Instance extends InstanceBase<X32Config> implements InstanceBaseExt<X32
 					break
 				case '/-stat/tape/etime':
 					updateTapeTime(this, this.x32State)
+					break
+
+				case '/-stat/urec/etime':
+					updateUReceTime(this, this.x32State)
+					break
+
+				case '/-stat/urec/rtime':
+					updateURecrTime(this, this.x32State)
 					break
 			}
 		})

@@ -3,3 +3,4 @@
 /pkg/
 /pkg.tgz
 *.log
+.DS_Store

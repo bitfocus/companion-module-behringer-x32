@@ -32,6 +32,26 @@ export function InitVariables(instance: InstanceBaseExt<X32Config>, state: X32St
 			name: 'Tape Timestamp hh:mm:ss',
 			variableId: 'tape_time_hms',
 		},
+		{
+			name: 'Urec Timestamp mm:ss',
+			variableId: 'urec_etime_ms',
+		},
+		{
+			name: 'Urec Timestamp hh:mm:ss',
+			variableId: 'urec_etime_hms',
+		},
+		{
+			name: 'Urec remaining mm:ss',
+			variableId: 'urec_rtime_ms',
+		},
+		{
+			name: 'Urec remaining hh:mm:ss',
+			variableId: 'urec_rtime_hms',
+		},
+		{
+			name: 'Stored channel',
+			variableId: 'stored_channel',
+		},
 	]
 
 	const targets = GetTargetChoices(state, { includeMain: true, defaultNames: true })
@@ -50,6 +70,11 @@ export function InitVariables(instance: InstanceBaseExt<X32Config>, state: X32St
 	instance.setVariableValues({
 		tape_time_hms: `--:--:--`,
 		tape_time_ms: `--:--`,
+		urec_etime_hms: `--:--:--`,
+		urec_etime_ms: `--:--`,
+		urec_rtime_hms: `--:--:--`,
+		urec_rtime_ms: `--:--`,
+		stored_channel: `${state.getStoredChannel()}`,
 	})
 }
 
@@ -81,6 +106,30 @@ export function updateTapeTime(instance: InstanceBaseExt<X32Config>, state: X32S
 	})
 }
 
+export function updateUReceTime(instance: InstanceBaseExt<X32Config>, state: X32State): void {
+	const etime = state.get('/-stat/urec/etime')
+	const time = etime && etime[0]?.type === 'i' ? etime[0].value : 0
+	const mm = `${Math.floor(time / 1000 / 60) % 60}`.padStart(2, '0')
+	const ss = `${Math.floor(time / 1000) % 60}`.padStart(2, '0')
+	const hh = `${Math.floor(time / 1000 / 60 / 60) % 60}`.padStart(2, '0')
+	instance.setVariableValues({
+		urec_etime_hms: `${hh}:${mm}:${ss}`,
+		urec_etime_ms: `${mm}:${ss}`,
+	})
+}
+
+export function updateURecrTime(instance: InstanceBaseExt<X32Config>, state: X32State): void {
+	const etime = state.get('/-stat/urec/rtime')
+	const time = etime && etime[0]?.type === 'i' ? etime[0].value : 0
+	const mm = `${Math.floor(time / 1000 / 60) % 60}`.padStart(2, '0')
+	const ss = `${Math.floor(time / 1000) % 60}`.padStart(2, '0')
+	const hh = `${Math.floor(time / 1000 / 60 / 60) % 60}`.padStart(2, '0')
+	instance.setVariableValues({
+		urec_rtime_hms: `${hh}:${mm}:${ss}`,
+		urec_rtime_ms: `${mm}:${ss}`,
+	})
+}
+
 export function updateNameVariables(instance: InstanceBaseExt<X32Config>, state: X32State): void {
 	const variables: CompanionVariableValues = {}
 	const targets = GetTargetChoices(state, { includeMain: true, defaultNames: true })
@@ -94,4 +143,10 @@ export function updateNameVariables(instance: InstanceBaseExt<X32Config>, state:
 		variables[`fader${sanitiseName(target.id as string)}`] = isNaN(faderNum) ? '-' : formatDb(floatToDB(faderNum))
 	}
 	instance.setVariableValues(variables)
+}
+
+export function updateStoredChannelVariable(instance: InstanceBaseExt<X32Config>, state: X32State): void {
+	instance.setVariableValues({
+		stored_channel: `${state.getStoredChannel()}`,
+	})
 }

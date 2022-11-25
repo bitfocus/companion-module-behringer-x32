@@ -10,6 +10,18 @@ While developing the module, by using `yarn build:watch` the compiler will be ru
 
 ## Changes
 
+### v2.11
+
+- Xlive functionality
+- Updated fader curves
+- Save scene
+- Fix mute channel send to main mono
+
+### v2.10
+
+- Routing
+- Lock/Shutdown
+
 ### v2.9.1
 
 - Fix crash when disabling/deleting instance

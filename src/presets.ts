@@ -43,6 +43,65 @@ export function GetPresetsList(_instance: InstanceBaseExt<X32Config>, state: X32
 	const sampleBusSendSource = levelsChoices.busSendSources[0]
 	const sampleBusSendTarget = levelsChoices.busSendTargets[0]
 
+	presets.push({
+		label: 'X-Live Record',
+		category: 'X-Live',
+		bank: {
+			text: 'X-Live\\nRecord',
+			style: 'text',
+			size: 'auto',
+			latch: true,
+			color: instance.rgb(255, 255, 255),
+			bgcolor: instance.rgb(0, 0, 0),
+		},
+		actions: [
+			{
+				action: ActionId.Record,
+				options: {
+					state: 3,
+				},
+			},
+		],
+		release_actions: [
+			{
+				action: ActionId.Record,
+				options: {
+					state: 0,
+				},
+			},
+		],
+		feedbacks: [
+			{
+				type: FeedbackId.Record,
+				options: {
+					state: 3,
+				},
+				style: {
+					color: instance.rgb(255, 255, 255),
+					bgcolor: instance.rgb(255, 0, 0),
+				},
+			},
+		],
+	})
+	presets.push({
+		label: 'Add marker',
+		category: 'X-Live',
+		bank: {
+			text: 'Add marker',
+			style: 'text',
+			size: 'auto',
+			color: instance.rgb(255, 255, 255),
+			bgcolor: instance.rgb(0, 0, 0),
+		},
+		actions: [
+			{
+				action: ActionId.AddMarker,
+				options: {},
+			},
+		],
+		feedbacks: [],
+	})
+
 	if (sampleChannel) {
 		presets['dip-fader-level'] = {
 			name: 'Dip fader level',

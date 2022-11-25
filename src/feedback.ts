@@ -10,6 +10,17 @@ import {
 	GetLevelsChoiceConfigs,
 	GetPanningChoiceConfigs,
 	CHOICES_TAPE_FUNC,
+	GetAesBlocks,
+	GetAesCardRouteBlocks,
+	GetAuxBlockRoutes,
+	GetInputBlockRoutes,
+	GetInputBlocks,
+	GetLeftOutputBlockRoutes,
+	GetRightOutputBlockRoutes,
+	GetUserInSources,
+	GetUserInTargets,
+	GetUserOutSources,
+	GetUserOutTargets,
 } from './choices.js'
 import { compareNumber, floatToDB, InstanceBaseExt } from './util.js'
 import {
@@ -21,6 +32,8 @@ import {
 	MainPanPath,
 	ChannelToBusPanPath,
 	BusToMatrixPanPath,
+	UserRouteInPath,
+	UserRouteOutPath,
 } from './paths.js'
 import osc from 'osc'
 import { X32Config } from './config.js'
@@ -78,6 +91,18 @@ export enum FeedbackId {
 	USBPage = 'usb-page',
 	ScenePage = 'scene-page',
 	AssignPage = 'assign-page',
+	RouteUserIn = 'route-user-in',
+	RouteUserOut = 'route-user-out',
+	StoredChannel = 'stored-channel',
+	Record = 'record',
+	RouteInputBlockMode = 'route-input-block-mode',
+	RouteInputBlocks = 'route-input-blocks',
+	RouteAuxBlocks = 'route-aux-blocks',
+	RouteAES50Blocks = 'route-aes50-blocks',
+	RouteCardBlocks = 'route-card-blocks',
+	RouteXLRLeftOutputs = 'route-xlr-left-outputs',
+	RouteXLRRightOutputs = 'route-xlr-right-outputs',
+	LockAndShutdown = 'lock-and-shutdown',
 }
 
 function getDataNumber(data: osc.MetaArgument[] | undefined, index: number): number | undefined {
@@ -121,6 +146,42 @@ export function GetFeedbacksList(
 	const soloChoices = GetTargetChoices(state, { includeMain: true, numericIndex: true })
 
 	const feedbacks: { [id in FeedbackId]: CompanionFeedbackWithCallback | undefined } = {
+		[FeedbackId.Record]: {
+			type: 'boolean',
+			name: 'Change from X-Live state',
+			description: 'If the X-Live state has changed, change style of the bank',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'State',
+					id: 'state',
+					choices: [
+						{ id: 3, label: 'Record' },
+						{ id: 2, label: 'Play' },
+						{ id: 1, label: 'Pause' },
+						{ id: 0, label: 'Stop' },
+					],
+					default: 3,
+				},
+			],
+			defaultStyle: {
+				bgcolor: combineRgb(255, 0, 0),
+				color: combineRgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackInfo): boolean => {
+				const data = state.get(`/-stat/urec/state`)
+				const record = getDataNumber(data, 0) === 3
+				return record === !!evt.options.state
+			},
+			subscribe: (evt: CompanionFeedbackInfo): void => {
+				const path = `/-stat/urec/state`
+				subscribeFeedback(ensureLoaded, subs, path, evt)
+			},
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
+				const path = `/-stat/urec/state`
+				unsubscribeFeedback(subs, path, evt)
+			},
+		},
 		[FeedbackId.Mute]: {
 			type: 'boolean',
 			name: 'Change from mute state',
@@ -2001,6 +2062,578 @@ export function GetFeedbacksList(
 			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				unsubscribeFeedback(subs, '/-stat/screen/screen', evt)
 				unsubscribeFeedback(subs, '/-stat/screen/ASSIGN/page', evt)
+			},
+		},
+
+		[FeedbackId.RouteUserIn]: {
+			type: 'boolean',
+			name: 'Change from user in routing state',
+			description:
+				'If the specified source is routed to the specified destination, change style of the bank. Protip: You can use `Store channel` with and then select `FROM STORAGE` to chain screens ',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'source',
+					id: 'source',
+					...convertChoices([...GetUserInSources()]),
+				},
+				{
+					id: 'state',
+					type: 'checkbox',
+					label: 'Is Routed To',
+					default: true,
+				},
+				{
+					type: 'dropdown',
+					label: 'destination channel',
+					id: 'channel',
+					default: 1,
+					choices: [
+						{
+							id: -1,
+							label: 'STORED CHANNEL',
+						},
+						...GetUserInTargets(),
+					],
+				},
+			],
+			defaultStyle: {
+				bgcolor: combineRgb(255, 0, 0),
+				color: combineRgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackInfo): boolean => {
+				const source = evt.options.source as number
+				let channel = evt.options.channel as number
+				if (channel == -1) {
+					channel = state.getStoredChannel()
+					if (channel == undefined || channel > 31) return false
+				}
+				const data = state.get(UserRouteInPath(channel))
+				const isRouted = getDataNumber(data, 0) === source
+				return isRouted === !!evt.options.state
+			},
+			subscribe: (evt: CompanionFeedbackInfo): void => {
+				const channel = evt.options.channel as number
+				if (channel < 0) {
+					for (let i = 1; i <= 32; i++) {
+						const path = UserRouteInPath(i)
+						subscribeFeedback(ensureLoaded, subs, path, evt)
+					}
+				} else {
+					const path = UserRouteInPath(channel)
+					subscribeFeedback(ensureLoaded, subs, path, evt)
+				}
+			},
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
+				const channel = evt.options.channel as number
+				if (channel < 0) {
+					for (let i = 1; i <= 32; i++) {
+						const path = UserRouteInPath(i)
+						unsubscribeFeedback(subs, path, evt)
+					}
+				} else {
+					const path = UserRouteInPath(channel)
+					unsubscribeFeedback(subs, path, evt)
+				}
+			},
+		},
+		[FeedbackId.RouteUserOut]: {
+			type: 'boolean',
+			name: 'Change from user out routing state',
+			description:
+				'If the specified source is routed to the specified destination, change style of the bank. Protip: You can use `Store channel` with and then select `FROM STORAGE` to chain screens ',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'source',
+					id: 'source',
+					...convertChoices([...GetUserOutSources()]),
+				},
+				{
+					id: 'state',
+					type: 'checkbox',
+					label: 'Is Routed To',
+					default: true,
+				},
+				{
+					type: 'dropdown',
+					label: 'destination output',
+					id: 'channel',
+					default: 1,
+					choices: [
+						{
+							id: -1,
+							label: 'STORED CHANNEL',
+						},
+						...GetUserOutTargets(),
+					],
+				},
+			],
+			defaultStyle: {
+				bgcolor: combineRgb(255, 0, 0),
+				color: combineRgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackInfo): boolean => {
+				const source = evt.options.source as number
+				let channel = evt.options.channel as number
+				if (channel == -1) {
+					channel = state.getStoredChannel()
+					if (channel == undefined || channel > 31) return false
+				}
+				const data = state.get(UserRouteOutPath(channel))
+				const isRouted = getDataNumber(data, 0) === source
+				return isRouted === !!evt.options.state
+			},
+			subscribe: (evt: CompanionFeedbackInfo): void => {
+				const channel = evt.options.channel as number
+				if (channel < 0) {
+					for (let i = 1; i <= 64; i++) {
+						const path = UserRouteOutPath(i)
+						subscribeFeedback(ensureLoaded, subs, path, evt)
+					}
+				} else {
+					const path = UserRouteOutPath(channel)
+					subscribeFeedback(ensureLoaded, subs, path, evt)
+				}
+			},
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
+				const channel = evt.options.channel as number
+				if (channel < 0) {
+					for (let i = 1; i <= 64; i++) {
+						const path = UserRouteOutPath(i)
+						unsubscribeFeedback(subs, path, evt)
+					}
+				} else {
+					const path = UserRouteOutPath(channel)
+					unsubscribeFeedback(subs, path, evt)
+				}
+			},
+		},
+		[FeedbackId.StoredChannel]: {
+			type: 'boolean',
+			name: 'Change based on Stored Channel',
+			description: 'If the specified channl is stored, change style of the bank.',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'destination output',
+					id: 'channel',
+					...convertChoices([...GetUserOutTargets(true)]),
+				},
+				{
+					id: 'state',
+					type: 'checkbox',
+					label: 'Is stored',
+					default: true,
+				},
+			],
+			defaultStyle: {
+				bgcolor: combineRgb(0, 255, 127),
+				color: combineRgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackInfo): boolean => {
+				const storedChannel = state.getStoredChannel()
+				const isStored = getOptNumber(evt, 'channel', 0) === storedChannel
+				return isStored === !!evt.options.state
+			},
+			subscribe: (): void => undefined,
+			unsubscribe: (): void => undefined,
+		},
+		[FeedbackId.RouteInputBlockMode]: {
+			type: 'boolean',
+			name: 'Input block routing mode',
+			description: 'If the specified mode is active, change style of the bank.',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Input mode',
+					id: 'mode',
+					...convertChoices([
+						{ label: 'RECORD', id: 0 },
+						{ label: 'PLAY', id: 1 },
+					]),
+				},
+				{
+					id: 'state',
+					type: 'checkbox',
+					label: 'Active',
+					default: true,
+				},
+			],
+			defaultStyle: {
+				bgcolor: combineRgb(0, 128, 255),
+				color: combineRgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackInfo): boolean => {
+				const data = state.get(`/config/routing/routswitch`)
+				const mode = getOptNumber(evt, 'mode', 0)
+				const isRouted = getDataNumber(data, 0) === mode
+				return isRouted === !!evt.options.state
+			},
+			subscribe: (evt: CompanionFeedbackInfo): void => {
+				const path = `/config/routing/routswitch`
+				subscribeFeedback(ensureLoaded, subs, path, evt)
+			},
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
+				const path = `/config/routing/routswitch`
+				unsubscribeFeedback(subs, path, evt)
+			},
+		},
+		[FeedbackId.RouteInputBlocks]: {
+			type: 'boolean',
+			name: 'Input block routing state',
+			description: 'If the specified block is routed to the specified destination, change style of the bank.',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Input mode',
+					id: 'mode',
+					...convertChoices([
+						{ label: 'RECORD', id: 'IN' },
+						{ label: 'PLAY', id: 'PLAY' },
+					]),
+				},
+				{
+					type: 'dropdown',
+					label: 'Input block',
+					id: 'block',
+					...convertChoices([...GetInputBlocks()]),
+				},
+				{
+					id: 'state',
+					type: 'checkbox',
+					label: 'Is Routed To',
+					default: true,
+				},
+				{
+					type: 'dropdown',
+					label: 'Routing source block',
+					id: 'routing',
+					...convertChoices([...GetInputBlockRoutes()]),
+				},
+			],
+			defaultStyle: {
+				bgcolor: combineRgb(255, 0, 0),
+				color: combineRgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackInfo): boolean => {
+				const mode = evt.options.mode
+				const block = evt.options.block
+				const routing = evt.options.routing as number
+				const cmd = `/config/routing/${mode}/${block}`
+				const data = state.get(cmd)
+				const isRouted = getDataNumber(data, 0) === routing
+				return isRouted === !!evt.options.state
+			},
+			subscribe: (evt: CompanionFeedbackInfo): void => {
+				const mode = evt.options.mode
+				const block = evt.options.block
+				const path = `/config/routing/${mode}/${block}`
+				subscribeFeedback(ensureLoaded, subs, path, evt)
+			},
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
+				const mode = evt.options.mode
+				const block = evt.options.block
+				const path = `/config/routing/${mode}/${block}`
+				unsubscribeFeedback(subs, path, evt)
+			},
+		},
+		[FeedbackId.RouteAuxBlocks]: {
+			type: 'boolean',
+			name: 'Aux block routing state',
+			description: 'If the specified block is routed to the specified destination, change style of the bank.',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Input mode',
+					id: 'mode',
+					...convertChoices([
+						{ label: 'RECORD', id: 'IN' },
+						{ label: 'PLAY', id: 'PLAY' },
+					]),
+				},
+				{
+					id: 'state',
+					type: 'checkbox',
+					label: 'Is Routed To',
+					default: true,
+				},
+				{
+					type: 'dropdown',
+					label: 'Routing source block',
+					id: 'routing',
+					...convertChoices([...GetAuxBlockRoutes()]),
+				},
+			],
+			defaultStyle: {
+				bgcolor: combineRgb(255, 0, 0),
+				color: combineRgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackInfo): boolean => {
+				const mode = evt.options.mode
+				const routing = evt.options.routing as number
+				const cmd = `/config/routing/${mode}/AUX`
+				const data = state.get(cmd)
+				const isRouted = getDataNumber(data, 0) === routing
+				return isRouted === !!evt.options.state
+			},
+			subscribe: (evt: CompanionFeedbackInfo): void => {
+				const mode = evt.options.mode
+				const path = `/config/routing/${mode}/AUX`
+				subscribeFeedback(ensureLoaded, subs, path, evt)
+			},
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
+				const mode = evt.options.mode
+				const path = `/config/routing/${mode}/AUX`
+				unsubscribeFeedback(subs, path, evt)
+			},
+		},
+		[FeedbackId.RouteAES50Blocks]: {
+			type: 'boolean',
+			name: 'AES50 block routing state',
+			description: 'If the specified block is routed to the specified destination, change style of the bank.',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Input mode',
+					id: 'mode',
+					...convertChoices([
+						{ label: 'AES50 A', id: 'A' },
+						{ label: 'AES50 B', id: 'B' },
+					]),
+				},
+				{
+					type: 'dropdown',
+					label: 'AES50 block',
+					id: 'block',
+					...convertChoices([...GetAesBlocks()]),
+				},
+				{
+					id: 'state',
+					type: 'checkbox',
+					label: 'Is Routed To',
+					default: true,
+				},
+				{
+					type: 'dropdown',
+					label: 'Routing source block',
+					id: 'routing',
+					...convertChoices([...GetAesCardRouteBlocks()]),
+				},
+			],
+			defaultStyle: {
+				bgcolor: combineRgb(255, 0, 0),
+				color: combineRgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackInfo): boolean => {
+				const mode = evt.options.mode
+				const block = evt.options.block
+				const routing = evt.options.routing as number
+				const cmd = `/config/routing/AES${mode}/${block}`
+				const data = state.get(cmd)
+				const isRouted = getDataNumber(data, 0) === routing
+				return isRouted === !!evt.options.state
+			},
+			subscribe: (evt: CompanionFeedbackInfo): void => {
+				const mode = evt.options.mode
+				const block = evt.options.block
+				const path = `/config/routing/AES${mode}/${block}`
+				subscribeFeedback(ensureLoaded, subs, path, evt)
+			},
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
+				const mode = evt.options.mode
+				const block = evt.options.block
+				const path = `/config/routing/AES${mode}/${block}`
+				unsubscribeFeedback(subs, path, evt)
+			},
+		},
+		[FeedbackId.RouteCardBlocks]: {
+			type: 'boolean',
+			name: 'Card block routing state',
+			description: 'If the specified block is routed to the specified destination, change style of the bank.',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Card block',
+					id: 'block',
+					...convertChoices([...GetInputBlocks()]),
+				},
+				{
+					id: 'state',
+					type: 'checkbox',
+					label: 'Is Routed To',
+					default: true,
+				},
+				{
+					type: 'dropdown',
+					label: 'Routing source block',
+					id: 'routing',
+					...convertChoices([...GetAesCardRouteBlocks()]),
+				},
+			],
+			defaultStyle: {
+				bgcolor: combineRgb(255, 0, 0),
+				color: combineRgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackInfo): boolean => {
+				const block = evt.options.block
+				const routing = evt.options.routing as number
+				const cmd = `/config/routing/CARD/${block}`
+				const data = state.get(cmd)
+				const isRouted = getDataNumber(data, 0) === routing
+				return isRouted === !!evt.options.state
+			},
+			subscribe: (evt: CompanionFeedbackInfo): void => {
+				const block = evt.options.block
+				const path = `/config/routing/CARD/${block}`
+				subscribeFeedback(ensureLoaded, subs, path, evt)
+			},
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
+				const block = evt.options.block
+				const path = `/config/routing/CARD/${block}`
+				unsubscribeFeedback(subs, path, evt)
+			},
+		},
+		[FeedbackId.RouteXLRLeftOutputs]: {
+			type: 'boolean',
+			name: 'XRL left block routing state',
+			description: 'If the specified block is routed to the specified destination, change style of the bank.',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Output block',
+					id: 'block',
+					...convertChoices([
+						{ id: '1-4', label: '1-4' },
+						{ id: '9-12', label: '9-12' },
+					]),
+				},
+				{
+					id: 'state',
+					type: 'checkbox',
+					label: 'Is Routed To',
+					default: true,
+				},
+				{
+					type: 'dropdown',
+					label: 'Routing source block',
+					id: 'routing',
+					...convertChoices([...GetLeftOutputBlockRoutes()]),
+				},
+			],
+			defaultStyle: {
+				bgcolor: combineRgb(255, 0, 0),
+				color: combineRgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackInfo): boolean => {
+				const block = evt.options.block
+				const routing = evt.options.routing as number
+				const cmd = `/config/routing/OUT/${block}`
+				const data = state.get(cmd)
+				const isRouted = getDataNumber(data, 0) === routing
+				return isRouted === !!evt.options.state
+			},
+			subscribe: (evt: CompanionFeedbackInfo): void => {
+				const block = evt.options.block
+				const path = `/config/routing/OUT/${block}`
+				subscribeFeedback(ensureLoaded, subs, path, evt)
+			},
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
+				const block = evt.options.block
+				const path = `/config/routing/OUT/${block}`
+				unsubscribeFeedback(subs, path, evt)
+			},
+		},
+		[FeedbackId.RouteXLRRightOutputs]: {
+			type: 'boolean',
+			name: 'XRL right block routing state',
+			description: 'If the specified block is routed to the specified destination, change style of the bank.',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Output block',
+					id: 'block',
+					...convertChoices([
+						{ id: '5-8', label: '5-8' },
+						{ id: '13-16', label: '13-16' },
+					]),
+				},
+				{
+					id: 'state',
+					type: 'checkbox',
+					label: 'Is Routed To',
+					default: true,
+				},
+				{
+					type: 'dropdown',
+					label: 'Routing source block',
+					id: 'routing',
+					...convertChoices([...GetRightOutputBlockRoutes()]),
+				},
+			],
+			defaultStyle: {
+				bgcolor: combineRgb(255, 0, 0),
+				color: combineRgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackInfo): boolean => {
+				const block = evt.options.block
+				const routing = evt.options.routing as number
+				const cmd = `/config/routing/OUT/${block}`
+				const data = state.get(cmd)
+				const isRouted = getDataNumber(data, 0) === routing
+				return isRouted === !!evt.options.state
+			},
+			subscribe: (evt: CompanionFeedbackInfo): void => {
+				const block = evt.options.block
+				const path = `/config/routing/OUT/${block}`
+				subscribeFeedback(ensureLoaded, subs, path, evt)
+			},
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
+				const block = evt.options.block
+				const path = `/config/routing/OUT/${block}`
+				unsubscribeFeedback(subs, path, evt)
+			},
+		},
+
+		[FeedbackId.LockAndShutdown]: {
+			type: 'boolean',
+			name: 'Lock/Shutdown',
+			description: 'If the specified staye is active, change style of the bank.',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Lock/Shutdown state',
+					id: 'lockState',
+					...convertChoices([
+						{ id: 0, label: 'Unlock' },
+						{ id: 1, label: 'Lock' },
+						{ id: 2, label: 'Shutdown' },
+					]),
+				},
+				{
+					id: 'state',
+					type: 'checkbox',
+					label: 'Is active',
+					default: true,
+				},
+			],
+			defaultStyle: {
+				bgcolor: combineRgb(255, 0, 0),
+				color: combineRgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackInfo): boolean => {
+				const cmd = `/-stat/lock`
+				const data = state.get(cmd)
+				const isRouted = getDataNumber(data, 0) === (evt.options.lockState as number)
+				return isRouted === !!evt.options.state
+			},
+			subscribe: (evt: CompanionFeedbackInfo): void => {
+				const path = `/-stat/lock`
+				subscribeFeedback(ensureLoaded, subs, path, evt)
+			},
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
+				const path = `/-stat/lock`
+				unsubscribeFeedback(subs, path, evt)
 			},
 		},
 	}
