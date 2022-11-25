@@ -6,10 +6,6 @@ export function assertUnreachable(_never: never): void {
 	// throw new Error('Unreachable')
 }
 
-export function literal<T>(val: T): T {
-	return val
-}
-
 export function padNumber(i: number, len = 2): string {
 	return ('000000' + i).substr(-len)
 }
