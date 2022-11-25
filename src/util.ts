@@ -1,13 +1,9 @@
-import { InputValue } from '../../../instance_skel_types'
+import { InputValue, InstanceBase } from '@companion-module/base'
 
 export const MEDIA_PLAYER_SOURCE_CLIP_OFFSET = 1000
 
 export function assertUnreachable(_never: never): void {
 	// throw new Error('Unreachable')
-}
-
-export function literal<T>(val: T): T {
-	return val
 }
 
 export function padNumber(i: number, len = 2): string {
@@ -113,4 +109,8 @@ export function compareNumber(
 		default:
 			return currentValue === targetValue
 	}
+}
+
+export interface InstanceBaseExt<TConfig> extends InstanceBase<TConfig> {
+	config: TConfig
 }

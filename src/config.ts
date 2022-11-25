@@ -1,6 +1,5 @@
-import InstanceSkel = require('../../../instance_skel')
-import { SomeCompanionConfigField } from '../../../instance_skel_types'
-import { X32DeviceDetectorInstance } from './device-detector'
+import { SomeCompanionConfigField } from '@companion-module/base'
+import { X32DeviceDetectorInstance } from './device-detector.js'
 
 export const fadeFpsDefault = 10
 
@@ -9,7 +8,7 @@ export interface X32Config {
 	fadeFps?: number
 }
 
-export function GetConfigFields(self: InstanceSkel<X32Config>): SomeCompanionConfigField[] {
+export function GetConfigFields(): SomeCompanionConfigField[] {
 	return [
 		{
 			type: 'dropdown',
@@ -22,7 +21,7 @@ export function GetConfigFields(self: InstanceSkel<X32Config>): SomeCompanionCon
 			})),
 			default: '',
 			allowCustom: true,
-			regex: self.REGEX_IP,
+			// regex: self.REGEX_IP, // TODO
 		},
 		{
 			type: 'number',

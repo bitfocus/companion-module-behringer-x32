@@ -1,5 +1,4 @@
-import { CompanionFeedbacks, CompanionFeedbackEvent, CompanionFeedbackBoolean } from '../../../instance_skel_types'
-import { X32State, X32Subscriptions } from './state'
+import { X32State, X32Subscriptions } from './state.js'
 import {
 	GetMuteGroupChoices,
 	GetTargetChoices,
@@ -11,19 +10,19 @@ import {
 	GetLevelsChoiceConfigs,
 	GetPanningChoiceConfigs,
 	CHOICES_TAPE_FUNC,
+	GetAesBlocks,
+	GetAesCardRouteBlocks,
+	GetAuxBlockRoutes,
+	GetInputBlockRoutes,
+	GetInputBlocks,
+	GetLeftOutputBlockRoutes,
+	GetRightOutputBlockRoutes,
 	GetUserInSources,
 	GetUserInTargets,
 	GetUserOutSources,
 	GetUserOutTargets,
-	GetInputBlocks,
-	GetInputBlockRoutes,
-	GetAuxBlockRoutes,
-	GetAesBlocks,
-	GetAesCardRouteBlocks,
-	GetLeftOutputBlockRoutes,
-	GetRightOutputBlockRoutes,
-} from './choices'
-import { compareNumber, floatToDB } from './util'
+} from './choices.js'
+import { compareNumber, floatToDB, InstanceBaseExt } from './util.js'
 import {
 	MutePath,
 	MainPath,
@@ -35,15 +34,22 @@ import {
 	BusToMatrixPanPath,
 	UserRouteInPath,
 	UserRouteOutPath,
-} from './paths'
-// eslint-disable-next-line node/no-extraneous-import
-import * as osc from 'osc'
-import InstanceSkel = require('../../../instance_skel')
-import { X32Config } from './config'
-import { NumberComparitorPicker } from './input'
+} from './paths.js'
+import osc from 'osc'
+import { X32Config } from './config.js'
+import { NumberComparitorPicker } from './input.js'
 import { SetRequired } from 'type-fest'
+import {
+	combineRgb,
+	CompanionBooleanFeedbackDefinition,
+	CompanionFeedbackDefinitions,
+	CompanionFeedbackInfo,
+} from '@companion-module/base'
 
-type CompanionFeedbackWithCallback = SetRequired<CompanionFeedbackBoolean, 'callback' | 'subscribe' | 'unsubscribe'>
+type CompanionFeedbackWithCallback = SetRequired<
+	CompanionBooleanFeedbackDefinition,
+	'callback' | 'subscribe' | 'unsubscribe'
+>
 
 export enum FeedbackId {
 	Mute = 'mute',
@@ -104,7 +110,7 @@ function getDataNumber(data: osc.MetaArgument[] | undefined, index: number): num
 	return val?.type === 'i' || val?.type === 'f' ? val.value : undefined
 }
 
-const getOptNumber = (event: CompanionFeedbackEvent, key: string, defVal?: number): number => {
+const getOptNumber = (event: CompanionFeedbackInfo, key: string, defVal?: number): number => {
 	const rawVal = event.options[key]
 	if (defVal !== undefined && rawVal === undefined) return defVal
 	const val = Number(rawVal)
@@ -118,21 +124,21 @@ function subscribeFeedback(
 	ensureLoaded: (path: string) => void,
 	subs: X32Subscriptions,
 	path: string,
-	evt: CompanionFeedbackEvent
+	evt: CompanionFeedbackInfo
 ): void {
 	subs.subscribe(path, evt.id, evt.type as FeedbackId)
 	ensureLoaded(path)
 }
-function unsubscribeFeedback(subs: X32Subscriptions, path: string, evt: CompanionFeedbackEvent): void {
+function unsubscribeFeedback(subs: X32Subscriptions, path: string, evt: CompanionFeedbackInfo): void {
 	subs.unsubscribe(path, evt.id)
 }
 
 export function GetFeedbacksList(
-	self: InstanceSkel<X32Config>,
+	_self: InstanceBaseExt<X32Config>,
 	state: X32State,
 	subs: X32Subscriptions,
 	ensureLoaded: (path: string) => void
-): CompanionFeedbacks {
+): CompanionFeedbackDefinitions {
 	const levelsChoices = GetLevelsChoiceConfigs(state)
 	const panningChoices = GetPanningChoiceConfigs(state)
 	const muteGroups = GetMuteGroupChoices(state)
@@ -142,7 +148,7 @@ export function GetFeedbacksList(
 	const feedbacks: { [id in FeedbackId]: CompanionFeedbackWithCallback | undefined } = {
 		[FeedbackId.Record]: {
 			type: 'boolean',
-			label: 'Change from X-Live state',
+			name: 'Change from X-Live state',
 			description: 'If the X-Live state has changed, change style of the bank',
 			options: [
 				{
@@ -158,27 +164,27 @@ export function GetFeedbacksList(
 					default: 3,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(255, 0, 0),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(255, 0, 0),
+				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const data = state.get(`/-stat/urec/state`)
 				const record = getDataNumber(data, 0) === 3
 				return record === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/urec/state`
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/urec/state`
 				unsubscribeFeedback(subs, path, evt)
 			},
 		},
 		[FeedbackId.Mute]: {
 			type: 'boolean',
-			label: 'Change from mute state',
+			name: 'Change from mute state',
 			description: 'If the specified target is muted, change style of the bank',
 			options: [
 				{
@@ -194,27 +200,27 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(255, 0, 0),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(255, 0, 0),
+				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const data = state.get(MutePath(evt.options.target as string))
 				const muted = getDataNumber(data, 0) === 0
 				return muted === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = MutePath(evt.options.target as string)
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = MutePath(evt.options.target as string)
 				unsubscribeFeedback(subs, path, evt)
 			},
 		},
 		[FeedbackId.MuteGroup]: {
 			type: 'boolean',
-			label: 'Change from mute group state',
+			name: 'Change from mute group state',
 			description: 'If the specified mute group is muted, change style of the bank',
 			options: [
 				{
@@ -230,27 +236,27 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(255, 0, 0),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(255, 0, 0),
+				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const data = state.get(evt.options.mute_grp as string)
 				const muted = getDataNumber(data, 0) === 1
 				return muted === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = evt.options.mute_grp as string
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = evt.options.mute_grp as string
 				unsubscribeFeedback(subs, path, evt)
 			},
 		},
 		[FeedbackId.MuteChannelSend]: {
 			type: 'boolean',
-			label: 'Change from channel to bus send mute state',
+			name: 'Change from channel to bus send mute state',
 			description: 'If the specified channel send is muted, change style of the bank',
 			options: [
 				{
@@ -272,28 +278,28 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(255, 0, 0),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(255, 0, 0),
+				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const path = `${MainPath(evt.options.source as string)}/${evt.options.target}`
 				const data = path ? state.get(path) : undefined
 				const muted = getDataNumber(data, 0) === 0
 				return muted === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `${MainPath(evt.options.source as string)}/${evt.options.target}`
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `${MainPath(evt.options.source as string)}/${evt.options.target}`
 				unsubscribeFeedback(subs, path, evt)
 			},
 		},
 		[FeedbackId.MuteBusSend]: {
 			type: 'boolean',
-			label: 'Change from bus to matrix send mute state',
+			name: 'Change from bus to matrix send mute state',
 			description: 'If the specified bus send is muted, change style of the bank',
 			options: [
 				{
@@ -315,28 +321,28 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(255, 0, 0),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(255, 0, 0),
+				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const path = `${MainPath(evt.options.source as string)}/${evt.options.target}/on`
 				const data = path ? state.get(path) : undefined
 				const muted = getDataNumber(data, 0) === 0
 				return muted === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `${MainPath(evt.options.source as string)}/${evt.options.target}/on`
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `${MainPath(evt.options.source as string)}/${evt.options.target}/on`
 				unsubscribeFeedback(subs, path, evt)
 			},
 		},
 		[FeedbackId.FaderLevel]: {
 			type: 'boolean',
-			label: 'Change from fader level',
+			name: 'Change from fader level',
 			description: 'If the fader level has the specified gain, change style of the bank',
 			options: [
 				{
@@ -348,11 +354,11 @@ export function GetFeedbacksList(
 				NumberComparitorPicker(),
 				FaderLevelChoice,
 			],
-			style: {
-				bgcolor: self.rgb(0, 255, 0),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(0, 255, 0),
+				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const currentState = state.get(MainFaderPath(evt.options))
 				const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0]?.value : undefined
 				return (
@@ -364,14 +370,14 @@ export function GetFeedbacksList(
 				const path = MainFaderPath(evt.options)
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = MainFaderPath(evt.options)
 				unsubscribeFeedback(subs, path, evt)
 			},
 		},
 		[FeedbackId.ChannelSendLevel]: {
 			type: 'boolean',
-			label: 'Change from level of channel to bus send',
+			name: 'Change from level of channel to bus send',
 			description: 'If the channel to bus send level has the specified gain, change style of the bank',
 			options: [
 				{
@@ -389,11 +395,11 @@ export function GetFeedbacksList(
 				NumberComparitorPicker(),
 				FaderLevelChoice,
 			],
-			style: {
-				bgcolor: self.rgb(0, 255, 0),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(0, 255, 0),
+				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const currentState = state.get(SendChannelToBusPath(evt.options))
 				const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0]?.value : undefined
 				return (
@@ -405,14 +411,14 @@ export function GetFeedbacksList(
 				const path = SendChannelToBusPath(evt.options)
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = SendChannelToBusPath(evt.options)
 				unsubscribeFeedback(subs, path, evt)
 			},
 		},
 		[FeedbackId.BusSendLevel]: {
 			type: 'boolean',
-			label: 'Change from level of bus to matrix send',
+			name: 'Change from level of bus to matrix send',
 			description: 'If the bus to matrix send level has the specified gain, change style of the bank',
 			options: [
 				{
@@ -430,11 +436,11 @@ export function GetFeedbacksList(
 				NumberComparitorPicker(),
 				FaderLevelChoice,
 			],
-			style: {
-				bgcolor: self.rgb(0, 255, 0),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(0, 255, 0),
+				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const currentState = state.get(SendBusToMatrixPath(evt.options))
 				const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0]?.value : undefined
 				return (
@@ -446,7 +452,7 @@ export function GetFeedbacksList(
 				const path = SendBusToMatrixPath(evt.options)
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = SendBusToMatrixPath(evt.options)
 				unsubscribeFeedback(subs, path, evt)
 			},
@@ -454,7 +460,7 @@ export function GetFeedbacksList(
 
 		[FeedbackId.ChannelPanning]: {
 			type: 'boolean',
-			label: 'Change from channel panning',
+			name: 'Change from channel panning',
 			description: 'If the channel panning has the specified value, change style of the bank',
 			options: [
 				{
@@ -466,11 +472,11 @@ export function GetFeedbacksList(
 				NumberComparitorPicker(),
 				PanningChoice,
 			],
-			style: {
-				bgcolor: self.rgb(0, 255, 0),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(0, 255, 0),
+				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const currentState = state.get(MainPanPath(evt.options))
 				const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0]?.value : undefined
 				return (
@@ -482,14 +488,14 @@ export function GetFeedbacksList(
 				const path = MainPanPath(evt.options)
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = MainPanPath(evt.options)
 				unsubscribeFeedback(subs, path, evt)
 			},
 		},
 		[FeedbackId.ChannelSendPanning]: {
 			type: 'boolean',
-			label: 'Change from channel send panning',
+			name: 'Change from channel send panning',
 			description: 'If the channel send panning has the specified value, change style of the bank',
 			options: [
 				{
@@ -507,11 +513,11 @@ export function GetFeedbacksList(
 				NumberComparitorPicker(),
 				PanningChoice,
 			],
-			style: {
-				bgcolor: self.rgb(0, 255, 0),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(0, 255, 0),
+				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const currentState = state.get(ChannelToBusPanPath(evt.options))
 				const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0]?.value : undefined
 				return (
@@ -523,14 +529,14 @@ export function GetFeedbacksList(
 				const path = ChannelToBusPanPath(evt.options)
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = ChannelToBusPanPath(evt.options)
 				unsubscribeFeedback(subs, path, evt)
 			},
 		},
 		[FeedbackId.BusSendPanning]: {
 			type: 'boolean',
-			label: 'Change from bus send panning',
+			name: 'Change from bus send panning',
 			description: 'If the bus send has the specified value, change style of the bank',
 			options: [
 				{
@@ -548,11 +554,11 @@ export function GetFeedbacksList(
 				NumberComparitorPicker(),
 				PanningChoice,
 			],
-			style: {
-				bgcolor: self.rgb(0, 255, 0),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(0, 255, 0),
+				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const currentState = state.get(BusToMatrixPanPath(evt.options))
 				const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0]?.value : undefined
 				return (
@@ -564,14 +570,14 @@ export function GetFeedbacksList(
 				const path = BusToMatrixPanPath(evt.options)
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = BusToMatrixPanPath(evt.options)
 				unsubscribeFeedback(subs, path, evt)
 			},
 		},
 		[FeedbackId.TalkbackTalk]: {
 			type: 'boolean',
-			label: 'Change from talkback talk state',
+			name: 'Change from talkback talk state',
 			description: 'If the specified talkback is on, change style of the bank',
 			options: [
 				{
@@ -596,28 +602,28 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(255, 0, 0),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(255, 0, 0),
+				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const path = `/-stat/talk/${evt.options.channel}`
 				const data = path ? state.get(path) : undefined
 				const isOn = getDataNumber(data, 0) !== 0
 				return isOn === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/talk/${evt.options.channel}`
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/talk/${evt.options.channel}`
 				unsubscribeFeedback(subs, path, evt)
 			},
 		},
 		[FeedbackId.OscillatorEnable]: {
 			type: 'boolean',
-			label: 'Change from oscillator enabled state',
+			name: 'Change from oscillator enabled state',
 			description: 'If the oscillator is on, change style of the bank',
 			options: [
 				{
@@ -627,28 +633,28 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(255, 0, 0),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(255, 0, 0),
+				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const path = `/-stat/osc/on`
 				const data = path ? state.get(path) : undefined
 				const isOn = getDataNumber(data, 0) !== 0
 				return isOn === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/osc/on`
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/osc/on`
 				unsubscribeFeedback(subs, path, evt)
 			},
 		},
 		[FeedbackId.OscillatorDestination]: {
 			type: 'boolean',
-			label: 'Change from oscillator destination state',
+			name: 'Change from oscillator destination state',
 			description: 'If the oscillator destination matches, change style of the bank',
 			options: [
 				{
@@ -658,28 +664,28 @@ export function GetFeedbacksList(
 					...convertChoices(GetOscillatorDestinations(state)),
 				},
 			],
-			style: {
-				bgcolor: self.rgb(255, 0, 0),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(255, 0, 0),
+				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const path = `/config/osc/dest`
 				const data = path ? state.get(path) : undefined
 				const destination = getDataNumber(data, 0)
 				return destination === Number(evt.options.destination)
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/config/osc/dest`
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/config/osc/dest`
 				unsubscribeFeedback(subs, path, evt)
 			},
 		},
 		[FeedbackId.Select]: {
 			type: 'boolean',
-			label: 'Change from solo enabled state',
+			name: 'Change from solo enabled state',
 			description: 'If the solo is on for specified channel, change style of the bank',
 			options: [
 				{
@@ -695,23 +701,23 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(255, 127, 0),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(255, 127, 0),
+				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const ch = `${getOptNumber(evt, 'solo') + 1}`.padStart(2, '0')
 				const path = `/-stat/solosw/${ch}`
 				const data = path ? state.get(path) : undefined
 				const isOn = getDataNumber(data, 0) !== 0
 				return isOn === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const ch = `${getOptNumber(evt, 'solo') + 1}`.padStart(2, '0')
 				const path = `/-stat/solosw/${ch}`
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const ch = `${getOptNumber(evt, 'solo') + 1}`.padStart(2, '0')
 				const path = `/-stat/solosw/${ch}`
 				unsubscribeFeedback(subs, path, evt)
@@ -719,7 +725,7 @@ export function GetFeedbacksList(
 		},
 		[FeedbackId.Select]: {
 			type: 'boolean',
-			label: 'Change from select state',
+			name: 'Change from select state',
 			description: 'If specified channel is selected, change style of the bank',
 			options: [
 				{
@@ -729,28 +735,28 @@ export function GetFeedbacksList(
 					...convertChoices(selectChoices),
 				},
 			],
-			style: {
-				bgcolor: self.rgb(0, 255, 127),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(0, 255, 127),
+				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const path = `/-stat/selidx`
 				const data = path ? state.get(path) : undefined
 				const selectedChannel = getDataNumber(data, 0)
 				return selectedChannel == evt.options.select
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/selidx`
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/selidx`
 				unsubscribeFeedback(subs, path, evt)
 			},
 		},
 		[FeedbackId.Solo]: {
 			type: 'boolean',
-			label: 'Change from solo enabled state',
+			name: 'Change from solo enabled state',
 			description: 'If the solo is on for specified channel, change style of the bank',
 			options: [
 				{
@@ -766,23 +772,23 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(255, 127, 0),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(255, 127, 0),
+				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const ch = `${getOptNumber(evt, 'solo') + 1}`.padStart(2, '0')
 				const path = `/-stat/solosw/${ch}`
 				const data = path ? state.get(path) : undefined
 				const isOn = getDataNumber(data, 0) !== 0
 				return isOn === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const ch = `${getOptNumber(evt, 'solo') + 1}`.padStart(2, '0')
 				const path = `/-stat/solosw/${ch}`
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const ch = `${getOptNumber(evt, 'solo') + 1}`.padStart(2, '0')
 				const path = `/-stat/solosw/${ch}`
 				unsubscribeFeedback(subs, path, evt)
@@ -790,7 +796,7 @@ export function GetFeedbacksList(
 		},
 		[FeedbackId.ClearSolo]: {
 			type: 'boolean',
-			label: 'Change from clear solo state',
+			name: 'Change from clear solo state',
 			description: 'If atleast one solo is selected the clear solo button is on and will change style of the bank',
 			options: [
 				{
@@ -800,28 +806,28 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(255, 127, 0),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(255, 127, 0),
+				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const path = `/-stat/solo`
 				const data = path ? state.get(path) : undefined
 				const isOn = getDataNumber(data, 0) !== 0
 				return isOn === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/solo`
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/solo`
 				unsubscribeFeedback(subs, path, evt)
 			},
 		},
 		[FeedbackId.SendsOnFader]: {
 			type: 'boolean',
-			label: 'Change from Sends on Fader/Fader Flip state',
+			name: 'Change from Sends on Fader/Fader Flip state',
 			description: 'If the Sends on Fader/Fader Flip is on, change style of the bank',
 			options: [
 				{
@@ -831,28 +837,28 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(255, 127, 0),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(255, 127, 0),
+				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const path = `/-stat/sendsonfader`
 				const data = path ? state.get(path) : undefined
 				const isOn = getDataNumber(data, 0) !== 0
 				return isOn === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/sendsonfader`
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/sendsonfader`
 				unsubscribeFeedback(subs, path, evt)
 			},
 		},
 		[FeedbackId.SoloMono]: {
 			type: 'boolean',
-			label: 'Change from Solo Mono enabled state',
+			name: 'Change from Solo Mono enabled state',
 			description: 'If the Solo Mono is on, change style of the bank',
 			options: [
 				{
@@ -862,28 +868,28 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(255, 127, 0),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(255, 127, 0),
+				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const path = `/config/solo/mono`
 				const data = path ? state.get(path) : undefined
 				const isOn = getDataNumber(data, 0) !== 0
 				return isOn === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/config/solo/mono`
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/config/solo/mono`
 				unsubscribeFeedback(subs, path, evt)
 			},
 		},
 		[FeedbackId.SoloDim]: {
 			type: 'boolean',
-			label: 'Change from Solo Dim enabled state',
+			name: 'Change from Solo Dim enabled state',
 			description: 'If the Solo Dim is on, change style of the bank',
 			options: [
 				{
@@ -893,28 +899,28 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(255, 127, 0),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(255, 127, 0),
+				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const path = `/config/solo/dim`
 				const data = path ? state.get(path) : undefined
 				const isOn = getDataNumber(data, 0) !== 0
 				return isOn === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/config/solo/dim`
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/config/solo/dim`
 				unsubscribeFeedback(subs, path, evt)
 			},
 		},
 		[FeedbackId.Tape]: {
 			type: 'boolean',
-			label: 'Change from tape operation state',
+			name: 'Change from tape operation state',
 			description: 'If the tape state matches, change style of the bank',
 			options: [
 				{
@@ -924,27 +930,27 @@ export function GetFeedbacksList(
 					...convertChoices(CHOICES_TAPE_FUNC),
 				},
 			],
-			style: {
-				bgcolor: self.rgb(255, 0, 0),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(255, 0, 0),
+				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const path = `/-stat/tape/state`
 				const data = path ? state.get(path) : undefined
 				return getDataNumber(data, 0) == evt.options.tapeFunc
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/tape/state`
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/tape/state`
 				unsubscribeFeedback(subs, path, evt)
 			},
 		},
 		[FeedbackId.ChannelBank]: {
 			type: 'boolean',
-			label: 'Change from selected channel bank (X32/M32)',
+			name: 'Change from selected channel bank (X32/M32)',
 			description:
 				'If the channel bank matches the selected channel bank, change style of the bank. Please note these will be incorrect if used connected to an X32 Compact/X32 Producer/M32R use the X32 Compact/X32 Producer/M32R feedback instead.',
 			options: [
@@ -978,28 +984,28 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(0, 255, 127),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(0, 255, 127),
+				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const path = `/-stat/chfaderbank`
 				const data = path ? state.get(path) : undefined
 				const isOn = getDataNumber(data, 0) == evt.options.bank
 				return isOn === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/chfaderbank`
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/chfaderbank`
 				unsubscribeFeedback(subs, path, evt)
 			},
 		},
 		[FeedbackId.GroupBank]: {
 			type: 'boolean',
-			label: 'Change from selected group bank (X32/M32)',
+			name: 'Change from selected group bank (X32/M32)',
 			description:
 				'If the group bank matches the selected group bank, change style of the bank. Please note these will be incorrect if used connected to an X32 Compact/X32 Producer/M32R use the X32 Compact/X32 Producer/M32R feedback instead.',
 			options: [
@@ -1033,28 +1039,28 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(0, 255, 127),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(0, 255, 127),
+				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const path = `/-stat/grpfaderbank`
 				const data = path ? state.get(path) : undefined
 				const isOn = getDataNumber(data, 0) == evt.options.bank
 				return isOn === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/grpfaderbank`
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/grpfaderbank`
 				unsubscribeFeedback(subs, path, evt)
 			},
 		},
 		[FeedbackId.ChannelBankCompact]: {
 			type: 'boolean',
-			label: 'Change from selected channel bank (X32 Compact/X32 Producer/M32R)',
+			name: 'Change from selected channel bank (X32 Compact/X32 Producer/M32R)',
 			description:
 				'If the channel bank matches the selected channel bank, change style of the bank. Please note these will be incorrect if used connected to an X32/M32 use the X32/M32 feedback instead.',
 			options: [
@@ -1104,28 +1110,28 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(0, 255, 127),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(0, 255, 127),
+				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const path = `/-stat/chfaderbank`
 				const data = path ? state.get(path) : undefined
 				const isOn = getDataNumber(data, 0) == evt.options.bank
 				return isOn === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/chfaderbank`
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/chfaderbank`
 				unsubscribeFeedback(subs, path, evt)
 			},
 		},
 		[FeedbackId.GroupBankCompact]: {
 			type: 'boolean',
-			label: 'Change from selected group bank (X32 Compact/X32 Producer/M32R)',
+			name: 'Change from selected group bank (X32 Compact/X32 Producer/M32R)',
 			description:
 				'If the group bank matches the selected group bank, change style of the bank. Please note these will be incorrect if used connected to an X32/M32 use the X32/M32 feedback instead.',
 			options: [
@@ -1183,28 +1189,28 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(0, 255, 127),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(0, 255, 127),
+				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const path = `/-stat/grpfaderbank`
 				const data = path ? state.get(path) : undefined
 				const isOn = getDataNumber(data, 0) == evt.options.bank
 				return isOn === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/grpfaderbank`
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/grpfaderbank`
 				unsubscribeFeedback(subs, path, evt)
 			},
 		},
 		[FeedbackId.BusSendBank]: {
 			type: 'boolean',
-			label: 'Change from selected Bus Send',
+			name: 'Change from selected Bus Send',
 			description: 'If the selected bus send bank is active,, change style of the bank',
 			options: [
 				{
@@ -1237,28 +1243,28 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(255, 127, 0),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(255, 127, 0),
+				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const path = `/-stat/bussendbank`
 				const data = path ? state.get(path) : undefined
 				const isOn = getDataNumber(data, 0) == evt.options.bank
 				return isOn === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/bussendbank`
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/bussendbank`
 				unsubscribeFeedback(subs, path, evt)
 			},
 		},
 		[FeedbackId.UserBank]: {
 			type: 'boolean',
-			label: 'Change from selected User Assign Bank',
+			name: 'Change from selected User Assign Bank',
 			description: 'If the selected assign bank is active, change style of the bank',
 			options: [
 				{
@@ -1287,28 +1293,28 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(255, 127, 0),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(255, 127, 0),
+				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const path = `/-stat/userbank`
 				const data = path ? state.get(path) : undefined
 				const isOn = getDataNumber(data, 0) == evt.options.bank
 				return isOn === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/userbank`
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/userbank`
 				unsubscribeFeedback(subs, path, evt)
 			},
 		},
 		[FeedbackId.Screens]: {
 			type: 'boolean',
-			label: 'Change from screen state',
+			name: 'Change from screen state',
 			description: 'If the select screen is being shown, change style of the bank',
 			options: [
 				{
@@ -1365,28 +1371,28 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(0, 255, 127),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(0, 255, 127),
+				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const path = `/-stat/screen/screen`
 				const data = path ? state.get(path) : undefined
 				const isOn = getDataNumber(data, 0) == evt.options.screen
 				return isOn === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/screen/screen`
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/screen/screen`
 				unsubscribeFeedback(subs, path, evt)
 			},
 		},
 		[FeedbackId.MuteGroupScreen]: {
 			type: 'boolean',
-			label: 'Change from mute groups screen enabled state',
+			name: 'Change from mute groups screen enabled state',
 			description: 'If mute groups screen is on, change style of the bank',
 			options: [
 				{
@@ -1396,28 +1402,28 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(255, 0, 0),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(255, 0, 0),
+				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const path = `/-stat/screen/mutegrp`
 				const data = path ? state.get(path) : undefined
 				const isOn = getDataNumber(data, 0) !== 0
 				return isOn === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/screen/mutegrp`
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/screen/mutegrp`
 				unsubscribeFeedback(subs, path, evt)
 			},
 		},
 		[FeedbackId.UtilityScreen]: {
 			type: 'boolean',
-			label: 'Change from Utility enabled state',
+			name: 'Change from Utility enabled state',
 			description: 'If utility screen is on, change style of the bank',
 			options: [
 				{
@@ -1427,28 +1433,28 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(0, 255, 127),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(0, 255, 127),
+				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const path = `/-stat/screen/utils`
 				const data = path ? state.get(path) : undefined
 				const isOn = getDataNumber(data, 0) !== 0
 				return isOn === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/screen/utils`
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/screen/utils`
 				unsubscribeFeedback(subs, path, evt)
 			},
 		},
 		[FeedbackId.ChannelPage]: {
 			type: 'boolean',
-			label: 'Change from channel page selected state',
+			name: 'Change from channel page selected state',
 			description: 'If channel screen is on and selected page is active, change style of the bank',
 			options: [
 				{
@@ -1493,28 +1499,28 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(0, 255, 127),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(0, 255, 127),
+				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const screen = state.get('/-stat/screen/screen')
 				const page = state.get('/-stat/screen/CHAN/page')
 				const isOn = getDataNumber(screen, 0) === 0 && getDataNumber(page, 0) == evt.options.page
 				return isOn === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/screen', evt)
 				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/CHAN/page', evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				unsubscribeFeedback(subs, '/-stat/screen/screen', evt)
 				unsubscribeFeedback(subs, '/-stat/screen/CHAN/page', evt)
 			},
 		},
 		[FeedbackId.MeterPage]: {
 			type: 'boolean',
-			label: 'Change from meter page selected state',
+			name: 'Change from meter page selected state',
 			description: 'If meter screen is on and selected page is active, change style of the bank',
 			options: [
 				{
@@ -1555,28 +1561,28 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(0, 255, 127),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(0, 255, 127),
+				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const screen = state.get('/-stat/screen/screen')
 				const page = state.get('/-stat/screen/METER/page')
 				const isOn = getDataNumber(screen, 0) === 1 && getDataNumber(page, 0) == evt.options.page
 				return isOn === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/screen', evt)
 				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/METER/page', evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				unsubscribeFeedback(subs, '/-stat/screen/screen', evt)
 				unsubscribeFeedback(subs, '/-stat/screen/METER/page', evt)
 			},
 		},
 		[FeedbackId.RoutePage]: {
 			type: 'boolean',
-			label: 'Change from route page selected state',
+			name: 'Change from route page selected state',
 			description: 'If route screen is on and selected page is active, change style of the bank',
 			options: [
 				{
@@ -1629,28 +1635,28 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(0, 255, 127),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(0, 255, 127),
+				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const screen = state.get('/-stat/screen/screen')
 				const page = state.get('/-stat/screen/ROUTE/page')
 				const isOn = getDataNumber(screen, 0) === 2 && getDataNumber(page, 0) == evt.options.page
 				return isOn === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/screen', evt)
 				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/ROUTE/page', evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				unsubscribeFeedback(subs, '/-stat/screen/screen', evt)
 				unsubscribeFeedback(subs, '/-stat/screen/ROUTE/page', evt)
 			},
 		},
 		[FeedbackId.SetupPage]: {
 			type: 'boolean',
-			label: 'Change from setup page selected state',
+			name: 'Change from setup page selected state',
 			description: 'If setup screen is on and selected page is active, change style of the bank',
 			options: [
 				{
@@ -1695,28 +1701,28 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(0, 255, 127),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(0, 255, 127),
+				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const screen = state.get('/-stat/screen/screen')
 				const page = state.get('/-stat/screen/SETUP/page')
 				const isOn = getDataNumber(screen, 0) === 3 && getDataNumber(page, 0) == evt.options.page
 				return isOn === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/screen', evt)
 				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/SETUP/page', evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				unsubscribeFeedback(subs, '/-stat/screen/screen', evt)
 				unsubscribeFeedback(subs, '/-stat/screen/SETUP/page', evt)
 			},
 		},
 		[FeedbackId.LibPage]: {
 			type: 'boolean',
-			label: 'Change from library page selected state',
+			name: 'Change from library page selected state',
 			description: 'If library screen is on and selected page is active, change style of the bank',
 			options: [
 				{
@@ -1749,28 +1755,28 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(0, 255, 127),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(0, 255, 127),
+				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const screen = state.get('/-stat/screen/screen')
 				const page = state.get('/-stat/screen/LIB/page')
 				const isOn = getDataNumber(screen, 0) === 4 && getDataNumber(page, 0) == evt.options.page
 				return isOn === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/screen', evt)
 				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/LIB/page', evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				unsubscribeFeedback(subs, '/-stat/screen/screen', evt)
 				unsubscribeFeedback(subs, '/-stat/screen/LIB/page', evt)
 			},
 		},
 		[FeedbackId.FxPage]: {
 			type: 'boolean',
-			label: 'Change from effects page selected state',
+			name: 'Change from effects page selected state',
 			description: 'If effects screen is on and selected page is active, change style of the bank',
 			options: [
 				{
@@ -1823,28 +1829,28 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(0, 255, 127),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(0, 255, 127),
+				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const screen = state.get('/-stat/screen/screen')
 				const page = state.get('/-stat/screen/FX/page')
 				const isOn = getDataNumber(screen, 0) === 5 && getDataNumber(page, 0) == evt.options.page
 				return isOn === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/screen', evt)
 				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/FX/page', evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				unsubscribeFeedback(subs, '/-stat/screen/screen', evt)
 				unsubscribeFeedback(subs, '/-stat/screen/FX/page', evt)
 			},
 		},
 		[FeedbackId.MonPage]: {
 			type: 'boolean',
-			label: 'Change from monitor page selected state',
+			name: 'Change from monitor page selected state',
 			description: 'If monitor screen is on and selected page is active, change style of the bank',
 			options: [
 				{
@@ -1877,28 +1883,28 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(0, 255, 127),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(0, 255, 127),
+				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const screen = state.get('/-stat/screen/screen')
 				const page = state.get('/-stat/screen/MON/page')
 				const isOn = getDataNumber(screen, 0) === 6 && getDataNumber(page, 0) == evt.options.page
 				return isOn === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/screen', evt)
 				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/MON/page', evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				unsubscribeFeedback(subs, '/-stat/screen/screen', evt)
 				unsubscribeFeedback(subs, '/-stat/screen/MON/page', evt)
 			},
 		},
 		[FeedbackId.USBPage]: {
 			type: 'boolean',
-			label: 'Change from USB page selected state',
+			name: 'Change from USB page selected state',
 			description: 'If USB screen is on and selected page is active, change style of the bank',
 			options: [
 				{
@@ -1923,28 +1929,28 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(0, 255, 127),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(0, 255, 127),
+				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const screen = state.get('/-stat/screen/screen')
 				const page = state.get('/-stat/screen/USB/page')
 				const isOn = getDataNumber(screen, 0) === 7 && getDataNumber(page, 0) == evt.options.page
 				return isOn === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/screen', evt)
 				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/USB/page', evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				unsubscribeFeedback(subs, '/-stat/screen/screen', evt)
 				unsubscribeFeedback(subs, '/-stat/screen/USB/page', evt)
 			},
 		},
 		[FeedbackId.ScenePage]: {
 			type: 'boolean',
-			label: 'Change from scene page selected state',
+			name: 'Change from scene page selected state',
 			description: 'If scene screen is on and selected page is active, change style of the bank',
 			options: [
 				{
@@ -1985,28 +1991,28 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(0, 255, 127),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(0, 255, 127),
+				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const screen = state.get('/-stat/screen/screen')
 				const page = state.get('/-stat/screen/SCENE/page')
 				const isOn = getDataNumber(screen, 0) === 8 && getDataNumber(page, 0) == evt.options.page
 				return isOn === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/screen', evt)
 				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/SCENE/page', evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				unsubscribeFeedback(subs, '/-stat/screen/screen', evt)
 				unsubscribeFeedback(subs, '/-stat/screen/SCENE/page', evt)
 			},
 		},
 		[FeedbackId.AssignPage]: {
 			type: 'boolean',
-			label: 'Change from assign page selected state',
+			name: 'Change from assign page selected state',
 			description: 'If assign screen is on and selected page is active, change style of the bank',
 			options: [
 				{
@@ -2039,21 +2045,21 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(0, 255, 127),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(0, 255, 127),
+				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const screen = state.get('/-stat/screen/screen')
 				const page = state.get('/-stat/screen/ASSIGN/page')
 				const isOn = getDataNumber(screen, 0) === 9 && getDataNumber(page, 0) == evt.options.page
 				return isOn === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/screen', evt)
 				subscribeFeedback(ensureLoaded, subs, '/-stat/screen/ASSIGN/page', evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				unsubscribeFeedback(subs, '/-stat/screen/screen', evt)
 				unsubscribeFeedback(subs, '/-stat/screen/ASSIGN/page', evt)
 			},
@@ -2061,7 +2067,7 @@ export function GetFeedbacksList(
 
 		[FeedbackId.RouteUserIn]: {
 			type: 'boolean',
-			label: 'Change from user in routing state',
+			name: 'Change from user in routing state',
 			description:
 				'If the specified source is routed to the specified destination, change style of the bank. Protip: You can use `Store channel` with and then select `FROM STORAGE` to chain screens ',
 			options: [
@@ -2091,11 +2097,11 @@ export function GetFeedbacksList(
 					],
 				},
 			],
-			style: {
-				bgcolor: self.rgb(255, 0, 0),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(255, 0, 0),
+				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const source = evt.options.source as number
 				let channel = evt.options.channel as number
 				if (channel == -1) {
@@ -2106,7 +2112,7 @@ export function GetFeedbacksList(
 				const isRouted = getDataNumber(data, 0) === source
 				return isRouted === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const channel = evt.options.channel as number
 				if (channel < 0) {
 					for (let i = 1; i <= 32; i++) {
@@ -2118,7 +2124,7 @@ export function GetFeedbacksList(
 					subscribeFeedback(ensureLoaded, subs, path, evt)
 				}
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const channel = evt.options.channel as number
 				if (channel < 0) {
 					for (let i = 1; i <= 32; i++) {
@@ -2133,7 +2139,7 @@ export function GetFeedbacksList(
 		},
 		[FeedbackId.RouteUserOut]: {
 			type: 'boolean',
-			label: 'Change from user out routing state',
+			name: 'Change from user out routing state',
 			description:
 				'If the specified source is routed to the specified destination, change style of the bank. Protip: You can use `Store channel` with and then select `FROM STORAGE` to chain screens ',
 			options: [
@@ -2163,11 +2169,11 @@ export function GetFeedbacksList(
 					],
 				},
 			],
-			style: {
-				bgcolor: self.rgb(255, 0, 0),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(255, 0, 0),
+				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const source = evt.options.source as number
 				let channel = evt.options.channel as number
 				if (channel == -1) {
@@ -2178,7 +2184,7 @@ export function GetFeedbacksList(
 				const isRouted = getDataNumber(data, 0) === source
 				return isRouted === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const channel = evt.options.channel as number
 				if (channel < 0) {
 					for (let i = 1; i <= 64; i++) {
@@ -2190,7 +2196,7 @@ export function GetFeedbacksList(
 					subscribeFeedback(ensureLoaded, subs, path, evt)
 				}
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const channel = evt.options.channel as number
 				if (channel < 0) {
 					for (let i = 1; i <= 64; i++) {
@@ -2205,7 +2211,7 @@ export function GetFeedbacksList(
 		},
 		[FeedbackId.StoredChannel]: {
 			type: 'boolean',
-			label: 'Change based on Stored Channel',
+			name: 'Change based on Stored Channel',
 			description: 'If the specified channl is stored, change style of the bank.',
 			options: [
 				{
@@ -2221,11 +2227,11 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(0, 255, 127),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(0, 255, 127),
+				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const storedChannel = state.getStoredChannel()
 				const isStored = getOptNumber(evt, 'channel', 0) === storedChannel
 				return isStored === !!evt.options.state
@@ -2235,7 +2241,7 @@ export function GetFeedbacksList(
 		},
 		[FeedbackId.RouteInputBlockMode]: {
 			type: 'boolean',
-			label: 'Input block routing mode',
+			name: 'Input block routing mode',
 			description: 'If the specified mode is active, change style of the bank.',
 			options: [
 				{
@@ -2254,28 +2260,28 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(0, 128, 255),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(0, 128, 255),
+				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const data = state.get(`/config/routing/routswitch`)
 				const mode = getOptNumber(evt, 'mode', 0)
 				const isRouted = getDataNumber(data, 0) === mode
 				return isRouted === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/config/routing/routswitch`
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/config/routing/routswitch`
 				unsubscribeFeedback(subs, path, evt)
 			},
 		},
 		[FeedbackId.RouteInputBlocks]: {
 			type: 'boolean',
-			label: 'Input block routing state',
+			name: 'Input block routing state',
 			description: 'If the specified block is routed to the specified destination, change style of the bank.',
 			options: [
 				{
@@ -2306,11 +2312,11 @@ export function GetFeedbacksList(
 					...convertChoices([...GetInputBlockRoutes()]),
 				},
 			],
-			style: {
-				bgcolor: self.rgb(255, 0, 0),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(255, 0, 0),
+				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const mode = evt.options.mode
 				const block = evt.options.block
 				const routing = evt.options.routing as number
@@ -2319,13 +2325,13 @@ export function GetFeedbacksList(
 				const isRouted = getDataNumber(data, 0) === routing
 				return isRouted === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const mode = evt.options.mode
 				const block = evt.options.block
 				const path = `/config/routing/${mode}/${block}`
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const mode = evt.options.mode
 				const block = evt.options.block
 				const path = `/config/routing/${mode}/${block}`
@@ -2334,7 +2340,7 @@ export function GetFeedbacksList(
 		},
 		[FeedbackId.RouteAuxBlocks]: {
 			type: 'boolean',
-			label: 'Aux block routing state',
+			name: 'Aux block routing state',
 			description: 'If the specified block is routed to the specified destination, change style of the bank.',
 			options: [
 				{
@@ -2359,11 +2365,11 @@ export function GetFeedbacksList(
 					...convertChoices([...GetAuxBlockRoutes()]),
 				},
 			],
-			style: {
-				bgcolor: self.rgb(255, 0, 0),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(255, 0, 0),
+				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const mode = evt.options.mode
 				const routing = evt.options.routing as number
 				const cmd = `/config/routing/${mode}/AUX`
@@ -2371,12 +2377,12 @@ export function GetFeedbacksList(
 				const isRouted = getDataNumber(data, 0) === routing
 				return isRouted === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const mode = evt.options.mode
 				const path = `/config/routing/${mode}/AUX`
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const mode = evt.options.mode
 				const path = `/config/routing/${mode}/AUX`
 				unsubscribeFeedback(subs, path, evt)
@@ -2384,7 +2390,7 @@ export function GetFeedbacksList(
 		},
 		[FeedbackId.RouteAES50Blocks]: {
 			type: 'boolean',
-			label: 'AES50 block routing state',
+			name: 'AES50 block routing state',
 			description: 'If the specified block is routed to the specified destination, change style of the bank.',
 			options: [
 				{
@@ -2415,11 +2421,11 @@ export function GetFeedbacksList(
 					...convertChoices([...GetAesCardRouteBlocks()]),
 				},
 			],
-			style: {
-				bgcolor: self.rgb(255, 0, 0),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(255, 0, 0),
+				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const mode = evt.options.mode
 				const block = evt.options.block
 				const routing = evt.options.routing as number
@@ -2428,13 +2434,13 @@ export function GetFeedbacksList(
 				const isRouted = getDataNumber(data, 0) === routing
 				return isRouted === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const mode = evt.options.mode
 				const block = evt.options.block
 				const path = `/config/routing/AES${mode}/${block}`
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const mode = evt.options.mode
 				const block = evt.options.block
 				const path = `/config/routing/AES${mode}/${block}`
@@ -2443,7 +2449,7 @@ export function GetFeedbacksList(
 		},
 		[FeedbackId.RouteCardBlocks]: {
 			type: 'boolean',
-			label: 'Card block routing state',
+			name: 'Card block routing state',
 			description: 'If the specified block is routed to the specified destination, change style of the bank.',
 			options: [
 				{
@@ -2465,11 +2471,11 @@ export function GetFeedbacksList(
 					...convertChoices([...GetAesCardRouteBlocks()]),
 				},
 			],
-			style: {
-				bgcolor: self.rgb(255, 0, 0),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(255, 0, 0),
+				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const block = evt.options.block
 				const routing = evt.options.routing as number
 				const cmd = `/config/routing/CARD/${block}`
@@ -2477,12 +2483,12 @@ export function GetFeedbacksList(
 				const isRouted = getDataNumber(data, 0) === routing
 				return isRouted === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const block = evt.options.block
 				const path = `/config/routing/CARD/${block}`
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const block = evt.options.block
 				const path = `/config/routing/CARD/${block}`
 				unsubscribeFeedback(subs, path, evt)
@@ -2490,7 +2496,7 @@ export function GetFeedbacksList(
 		},
 		[FeedbackId.RouteXLRLeftOutputs]: {
 			type: 'boolean',
-			label: 'XRL left block routing state',
+			name: 'XRL left block routing state',
 			description: 'If the specified block is routed to the specified destination, change style of the bank.',
 			options: [
 				{
@@ -2515,11 +2521,11 @@ export function GetFeedbacksList(
 					...convertChoices([...GetLeftOutputBlockRoutes()]),
 				},
 			],
-			style: {
-				bgcolor: self.rgb(255, 0, 0),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(255, 0, 0),
+				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const block = evt.options.block
 				const routing = evt.options.routing as number
 				const cmd = `/config/routing/OUT/${block}`
@@ -2527,12 +2533,12 @@ export function GetFeedbacksList(
 				const isRouted = getDataNumber(data, 0) === routing
 				return isRouted === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const block = evt.options.block
 				const path = `/config/routing/OUT/${block}`
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const block = evt.options.block
 				const path = `/config/routing/OUT/${block}`
 				unsubscribeFeedback(subs, path, evt)
@@ -2540,7 +2546,7 @@ export function GetFeedbacksList(
 		},
 		[FeedbackId.RouteXLRRightOutputs]: {
 			type: 'boolean',
-			label: 'XRL right block routing state',
+			name: 'XRL right block routing state',
 			description: 'If the specified block is routed to the specified destination, change style of the bank.',
 			options: [
 				{
@@ -2565,11 +2571,11 @@ export function GetFeedbacksList(
 					...convertChoices([...GetRightOutputBlockRoutes()]),
 				},
 			],
-			style: {
-				bgcolor: self.rgb(255, 0, 0),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(255, 0, 0),
+				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const block = evt.options.block
 				const routing = evt.options.routing as number
 				const cmd = `/config/routing/OUT/${block}`
@@ -2577,12 +2583,12 @@ export function GetFeedbacksList(
 				const isRouted = getDataNumber(data, 0) === routing
 				return isRouted === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const block = evt.options.block
 				const path = `/config/routing/OUT/${block}`
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const block = evt.options.block
 				const path = `/config/routing/OUT/${block}`
 				unsubscribeFeedback(subs, path, evt)
@@ -2591,7 +2597,7 @@ export function GetFeedbacksList(
 
 		[FeedbackId.LockAndShutdown]: {
 			type: 'boolean',
-			label: 'Lock/Shutdown',
+			name: 'Lock/Shutdown',
 			description: 'If the specified staye is active, change style of the bank.',
 			options: [
 				{
@@ -2611,21 +2617,21 @@ export function GetFeedbacksList(
 					default: true,
 				},
 			],
-			style: {
-				bgcolor: self.rgb(255, 0, 0),
-				color: self.rgb(0, 0, 0),
+			defaultStyle: {
+				bgcolor: combineRgb(255, 0, 0),
+				color: combineRgb(0, 0, 0),
 			},
-			callback: (evt: CompanionFeedbackEvent): boolean => {
+			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const cmd = `/-stat/lock`
 				const data = state.get(cmd)
 				const isRouted = getDataNumber(data, 0) === (evt.options.lockState as number)
 				return isRouted === !!evt.options.state
 			},
-			subscribe: (evt: CompanionFeedbackEvent): void => {
+			subscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/lock`
 				subscribeFeedback(ensureLoaded, subs, path, evt)
 			},
-			unsubscribe: (evt: CompanionFeedbackEvent): void => {
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/lock`
 				unsubscribeFeedback(subs, path, evt)
 			},

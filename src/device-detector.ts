@@ -1,6 +1,5 @@
-import debug0 = require('debug')
-// eslint-disable-next-line node/no-extraneous-import
-import * as osc from 'osc'
+import debug0 from 'debug'
+import osc from 'osc'
 
 const debug = debug0('behringer-x32/device-detector')
 

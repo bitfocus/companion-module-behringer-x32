@@ -1,9 +1,7 @@
-// eslint-disable-next-line node/no-extraneous-import
 import { MetaArgument } from 'osc'
-import InstanceSkel = require('../../../instance_skel')
-import { fadeFpsDefault, X32Config } from './config'
-import { Easing } from './easings'
-import { dbToFloat } from './util'
+import { fadeFpsDefault, X32Config } from './config.js'
+import { Easing } from './easings.js'
+import { dbToFloat, InstanceBaseExt } from './util.js'
 
 export interface TransitionInfo {
 	steps: number[]
@@ -11,26 +9,22 @@ export interface TransitionInfo {
 
 export class X32Transitions {
 	private readonly transitions: Map<string, TransitionInfo>
-	private readonly instance: InstanceSkel<X32Config>
+	private readonly instance: InstanceBaseExt<X32Config>
 	private readonly fps: number
 
 	private tickInterval: NodeJS.Timer | undefined
 
-	constructor(instance: InstanceSkel<X32Config>) {
+	constructor(instance: InstanceBaseExt<X32Config>) {
 		this.transitions = new Map()
 		this.instance = instance
 		this.fps = instance.config.fadeFps ?? fadeFpsDefault
 	}
 
 	private sendOsc(cmd: string, arg: MetaArgument): void {
-		try {
-			// HACK: We send commands on a different port than we run /xremote on, so that we get change events for what we send.
-			// Otherwise we can have no confirmation that a command was accepted
-			if (this.instance.config.host) {
-				this.instance.oscSend(this.instance.config.host, 10023, cmd, [arg])
-			}
-		} catch (e) {
-			this.instance.log('error', `Command send failed: ${e}`)
+		// HACK: We send commands on a different port than we run /xremote on, so that we get change events for what we send.
+		// Otherwise we can have no confirmation that a command was accepted
+		if (this.instance.config.host) {
+			this.instance.oscSend(this.instance.config.host, 10023, cmd, [arg])
 		}
 	}
 

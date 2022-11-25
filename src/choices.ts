@@ -1,14 +1,13 @@
 import {
-	DropdownChoice,
-	ConfigValue,
-	CompanionInputFieldNumber,
 	CompanionInputFieldDropdown,
-	SomeCompanionInputField,
-	CompanionActionEvent,
-	CompanionFeedbackEvent,
-} from '../../../instance_skel_types'
-import { X32State } from './state'
-import { padNumber } from './util'
+	CompanionInputFieldNumber,
+	CompanionOptionValues,
+	DropdownChoice,
+	DropdownChoiceId,
+	SomeCompanionActionInputField,
+} from '@companion-module/base'
+import { X32State } from './state.js'
+import { padNumber } from './util.js'
 
 export const MUTE_TOGGLE = 2
 export const CHOICES_MUTE: DropdownChoice[] = [
@@ -130,7 +129,7 @@ export const MuteChoice: CompanionInputFieldDropdown = {
 	id: 'mute',
 	...convertChoices(CHOICES_MUTE),
 }
-export const FadeDurationChoice: SomeCompanionInputField[] = [
+export const FadeDurationChoice: SomeCompanionActionInputField[] = [
 	{
 		type: 'number',
 		label: 'Fade Duration (ms)',
@@ -158,8 +157,8 @@ export const FadeDurationChoice: SomeCompanionInputField[] = [
 			{ id: 'back', label: 'Back' },
 			{ id: 'bounce', label: 'Bounce' },
 		],
-		isVisible: (options: CompanionActionEvent | CompanionFeedbackEvent): boolean => {
-			return options.options.fadeDuration != null && (options.options.fadeDuration as number) > 0
+		isVisible: (options: CompanionOptionValues): boolean => {
+			return options.fadeDuration != null && (options.fadeDuration as number) > 0
 		},
 	},
 	{
@@ -172,18 +171,18 @@ export const FadeDurationChoice: SomeCompanionInputField[] = [
 			{ id: 'ease-out', label: 'Ease-out' },
 			{ id: 'ease-in-out', label: 'Ease-in-out' },
 		],
-		isVisible: (options: CompanionActionEvent | CompanionFeedbackEvent): boolean => {
+		isVisible: (options: CompanionOptionValues): boolean => {
 			return (
-				options.options.fadeDuration != null &&
-				options.options.fadeAlgorithm != null &&
-				(options.options.fadeDuration as number) > 0 &&
-				(options.options.fadeAlgorithm as string) !== 'linear'
+				options.fadeDuration != null &&
+				options.fadeAlgorithm != null &&
+				(options.fadeDuration as number) > 0 &&
+				(options.fadeAlgorithm as string) !== 'linear'
 			)
 		},
 	},
 ]
 
-export function convertChoices(choices: DropdownChoice[]): { choices: DropdownChoice[]; default: ConfigValue } {
+export function convertChoices(choices: DropdownChoice[]): { choices: DropdownChoice[]; default: DropdownChoiceId } {
 	return {
 		choices,
 		default: choices[0].id,

@@ -1,9 +1,7 @@
-import InstanceSkel = require('../../../instance_skel')
-import { CompanionConfigField, CompanionStaticUpgradeScript, CompanionSystem } from '../../../instance_skel_types'
-import { GetActionsList } from './actions'
-import { X32Config, GetConfigFields } from './config'
-import { FeedbackId, GetFeedbacksList } from './feedback'
-import { GetPresetsList } from './presets'
+import { GetActionsList } from './actions.js'
+import { X32Config, GetConfigFields } from './config.js'
+import { FeedbackId, GetFeedbacksList } from './feedback.js'
+import { GetPresetsList } from './presets.js'
 import {
 	InitVariables,
 	updateDeviceInfoVariables,
@@ -12,26 +10,42 @@ import {
 	updateTapeTime,
 	updateUReceTime,
 	updateURecrTime,
-} from './variables'
-import { X32State, X32Subscriptions, IStoredChannelObserver } from './state'
-// eslint-disable-next-line node/no-extraneous-import
-import * as osc from 'osc'
-import { MainPath } from './paths'
-import { BooleanFeedbackUpgradeMap, upgradeV2x0x0 } from './upgrades'
-import { GetTargetChoices } from './choices'
-import * as debounceFn from 'debounce-fn'
+} from './variables.js'
+import { IStoredChannelObserver, X32State, X32Subscriptions } from './state.js'
+import osc from 'osc'
+import { MainPath } from './paths.js'
+import { BooleanFeedbackUpgradeMap, upgradeV2x0x0 } from './upgrades.js'
+import { GetTargetChoices } from './choices.js'
+import debounceFn from 'debounce-fn'
 import PQueue from 'p-queue'
-import { X32Transitions } from './transitions'
-import { X32DeviceDetectorInstance } from './device-detector'
+import { X32Transitions } from './transitions.js'
+import { X32DeviceDetectorInstance } from './device-detector.js'
+import {
+	CompanionStaticUpgradeScript,
+	InstanceBase,
+	SomeCompanionConfigField,
+	runEntrypoint,
+	CreateConvertToBooleanFeedbackUpgradeScript,
+	EmptyUpgradeScript,
+	InstanceStatus,
+} from '@companion-module/base'
+import { InstanceBaseExt } from './util.js'
 
-class X32Instance extends InstanceSkel<X32Config> implements IStoredChannelObserver {
-	/**
-	 * Companion instance class for the Behringer X32 Mixers.
-	 */
+const UpgradeScripts: CompanionStaticUpgradeScript<X32Config>[] = [
+	EmptyUpgradeScript, // Previous version had a script
+	upgradeV2x0x0,
+	CreateConvertToBooleanFeedbackUpgradeScript(BooleanFeedbackUpgradeMap),
+]
+
+/**
+ * Companion instance class for the Behringer X32 Mixers.
+ */
+class X32Instance extends InstanceBase<X32Config> implements InstanceBaseExt<X32Config>, IStoredChannelObserver {
 	private osc: osc.UDPPort
 	private x32State: X32State
 	private x32Subscriptions: X32Subscriptions
 	private transitions: X32Transitions
+	public config: X32Config = {}
 
 	/** Ping the x32 at a regular interval to tell it to keep sending us info, and for us to check it is still there */
 	private heartbeat: NodeJS.Timer | undefined
@@ -57,12 +71,8 @@ class X32Instance extends InstanceSkel<X32Config> implements IStoredChannelObser
 	/**
 	 * Create an instance of an X32 module.
 	 */
-	constructor(system: CompanionSystem, id: string, config: X32Config) {
-		super(system, id, config)
-
-		// HACK: for testing upgrade script
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		// ;(config as any)._configIdx = -1
+	constructor(internal: unknown) {
+		super(internal)
 
 		this.osc = new osc.UDPPort({})
 		this.x32State = new X32State()
@@ -101,25 +111,19 @@ class X32Instance extends InstanceSkel<X32Config> implements IStoredChannelObser
 		this.debounceMessageFeedbacks()
 	}
 
-	public static GetUpgradeScripts(): CompanionStaticUpgradeScript[] {
-		return [
-			() => false, // Previous version had a script
-			upgradeV2x0x0,
-			X32Instance.CreateConvertToBooleanFeedbackUpgradeScript(BooleanFeedbackUpgradeMap),
-		]
-	}
-
 	// Override base types to make types stricter
 	public checkFeedbacks(...feedbackTypes: FeedbackId[]): void {
-		super.checkFeedbacks(...feedbackTypes)
+		return super.checkFeedbacks(...feedbackTypes)
 	}
 
 	/**
 	 * Main initialization function called once the module
 	 * is OK to start doing things.
 	 */
-	public init(): void {
-		this.status(this.STATUS_UNKNOWN)
+	public async init(config: X32Config): Promise<void> {
+		this.config = config
+
+		this.updateStatus(InstanceStatus.Connecting)
 		this.setupOscSocket()
 
 		X32DeviceDetectorInstance.subscribe(this.id)
@@ -130,7 +134,7 @@ class X32Instance extends InstanceSkel<X32Config> implements IStoredChannelObser
 	/**
 	 * Process an updated configuration array.
 	 */
-	public updateConfig(config: X32Config): void {
+	public async configUpdated(config: X32Config): Promise<void> {
 		this.config = config
 		this.x32State.detach(this)
 		this.x32State = new X32State()
@@ -142,7 +146,7 @@ class X32Instance extends InstanceSkel<X32Config> implements IStoredChannelObser
 		this.transitions = new X32Transitions(this)
 
 		if (this.config.host !== undefined) {
-			this.status(this.STATUS_WARNING, 'Connecting')
+			this.updateStatus(InstanceStatus.Connecting)
 			this.setupOscSocket()
 			this.updateCompanionBits()
 		}
@@ -151,14 +155,14 @@ class X32Instance extends InstanceSkel<X32Config> implements IStoredChannelObser
 	/**
 	 * Creates the configuration fields for web config.
 	 */
-	public config_fields(): CompanionConfigField[] {
-		return GetConfigFields(this)
+	public getConfigFields(): SomeCompanionConfigField[] {
+		return GetConfigFields()
 	}
 
 	/**
 	 * Clean up the instance before it is destroyed.
 	 */
-	public destroy(): void {
+	public async destroy(): Promise<void> {
 		if (this.reconnectTimer) {
 			clearTimeout(this.reconnectTimer)
 			this.reconnectTimer = undefined
@@ -191,16 +195,15 @@ class X32Instance extends InstanceSkel<X32Config> implements IStoredChannelObser
 			// delete this.osc
 		}
 
-		this.debug('destroy', this.id)
+		this.log('debug', 'destroy')
 	}
 
 	private updateCompanionBits(): void {
 		InitVariables(this, this.x32State)
 		this.setPresetDefinitions(GetPresetsList(this, this.x32State))
 		this.setFeedbackDefinitions(GetFeedbacksList(this, this.x32State, this.x32Subscriptions, this.queueEnsureLoaded))
-		this.setActions(GetActionsList(this, this.transitions, this.x32State, this.queueEnsureLoaded))
+		this.setActionDefinitions(GetActionsList(this, this.transitions, this.x32State, this.queueEnsureLoaded))
 		this.checkFeedbacks()
-
 		updateNameVariables(this, this.x32State)
 
 		// Ensure all feedbacks & actions have an initial value, if we are connected
@@ -234,7 +237,7 @@ class X32Instance extends InstanceSkel<X32Config> implements IStoredChannelObser
 	}
 
 	private setupOscSocket(): void {
-		this.status(this.STATUS_WARNING, 'Connecting')
+		this.updateStatus(InstanceStatus.Connecting)
 
 		if (this.reconnectTimer) {
 			clearTimeout(this.reconnectTimer)
@@ -264,7 +267,7 @@ class X32Instance extends InstanceSkel<X32Config> implements IStoredChannelObser
 
 		this.osc.on('error', (err: Error): void => {
 			this.log('error', `Error: ${err.message}`)
-			this.status(this.STATUS_ERROR, err.message)
+			this.updateStatus(InstanceStatus.ConnectionFailure, err.message)
 			this.requestQueue.clear()
 			this.inFlightRequests = {}
 
@@ -320,7 +323,7 @@ class X32Instance extends InstanceSkel<X32Config> implements IStoredChannelObser
 			}
 			doSync()
 
-			this.status(this.STATUS_WARNING, 'Syncing')
+			this.updateStatus(InstanceStatus.Connecting, 'Syncing')
 		})
 
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -352,7 +355,7 @@ class X32Instance extends InstanceSkel<X32Config> implements IStoredChannelObser
 
 			switch (message.address) {
 				case '/xinfo':
-					this.status(this.STATUS_OK)
+					this.updateStatus(InstanceStatus.Ok)
 
 					if (this.reconnectTimer) {
 						// Clear the timer, as it is alive
@@ -416,12 +419,12 @@ class X32Instance extends InstanceSkel<X32Config> implements IStoredChannelObser
 		this.requestQueue
 			.add(async () => {
 				if (this.inFlightRequests[path]) {
-					this.debug(`Ignoring request "${path}" as one in flight`)
+					this.log('debug', `Ignoring request "${path}" as one in flight`)
 					return
 				}
 
 				if (this.x32State.get(path)) {
-					this.debug(`Ignoring request "${path}" as data is already loaded`)
+					this.log('debug', `Ignoring request "${path}" as data is already loaded`)
 					return
 				}
 
@@ -459,4 +462,4 @@ class X32Instance extends InstanceSkel<X32Config> implements IStoredChannelObser
 	}
 }
 
-export = X32Instance
+runEntrypoint(X32Instance, UpgradeScripts)

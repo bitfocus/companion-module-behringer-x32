@@ -1,6 +1,5 @@
-// eslint-disable-next-line node/no-extraneous-import
-import * as osc from 'osc'
-import { FeedbackId } from './feedback'
+import osc from 'osc'
+import { FeedbackId } from './feedback.js'
 
 export class X32State implements IStoredChannelSubject {
 	private readonly data: Map<string, osc.MetaArgument[]>

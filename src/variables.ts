@@ -1,75 +1,73 @@
-import InstanceSkel = require('../../../instance_skel')
-import { CompanionVariable } from '../../../instance_skel_types'
-import { X32Config } from './config'
-import { X32State } from './state'
-// eslint-disable-next-line node/no-extraneous-import
-import * as osc from 'osc'
-import { GetTargetChoices } from './choices'
-import { MainPath } from './paths'
-import { formatDb, floatToDB } from './util'
+import { X32Config } from './config.js'
+import { X32State } from './state.js'
+import osc from 'osc'
+import { GetTargetChoices } from './choices.js'
+import { MainPath } from './paths.js'
+import { formatDb, floatToDB, InstanceBaseExt } from './util.js'
+import { CompanionVariableDefinition, CompanionVariableValues } from '@companion-module/base'
 
 function sanitiseName(name: string): string {
 	return name.replace(/\//g, '_')
 }
 
-export function InitVariables(instance: InstanceSkel<X32Config>, state: X32State): void {
-	const variables: CompanionVariable[] = [
+export function InitVariables(instance: InstanceBaseExt<X32Config>, state: X32State): void {
+	const variables: CompanionVariableDefinition[] = [
 		{
-			label: 'Device name',
-			name: 'm_name',
+			name: 'Device name',
+			variableId: 'm_name',
 		},
 		{
-			label: 'Device model',
-			name: 'm_model',
+			name: 'Device model',
+			variableId: 'm_model',
 		},
 		{
-			label: 'Device firmware',
-			name: 'm_fw',
+			name: 'Device firmware',
+			variableId: 'm_fw',
 		},
 		{
-			label: 'Tape Timestamp mm:ss',
-			name: 'tape_time_ms',
+			name: 'Tape Timestamp mm:ss',
+			variableId: 'tape_time_ms',
 		},
 		{
-			label: 'Tape Timestamp hh:mm:ss',
-			name: 'tape_time_hms',
+			name: 'Tape Timestamp hh:mm:ss',
+			variableId: 'tape_time_hms',
 		},
 		{
-			label: 'Urec Timestamp mm:ss',
-			name: 'urec_etime_ms',
+			name: 'Urec Timestamp mm:ss',
+			variableId: 'urec_etime_ms',
 		},
 		{
-			label: 'Urec Timestamp hh:mm:ss',
-			name: 'urec_etime_hms',
+			name: 'Urec Timestamp hh:mm:ss',
+			variableId: 'urec_etime_hms',
 		},
 		{
-			label: 'Urec remaining mm:ss',
-			name: 'urec_rtime_ms',
+			name: 'Urec remaining mm:ss',
+			variableId: 'urec_rtime_ms',
 		},
 		{
-			label: 'Urec remaining hh:mm:ss',
-			name: 'urec_rtime_hms',
+			name: 'Urec remaining hh:mm:ss',
+			variableId: 'urec_rtime_hms',
 		},
 		{
-			label: 'Stored channel',
-			name: 'stored_channel',
+			name: 'Stored channel',
+			variableId: 'stored_channel',
 		},
 	]
 
 	const targets = GetTargetChoices(state, { includeMain: true, defaultNames: true })
 	for (const target of targets) {
 		variables.push({
-			label: `Name: ${target.label}`,
-			name: `name${sanitiseName(target.id as string)}`,
+			name: `variableId: ${target.label}`,
+			variableId: `name${sanitiseName(target.id as string)}`,
 		})
 		variables.push({
-			label: `Fader: ${target.label}`,
-			name: `fader${sanitiseName(target.id as string)}`,
+			name: `Fader: ${target.label}`,
+			variableId: `fader${sanitiseName(target.id as string)}`,
 		})
 	}
 
 	instance.setVariableDefinitions(variables)
-	instance.setVariables({
+	instance.setVariableValues({
 		tape_time_hms: `--:--:--`,
 		tape_time_ms: `--:--`,
 		urec_etime_hms: `--:--:--`,
@@ -80,7 +78,7 @@ export function InitVariables(instance: InstanceSkel<X32Config>, state: X32State
 	})
 }
 
-export function updateDeviceInfoVariables(instance: InstanceSkel<X32Config>, args: osc.MetaArgument[]): void {
+export function updateDeviceInfoVariables(instance: InstanceBaseExt<X32Config>, args: osc.MetaArgument[]): void {
 	const getStringArg = (index: number): string => {
 		const raw = args[index]
 		if (raw && raw.type === 's') {
@@ -89,51 +87,51 @@ export function updateDeviceInfoVariables(instance: InstanceSkel<X32Config>, arg
 			return ''
 		}
 	}
-	instance.setVariables({
-		m_name: getStringArg(1),
+	instance.setVariableValues({
+		m_variableId: getStringArg(1),
 		m_model: getStringArg(2),
 		m_fw: getStringArg(3),
 	})
 }
 
-export function updateTapeTime(instance: InstanceSkel<X32Config>, state: X32State): void {
+export function updateTapeTime(instance: InstanceBaseExt<X32Config>, state: X32State): void {
 	const etime = state.get('/-stat/tape/etime')
 	const time = etime && etime[0]?.type === 'i' ? etime[0].value : 0
 	const hh = `${Math.floor(time / 3600)}`.padStart(2, '0')
 	const mm = `${Math.floor(time / 60) % 60}`.padStart(2, '0')
 	const ss = `${time % 60}`.padStart(2, '0')
-	instance.setVariables({
+	instance.setVariableValues({
 		tape_time_hms: `${hh}:${mm}:${ss}`,
 		tape_time_ms: `${mm}:${ss}`,
 	})
 }
 
-export function updateUReceTime(instance: InstanceSkel<X32Config>, state: X32State): void {
+export function updateUReceTime(instance: InstanceBaseExt<X32Config>, state: X32State): void {
 	const etime = state.get('/-stat/urec/etime')
 	const time = etime && etime[0]?.type === 'i' ? etime[0].value : 0
 	const mm = `${Math.floor(time / 1000 / 60) % 60}`.padStart(2, '0')
 	const ss = `${Math.floor(time / 1000) % 60}`.padStart(2, '0')
 	const hh = `${Math.floor(time / 1000 / 60 / 60) % 60}`.padStart(2, '0')
-	instance.setVariables({
+	instance.setVariableValues({
 		urec_etime_hms: `${hh}:${mm}:${ss}`,
 		urec_etime_ms: `${mm}:${ss}`,
 	})
 }
 
-export function updateURecrTime(instance: InstanceSkel<X32Config>, state: X32State): void {
+export function updateURecrTime(instance: InstanceBaseExt<X32Config>, state: X32State): void {
 	const etime = state.get('/-stat/urec/rtime')
 	const time = etime && etime[0]?.type === 'i' ? etime[0].value : 0
 	const mm = `${Math.floor(time / 1000 / 60) % 60}`.padStart(2, '0')
 	const ss = `${Math.floor(time / 1000) % 60}`.padStart(2, '0')
 	const hh = `${Math.floor(time / 1000 / 60 / 60) % 60}`.padStart(2, '0')
-	instance.setVariables({
+	instance.setVariableValues({
 		urec_rtime_hms: `${hh}:${mm}:${ss}`,
 		urec_rtime_ms: `${mm}:${ss}`,
 	})
 }
 
-export function updateNameVariables(instance: InstanceSkel<X32Config>, state: X32State): void {
-	const variables: { [variableId: string]: string | undefined } = {}
+export function updateNameVariables(instance: InstanceBaseExt<X32Config>, state: X32State): void {
+	const variables: CompanionVariableValues = {}
 	const targets = GetTargetChoices(state, { includeMain: true, defaultNames: true })
 	for (const target of targets) {
 		const nameVal = state.get(`${target.id}/config/name`)
@@ -144,9 +142,11 @@ export function updateNameVariables(instance: InstanceSkel<X32Config>, state: X3
 		const faderNum = faderVal && faderVal[0]?.type === 'f' ? faderVal[0].value : NaN
 		variables[`fader${sanitiseName(target.id as string)}`] = isNaN(faderNum) ? '-' : formatDb(floatToDB(faderNum))
 	}
-	instance.setVariables(variables)
+	instance.setVariableValues(variables)
 }
 
-export function updateStoredChannelVariable(instance: InstanceSkel<X32Config>, state: X32State): void {
-	instance.setVariable('stored_channel', `${state.getStoredChannel()}`)
+export function updateStoredChannelVariable(instance: InstanceBaseExt<X32Config>, state: X32State): void {
+	instance.setVariableValues({
+		stored_channel: `${state.getStoredChannel()}`,
+	})
 }

@@ -1,5 +1,5 @@
-import { CompanionInputFieldDropdown } from '../../../instance_skel_types'
-import { NumberComparitor } from './util'
+import { CompanionInputFieldDropdown } from '@companion-module/base'
+import { NumberComparitor } from './util.js'
 
 export function NumberComparitorPicker(): CompanionInputFieldDropdown {
 	const options = [
