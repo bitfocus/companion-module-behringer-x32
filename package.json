@@ -1,6 +1,6 @@
 {
 	"name": "behringer-x32",
-	"version": "3.0.0-1",
+	"version": "3.0.0-2",
 	"main": "dist/index.js",
 	"type": "module",
 	"scripts": {
@@ -30,7 +30,7 @@
 		"node": "^18.12"
 	},
 	"dependencies": {
-		"@companion-module/base": "~0.6.1",
+		"@companion-module/base": "~1.0.0",
 		"date-fns": "^2.28.0",
 		"debounce-fn": "^5.1.2",
 		"debug": "^4.3.4",
@@ -41,7 +41,7 @@
 	"devDependencies": {
 		"@companion-module/tools": "^0.4.1",
 		"@types/debug": "^4.1.7",
-		"@types/node": "^14.18.21",
+		"@types/node": "^18.11.9",
 		"husky": "^8.0.1",
 		"lint-staged": "^13.0.3",
 		"rimraf": "^3.0.2",
