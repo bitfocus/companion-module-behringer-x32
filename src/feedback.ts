@@ -603,13 +603,13 @@ export function GetFeedbacksList(
 				},
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(255, 0, 0),
+				bgcolor: combineRgb(255, 127, 0),
 				color: combineRgb(0, 0, 0),
 			},
 			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const path = `/-stat/talk/${evt.options.channel}`
 				const data = path ? state.get(path) : undefined
-				const isOn = getDataNumber(data, 0) !== 0
+				const isOn = getDataNumber(data, 0) === 1
 				return isOn === !!evt.options.state
 			},
 			subscribe: (evt: CompanionFeedbackInfo): void => {

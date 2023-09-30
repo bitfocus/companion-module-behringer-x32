@@ -117,6 +117,178 @@ export function GetPresetsList(_instance: InstanceBaseExt<X32Config>, state: X32
 		feedbacks: [],
 	}
 
+	presets['talkback-push-a'] = {
+		name: 'Push to talk A',
+		category: 'Talkback - Non-latching',
+		type: 'button',
+		style: {
+			text: 'TALK A',
+			size: 'auto',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: ActionId.TalkbackTalk,
+						options: {
+							channel: 'A',
+							on: 1,
+						},
+					},
+				],
+				up: [
+					{
+						actionId: ActionId.TalkbackTalk,
+						options: {
+							channel: 'A',
+							on: 0,
+						},
+					},
+				],
+			},
+		],
+		feedbacks: [
+			{
+				feedbackId: FeedbackId.TalkbackTalk,
+				options: {
+					channel: 'A',
+					state: true,
+				},
+				style: {
+					bgcolor: combineRgb(255, 127, 0),
+					color: combineRgb(0, 0, 0),
+				},
+			},
+		],
+	}
+
+	presets['talkback-latch-a'] = {
+		name: 'Latch talk A',
+		category: 'Talkback - Latching',
+		type: 'button',
+		style: {
+			text: 'TALK A',
+			size: 'auto',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: ActionId.TalkbackTalk,
+						options: {
+							channel: 'A',
+							on: 2,
+						},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [
+			{
+				feedbackId: FeedbackId.TalkbackTalk,
+				options: {
+					channel: 'A',
+					state: true,
+				},
+				style: {
+					bgcolor: combineRgb(255, 127, 0),
+					color: combineRgb(0, 0, 0),
+				},
+			},
+		],
+	}
+
+	presets['talkback-push-b'] = {
+		name: 'Push to talk B',
+		category: 'Talkback - Non-latching',
+		type: 'button',
+		style: {
+			text: 'TALK B',
+			size: 'auto',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: ActionId.TalkbackTalk,
+						options: {
+							channel: 'B',
+							on: 1,
+						},
+					},
+				],
+				up: [
+					{
+						actionId: ActionId.TalkbackTalk,
+						options: {
+							channel: 'B',
+							on: 0,
+						},
+					},
+				],
+			},
+		],
+		feedbacks: [
+			{
+				feedbackId: FeedbackId.TalkbackTalk,
+				options: {
+					channel: 'B',
+					state: true,
+				},
+				style: {
+					bgcolor: combineRgb(255, 127, 0),
+					color: combineRgb(0, 0, 0),
+				},
+			},
+		],
+	}
+
+	presets['talkback-latch-b'] = {
+		name: 'Latch talk B',
+		category: 'Talkback - Latching',
+		type: 'button',
+		style: {
+			text: 'TALK B',
+			size: 'auto',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: ActionId.TalkbackTalk,
+						options: {
+							channel: 'B',
+							on: 2,
+						},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [
+			{
+				feedbackId: FeedbackId.TalkbackTalk,
+				options: {
+					channel: 'B',
+					state: true,
+				},
+				style: {
+					bgcolor: combineRgb(255, 127, 0),
+					color: combineRgb(0, 0, 0),
+				},
+			},
+		],
+	}
+
 	if (sampleChannel) {
 		presets['dip-fader-level'] = {
 			name: 'Dip fader level',
