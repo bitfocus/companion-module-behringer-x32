@@ -1426,7 +1426,7 @@ export function GetActionsList(
 			},
 		},
 		[ActionId.TalkbackConfig]: {
-			label: 'Talkback Config',
+			name: 'Talkback Config',
 			options: [
 				{
 					type: 'dropdown',
@@ -1444,10 +1444,9 @@ export function GetActionsList(
 					]),
 				},
 				{
-					type: 'dropdown',
+					type: 'multidropdown',
 					label: 'Destinations',
 					id: 'dest',
-					multiple: true,
 					default: [],
 					choices: GetTalkbackDestinations(),
 				},
@@ -1462,7 +1461,7 @@ export function GetActionsList(
 			},
 		},
 		[ActionId.TalkbackConfigStore]: {
-			label: 'Talkback Store Config',
+			name: 'Talkback Store Config',
 			options: [
 				{
 					type: 'dropdown',
@@ -1480,14 +1479,12 @@ export function GetActionsList(
 					]),
 				},
 			],
-			callback: (action, info): void => {
-				if (info) {
-					const cmd = `/config/talk/${action.options.function}/destmap`
-					const currentState = state.get(cmd)
-					const currentVal = currentState && currentState[0]?.type === 'i' ? currentState[0]?.value : undefined
-					if (currentVal !== undefined) {
-						state.setPressValue(`${info.page}-${info.bank}-${cmd}`, currentVal)
-					}
+			callback: (action): void => {
+				const cmd = `/config/talk/${action.options.function}/destmap`
+				const currentState = state.get(cmd)
+				const currentVal = currentState && currentState[0]?.type === 'i' ? currentState[0]?.value : undefined
+				if (currentVal !== undefined) {
+					state.setPressValue(`${action.controlId}-${cmd}`, currentVal)
 				}
 			},
 			subscribe: (evt): void => {
@@ -1495,7 +1492,7 @@ export function GetActionsList(
 			},
 		},
 		[ActionId.TalkbackConfigRestore]: {
-			label: 'Talkback Restore Config',
+			name: 'Talkback Restore Config',
 			options: [
 				{
 					type: 'dropdown',
@@ -1513,16 +1510,14 @@ export function GetActionsList(
 					]),
 				},
 			],
-			callback: (action, info): void => {
-				if (info) {
-					const cmd = `/config/talk/${action.options.function}/destmap`
-					const storedVal = state.popPressValue(`${info.page}-${info.bank}-${cmd}`)
-					if (storedVal !== undefined) {
-						sendOsc(cmd, {
-							type: 'i',
-							value: storedVal,
-						})
-					}
+			callback: (action): void => {
+				const cmd = `/config/talk/${action.options.function}/destmap`
+				const storedVal = state.popPressValue(`${action.controlId}-${cmd}`)
+				if (storedVal !== undefined) {
+					sendOsc(cmd, {
+						type: 'i',
+						value: storedVal,
+					})
 				}
 			},
 			subscribe: (evt): void => {

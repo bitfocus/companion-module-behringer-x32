@@ -685,46 +685,6 @@ export function GetFeedbacksList(
 		},
 		[FeedbackId.Select]: {
 			type: 'boolean',
-			name: 'Change from solo enabled state',
-			description: 'If the solo is on for specified channel, change style of the bank',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Target',
-					id: 'solo',
-					...convertChoices(soloChoices),
-				},
-				{
-					id: 'state',
-					type: 'checkbox',
-					label: 'On',
-					default: true,
-				},
-			],
-			defaultStyle: {
-				bgcolor: combineRgb(255, 127, 0),
-				color: combineRgb(0, 0, 0),
-			},
-			callback: (evt: CompanionFeedbackInfo): boolean => {
-				const ch = `${getOptNumber(evt, 'solo') + 1}`.padStart(2, '0')
-				const path = `/-stat/solosw/${ch}`
-				const data = path ? state.get(path) : undefined
-				const isOn = getDataNumber(data, 0) !== 0
-				return isOn === !!evt.options.state
-			},
-			subscribe: (evt: CompanionFeedbackInfo): void => {
-				const ch = `${getOptNumber(evt, 'solo') + 1}`.padStart(2, '0')
-				const path = `/-stat/solosw/${ch}`
-				subscribeFeedback(ensureLoaded, subs, path, evt)
-			},
-			unsubscribe: (evt: CompanionFeedbackInfo): void => {
-				const ch = `${getOptNumber(evt, 'solo') + 1}`.padStart(2, '0')
-				const path = `/-stat/solosw/${ch}`
-				unsubscribeFeedback(subs, path, evt)
-			},
-		},
-		[FeedbackId.Select]: {
-			type: 'boolean',
 			name: 'Change from select state',
 			description: 'If specified channel is selected, change style of the bank',
 			options: [
