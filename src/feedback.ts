@@ -21,6 +21,7 @@ import {
 	GetUserInTargets,
 	GetUserOutSources,
 	GetUserOutTargets,
+	GetInsertDestinationChoices,
 } from './choices.js'
 import { compareNumber, floatToDB, InstanceBaseExt } from './util.js'
 import {
@@ -103,6 +104,9 @@ export enum FeedbackId {
 	RouteXLRLeftOutputs = 'route-xlr-left-outputs',
 	RouteXLRRightOutputs = 'route-xlr-right-outputs',
 	LockAndShutdown = 'lock-and-shutdown',
+	InsertOn = 'insert-on',
+	InsertPos = 'insert-pos',
+	InsertSelect = 'insert-select',
 }
 
 function getDataNumber(data: osc.MetaArgument[] | undefined, index: number): number | undefined {
@@ -142,8 +146,13 @@ export function GetFeedbacksList(
 	const levelsChoices = GetLevelsChoiceConfigs(state)
 	const panningChoices = GetPanningChoiceConfigs(state)
 	const muteGroups = GetMuteGroupChoices(state)
-	const selectChoices = GetTargetChoices(state, { skipDca: true, includeMain: true, numericIndex: true })
 	const soloChoices = GetTargetChoices(state, { includeMain: true, numericIndex: true })
+	const insertSourceChoices = GetTargetChoices(state, {
+		includeMain: true,
+		skipAuxIn: true,
+		skipFxRtn: true,
+		skipDca: true,
+	})
 
 	const feedbacks: { [id in FeedbackId]: CompanionFeedbackWithCallback | undefined } = {
 		[FeedbackId.Record]: {
@@ -720,37 +729,6 @@ export function GetFeedbacksList(
 			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const ch = `${getOptNumber(evt, 'solo') + 1}`.padStart(2, '0')
 				const path = `/-stat/solosw/${ch}`
-				unsubscribeFeedback(subs, path, evt)
-			},
-		},
-		[FeedbackId.Select]: {
-			type: 'boolean',
-			name: 'Change from select state',
-			description: 'If specified channel is selected, change style of the bank',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Target',
-					id: 'select',
-					...convertChoices(selectChoices),
-				},
-			],
-			defaultStyle: {
-				bgcolor: combineRgb(0, 255, 127),
-				color: combineRgb(0, 0, 0),
-			},
-			callback: (evt: CompanionFeedbackInfo): boolean => {
-				const path = `/-stat/selidx`
-				const data = path ? state.get(path) : undefined
-				const selectedChannel = getDataNumber(data, 0)
-				return selectedChannel == evt.options.select
-			},
-			subscribe: (evt: CompanionFeedbackInfo): void => {
-				const path = `/-stat/selidx`
-				subscribeFeedback(ensureLoaded, subs, path, evt)
-			},
-			unsubscribe: (evt: CompanionFeedbackInfo): void => {
-				const path = `/-stat/selidx`
 				unsubscribeFeedback(subs, path, evt)
 			},
 		},
@@ -2598,7 +2576,7 @@ export function GetFeedbacksList(
 		[FeedbackId.LockAndShutdown]: {
 			type: 'boolean',
 			name: 'Lock/Shutdown',
-			description: 'If the specified staye is active, change style of the bank.',
+			description: 'If the specified state is active, change style of the bank.',
 			options: [
 				{
 					type: 'dropdown',
@@ -2633,6 +2611,120 @@ export function GetFeedbacksList(
 			},
 			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/lock`
+				unsubscribeFeedback(subs, path, evt)
+			},
+		},
+
+		[FeedbackId.InsertOn]: {
+			type: 'boolean',
+			name: 'Insert Status',
+			description: 'If the insert status of specified source matches the specified state, change style of the bank.',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Source',
+					id: 'src',
+					...convertChoices(insertSourceChoices),
+				},
+				{
+					id: 'state',
+					type: 'checkbox',
+					label: 'Is On',
+					default: true,
+				},
+			],
+			defaultStyle: {
+				bgcolor: combineRgb(255, 127, 0),
+				color: combineRgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackInfo): boolean => {
+				const path = `${evt.options.src as string}/insert/on`
+				const data = state.get(path)
+				const isOn = getDataNumber(data, 0) === 1
+				return isOn === !!evt.options.state
+			},
+			subscribe: (evt: CompanionFeedbackInfo): void => {
+				const path = `${evt.options.src as string}/insert/on`
+				subscribeFeedback(ensureLoaded, subs, path, evt)
+			},
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
+				const path = `${evt.options.src as string}/insert/on`
+				unsubscribeFeedback(subs, path, evt)
+			},
+		},
+		[FeedbackId.InsertPos]: {
+			type: 'boolean',
+			name: 'Insert Position',
+			description: 'If the insert position of specified source matches the specified state, change style of the bank.',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Source',
+					id: 'src',
+					...convertChoices(insertSourceChoices),
+				},
+				{
+					type: 'dropdown',
+					label: 'PRE / POST',
+					id: 'pos',
+					...convertChoices([
+						{ id: 0, label: 'PRE' },
+						{ id: 1, label: 'POST' },
+					]),
+				},
+			],
+			defaultStyle: {
+				bgcolor: combineRgb(255, 127, 0),
+				color: combineRgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackInfo): boolean => {
+				const path = `${evt.options.src as string}/insert/pos`
+				const data = state.get(path)
+				return getDataNumber(data, 0) === evt.options.pos
+			},
+			subscribe: (evt: CompanionFeedbackInfo): void => {
+				const path = `${evt.options.src as string}/insert/pos`
+				subscribeFeedback(ensureLoaded, subs, path, evt)
+			},
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
+				const path = `${evt.options.src as string}/insert/pos`
+				unsubscribeFeedback(subs, path, evt)
+			},
+		},
+		[FeedbackId.InsertSelect]: {
+			type: 'boolean',
+			name: 'Insert Destination',
+			description:
+				'If the insert destination of specified source matches the specified destination, change style of the bank.',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Source',
+					id: 'src',
+					...convertChoices(insertSourceChoices),
+				},
+				{
+					type: 'dropdown',
+					label: 'Destination',
+					id: 'dest',
+					...convertChoices(GetInsertDestinationChoices()),
+				},
+			],
+			defaultStyle: {
+				bgcolor: combineRgb(255, 127, 0),
+				color: combineRgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackInfo): boolean => {
+				const path = `${evt.options.src as string}/insert/sel`
+				const data = state.get(path)
+				return getDataNumber(data, 0) === evt.options.dest
+			},
+			subscribe: (evt: CompanionFeedbackInfo): void => {
+				const path = `${evt.options.src as string}/insert/sel`
+				subscribeFeedback(ensureLoaded, subs, path, evt)
+			},
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
+				const path = `${evt.options.src as string}/insert/sel`
 				unsubscribeFeedback(subs, path, evt)
 			},
 		},
