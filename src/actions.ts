@@ -150,6 +150,9 @@ export enum ActionId {
 	XLiveRouting = 'x-live-routing',
 	XLivePosition = 'x-live-position',
 	XLiveClearAlert = 'x-live-clear-alert',
+	GoCommand = 'goCommmand',
+	NextCommand = 'nextCommmand',
+	PrevCommand = 'prevCommmand',
 }
 
 type CompanionActionWithCallback = SetRequired<CompanionActionDefinition, 'callback'>
@@ -197,6 +200,17 @@ export function GetActionsList(
 			return rawVal
 		}
 		return rawVal as Easing.curve
+	}
+
+	const getShowControlName = (index: number): string => {
+		switch (index) {
+			case 1:
+				return 'scene'
+			case 2:
+				return 'snippet'
+			default:
+				return 'cue'
+		}
 	}
 
 	// Easy dirty fix
@@ -2981,6 +2995,59 @@ export function GetActionsList(
 			callback: (action): void => {
 				const path = `/‐action/setposition`
 				sendOsc(path, { type: 'i', value: convertAnyToNumber(action.options.position) })
+			},
+		},
+
+		[ActionId.GoCommand]: {
+			name: 'Go Command',
+			description: 'Load the highlighted cue/scene/snipped (based on show control)',
+			options: [],
+			callback: (): void => {
+				const showControlState = state.get('/-prefs/show_control')
+				const showControlValue = showControlState && showControlState[0].type === 'i' ? showControlState[0].value : 0
+				const showControl = getShowControlName(showControlValue)
+
+				const highlightedState = state.get('/-show/prepos/current')
+				const highlightedValue = highlightedState && highlightedState[0].type === 'i' ? highlightedState[0].value : 0
+
+				sendOsc(`/-action/go${showControl}`, { type: 'i', value: highlightedValue })
+			},
+			subscribe: (): void => {
+				ensureLoaded('/-prefs/show_control')
+				ensureLoaded('/-show/prepos/current')
+			},
+		},
+		[ActionId.NextCommand]: {
+			name: 'Next Command',
+			description:
+				'Move the highlighted marker to the cue/scene/snipped (based on show control). Warning pressing this too many times could result in going to a cue/scene/snippet without data.',
+			options: [],
+			callback: (): void => {
+				const highlightedState = state.get('/-show/prepos/current')
+				const highlightedValue = highlightedState && highlightedState[0].type === 'i' ? highlightedState[0].value : 0
+				const incrementedValue = highlightedValue + 1
+				sendOsc('/-show/prepos/current', { type: 'i', value: incrementedValue })
+			},
+			subscribe: (): void => {
+				ensureLoaded('/-show/prepos/current')
+			},
+		},
+
+		[ActionId.PrevCommand]: {
+			name: 'Previous Command',
+			description: 'Move the highlighted marker to the cue/scene/snipped (based on show control).',
+			options: [],
+			callback: (): void => {
+				const highlightedState = state.get('/-show/prepos/current')
+				const highlightedValue = highlightedState && highlightedState[0].type === 'i' ? highlightedState[0].value : 0
+				if (highlightedValue <= 0) {
+					return
+				}
+				const decrementedValue = highlightedValue - 1
+				sendOsc('/-show/prepos/current', { type: 'i', value: decrementedValue })
+			},
+			subscribe: (): void => {
+				ensureLoaded('/-show/prepos/current')
 			},
 		},
 	}
