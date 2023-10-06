@@ -1472,7 +1472,7 @@ export function GetActionsList(
 					label: 'Destinations',
 					id: 'dest',
 					default: [],
-					choices: GetTalkbackDestinations(),
+					choices: GetTalkbackDestinations(state),
 				},
 			],
 			callback: (action): void => {
