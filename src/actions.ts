@@ -105,6 +105,7 @@ export enum ActionId {
 	Tape = 'tape',
 	TalkbackTalk = 'talkback_talk',
 	TalkbackConfig = 'talkback_config',
+	TalkbackConfigSingleSource = 'talkback_config_single_src',
 	TalkbackConfigStore = 'talkback_config_store',
 	TalkbackConfigRestore = 'talkback_restore',
 	OscillatorEnable = 'oscillator-enable',
@@ -1482,6 +1483,66 @@ export function GetActionsList(
 					type: 'i',
 					value: bitmap,
 				})
+			},
+		},
+		[ActionId.TalkbackConfigSingleSource]: {
+			name: 'Talkback Config - Single Source',
+			description: 'Modify the config of a single source without changeing the other sources',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Function',
+					id: 'function',
+					...convertChoices([
+						{
+							id: 'A',
+							label: 'A',
+						},
+						{
+							id: 'B',
+							label: 'B',
+						},
+					]),
+				},
+				{
+					type: 'dropdown',
+					label: 'Destinations',
+					id: 'dest',
+					default: 0,
+					choices: GetTalkbackDestinations(state),
+				},
+				{
+					type: 'dropdown',
+					label: 'Active',
+					id: 'on',
+					...convertChoices(CHOICES_ON_OFF),
+				},
+			],
+			callback: (action): void => {
+				const cmd = `/config/talk/${action.options.function}/destmap`
+				const currentState = state.get(cmd)
+				const currentVal = currentState && currentState[0]?.type === 'i' ? currentState[0]?.value : 0
+				const mask = Math.pow(2, action.options.dest as number)
+
+				console.log(`current: ${currentVal}, mask: ${mask}`)
+				let bitmap: number
+				switch (action.options.on) {
+					case 0:
+						bitmap = currentVal & ~mask
+						break
+					case 1:
+						bitmap = currentVal | mask
+						break
+					default:
+						bitmap = currentVal ^ mask
+				}
+				sendOsc(cmd, {
+					type: 'i',
+					value: bitmap,
+				})
+			},
+			subscribe: (evt): void => {
+				ensureLoaded(`/config/talk/${evt.options.function}/destmap`)
 			},
 		},
 		[ActionId.TalkbackConfigStore]: {
