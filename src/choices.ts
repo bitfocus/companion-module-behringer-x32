@@ -64,6 +64,8 @@ export interface ChannelChoicesOptions {
 	skipBus?: boolean
 	skipMatrix?: boolean
 	skipInputs?: boolean
+	skipAuxIn?: boolean
+	skipFxRtn?: boolean
 	// TODO - more skipXXX
 }
 
@@ -255,14 +257,18 @@ export function GetTargetChoices(state: X32State, options?: ChannelChoicesOption
 			appendTarget(`/ch/${padNumber(i)}`, `Channel ${i}`)
 		}
 
-		for (let i = 1; i <= 8; i++) {
-			appendTarget(`/auxin/${padNumber(i)}`, `Aux In ${i}`)
+		if (!options?.skipAuxIn) {
+			for (let i = 1; i <= 8; i++) {
+				appendTarget(`/auxin/${padNumber(i)}`, `Aux In ${i}`)
+			}
 		}
 
-		for (let i = 1; i <= 4; i++) {
-			const o = (i - 1) * 2 + 1
-			appendTarget(`/fxrtn/${padNumber(o)}`, `FX Return ${i} L`)
-			appendTarget(`/fxrtn/${padNumber(o + 1)}`, `FX Return ${i} R`)
+		if (!options?.skipAuxIn) {
+			for (let i = 1; i <= 4; i++) {
+				const o = (i - 1) * 2 + 1
+				appendTarget(`/fxrtn/${padNumber(o)}`, `FX Return ${i} L`)
+				appendTarget(`/fxrtn/${padNumber(o + 1)}`, `FX Return ${i} R`)
+			}
 		}
 	}
 
@@ -668,4 +674,32 @@ export function GetTalkbackDestinations(): DropdownChoice[] {
 	const main = ['LR', 'M/C']
 
 	return [...bus, ...main].map((src, i) => ({ id: i, label: src }))
+}
+
+export function GetInsertDestinationChoices(): DropdownChoice[] {
+	return [
+		'OFF',
+		'FX1L',
+		'FX1R',
+		'FX2L',
+		'FX2R',
+		'FX3L',
+		'FX3R',
+		'FX4L',
+		'FX4R',
+		'FX5L',
+		'FX5R',
+		'FX6L',
+		'FX6R',
+		'FX7L',
+		'FX7R',
+		'FX8L',
+		'FX8R',
+		'AUX1',
+		'AUX2',
+		'AUX3',
+		'AUX4',
+		'AUX5',
+		'AUX6',
+	].map((src, i) => ({ id: i, label: src }))
 }
