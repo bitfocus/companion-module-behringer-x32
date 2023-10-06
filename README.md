@@ -16,6 +16,7 @@ While developing the module, by using `yarn build:watch` the compiler will be ru
 
 - Previous, Next, Go
 - Channel Inserts
+- Talkback
 
 ### v2.11
 
