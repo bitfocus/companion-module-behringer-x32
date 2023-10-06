@@ -10,6 +10,12 @@ While developing the module, by using `yarn build:watch` the compiler will be ru
 
 ## Changes
 
+### v2.12? should this go to 3?
+
+# WIP
+
+- Previous, Next, Go
+
 ### v2.11
 
 - Xlive functionality
