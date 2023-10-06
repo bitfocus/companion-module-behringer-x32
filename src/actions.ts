@@ -34,6 +34,7 @@ import {
 	GetUserInTargets,
 	GetUserOutSources,
 	GetUserOutTargets,
+	GetInsertDestinationChoices,
 } from './choices.js'
 import {
 	MutePath,
@@ -153,6 +154,9 @@ export enum ActionId {
 	GoCommand = 'goCommmand',
 	NextCommand = 'nextCommmand',
 	PrevCommand = 'prevCommmand',
+	InsertOn = 'insert-on',
+	InsertPos = 'insert-pos',
+	InsertSelect = 'insert-select',
 }
 
 type CompanionActionWithCallback = SetRequired<CompanionActionDefinition, 'callback'>
@@ -168,6 +172,12 @@ export function GetActionsList(
 	const muteGroups = GetMuteGroupChoices(state)
 	const selectChoices = GetTargetChoices(state, { skipDca: true, includeMain: true, numericIndex: true })
 	const soloChoices = GetTargetChoices(state, { includeMain: true, numericIndex: true })
+	const insertSourceChoices = GetTargetChoices(state, {
+		includeMain: true,
+		skipAuxIn: true,
+		skipFxRtn: true,
+		skipDca: true,
+	})
 
 	const sendOsc = (cmd: string, args: OSCSomeArguments): void => {
 		// HACK: We send commands on a different port than we run /xremote on, so that we get change events for what we send.
@@ -2997,7 +3007,6 @@ export function GetActionsList(
 				sendOsc(path, { type: 'i', value: convertAnyToNumber(action.options.position) })
 			},
 		},
-
 		[ActionId.GoCommand]: {
 			name: 'Go Command',
 			description: 'Load the highlighted cue/scene/snipped (based on show control)',
@@ -3032,7 +3041,6 @@ export function GetActionsList(
 				ensureLoaded('/-show/prepos/current')
 			},
 		},
-
 		[ActionId.PrevCommand]: {
 			name: 'Previous Command',
 			description: 'Move the highlighted marker to the cue/scene/snipped (based on show control).',
@@ -3048,6 +3056,81 @@ export function GetActionsList(
 			},
 			subscribe: (): void => {
 				ensureLoaded('/-show/prepos/current')
+			},
+		},
+		[ActionId.InsertOn]: {
+			name: 'Insert Status',
+			description: 'Switch Insert no or off for a specific source',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Source',
+					id: 'src',
+					...convertChoices(insertSourceChoices),
+				},
+				{
+					type: 'dropdown',
+					label: 'On / Off',
+					id: 'on',
+					...convertChoices(CHOICES_ON_OFF),
+				},
+			],
+			callback: (action): void => {
+				const cmd = `${action.options.src as string}/insert/on`
+				const onState = getResolveOnOffMute(action, cmd, true, 'on')
+				sendOsc(cmd, { type: 'i', value: onState })
+			},
+			subscribe: (evt): void => {
+				if (evt.options.on === MUTE_TOGGLE) {
+					ensureLoaded(`${evt.options.src as string}/insert/on`)
+				}
+			},
+		},
+		[ActionId.InsertPos]: {
+			name: 'Insert Position',
+			description: 'Set whether insert is PRE or POST for specific source',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Source',
+					id: 'src',
+					...convertChoices(insertSourceChoices),
+				},
+				{
+					type: 'dropdown',
+					label: 'PRE / POST',
+					id: 'pos',
+					...convertChoices([
+						{ id: 0, label: 'PRE' },
+						{ id: 1, label: 'POST' },
+					]),
+				},
+			],
+			callback: (action): void => {
+				const cmd = `${action.options.src as string}/insert/pos`
+				sendOsc(cmd, { type: 'i', value: convertAnyToNumber(action.options.pos) })
+			},
+		},
+		[ActionId.InsertSelect]: {
+			name: 'Insert Destination',
+			description: 'Set the destination of the insert for a specific source',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Source',
+					id: 'src',
+					...convertChoices(insertSourceChoices),
+				},
+				{
+					type: 'dropdown',
+					label: 'Destination',
+					id: 'dest',
+					...convertChoices(GetInsertDestinationChoices()),
+				},
+			],
+			callback: (action): void => {
+				const cmd = `${action.options.src as string}/insert/sel`
+				sendOsc(cmd, { type: 'i', value: convertAnyToNumber(action.options.dest) })
 			},
 		},
 	}

@@ -15,6 +15,7 @@ While developing the module, by using `yarn build:watch` the compiler will be ru
 # WIP
 
 - Previous, Next, Go
+- Channel Inserts
 
 ### v2.11
 
