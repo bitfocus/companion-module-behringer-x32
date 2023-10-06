@@ -669,6 +669,18 @@ export function GetRightOutputBlockRoutes(): DropdownChoice[] {
 	].map((src, i) => ({ id: i, label: src }))
 }
 
+export function GetTalkbackDestinations(state: X32State): DropdownChoice[] {
+	return GetTargetChoices(state, {
+		numericIndex: true,
+		includeMain: true,
+		skipDca: true,
+		skipMatrix: true,
+		skipInputs: true,
+		skipAuxIn: true,
+		skipFxRtn: true,
+	})
+}
+
 export function GetInsertDestinationChoices(): DropdownChoice[] {
 	return [
 		'OFF',

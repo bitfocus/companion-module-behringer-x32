@@ -22,6 +22,7 @@ import {
 	GetUserOutSources,
 	GetUserOutTargets,
 	GetInsertDestinationChoices,
+	GetTalkbackDestinations,
 } from './choices.js'
 import { compareNumber, floatToDB, InstanceBaseExt } from './util.js'
 import {
@@ -64,6 +65,7 @@ export enum FeedbackId {
 	ChannelSendPanning = 'channel_send_panning',
 	BusSendPanning = 'bus_send_panning',
 	TalkbackTalk = 'talkback_talk',
+	TalkbackConfigSingleSource = 'talkback_config_single_source',
 	OscillatorEnable = 'oscillator-enable',
 	OscillatorDestination = 'oscillator-destination',
 	SoloMono = 'solo-mono',
@@ -613,13 +615,13 @@ export function GetFeedbacksList(
 				},
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(255, 0, 0),
+				bgcolor: combineRgb(255, 127, 0),
 				color: combineRgb(0, 0, 0),
 			},
 			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const path = `/-stat/talk/${evt.options.channel}`
 				const data = path ? state.get(path) : undefined
-				const isOn = getDataNumber(data, 0) !== 0
+				const isOn = getDataNumber(data, 0) === 1
 				return isOn === !!evt.options.state
 			},
 			subscribe: (evt: CompanionFeedbackInfo): void => {
@@ -628,6 +630,63 @@ export function GetFeedbacksList(
 			},
 			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `/-stat/talk/${evt.options.channel}`
+				unsubscribeFeedback(subs, path, evt)
+			},
+		},
+		[FeedbackId.TalkbackConfigSingleSource]: {
+			type: 'boolean',
+			name: 'Change from talkback config of single source',
+			description: 'If the source is mapped to a talkback destination, change style of the bank',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Function',
+					id: 'channel',
+					...convertChoices([
+						{
+							id: 'A',
+							label: 'A',
+						},
+						{
+							id: 'B',
+							label: 'B',
+						},
+					]),
+				},
+				{
+					type: 'dropdown',
+					label: 'Destinations',
+					id: 'dest',
+					default: 0,
+					choices: GetTalkbackDestinations(state),
+				},
+				{
+					id: 'state',
+					type: 'checkbox',
+					label: 'On',
+					default: true,
+				},
+			],
+			defaultStyle: {
+				bgcolor: combineRgb(255, 127, 0),
+				color: combineRgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackInfo): boolean => {
+				const path = `/config/talk/${evt.options.channel}/destmap`
+				const data = state.get(path)
+				const bitmap = getDataNumber(data, 0) ?? 0
+				console.log(`bitmap: ${bitmap}`)
+				const mask = Math.pow(2, evt.options.dest as number)
+				console.log(`mask: ${mask}`)
+				const isOn = (bitmap & mask) > 0
+				return isOn === !!evt.options.state
+			},
+			subscribe: (evt: CompanionFeedbackInfo): void => {
+				const path = `/config/talk/${evt.options.channel}/destmap`
+				subscribeFeedback(ensureLoaded, subs, path, evt)
+			},
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
+				const path = `/config/talk/${evt.options.channel}/destmap`
 				unsubscribeFeedback(subs, path, evt)
 			},
 		},
