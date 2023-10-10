@@ -192,8 +192,8 @@ export function GetActionsList(
 	const sendOsc = (cmd: string, args: OSCSomeArguments): void => {
 		// HACK: We send commands on a different port than we run /xremote on, so that we get change events for what we send.
 		// Otherwise we can have no confirmation that a command was accepted
-		// console.log(`osc command: ${cmd} ${JSON.stringify(args)}`)	
-		
+		console.log(`osc command: ${cmd} ${JSON.stringify(args)}`)
+
 		if (self.config.host) {
 			self.oscSend(self.config.host, 10023, cmd, args)
 		}
@@ -3434,7 +3434,16 @@ export function GetActionsList(
 				])
 			},
 		},
-		// Not currently working... investigating
+		// Not currently working...
+		// Looks like Behringer changes things when they introduced User Routing and didnt update the OSC Command
+		// We assume that when they added scopes to the routing they didnt update the OSC command so it just defaults to 0 and doesn't
+		// read what we send as a parameter. Both `load ,si librout 5` and `load ,sii librout 5 255` respond with `load ,si librout 1`
+		// which should indicate "success" but nothing happens on the X32 which leads us tyo believe that its "successfully" loading nothing.
+		// I contacted Patrick‐Gilles Maillot, and he has tried to contact Behringer and they say is going to be a while before a dev can look
+		// into it. Sadness =(. It seems X32 isn't getting as much love from Behringer as the Wing now days.
+		// I also tried to see how X32edit loads presets and it doesn't even use the load command, instead it uses eight separate
+		//`/config/routing` commands to set each config (for interest loading a channel preset kicks of 24 commands and sets
+		// each property of the channel manually) so that exercise didn't help. This feature is missing on Mixing Station too
 		// [ActionId.LoadRoutingPreset]: {
 		// 	name: 'Load routing preset',
 		// 	description: "Load routing preset. Use at own risk. (Maybe don't accidently press during a show?)",
@@ -3444,6 +3453,54 @@ export function GetActionsList(
 		// 			label: 'Preset to load',
 		// 			id: 'preset',
 		// 			...convertChoices(GetPresetsChoices('r', state)),
+		// 		},
+		// 		{
+		// 			id: 'ch',
+		// 			type: 'checkbox',
+		// 			label: 'Load Channel In Routing',
+		// 			default: true,
+		// 		},
+		// 		{
+		// 			id: 'aes',
+		// 			type: 'checkbox',
+		// 			label: 'Load AES50 Out Routing',
+		// 			default: true,
+		// 		},
+		// 		{
+		// 			id: 'card',
+		// 			type: 'checkbox',
+		// 			label: 'Load Card Out Routing',
+		// 			default: true,
+		// 		},
+		// 		{
+		// 			id: 'xlr',
+		// 			type: 'checkbox',
+		// 			label: 'Load XLR Out Routing',
+		// 			default: true,
+		// 		},
+		// 		{
+		// 			id: 'out',
+		// 			type: 'checkbox',
+		// 			label: 'Load Out Patch',
+		// 			default: true,
+		// 		},
+		// 		{
+		// 			id: 'aux',
+		// 			type: 'checkbox',
+		// 			label: 'Load Aux Patch ',
+		// 			default: true,
+		// 		},
+		// 		{
+		// 			id: 'p16',
+		// 			type: 'checkbox',
+		// 			label: 'Load P16 Patch',
+		// 			default: true,
+		// 		},
+		// 		{
+		// 			id: 'user',
+		// 			type: 'checkbox',
+		// 			label: 'Load User Slots ',
+		// 			default: true,
 		// 		},
 		// 	],
 		// 	callback: (action): void => {
@@ -3455,9 +3512,21 @@ export function GetActionsList(
 		// 			return
 		// 		}
 
+		// 		const scopeBits = [
+		// 			!!action.options.ch,
+		// 			!!action.options.aes,
+		// 			!!action.options.card,
+		// 			!!action.options.xlr,
+		// 			!!action.options.out,
+		// 			!!action.options.aux,
+		// 			!!action.options.p16,
+		// 			!!action.options.user,
+		// 		].reduce<number>((acc, cur) => (acc << 1) | (cur ? 1 : 0), 0)
+
 		// 		sendOsc('/load', [
 		// 			{ type: 's', value: 'librout' },
 		// 			{ type: 'i', value: preset - 1 },
+		// 			{ type: 'i', value: scopeBits },
 		// 		])
 		// 	},
 		// },
