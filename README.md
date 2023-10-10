@@ -19,6 +19,10 @@ While developing the module, by using `yarn build:watch` the compiler will be ru
 - Talkback
 - Load Presets (Channel, FX and AES50. No Routing presets due to X32 bug)
 
+### v3.0
+
+- Compatibility updates for Companion 3.0
+
 ### v2.11
 
 - Xlive functionality
