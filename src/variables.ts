@@ -52,6 +52,18 @@ export function InitVariables(instance: InstanceBaseExt<X32Config>, state: X32St
 			name: 'Stored channel',
 			variableId: 'stored_channel',
 		},
+		{
+			name: 'Selected channel number',
+			variableId: 'selected_channel',
+		},
+		{
+			name: 'Selected channel name',
+			variableId: 'selected_name',
+		},
+		{
+			name: 'Stored channel',
+			variableId: 'stored_channel',
+		},
 	]
 
 	const targets = GetTargetChoices(state, { includeMain: true, defaultNames: true })
@@ -148,5 +160,22 @@ export function updateNameVariables(instance: InstanceBaseExt<X32Config>, state:
 export function updateStoredChannelVariable(instance: InstanceBaseExt<X32Config>, state: X32State): void {
 	instance.setVariableValues({
 		stored_channel: `${state.getStoredChannel()}`,
+	})
+}
+
+export function updateSelectedVariables(instance: InstanceBaseExt<X32Config>, state: X32State): void {
+	const selidx = state.get('/-stat/selidx')
+	const index = selidx && selidx[0]?.type === 'i' ? selidx[0].value : 0
+
+	const targets = GetTargetChoices(state, { includeMain: true, defaultNames: true })
+	const target = targets[index]
+
+	const nameVal = state.get(`${target.id}/config/name`)
+	const nameStr = nameVal && nameVal[0]?.type === 's' ? nameVal[0].value : ''
+	const selectedChannel = (target.id ? (target.id as string).replace(/\//g, ' ').trim() : 'ch 1').toUpperCase()
+
+	instance.setVariableValues({
+		selected_channel: selectedChannel,
+		selected_name: nameStr,
 	})
 }

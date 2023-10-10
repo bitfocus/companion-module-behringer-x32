@@ -17,6 +17,7 @@ While developing the module, by using `yarn build:watch` the compiler will be ru
 - Previous, Next, Go
 - Channel Inserts
 - Talkback
+- Load Presets (Channel, FX and AES50. No Routing presets due to X32 bug)
 
 ### v2.11
 

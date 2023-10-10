@@ -708,3 +708,26 @@ export function GetInsertDestinationChoices(): DropdownChoice[] {
 		'AUX6',
 	].map((src, i) => ({ id: i, label: src }))
 }
+
+export function GetPresetsChoices(lib: 'ch' | 'fx' | 'r' | 'mon', state: X32State): DropdownChoice[] {
+	const options = [...Array(100).keys()].map((x) => `${x + 1}`.padStart(3, '0'))
+	const choices: DropdownChoice[] = []
+	options.forEach((option) => {
+		const hasDataState = state.get(`/-libs/${lib}/${option}/hasdata`)
+		const hasDataValue = hasDataState && hasDataState[0]?.type === 'i' && hasDataState[0].value === 1
+		if (hasDataValue) {
+			const nameState = state.get(`/-libs/${lib}/${option}/name`)
+			const nameValue = nameState && nameState[0]?.type === 's' ? nameState[0].value : undefined
+			choices.push({
+				id: option,
+				label: nameValue && nameValue.trim().length > 0 ? `${option} (${nameValue})` : `${option}`,
+			})
+		} else {
+			choices.push({
+				id: option,
+				label: `${option} (No data)`,
+			})
+		}
+	})
+	return choices
+}
