@@ -82,6 +82,28 @@ export function InitVariables(instance: InstanceBaseExt<X32Config>, state: X32St
 		})
 	}
 
+	const sendSources = GetTargetChoices(state, { defaultNames: true, skipBus: true, skipDca: true, skipMatrix: true })
+	for (const target of sendSources) {
+		for (let b = 1; b <= 16; b++) {
+			const padded = `${b}`.padStart(2, '0')
+			variables.push({
+				name: `Fader: ${target.label} to Bus ${b}`,
+				variableId: `fader${sanitiseName(target.id as string)}_to_bus_${padded}`,
+			})
+		}
+	}
+
+	const busSources = GetTargetChoices(state, { defaultNames: true, skipInputs: true, skipDca: true, skipMatrix: true })
+	for (const target of busSources) {
+		for (let m = 1; m <= 6; m++) {
+			const padded = `${m}`.padStart(2, '0')
+			variables.push({
+				name: `Fader: ${target.label} to Matrix ${m}`,
+				variableId: `fader${sanitiseName(target.id as string)}_to_matrix_${padded}`,
+			})
+		}
+	}
+
 	instance.setVariableDefinitions(variables)
 	instance.setVariableValues({
 		tape_time_hms: `--:--:--`,
@@ -158,6 +180,30 @@ export function updateNameVariables(instance: InstanceBaseExt<X32Config>, state:
 		const faderVal = state.get(`${MainPath(target.id as string)}/fader`)
 		const faderNum = faderVal && faderVal[0]?.type === 'f' ? faderVal[0].value : NaN
 		variables[`fader${sanitiseName(target.id as string)}`] = isNaN(faderNum) ? '-' : formatDb(floatToDB(faderNum))
+	}
+
+	const sendSources = GetTargetChoices(state, { defaultNames: true, skipBus: true, skipDca: true, skipMatrix: true })
+	for (const target of sendSources) {
+		for (let b = 1; b <= 16; b++) {
+			const padded = `${b}`.padStart(2, '0')
+			const faderVal = state.get(`${target.id}/mix/${padded}/level`)
+			const faderNum = faderVal && faderVal[0]?.type === 'f' ? faderVal[0].value : NaN
+			variables[`fader${sanitiseName(target.id as string)}_to_bus_${padded}`] = isNaN(faderNum)
+				? '-'
+				: formatDb(floatToDB(faderNum))
+		}
+	}
+
+	const busSources = GetTargetChoices(state, { defaultNames: true, skipInputs: true, skipDca: true, skipMatrix: true })
+	for (const target of busSources) {
+		for (let m = 1; m <= 6; m++) {
+			const padded = `${m}`.padStart(2, '0')
+			const faderVal = state.get(`${target.id}/mix/${padded}/level`)
+			const faderNum = faderVal && faderVal[0]?.type === 'f' ? faderVal[0].value : NaN
+			variables[`fader${sanitiseName(target.id as string)}_to_matrix_${padded}`] = isNaN(faderNum)
+				? '-'
+				: formatDb(floatToDB(faderNum))
+		}
 	}
 	instance.setVariableValues(variables)
 }

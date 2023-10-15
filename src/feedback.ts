@@ -676,9 +676,7 @@ export function GetFeedbacksList(
 				const path = `/config/talk/${evt.options.channel}/destmap`
 				const data = state.get(path)
 				const bitmap = getDataNumber(data, 0) ?? 0
-				console.log(`bitmap: ${bitmap}`)
 				const mask = Math.pow(2, evt.options.dest as number)
-				console.log(`mask: ${mask}`)
 				const isOn = (bitmap & mask) > 0
 				return isOn === !!evt.options.state
 			},
