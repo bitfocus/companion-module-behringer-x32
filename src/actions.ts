@@ -195,7 +195,7 @@ export function GetActionsList(
 	const sendOsc = (cmd: string, args: OSCSomeArguments): void => {
 		// HACK: We send commands on a different port than we run /xremote on, so that we get change events for what we send.
 		// Otherwise we can have no confirmation that a command was accepted
-		console.log(`osc command: ${cmd} ${JSON.stringify(args)}`)
+		// console.log(`osc command: ${cmd} ${JSON.stringify(args)}`)
 
 		if (self.config.host) {
 			self.oscSend(self.config.host, 10023, cmd, args)
@@ -217,7 +217,6 @@ export function GetActionsList(
 		context: CompanionActionContext,
 		defVal?: number
 	): Promise<number> => {
-		console.log(JSON.stringify(action.options))
 		const useVariable = action.options.useVariable
 		const rawVal = useVariable ? action.options.varDelta : action.options.delta
 		if (defVal !== undefined && rawVal === undefined) return defVal
