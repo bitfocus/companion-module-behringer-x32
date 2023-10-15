@@ -418,6 +418,33 @@ class X32Instance extends InstanceBase<X32Config> implements InstanceBaseExt<X32
 			this.queueEnsureLoaded(`${target.id}/config/name`)
 			this.queueEnsureLoaded(`${MainPath(target.id as string)}/fader`)
 		}
+
+		const sendSources = GetTargetChoices(this.x32State, {
+			defaultNames: true,
+			skipBus: true,
+			skipDca: true,
+			skipMatrix: true,
+		})
+		for (const target of sendSources) {
+			for (let b = 1; b <= 16; b++) {
+				const padded = `${b}`.padStart(2, '0')
+				this.queueEnsureLoaded(`${target.id}/mix/${padded}/level`)
+			}
+		}
+
+		const busSources = GetTargetChoices(this.x32State, {
+			defaultNames: true,
+			skipInputs: true,
+			skipDca: true,
+			skipMatrix: true,
+		})
+		for (const target of busSources) {
+			for (let m = 1; m <= 6; m++) {
+				const padded = `${m}`.padStart(2, '0')
+				this.queueEnsureLoaded(`${target.id}/mix/${padded}/level`)
+			}
+		}
+
 		this.queueEnsureLoaded('/-stat/selidx')
 		this.queueEnsureLoaded('/-undo/time')
 	}
@@ -477,7 +504,8 @@ class X32Instance extends InstanceBase<X32Config> implements InstanceBaseExt<X32
 			msg.address.match('/fader$') ||
 			msg.address.match('/-stat/selidx') ||
 			msg.address.match('/-libs/') ||
-			msg.address.match('/-undo/time')
+			msg.address.match('/-undo/time') ||
+			msg.address.match('/mix/../level')
 		) {
 			this.debounceUpdateCompanionBits()
 		}
