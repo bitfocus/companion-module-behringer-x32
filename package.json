@@ -30,7 +30,7 @@
 		"node": "^18.12"
 	},
 	"dependencies": {
-		"@companion-module/base": "~1.0.2",
+		"@companion-module/base": "~1.4",
 		"date-fns": "^2.28.0",
 		"debounce-fn": "^5.1.2",
 		"debug": "^4.3.4",
