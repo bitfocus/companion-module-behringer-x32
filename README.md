@@ -17,6 +17,7 @@ While developing the module, by using `yarn dev` the compiler will be run in wat
 - Talkback
 - Load Presets (Channel, FX and AES50. No Routing presets due to X32 bug)
 - Undo
+- Variable for send levels (Input to Bus and Bus to Matrix)
 
 ### v3.0
 
