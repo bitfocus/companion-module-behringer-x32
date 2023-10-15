@@ -57,6 +57,7 @@ import {
 	CompanionActionDefinition,
 	CompanionActionEvent,
 	CompanionActionInfo,
+	CompanionActionContext,
 	CompanionActionDefinitions,
 	OSCSomeArguments,
 } from '@companion-module/base'
@@ -200,12 +201,29 @@ export function GetActionsList(
 			self.oscSend(self.config.host, 10023, cmd, args)
 		}
 	}
+
 	const getOptNumber = (action: CompanionActionInfo, key: string, defVal?: number): number => {
 		const rawVal = action.options[key]
 		if (defVal !== undefined && rawVal === undefined) return defVal
 		const val = Number(rawVal)
 		if (isNaN(val)) {
 			throw new Error(`Invalid option '${key}'`)
+		}
+		return val
+	}
+
+	const getDeltaNumber = async (
+		action: CompanionActionInfo,
+		context: CompanionActionContext,
+		defVal?: number
+	): Promise<number> => {
+		console.log(JSON.stringify(action.options))
+		const useVariable = action.options.useVariable
+		const rawVal = useVariable ? action.options.varDelta : action.options.delta
+		if (defVal !== undefined && rawVal === undefined) return defVal
+		const val = useVariable ? Number(await context.parseVariablesInString((rawVal as string).trim())) : Number(rawVal)
+		if (isNaN(val) || val < -100 || val > 100) {
+			return defVal ?? 0
 		}
 		return val
 	}
@@ -499,10 +517,10 @@ export function GetActionsList(
 					id: 'target',
 					...convertChoices(levelsChoices.channels),
 				},
-				FaderLevelDeltaChoice,
+				...FaderLevelDeltaChoice,
 				...FadeDurationChoice,
 			],
-			callback: async (action): Promise<void> => {
+			callback: async (action, context): Promise<void> => {
 				const cmd = MainFaderPath(action.options)
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
@@ -510,7 +528,7 @@ export function GetActionsList(
 					transitions.runForDb(
 						cmd,
 						currentVal,
-						currentVal + getOptNumber(action, 'delta'),
+						currentVal + (await getDeltaNumber(action, context, 0)),
 						getOptNumber(action, 'fadeDuration', 0),
 						getOptAlgorithm(action, 'fadeAlgorithm'),
 						getOptCurve(action, 'fadeType')
@@ -559,14 +577,14 @@ export function GetActionsList(
 					id: 'target',
 					...convertChoices(panningChoices.allSources),
 				},
-				PanningDelta,
+				...PanningDelta,
 				...FadeDurationChoice,
 			],
-			callback: async (action): Promise<void> => {
+			callback: async (action, context): Promise<void> => {
 				const cmd = MainPanPath(action.options)
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0]?.value : 0
-				let newVal = currentVal + getOptNumber(action, 'delta') / 100
+				let newVal = currentVal + (await getDeltaNumber(action, context, 0)) / 100
 				if (newVal < 0) {
 					newVal = 0
 				} else if (newVal > 1) {
@@ -691,10 +709,10 @@ export function GetActionsList(
 					id: 'target',
 					...convertChoices(levelsChoices.channelSendTargets),
 				},
-				FaderLevelDeltaChoice,
+				...FaderLevelDeltaChoice,
 				...FadeDurationChoice,
 			],
-			callback: async (action): Promise<void> => {
+			callback: async (action, context): Promise<void> => {
 				const cmd = SendChannelToBusPath(action.options)
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
@@ -702,7 +720,7 @@ export function GetActionsList(
 					transitions.runForDb(
 						cmd,
 						currentVal,
-						currentVal + getOptNumber(action, 'delta'),
+						currentVal + (await getDeltaNumber(action, context, 0)),
 						getOptNumber(action, 'fadeDuration', 0)
 					)
 				}
@@ -826,14 +844,14 @@ export function GetActionsList(
 					id: 'target',
 					...convertChoices(panningChoices.channelSendTargets),
 				},
-				PanningDelta,
+				...PanningDelta,
 				...FadeDurationChoice,
 			],
-			callback: async (action): Promise<void> => {
+			callback: async (action, context): Promise<void> => {
 				const cmd = ChannelToBusPanPath(action.options)
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0]?.value : 0
-				let newVal = currentVal + getOptNumber(action, 'delta') / 100
+				let newVal = currentVal + (await getDeltaNumber(action, context, 0)) / 100
 				if (newVal < 0) {
 					newVal = 0
 				} else if (newVal > 1) {
@@ -963,10 +981,10 @@ export function GetActionsList(
 					id: 'target',
 					...convertChoices(levelsChoices.busSendTargets),
 				},
-				FaderLevelDeltaChoice,
+				...FaderLevelDeltaChoice,
 				...FadeDurationChoice,
 			],
-			callback: async (action): Promise<void> => {
+			callback: async (action, context): Promise<void> => {
 				const cmd = SendBusToMatrixPath(action.options)
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
@@ -974,7 +992,7 @@ export function GetActionsList(
 					transitions.runForDb(
 						cmd,
 						currentVal,
-						currentVal + getOptNumber(action, 'delta'),
+						currentVal + (await getDeltaNumber(action, context, 0)),
 						getOptNumber(action, 'fadeDuration', 0)
 					)
 				}
@@ -1098,14 +1116,14 @@ export function GetActionsList(
 					id: 'target',
 					...convertChoices(panningChoices.busSendTarget),
 				},
-				PanningDelta,
+				...PanningDelta,
 				...FadeDurationChoice,
 			],
-			callback: async (action): Promise<void> => {
+			callback: async (action, context): Promise<void> => {
 				const cmd = BusToMatrixPanPath(action.options)
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0]?.value : 0
-				let newVal = currentVal + getOptNumber(action, 'delta') / 100
+				let newVal = currentVal + (await getDeltaNumber(action, context, 0)) / 100
 				if (newVal < 0) {
 					newVal = 0
 				} else if (newVal > 1) {

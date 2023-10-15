@@ -81,14 +81,34 @@ export const FaderLevelChoice: CompanionInputFieldNumber = {
 	max: 10,
 }
 
-export const FaderLevelDeltaChoice: CompanionInputFieldNumber = {
-	type: 'number',
-	label: 'Delta',
-	id: 'delta',
-	default: 1,
-	max: 100,
-	min: -100,
-}
+export const FaderLevelDeltaChoice: SomeCompanionActionInputField[] = [
+	{
+		type: 'checkbox',
+		label: 'Use a variable for Delta',
+		default: false,
+		id: 'useVariable',
+	},
+	{
+		type: 'number',
+		label: 'Delta',
+		id: 'delta',
+		default: 1,
+		max: 100,
+		min: -100,
+		isVisible: (options: CompanionOptionValues): boolean => {
+			return !options.useVariable
+		},
+	},
+	{
+		type: 'textinput',
+		label: 'Variable Delta (e.g. $(internal:custom_my_delta), NOTE: strings and out of range numbers will be ignored)',
+		id: 'varDelta',
+		useVariables: true,
+		isVisible: (options: CompanionOptionValues): boolean => {
+			return !!options.useVariable
+		},
+	},
+]
 
 export const PanningChoice: CompanionInputFieldNumber = {
 	type: 'number',
@@ -102,17 +122,37 @@ export const PanningChoice: CompanionInputFieldNumber = {
 	max: 50,
 }
 
-export const PanningDelta: CompanionInputFieldNumber = {
-	type: 'number',
-	label: 'Delta',
-	id: 'delta',
-	range: true,
-	required: true,
-	default: 0,
-	step: 1,
-	min: -100,
-	max: 100,
-}
+export const PanningDelta: SomeCompanionActionInputField[] = [
+	{
+		type: 'checkbox',
+		label: 'Use a variable for Delta',
+		default: false,
+		id: 'useVariable',
+	},
+	{
+		type: 'number',
+		label: 'Delta (-50 = hard left, 0 = center, 50 = hard right)',
+		id: 'delta',
+		range: true,
+		required: true,
+		default: 0,
+		step: 1,
+		min: -100,
+		max: 100,
+		isVisible: (options: CompanionOptionValues): boolean => {
+			return !options.useVariable
+		},
+	},
+	{
+		type: 'textinput',
+		label: 'Variable Delta (e.g. $(internal:custom_my_delta), NOTE: strings and out of range numbers will be ignored)',
+		id: 'varDelta',
+		useVariables: true,
+		isVisible: (options: CompanionOptionValues): boolean => {
+			return !!options.useVariable
+		},
+	},
+]
 
 export const HeadampGainChoice: CompanionInputFieldNumber = {
 	type: 'number',
