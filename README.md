@@ -10,14 +10,13 @@ While developing the module, by using `yarn build:watch` the compiler will be ru
 
 ## Changes
 
-### v2.12? should this go to 3?
-
-# WIP
+### v3.1 (WIP)
 
 - Previous, Next, Go
 - Channel Inserts
 - Talkback
 - Load Presets (Channel, FX and AES50. No Routing presets due to X32 bug)
+- Undo
 
 ### v3.0
 

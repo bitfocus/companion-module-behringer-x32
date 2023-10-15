@@ -167,6 +167,8 @@ export enum ActionId {
 	LoadFXPreset = 'load-fx-preset',
 	// LoadRoutingPreset = 'load-route-preset',
 	LoadAESPreset = 'load-aes-preset',
+	DoUndo = 'do-undo',
+	SetUndoCheckpoint = 'set-undo-checkpoint',
 }
 
 type CompanionActionWithCallback = SetRequired<CompanionActionDefinition, 'callback'>
@@ -3554,6 +3556,30 @@ export function GetActionsList(
 					{ type: 's', value: 'libmon' },
 					{ type: 'i', value: preset - 1 },
 				])
+			},
+		},
+		[ActionId.DoUndo]: {
+			name: 'Do Undo',
+			description: 'If possible, undo to last checkpoint (NOTE: There is only one undo step in X32)',
+			options: [],
+			callback: (): void => {
+				const undoTimeState = state.get(`/-undo/time`)
+				const undoTime = undoTimeState && undoTimeState[0]?.type === 's' ? undoTimeState[0].value : ''
+
+				if (!undoTime) {
+					return
+				}
+
+				sendOsc('/-action/doundo', { type: 'i', value: 1 })
+			},
+		},
+		[ActionId.SetUndoCheckpoint]: {
+			name: 'Set Undo Checkpoint',
+			description:
+				'Creates checkpoint to get back to upon issuing an undo command. The time will replace any value previously saved checkpoint',
+			options: [],
+			callback: (): void => {
+				sendOsc('/-action/undopt', { type: 'i', value: 1 })
 			},
 		},
 	}

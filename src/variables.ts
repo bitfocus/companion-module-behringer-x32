@@ -64,6 +64,10 @@ export function InitVariables(instance: InstanceBaseExt<X32Config>, state: X32St
 			name: 'Stored channel',
 			variableId: 'stored_channel',
 		},
+		{
+			name: 'Undo Time',
+			variableId: 'undo_time',
+		},
 	]
 
 	const targets = GetTargetChoices(state, { includeMain: true, defaultNames: true })
@@ -86,6 +90,7 @@ export function InitVariables(instance: InstanceBaseExt<X32Config>, state: X32St
 		urec_etime_ms: `--:--`,
 		urec_rtime_hms: `--:--:--`,
 		urec_rtime_ms: `--:--`,
+		undo_time: '--:--:--',
 		stored_channel: `${state.getStoredChannel()}`,
 	})
 }
@@ -177,5 +182,13 @@ export function updateSelectedVariables(instance: InstanceBaseExt<X32Config>, st
 	instance.setVariableValues({
 		selected_channel: selectedChannel,
 		selected_name: nameStr,
+	})
+}
+
+export function updateUndoTime(instance: InstanceBaseExt<X32Config>, state: X32State): void {
+	const undoTime = state.get('/-undo/time')
+	const time = undoTime && undoTime[0]?.type === 's' ? undoTime[0].value : ''
+	instance.setVariableValues({
+		undo_time: time ? time : '--:--:--',
 	})
 }

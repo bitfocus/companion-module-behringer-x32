@@ -11,6 +11,7 @@ import {
 	updateTapeTime,
 	updateUReceTime,
 	updateURecrTime,
+	updateUndoTime,
 } from './variables.js'
 import { IStoredChannelObserver, X32State, X32Subscriptions } from './state.js'
 import osc from 'osc'
@@ -207,6 +208,7 @@ class X32Instance extends InstanceBase<X32Config> implements InstanceBaseExt<X32
 		this.checkFeedbacks()
 		updateNameVariables(this, this.x32State)
 		updateSelectedVariables(this, this.x32State)
+		updateUndoTime(this, this.x32State)
 
 		// Ensure all feedbacks & actions have an initial value, if we are connected
 		if (this.heartbeat) {
@@ -417,6 +419,7 @@ class X32Instance extends InstanceBase<X32Config> implements InstanceBaseExt<X32
 			this.queueEnsureLoaded(`${MainPath(target.id as string)}/fader`)
 		}
 		this.queueEnsureLoaded('/-stat/selidx')
+		this.queueEnsureLoaded('/-undo/time')
 	}
 
 	private loadPresetData(): void {
@@ -469,7 +472,13 @@ class X32Instance extends InstanceBase<X32Config> implements InstanceBaseExt<X32
 			toUpdate.forEach((f) => this.messageFeedbacks.add(f))
 			this.debounceMessageFeedbacks()
 		}
-		if (msg.address.match('/config/name$') || msg.address.match('/fader$') || msg.address.match('/-stat/selidx') || msg.address.match('/-libs/')) {
+		if (
+			msg.address.match('/config/name$') ||
+			msg.address.match('/fader$') ||
+			msg.address.match('/-stat/selidx') ||
+			msg.address.match('/-libs/') ||
+			msg.address.match('/-undo/time')
+		) {
 			this.debounceUpdateCompanionBits()
 		}
 	}
