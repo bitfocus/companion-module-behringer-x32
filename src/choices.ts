@@ -81,14 +81,34 @@ export const FaderLevelChoice: CompanionInputFieldNumber = {
 	max: 10,
 }
 
-export const FaderLevelDeltaChoice: CompanionInputFieldNumber = {
-	type: 'number',
-	label: 'Delta',
-	id: 'delta',
-	default: 1,
-	max: 100,
-	min: -100,
-}
+export const FaderLevelDeltaChoice: SomeCompanionActionInputField[] = [
+	{
+		type: 'checkbox',
+		label: 'Use a variable for Delta',
+		default: false,
+		id: 'useVariable',
+	},
+	{
+		type: 'number',
+		label: 'Delta',
+		id: 'delta',
+		default: 1,
+		max: 100,
+		min: -100,
+		isVisible: (options: CompanionOptionValues): boolean => {
+			return !options.useVariable
+		},
+	},
+	{
+		type: 'textinput',
+		label: 'Variable Delta (e.g. $(internal:custom_my_delta), NOTE: strings and out of range numbers will be ignored)',
+		id: 'varDelta',
+		useVariables: true,
+		isVisible: (options: CompanionOptionValues): boolean => {
+			return !!options.useVariable
+		},
+	},
+]
 
 export const PanningChoice: CompanionInputFieldNumber = {
 	type: 'number',
