@@ -577,14 +577,14 @@ export function GetActionsList(
 					id: 'target',
 					...convertChoices(panningChoices.allSources),
 				},
-				PanningDelta,
+				...PanningDelta,
 				...FadeDurationChoice,
 			],
-			callback: async (action): Promise<void> => {
+			callback: async (action, context): Promise<void> => {
 				const cmd = MainPanPath(action.options)
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0]?.value : 0
-				let newVal = currentVal + getOptNumber(action, 'delta') / 100
+				let newVal = currentVal + (await getDeltaNumber(action, context, 0)) / 100
 				if (newVal < 0) {
 					newVal = 0
 				} else if (newVal > 1) {
@@ -844,14 +844,14 @@ export function GetActionsList(
 					id: 'target',
 					...convertChoices(panningChoices.channelSendTargets),
 				},
-				PanningDelta,
+				...PanningDelta,
 				...FadeDurationChoice,
 			],
-			callback: async (action): Promise<void> => {
+			callback: async (action, context): Promise<void> => {
 				const cmd = ChannelToBusPanPath(action.options)
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0]?.value : 0
-				let newVal = currentVal + getOptNumber(action, 'delta') / 100
+				let newVal = currentVal + (await getDeltaNumber(action, context, 0)) / 100
 				if (newVal < 0) {
 					newVal = 0
 				} else if (newVal > 1) {
@@ -1116,14 +1116,14 @@ export function GetActionsList(
 					id: 'target',
 					...convertChoices(panningChoices.busSendTarget),
 				},
-				PanningDelta,
+				...PanningDelta,
 				...FadeDurationChoice,
 			],
-			callback: async (action): Promise<void> => {
+			callback: async (action, context): Promise<void> => {
 				const cmd = BusToMatrixPanPath(action.options)
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0]?.value : 0
-				let newVal = currentVal + getOptNumber(action, 'delta') / 100
+				let newVal = currentVal + (await getDeltaNumber(action, context, 0)) / 100
 				if (newVal < 0) {
 					newVal = 0
 				} else if (newVal > 1) {
