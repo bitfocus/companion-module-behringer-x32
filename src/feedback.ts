@@ -109,6 +109,7 @@ export enum FeedbackId {
 	InsertOn = 'insert-on',
 	InsertPos = 'insert-pos',
 	InsertSelect = 'insert-select',
+	UndoAvailable = 'undo-available',
 }
 
 function getDataNumber(data: osc.MetaArgument[] | undefined, index: number): number | undefined {
@@ -2776,6 +2777,36 @@ export function GetFeedbacksList(
 			},
 			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const path = `${evt.options.src as string}/insert/sel`
+				unsubscribeFeedback(subs, path, evt)
+			},
+		},
+		[FeedbackId.UndoAvailable]: {
+			type: 'boolean',
+			name: 'Undo available',
+			description: 'If undo is available, change the style of the bank',
+			options: [
+				{
+					id: 'state',
+					type: 'checkbox',
+					label: 'Is available',
+					default: true,
+				},
+			],
+			defaultStyle: {
+				bgcolor: combineRgb(255, 127, 0),
+				color: combineRgb(0, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackInfo): boolean => {
+				const undoTime = state.get('/-undo/time')
+				const time = undoTime && undoTime[0]?.type === 's' ? undoTime[0].value : ''
+				return !!time === !!evt.options.state
+			},
+			subscribe: (evt: CompanionFeedbackInfo): void => {
+				const path = `/-undo/time`
+				subscribeFeedback(ensureLoaded, subs, path, evt)
+			},
+			unsubscribe: (evt: CompanionFeedbackInfo): void => {
+				const path = `/-undo/time`
 				unsubscribeFeedback(subs, path, evt)
 			},
 		},
