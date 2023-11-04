@@ -416,6 +416,7 @@ class X32Instance extends InstanceBase<X32Config> implements InstanceBaseExt<X32
 		const targets = GetTargetChoices(this.x32State, { includeMain: true, defaultNames: true })
 		for (const target of targets) {
 			this.queueEnsureLoaded(`${target.id}/config/name`)
+			this.queueEnsureLoaded(`${target.id}/config/color`)
 			this.queueEnsureLoaded(`${MainPath(target.id as string)}/fader`)
 		}
 
@@ -501,6 +502,7 @@ class X32Instance extends InstanceBase<X32Config> implements InstanceBaseExt<X32
 		}
 		if (
 			msg.address.match('/config/name$') ||
+			msg.address.match('/config/color$') ||
 			msg.address.match('/fader$') ||
 			msg.address.match('/-stat/selidx') ||
 			msg.address.match('/-libs/') ||

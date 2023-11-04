@@ -3,7 +3,8 @@ import { X32Config } from './config.js'
 import { trimToFloat, headampGainToFloat, floatToDB, InstanceBaseExt } from './util.js'
 import {
 	CHOICES_TAPE_FUNC,
-	CHOICES_COLOR,
+	ColorChoicesWithVariable,
+	getColorIdFromLabel,
 	GetTargetChoices,
 	MUTE_TOGGLE,
 	GetMuteGroupChoices,
@@ -1268,12 +1269,13 @@ export function GetActionsList(
 					label: 'Label',
 					id: 'lab',
 					default: '',
+					useVariables: true,
 				},
 			],
-			callback: async (action): Promise<void> => {
+			callback: async (action, context): Promise<void> => {
 				sendOsc(`${action.options.target}/config/name`, {
 					type: 's',
-					value: `${action.options.lab}`,
+					value: await context.parseVariablesInString(`${action.options.lab}`),
 				})
 			},
 		},
@@ -1287,17 +1289,24 @@ export function GetActionsList(
 					id: 'target',
 					...convertChoices(levelsChoices.channels),
 				},
-				{
-					type: 'dropdown',
-					label: 'color',
-					id: 'col',
-					...convertChoices(CHOICES_COLOR),
-				},
+				...ColorChoicesWithVariable,
 			],
-			callback: async (action): Promise<void> => {
+			callback: async (action, context): Promise<void> => {
+				if (!action.options.useVariable) {
+					sendOsc(`${action.options.target}/config/color`, {
+						type: 'i',
+						value: getOptNumber(action, 'col'),
+					})
+					return
+				}
+
+				const rawVal = action.options.varCol
+				if (rawVal === undefined) return
+				const id = getColorIdFromLabel(await context.parseVariablesInString((rawVal as string).trim()))
+				if (id === undefined) return
 				sendOsc(`${action.options.target}/config/color`, {
 					type: 'i',
-					value: getOptNumber(action, 'col'),
+					value: id as number,
 				})
 			},
 		},
