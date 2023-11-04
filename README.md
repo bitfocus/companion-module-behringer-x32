@@ -10,7 +10,7 @@ While developing the module, by using `yarn dev` the compiler will be run in wat
 
 ## Changes
 
-### v3.1 (WIP)
+### v3.1
 
 - Previous, Next, Go
 - Channel Inserts
@@ -18,6 +18,8 @@ While developing the module, by using `yarn dev` the compiler will be run in wat
 - Load Presets (Channel, FX and AES50. No Routing presets due to X32 bug)
 - Undo
 - Variable for send levels (Input to Bus and Bus to Matrix)
+- Variables for colors
+- Allow setting deltas, colors and labels from variables
 
 ### v3.0
 
