@@ -28,7 +28,7 @@ export const CHOICES_ON_OFF: DropdownChoice[] = [
 
 export const CHOICES_COLOR: DropdownChoice[] = [
 	{ label: 'Off', id: '0' },
-	{ label: 'Red: ', id: '1' },
+	{ label: 'Red', id: '1' },
 	{ label: 'Green', id: '2' },
 	{ label: 'Yellow', id: '3' },
 	{ label: 'Blue', id: '4' },
@@ -44,6 +44,43 @@ export const CHOICES_COLOR: DropdownChoice[] = [
 	{ label: 'Cyan Inverted', id: '14' },
 	{ label: 'White Inverted', id: '15' },
 ]
+
+export const ColorChoicesWithVariable: SomeCompanionActionInputField[] = [
+	{
+		type: 'checkbox',
+		label: 'Use a variable for Delta',
+		default: false,
+		id: 'useVariable',
+	},
+	{
+		type: 'dropdown',
+		label: 'color',
+		id: 'col',
+		...convertChoices(CHOICES_COLOR),
+		isVisible: (options: CompanionOptionValues): boolean => {
+			return !options.useVariable
+		},
+	},
+	{
+		type: 'textinput',
+		label: 'Variable Color (e.g. $(x32:color_ch_01), NOTE: unknown strings will be ignored)',
+		id: 'varCol',
+		useVariables: true,
+		isVisible: (options: CompanionOptionValues): boolean => {
+			return !!options.useVariable
+		},
+	},
+]
+
+export function getColorLabelFromId(id: DropdownChoiceId): string | undefined {
+	const choice = CHOICES_COLOR.find((item) => item.id == id)
+	return choice ? choice.label : undefined
+}
+
+export function getColorIdFromLabel(label: string): DropdownChoiceId | undefined {
+	const choice = CHOICES_COLOR.find((item) => item.label === label)
+	return choice ? choice.id : undefined
+}
 
 export const CHOICES_TAPE_FUNC: DropdownChoice[] = [
 	{ label: 'STOP', id: '0' },
