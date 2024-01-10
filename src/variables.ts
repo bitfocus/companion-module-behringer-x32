@@ -131,7 +131,7 @@ export function updateDeviceInfoVariables(instance: InstanceBaseExt<X32Config>, 
 		}
 	}
 	instance.setVariableValues({
-		m_variableId: getStringArg(1),
+		m_name: getStringArg(1),
 		m_model: getStringArg(2),
 		m_fw: getStringArg(3),
 	})
