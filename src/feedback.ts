@@ -133,7 +133,7 @@ function subscribeFeedback(
 	path: string,
 	evt: CompanionFeedbackInfo
 ): void {
-	subs.subscribe(path, evt.id, evt.type as FeedbackId)
+	subs.subscribe(path, evt.id, evt.feedbackId as FeedbackId)
 	ensureLoaded(path)
 }
 function unsubscribeFeedback(subs: X32Subscriptions, path: string, evt: CompanionFeedbackInfo): void {
