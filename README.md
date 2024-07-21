@@ -10,6 +10,11 @@ While developing the module, by using `yarn dev` the compiler will be run in wat
 
 ## Changes
 
+### v3.2
+
+- Fix using mute group would not update individual channel feedbacks
+- Update dependencies and build tooling
+
 ### v3.1
 
 - Previous, Next, Go
