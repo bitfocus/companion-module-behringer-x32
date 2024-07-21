@@ -50,14 +50,14 @@ class X32Instance extends InstanceBase<X32Config> implements InstanceBaseExt<X32
 	public config: X32Config = {}
 
 	/** Ping the x32 at a regular interval to tell it to keep sending us info, and for us to check it is still there */
-	private heartbeat: NodeJS.Timer | undefined
+	private heartbeat: NodeJS.Timeout | undefined
 	/** Delay a reconnect a few seconds after an error, or monitor the ping for lack of response */
-	private reconnectTimer: NodeJS.Timer | undefined
+	private reconnectTimer: NodeJS.Timeout | undefined
 	/** Once we have an osc socket ready, we send /xinfo on repeat until we get a response */
-	private syncInterval: NodeJS.Timer | undefined
+	private syncInterval: NodeJS.Timeout | undefined
 	/** subscribe interval, we need to resubscribe atleast every 10 seconds to keep the subscription going
 	 * we are using 5 seconds to be safe */
-	private subscribeInterval: NodeJS.Timer | undefined
+	private subscribeInterval: NodeJS.Timeout | undefined
 
 	private readonly debounceUpdateCompanionBits: () => void
 	private readonly requestQueue: PQueue = new PQueue({

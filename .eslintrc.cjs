@@ -4,7 +4,7 @@ module.exports = {
 		{
 			files: ['*.ts'],
 			rules: {
-				'node/no-missing-import': 'off',
+				'n/no-missing-import': 'off',
 				'node/no-unpublished-import': 'off',
 			},
 		},

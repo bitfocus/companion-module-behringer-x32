@@ -4,7 +4,7 @@
 	"main": "dist/index.js",
 	"type": "module",
 	"scripts": {
-		"postinstall": "husky install",
+		"postinstall": "husky",
 		"dev": "yarn build:main --watch",
 		"build": "rimraf dist && tsc -p tsconfig.build.json",
 		"build:main": "tsc -p tsconfig.build.json",
@@ -30,22 +30,22 @@
 		"node": "^18.12"
 	},
 	"dependencies": {
-		"@companion-module/base": "~1.4",
-		"date-fns": "^2.28.0",
-		"debounce-fn": "^5.1.2",
-		"debug": "^4.3.4",
-		"osc": "^2.4.3",
-		"p-queue": "^7.2.0",
-		"type-fest": "^3.5.1"
+		"@companion-module/base": "~1.8.0",
+		"date-fns": "^3.6.0",
+		"debounce-fn": "^6.0.0",
+		"debug": "^4.3.5",
+		"osc": "^2.4.4",
+		"p-queue": "^8.0.1",
+		"type-fest": "^4.22.1"
 	},
 	"devDependencies": {
-		"@companion-module/tools": "^0.5.1",
-		"@types/debug": "^4.1.7",
-		"@types/node": "^18.11.9",
-		"husky": "^8.0.1",
-		"lint-staged": "^13.0.3",
-		"rimraf": "^3.0.2",
-		"typescript": "~4.9.4"
+		"@companion-module/tools": "^1.5.1",
+		"@types/debug": "^4.1.12",
+		"@types/node": "^18.19.41",
+		"husky": "^9.1.1",
+		"lint-staged": "^15.2.7",
+		"rimraf": "^5.0.9",
+		"typescript": "~5.1.6"
 	},
 	"packageManager": "yarn@4.3.1"
 }

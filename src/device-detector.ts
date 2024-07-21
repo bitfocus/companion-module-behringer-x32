@@ -19,7 +19,7 @@ class X32DeviceDetectorImpl implements X32DeviceDetector {
 	private readonly subscribers = new Set<string>()
 	private osc?: osc.UDPPort
 	private knownDevices = new Map<string, DeviceInfo>()
-	private queryTimer: NodeJS.Timer | undefined
+	private queryTimer: NodeJS.Timeout | undefined
 
 	public subscribe(instanceId: string): void {
 		const startListening = this.subscribers.size === 0

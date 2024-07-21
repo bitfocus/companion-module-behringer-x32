@@ -12,7 +12,7 @@ export class X32Transitions {
 	private readonly instance: InstanceBaseExt<X32Config>
 	private readonly fps: number
 
-	private tickInterval: NodeJS.Timer | undefined
+	private tickInterval: NodeJS.Timeout | undefined
 
 	constructor(instance: InstanceBaseExt<X32Config>) {
 		this.transitions = new Map()
