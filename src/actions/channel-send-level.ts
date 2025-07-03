@@ -117,7 +117,11 @@ export function getChannelSendLevelActions(
 					return `${sourceRef.sendTo.path}/${targetRef.sendToSink.level}`
 				},
 				execute: (action, cachedData, path) => {
-					const currentVal = cachedData && cachedData[0]?.type === 'f' ? floatToDB(cachedData[0]?.value) : undefined
+					let currentVal = cachedData && cachedData[0]?.type === 'f' ? floatToDB(cachedData[0]?.value) : undefined
+
+					// If the number is not finite, it is presumably negative infinity, and we need to treat as -90
+					if (!Number.isFinite(currentVal)) currentVal = -90
+
 					if (typeof currentVal === 'number') {
 						props.transitions.runForDb(path, currentVal, currentVal + action.options.delta, action.options)
 					}
