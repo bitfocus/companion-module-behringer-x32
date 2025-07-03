@@ -715,7 +715,12 @@ export function GetActionsList(
 			callback: async (action, context): Promise<void> => {
 				const cmd = SendChannelToBusPath(action.options)
 				const currentState = state.get(cmd)
-				const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
+				var currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
+				
+				if (!Number.isFinite(currentVal)) {
+					currentVal = -90
+				}
+
 				if (typeof currentVal === 'number') {
 					transitions.runForDb(
 						cmd,
