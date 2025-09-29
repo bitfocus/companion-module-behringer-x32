@@ -38,6 +38,7 @@ import {
 	GetInsertDestinationChoices,
 	GetTalkbackDestinations,
 	GetPresetsChoices,
+	FaderLevelChoiceVariable,
 } from './choices.js'
 import {
 	MutePath,
@@ -206,9 +207,29 @@ export function GetActionsList(
 	const getOptNumber = (action: CompanionActionInfo, key: string, defVal?: number): number => {
 		const rawVal = action.options[key]
 		if (defVal !== undefined && rawVal === undefined) return defVal
+		console.log(rawVal)
 		const val = Number(rawVal)
 		if (isNaN(val)) {
 			throw new Error(`Invalid option '${key}'`)
+		}
+		return val
+	}
+	const getOptNumberVariable = async (
+		action: CompanionActionInfo,
+		varKey: string,
+		sliderKey: string,
+		context: CompanionActionContext,
+		defVal?: number
+	): Promise<number> => {
+		const useVariable = action.options.useVariable
+		const rawVarVal = action.options[varKey]
+		const rawSliderVal = action.options[sliderKey]
+		if (defVal !== undefined && rawVarVal === undefined && rawSliderVal === undefined) return defVal
+		const val = useVariable
+			? Number(await context.parseVariablesInString((rawVarVal as string).trim()))
+			: Number(rawSliderVal)
+		if (isNaN(val)) {
+			throw new Error(`(Variable) Invalid option '${useVariable ? rawVarVal : rawSliderVal}'`)
 		}
 		return val
 	}
@@ -441,17 +462,23 @@ export function GetActionsList(
 					id: 'target',
 					...convertChoices(levelsChoices.channels),
 				},
-				FaderLevelChoice,
+				...FaderLevelChoiceVariable,
 				...FadeDurationChoice,
 			],
-			callback: async (action): Promise<void> => {
+			callback: async (action, context): Promise<void> => {
 				const cmd = MainFaderPath(action.options)
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
+
+				if (typeof currentVal !== 'number') return // or handle error
+				const target = await getOptNumberVariable(action, 'var', 'fad', context)
+
+				// if target might be a variable/async, await or resolve it here
+
 				transitions.runForDb(
 					cmd,
 					currentVal,
-					getOptNumber(action, 'fad'),
+					target,
 					getOptNumber(action, 'fadeDuration', 0),
 					getOptAlgorithm(action, 'fadeAlgorithm'),
 					getOptCurve(action, 'fadeType')
