@@ -13,7 +13,6 @@ import {
 	convertChoices,
 	CHOICES_ON_OFF,
 	GetBusSendChoices,
-	FaderLevelChoice,
 	MuteChoice,
 	HeadampGainChoice,
 	GetHeadampChoices,
@@ -207,7 +206,6 @@ export function GetActionsList(
 	const getOptNumber = (action: CompanionActionInfo, key: string, defVal?: number): number => {
 		const rawVal = action.options[key]
 		if (defVal !== undefined && rawVal === undefined) return defVal
-		console.log(rawVal)
 		const val = Number(rawVal)
 		if (isNaN(val)) {
 			throw new Error(`Invalid option '${key}'`)
@@ -700,17 +698,19 @@ export function GetActionsList(
 					id: 'target',
 					...convertChoices(levelsChoices.channelSendTargets),
 				},
-				FaderLevelChoice,
+				...FaderLevelChoiceVariable,
 				...FadeDurationChoice,
 			],
-			callback: async (action): Promise<void> => {
+			callback: async (action, context): Promise<void> => {
 				const cmd = SendChannelToBusPath(action.options)
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
+				if (typeof currentVal !== 'number') return // or handle error
+				const target = await getOptNumberVariable(action, 'var', 'fad', context)
 				transitions.runForDb(
 					cmd,
 					currentVal,
-					getOptNumber(action, 'fad'),
+					target,
 					getOptNumber(action, 'fadeDuration', 0),
 					getOptAlgorithm(action, 'fadeAlgorithm'),
 					getOptCurve(action, 'fadeType')
@@ -979,14 +979,16 @@ export function GetActionsList(
 					id: 'target',
 					...convertChoices(levelsChoices.busSendTargets),
 				},
-				FaderLevelChoice,
+				...FaderLevelChoiceVariable,
 				...FadeDurationChoice,
 			],
-			callback: async (action): Promise<void> => {
+			callback: async (action, context): Promise<void> => {
 				const cmd = SendBusToMatrixPath(action.options)
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
-				transitions.runForDb(cmd, currentVal, getOptNumber(action, 'fad'), getOptNumber(action, 'fadeDuration', 0))
+				if (typeof currentVal !== 'number') return // or handle error
+				const target = await getOptNumberVariable(action, 'var', 'fad', context)
+				transitions.runForDb(cmd, currentVal, target, getOptNumber(action, 'fadeDuration', 0))
 			},
 			subscribe: (evt): void => {
 				// In case we have a fade time
@@ -1786,12 +1788,14 @@ export function GetActionsList(
 		},
 		[ActionId.MonitorLevel]: {
 			name: 'Set monitor level',
-			options: [FaderLevelChoice, ...FadeDurationChoice],
-			callback: async (action): Promise<void> => {
+			options: [...FaderLevelChoiceVariable, ...FadeDurationChoice],
+			callback: async (action, context): Promise<void> => {
 				const cmd = `/config/solo/level`
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
-				transitions.runForDb(cmd, currentVal, getOptNumber(action, 'fad'), getOptNumber(action, 'fadeDuration', 0))
+				if (typeof currentVal !== 'number') return // or handle error
+				const target = await getOptNumberVariable(action, 'var', 'fad', context)
+				transitions.runForDb(cmd, currentVal, target, getOptNumber(action, 'fadeDuration', 0))
 			},
 			subscribe: (): void => {
 				ensureLoaded(`/config/solo/level`)
