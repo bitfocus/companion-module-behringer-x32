@@ -3,7 +3,7 @@ import { X32DeviceDetectorInstance } from './device-detector.js'
 
 export const fadeFpsDefault = 10
 
-export interface X32Config {
+export type X32Config = {
 	host?: string
 	fadeFps?: number
 }

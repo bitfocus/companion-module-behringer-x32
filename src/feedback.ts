@@ -48,10 +48,7 @@ import {
 	CompanionFeedbackInfo,
 } from '@companion-module/base'
 
-type CompanionFeedbackWithCallback = SetRequired<
-	CompanionBooleanFeedbackDefinition,
-	'callback' | 'subscribe' | 'unsubscribe'
->
+type CompanionFeedbackWithCallback = SetRequired<CompanionBooleanFeedbackDefinition, 'callback' | 'unsubscribe'>
 
 export enum FeedbackId {
 	Mute = 'mute',

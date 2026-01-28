@@ -16,7 +16,7 @@ import {
 import { IStoredChannelObserver, X32State, X32Subscriptions } from './state.js'
 import osc from 'osc'
 import { MainPath } from './paths.js'
-import { BooleanFeedbackUpgradeMap, upgradeV2x0x0 } from './upgrades.js'
+import { BooleanFeedbackUpgradeMap } from './upgrades.js'
 import { GetTargetChoices } from './choices.js'
 import debounceFn from 'debounce-fn'
 import PQueue from 'p-queue'
@@ -26,23 +26,25 @@ import {
 	CompanionStaticUpgradeScript,
 	InstanceBase,
 	SomeCompanionConfigField,
-	runEntrypoint,
 	CreateConvertToBooleanFeedbackUpgradeScript,
 	EmptyUpgradeScript,
 	InstanceStatus,
 } from '@companion-module/base'
 import { InstanceBaseExt } from './util.js'
 
-const UpgradeScripts: CompanionStaticUpgradeScript<X32Config>[] = [
+export const UpgradeScripts: CompanionStaticUpgradeScript<X32Config>[] = [
 	EmptyUpgradeScript, // Previous version had a script
-	upgradeV2x0x0,
+	EmptyUpgradeScript, // This script was for Companion 2.x to 3.0, and was not worth the effort to fixup for the newer api
 	CreateConvertToBooleanFeedbackUpgradeScript(BooleanFeedbackUpgradeMap),
 ]
 
 /**
  * Companion instance class for the Behringer X32 Mixers.
  */
-class X32Instance extends InstanceBase<X32Config> implements InstanceBaseExt<X32Config>, IStoredChannelObserver {
+export default class X32Instance
+	extends InstanceBase<X32Config>
+	implements InstanceBaseExt<X32Config>, IStoredChannelObserver
+{
 	private osc: osc.UDPPort
 	private x32State: X32State
 	private x32Subscriptions: X32Subscriptions
@@ -211,7 +213,6 @@ class X32Instance extends InstanceBase<X32Config> implements InstanceBaseExt<X32
 
 		// Ensure all feedbacks & actions have an initial value, if we are connected
 		if (this.heartbeat) {
-			this.subscribeFeedbacks()
 			this.subscribeActions()
 		}
 	}
@@ -511,5 +512,3 @@ class X32Instance extends InstanceBase<X32Config> implements InstanceBaseExt<X32
 		}
 	}
 }
-
-runEntrypoint(X32Instance, UpgradeScripts)

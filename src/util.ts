@@ -1,4 +1,4 @@
-import { InputValue, InstanceBase } from '@companion-module/base'
+import type { JsonValue, InstanceBase, JsonObject } from '@companion-module/base'
 
 export const MEDIA_PLAYER_SOURCE_CLIP_OFFSET = 1000
 
@@ -86,8 +86,8 @@ export enum NumberComparitor {
 }
 
 export function compareNumber(
-	target: InputValue | undefined,
-	comparitor: InputValue | undefined,
+	target: JsonValue | undefined,
+	comparitor: JsonValue | undefined,
 	currentValue: number,
 ): boolean {
 	const targetValue = Number(target)
@@ -111,6 +111,6 @@ export function compareNumber(
 	}
 }
 
-export interface InstanceBaseExt<TConfig> extends InstanceBase<TConfig> {
+export interface InstanceBaseExt<TConfig extends JsonObject> extends InstanceBase<TConfig> {
 	config: TConfig
 }
