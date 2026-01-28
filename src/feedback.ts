@@ -222,6 +222,7 @@ export function GetFeedbacksList(
 						{ id: 0, label: 'Stop' },
 					],
 					default: 3,
+					disableAutoExpression: true,
 				},
 			],
 			defaultStyle: {
@@ -232,7 +233,7 @@ export function GetFeedbacksList(
 				getPath: () => `/-stat/urec/state`,
 				getValue: (evt, data) => {
 					const record = getDataNumber(data, 0) === 3
-					return record === !!evt.options.state
+					return record === evt.options.state
 				},
 			}),
 		},
@@ -247,12 +248,6 @@ export function GetFeedbacksList(
 					label: 'Target',
 					...convertChoices(levelsChoices.channels),
 				},
-				{
-					id: 'state',
-					type: 'checkbox',
-					label: 'Muted',
-					default: true,
-				},
 			],
 			defaultStyle: {
 				bgcolor: 0xff0000,
@@ -260,10 +255,7 @@ export function GetFeedbacksList(
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: (options) => MutePath(options.target as string),
-				getValue: (evt, data) => {
-					const muted = getDataNumber(data, 0) === 0
-					return muted === !!evt.options.state
-				},
+				getValue: (_evt, data) => getDataNumber(data, 0) === 0,
 			}),
 		},
 		[FeedbackId.MuteGroup]: {
@@ -277,12 +269,6 @@ export function GetFeedbacksList(
 					label: 'Target',
 					...convertChoices(muteGroups),
 				},
-				{
-					id: 'state',
-					type: 'checkbox',
-					label: 'Muted',
-					default: true,
-				},
 			],
 			defaultStyle: {
 				bgcolor: 0xff0000,
@@ -290,10 +276,7 @@ export function GetFeedbacksList(
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: (options) => options.mute_grp as string,
-				getValue: (evt, data) => {
-					const muted = getDataNumber(data, 0) === 1
-					return muted === !!evt.options.state
-				},
+				getValue: (_evt, data) => getDataNumber(data, 0) === 1,
 			}),
 		},
 		[FeedbackId.MuteChannelSend]: {
@@ -313,12 +296,6 @@ export function GetFeedbacksList(
 					id: 'target',
 					...convertChoices(GetChannelSendChoices(state, 'on')),
 				},
-				{
-					id: 'state',
-					type: 'checkbox',
-					label: 'Muted',
-					default: true,
-				},
 			],
 			defaultStyle: {
 				bgcolor: 0xff0000,
@@ -326,10 +303,7 @@ export function GetFeedbacksList(
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: (options) => `${MainPath(options.source as string)}/${options.target}`,
-				getValue: (evt, data) => {
-					const muted = getDataNumber(data, 0) === 0
-					return muted === !!evt.options.state
-				},
+				getValue: (_evt, data) => getDataNumber(data, 0) === 0,
 			}),
 		},
 		[FeedbackId.MuteBusSend]: {
@@ -349,12 +323,6 @@ export function GetFeedbacksList(
 					id: 'target',
 					...convertChoices(levelsChoices.busSendTargets),
 				},
-				{
-					id: 'state',
-					type: 'checkbox',
-					label: 'Muted',
-					default: true,
-				},
 			],
 			defaultStyle: {
 				bgcolor: 0xff0000,
@@ -362,10 +330,7 @@ export function GetFeedbacksList(
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: (options) => `${MainPath(options.source as string)}/${options.target}/on`,
-				getValue: (evt, data) => {
-					const muted = getDataNumber(data, 0) === 0
-					return muted === !!evt.options.state
-				},
+				getValue: (_evt, data) => getDataNumber(data, 0) === 0,
 			}),
 		},
 		[FeedbackId.FaderLevel]: {
@@ -587,12 +552,6 @@ export function GetFeedbacksList(
 						},
 					]),
 				},
-				{
-					id: 'state',
-					type: 'checkbox',
-					label: 'On',
-					default: true,
-				},
 			],
 			defaultStyle: {
 				bgcolor: 0xff7f00,
@@ -600,10 +559,7 @@ export function GetFeedbacksList(
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: (options) => `/-stat/talk/${options.channel}`,
-				getValue: (evt, data) => {
-					const isOn = getDataNumber(data, 0) === 1
-					return isOn === !!evt.options.state
-				},
+				getValue: (_evt, data) => getDataNumber(data, 0) === 1,
 			}),
 		},
 		[FeedbackId.TalkbackConfigSingleSource]: {
@@ -633,12 +589,6 @@ export function GetFeedbacksList(
 					default: 0,
 					choices: GetTalkbackDestinations(state),
 				},
-				{
-					id: 'state',
-					type: 'checkbox',
-					label: 'On',
-					default: true,
-				},
 			],
 			defaultStyle: {
 				bgcolor: 0xff7f00,
@@ -649,8 +599,7 @@ export function GetFeedbacksList(
 				getValue: (evt, data) => {
 					const bitmap = getDataNumber(data, 0) ?? 0
 					const mask = Math.pow(2, evt.options.dest as number)
-					const isOn = (bitmap & mask) > 0
-					return isOn === !!evt.options.state
+					return (bitmap & mask) > 0
 				},
 			}),
 		},
@@ -658,24 +607,14 @@ export function GetFeedbacksList(
 			type: 'boolean',
 			name: 'Change from oscillator enabled state',
 			description: 'If the oscillator is on, change style of the bank',
-			options: [
-				{
-					id: 'state',
-					type: 'checkbox',
-					label: 'On',
-					default: true,
-				},
-			],
+			options: [],
 			defaultStyle: {
 				bgcolor: 0xff0000,
 				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: () => `/-stat/osc/on`,
-				getValue: (evt, data) => {
-					const isOn = getDataNumber(data, 0) !== 0
-					return isOn === !!evt.options.state
-				},
+				getValue: (_evt, data) => getDataNumber(data, 0) !== 0,
 			}),
 		},
 		[FeedbackId.OscillatorDestination]: {
@@ -737,12 +676,6 @@ export function GetFeedbacksList(
 					id: 'solo',
 					...convertChoices(soloChoices),
 				},
-				{
-					id: 'state',
-					type: 'checkbox',
-					label: 'On',
-					default: true,
-				},
 			],
 			defaultStyle: {
 				bgcolor: 0xff7f00,
@@ -753,106 +686,63 @@ export function GetFeedbacksList(
 					const ch = `${getOptNumber(options, 'solo') + 1}`.padStart(2, '0')
 					return `/-stat/solosw/${ch}`
 				},
-				getValue: (evt, data) => {
-					const isOn = getDataNumber(data, 0) !== 0
-					return isOn === !!evt.options.state
-				},
+				getValue: (_evt, data) => getDataNumber(data, 0) !== 0,
 			}),
 		},
 		[FeedbackId.ClearSolo]: {
 			type: 'boolean',
 			name: 'Change from clear solo state',
 			description: 'If atleast one solo is selected the clear solo button is on and will change style of the bank',
-			options: [
-				{
-					id: 'state',
-					type: 'checkbox',
-					label: 'On',
-					default: true,
-				},
-			],
+			options: [],
 			defaultStyle: {
 				bgcolor: 0xff7f00,
 				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: () => `/-stat/solo`,
-				getValue: (evt, data) => {
-					const isOn = getDataNumber(data, 0) !== 0
-					return isOn === !!evt.options.state
-				},
+				getValue: (_evt, data) => getDataNumber(data, 0) !== 0,
 			}),
 		},
 		[FeedbackId.SendsOnFader]: {
 			type: 'boolean',
 			name: 'Change from Sends on Fader/Fader Flip state',
 			description: 'If the Sends on Fader/Fader Flip is on, change style of the bank',
-			options: [
-				{
-					id: 'state',
-					type: 'checkbox',
-					label: 'On',
-					default: true,
-				},
-			],
+			options: [],
 			defaultStyle: {
 				bgcolor: 0xff7f00,
 				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: () => `/-stat/sendsonfader`,
-				getValue: (evt, data) => {
-					const isOn = getDataNumber(data, 0) !== 0
-					return isOn === !!evt.options.state
-				},
+				getValue: (_evt, data) => getDataNumber(data, 0) !== 0,
 			}),
 		},
 		[FeedbackId.SoloMono]: {
 			type: 'boolean',
 			name: 'Change from Solo Mono enabled state',
 			description: 'If the Solo Mono is on, change style of the bank',
-			options: [
-				{
-					id: 'state',
-					type: 'checkbox',
-					label: 'On',
-					default: true,
-				},
-			],
+			options: [],
 			defaultStyle: {
 				bgcolor: 0xff7f00,
 				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: () => `/config/solo/mono`,
-				getValue: (evt, data) => {
-					const isOn = getDataNumber(data, 0) !== 0
-					return isOn === !!evt.options.state
-				},
+				getValue: (_evt, data) => getDataNumber(data, 0) !== 0,
 			}),
 		},
 		[FeedbackId.SoloDim]: {
 			type: 'boolean',
 			name: 'Change from Solo Dim enabled state',
 			description: 'If the Solo Dim is on, change style of the bank',
-			options: [
-				{
-					id: 'state',
-					type: 'checkbox',
-					label: 'On',
-					default: true,
-				},
-			],
+			options: [],
 			defaultStyle: {
 				bgcolor: 0xff7f00,
 				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: () => `/config/solo/dim`,
-				getValue: (evt, data) => {
-					const isOn = getDataNumber(data, 0) !== 0
-					return isOn === !!evt.options.state
-				},
+				getValue: (_evt, data) => getDataNumber(data, 0) !== 0,
 			}),
 		},
 		[FeedbackId.Tape]: {
@@ -905,12 +795,6 @@ export function GetFeedbacksList(
 						},
 					]),
 				},
-				{
-					id: 'state',
-					type: 'checkbox',
-					label: 'On',
-					default: true,
-				},
 			],
 			defaultStyle: {
 				bgcolor: 0x00ff7f,
@@ -918,10 +802,7 @@ export function GetFeedbacksList(
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: () => `/-stat/chfaderbank`,
-				getValue: (evt, data) => {
-					const isOn = getDataNumber(data, 0) == evt.options.bank
-					return isOn === !!evt.options.state
-				},
+				getValue: (evt, data) => getDataNumber(data, 0) == evt.options.bank,
 			}),
 		},
 		[FeedbackId.GroupBank]: {
@@ -953,12 +834,6 @@ export function GetFeedbacksList(
 						},
 					]),
 				},
-				{
-					id: 'state',
-					type: 'checkbox',
-					label: 'On',
-					default: true,
-				},
 			],
 			defaultStyle: {
 				bgcolor: 0x00ff7f,
@@ -966,10 +841,7 @@ export function GetFeedbacksList(
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: () => `/-stat/grpfaderbank`,
-				getValue: (evt, data) => {
-					const isOn = getDataNumber(data, 0) == evt.options.bank
-					return isOn === !!evt.options.state
-				},
+				getValue: (evt, data) => getDataNumber(data, 0) == evt.options.bank,
 			}),
 		},
 		[FeedbackId.ChannelBankCompact]: {
@@ -1017,12 +889,6 @@ export function GetFeedbacksList(
 						},
 					]),
 				},
-				{
-					id: 'state',
-					type: 'checkbox',
-					label: 'On',
-					default: true,
-				},
 			],
 			defaultStyle: {
 				bgcolor: 0x00ff7f,
@@ -1030,10 +896,7 @@ export function GetFeedbacksList(
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: () => `/-stat/chfaderbank`,
-				getValue: (evt, data) => {
-					const isOn = getDataNumber(data, 0) == evt.options.bank
-					return isOn === !!evt.options.state
-				},
+				getValue: (evt, data) => getDataNumber(data, 0) == evt.options.bank,
 			}),
 		},
 		[FeedbackId.GroupBankCompact]: {
@@ -1089,12 +952,6 @@ export function GetFeedbacksList(
 						},
 					]),
 				},
-				{
-					id: 'state',
-					type: 'checkbox',
-					label: 'On',
-					default: true,
-				},
 			],
 			defaultStyle: {
 				bgcolor: 0x00ff7f,
@@ -1102,10 +959,7 @@ export function GetFeedbacksList(
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: () => `/-stat/grpfaderbank`,
-				getValue: (evt, data) => {
-					const isOn = getDataNumber(data, 0) == evt.options.bank
-					return isOn === !!evt.options.state
-				},
+				getValue: (evt, data) => getDataNumber(data, 0) == evt.options.bank,
 			}),
 		},
 		[FeedbackId.BusSendBank]: {
@@ -1136,12 +990,6 @@ export function GetFeedbacksList(
 						},
 					]),
 				},
-				{
-					id: 'state',
-					type: 'checkbox',
-					label: 'On',
-					default: true,
-				},
 			],
 			defaultStyle: {
 				bgcolor: 0xff7f00,
@@ -1149,10 +997,7 @@ export function GetFeedbacksList(
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: () => `/-stat/bussendbank`,
-				getValue: (evt, data) => {
-					const isOn = getDataNumber(data, 0) == evt.options.bank
-					return isOn === !!evt.options.state
-				},
+				getValue: (evt, data) => getDataNumber(data, 0) == evt.options.bank,
 			}),
 		},
 		[FeedbackId.UserBank]: {
@@ -1179,12 +1024,6 @@ export function GetFeedbacksList(
 						},
 					]),
 				},
-				{
-					id: 'state',
-					type: 'checkbox',
-					label: 'On',
-					default: true,
-				},
 			],
 			defaultStyle: {
 				bgcolor: 0xff7f00,
@@ -1192,10 +1031,7 @@ export function GetFeedbacksList(
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: () => `/-stat/userbank`,
-				getValue: (evt, data) => {
-					const isOn = getDataNumber(data, 0) == evt.options.bank
-					return isOn === !!evt.options.state
-				},
+				getValue: (evt, data) => getDataNumber(data, 0) == evt.options.bank,
 			}),
 		},
 		[FeedbackId.Screens]: {
@@ -1250,12 +1086,6 @@ export function GetFeedbacksList(
 						},
 					]),
 				},
-				{
-					id: 'state',
-					type: 'checkbox',
-					label: 'On',
-					default: true,
-				},
 			],
 			defaultStyle: {
 				bgcolor: 0x00ff7f,
@@ -1263,58 +1093,35 @@ export function GetFeedbacksList(
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: () => `/-stat/screen/screen`,
-				getValue: (evt, data) => {
-					const isOn = getDataNumber(data, 0) == evt.options.screen
-					return isOn === !!evt.options.state
-				},
+				getValue: (evt, data) => getDataNumber(data, 0) == evt.options.screen,
 			}),
 		},
 		[FeedbackId.MuteGroupScreen]: {
 			type: 'boolean',
 			name: 'Change from mute groups screen enabled state',
 			description: 'If mute groups screen is on, change style of the bank',
-			options: [
-				{
-					id: 'state',
-					type: 'checkbox',
-					label: 'On',
-					default: true,
-				},
-			],
+			options: [],
 			defaultStyle: {
 				bgcolor: 0xff0000,
 				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: () => `/-stat/screen/mutegrp`,
-				getValue: (evt, data) => {
-					const isOn = getDataNumber(data, 0) !== 0
-					return isOn === !!evt.options.state
-				},
+				getValue: (_evt, data) => getDataNumber(data, 0) !== 0,
 			}),
 		},
 		[FeedbackId.UtilityScreen]: {
 			type: 'boolean',
 			name: 'Change from Utility enabled state',
 			description: 'If utility screen is on, change style of the bank',
-			options: [
-				{
-					id: 'state',
-					type: 'checkbox',
-					label: 'On',
-					default: true,
-				},
-			],
+			options: [],
 			defaultStyle: {
 				bgcolor: 0x00ff7f,
 				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: () => `/-stat/screen/utils`,
-				getValue: (evt, data) => {
-					const isOn = getDataNumber(data, 0) !== 0
-					return isOn === !!evt.options.state
-				},
+				getValue: (_evt, data) => getDataNumber(data, 0) !== 0,
 			}),
 		},
 		[FeedbackId.ChannelPage]: {
@@ -1357,12 +1164,6 @@ export function GetFeedbacksList(
 						},
 					]),
 				},
-				{
-					id: 'state',
-					type: 'checkbox',
-					label: 'On',
-					default: true,
-				},
 			],
 			defaultStyle: {
 				bgcolor: 0x00ff7f,
@@ -1370,10 +1171,7 @@ export function GetFeedbacksList(
 			},
 			...screenSelectionSubscriptionWrapper({
 				contentPath: '/-stat/screen/CHAN/page',
-				getValue: (evt, screen, page) => {
-					const isOn = getDataNumber(screen, 0) === 0 && getDataNumber(page, 0) == evt.options.page
-					return isOn === !!evt.options.state
-				},
+				getValue: (evt, screen, page) => getDataNumber(screen, 0) === 0 && getDataNumber(page, 0) == evt.options.page,
 			}),
 		},
 		[FeedbackId.MeterPage]: {
@@ -1412,12 +1210,6 @@ export function GetFeedbacksList(
 						},
 					]),
 				},
-				{
-					id: 'state',
-					type: 'checkbox',
-					label: 'On',
-					default: true,
-				},
 			],
 			defaultStyle: {
 				bgcolor: 0x00ff7f,
@@ -1425,10 +1217,7 @@ export function GetFeedbacksList(
 			},
 			...screenSelectionSubscriptionWrapper({
 				contentPath: '/-stat/screen/METER/page',
-				getValue: (evt, screen, page) => {
-					const isOn = getDataNumber(screen, 0) === 1 && getDataNumber(page, 0) == evt.options.page
-					return isOn === !!evt.options.state
-				},
+				getValue: (evt, screen, page) => getDataNumber(screen, 0) === 1 && getDataNumber(page, 0) == evt.options.page,
 			}),
 		},
 		[FeedbackId.RoutePage]: {
@@ -1479,12 +1268,6 @@ export function GetFeedbacksList(
 						},
 					]),
 				},
-				{
-					id: 'state',
-					type: 'checkbox',
-					label: 'On',
-					default: true,
-				},
 			],
 			defaultStyle: {
 				bgcolor: 0x00ff7f,
@@ -1492,10 +1275,7 @@ export function GetFeedbacksList(
 			},
 			...screenSelectionSubscriptionWrapper({
 				contentPath: '/-stat/screen/ROUTE/page',
-				getValue: (evt, screen, page) => {
-					const isOn = getDataNumber(screen, 0) === 2 && getDataNumber(page, 0) == evt.options.page
-					return isOn === !!evt.options.state
-				},
+				getValue: (evt, screen, page) => getDataNumber(screen, 0) === 2 && getDataNumber(page, 0) == evt.options.page,
 			}),
 		},
 		[FeedbackId.SetupPage]: {
@@ -1538,12 +1318,6 @@ export function GetFeedbacksList(
 						},
 					]),
 				},
-				{
-					id: 'state',
-					type: 'checkbox',
-					label: 'On',
-					default: true,
-				},
 			],
 			defaultStyle: {
 				bgcolor: 0x00ff7f,
@@ -1551,10 +1325,7 @@ export function GetFeedbacksList(
 			},
 			...screenSelectionSubscriptionWrapper({
 				contentPath: '/-stat/screen/SETUP/page',
-				getValue: (evt, screen, page) => {
-					const isOn = getDataNumber(screen, 0) === 3 && getDataNumber(page, 0) == evt.options.page
-					return isOn === !!evt.options.state
-				},
+				getValue: (evt, screen, page) => getDataNumber(screen, 0) === 3 && getDataNumber(page, 0) == evt.options.page,
 			}),
 		},
 		[FeedbackId.LibPage]: {
@@ -1585,12 +1356,6 @@ export function GetFeedbacksList(
 						},
 					]),
 				},
-				{
-					id: 'state',
-					type: 'checkbox',
-					label: 'On',
-					default: true,
-				},
 			],
 			defaultStyle: {
 				bgcolor: 0x00ff7f,
@@ -1598,10 +1363,7 @@ export function GetFeedbacksList(
 			},
 			...screenSelectionSubscriptionWrapper({
 				contentPath: '/-stat/screen/LIB/page',
-				getValue: (evt, screen, page) => {
-					const isOn = getDataNumber(screen, 0) === 4 && getDataNumber(page, 0) == evt.options.page
-					return isOn === !!evt.options.state
-				},
+				getValue: (evt, screen, page) => getDataNumber(screen, 0) === 4 && getDataNumber(page, 0) == evt.options.page,
 			}),
 		},
 		[FeedbackId.FxPage]: {
@@ -1652,12 +1414,6 @@ export function GetFeedbacksList(
 						},
 					]),
 				},
-				{
-					id: 'state',
-					type: 'checkbox',
-					label: 'On',
-					default: true,
-				},
 			],
 			defaultStyle: {
 				bgcolor: 0x00ff7f,
@@ -1665,10 +1421,7 @@ export function GetFeedbacksList(
 			},
 			...screenSelectionSubscriptionWrapper({
 				contentPath: '/-stat/screen/FX/page',
-				getValue: (evt, screen, page) => {
-					const isOn = getDataNumber(screen, 0) === 5 && getDataNumber(page, 0) == evt.options.page
-					return isOn === !!evt.options.state
-				},
+				getValue: (evt, screen, page) => getDataNumber(screen, 0) === 5 && getDataNumber(page, 0) == evt.options.page,
 			}),
 		},
 		[FeedbackId.MonPage]: {
@@ -1699,12 +1452,6 @@ export function GetFeedbacksList(
 						},
 					]),
 				},
-				{
-					id: 'state',
-					type: 'checkbox',
-					label: 'On',
-					default: true,
-				},
 			],
 			defaultStyle: {
 				bgcolor: 0x00ff7f,
@@ -1712,10 +1459,7 @@ export function GetFeedbacksList(
 			},
 			...screenSelectionSubscriptionWrapper({
 				contentPath: '/-stat/screen/MON/page',
-				getValue: (evt, screen, page) => {
-					const isOn = getDataNumber(screen, 0) === 6 && getDataNumber(page, 0) == evt.options.page
-					return isOn === !!evt.options.state
-				},
+				getValue: (evt, screen, page) => getDataNumber(screen, 0) === 6 && getDataNumber(page, 0) == evt.options.page,
 			}),
 		},
 		[FeedbackId.USBPage]: {
@@ -1738,12 +1482,6 @@ export function GetFeedbacksList(
 						},
 					]),
 				},
-				{
-					id: 'state',
-					type: 'checkbox',
-					label: 'On',
-					default: true,
-				},
 			],
 			defaultStyle: {
 				bgcolor: 0x00ff7f,
@@ -1751,10 +1489,7 @@ export function GetFeedbacksList(
 			},
 			...screenSelectionSubscriptionWrapper({
 				contentPath: '/-stat/screen/USB/page',
-				getValue: (evt, screen, page) => {
-					const isOn = getDataNumber(screen, 0) === 7 && getDataNumber(page, 0) == evt.options.page
-					return isOn === !!evt.options.state
-				},
+				getValue: (evt, screen, page) => getDataNumber(screen, 0) === 7 && getDataNumber(page, 0) == evt.options.page,
 			}),
 		},
 		[FeedbackId.ScenePage]: {
@@ -1793,12 +1528,6 @@ export function GetFeedbacksList(
 						},
 					]),
 				},
-				{
-					id: 'state',
-					type: 'checkbox',
-					label: 'On',
-					default: true,
-				},
 			],
 			defaultStyle: {
 				bgcolor: 0x00ff7f,
@@ -1806,10 +1535,7 @@ export function GetFeedbacksList(
 			},
 			...screenSelectionSubscriptionWrapper({
 				contentPath: '/-stat/screen/SCENE/page',
-				getValue: (evt, screen, page) => {
-					const isOn = getDataNumber(screen, 0) === 8 && getDataNumber(page, 0) == evt.options.page
-					return isOn === !!evt.options.state
-				},
+				getValue: (evt, screen, page) => getDataNumber(screen, 0) === 8 && getDataNumber(page, 0) == evt.options.page,
 			}),
 		},
 		[FeedbackId.AssignPage]: {
@@ -1840,12 +1566,6 @@ export function GetFeedbacksList(
 						},
 					]),
 				},
-				{
-					id: 'state',
-					type: 'checkbox',
-					label: 'On',
-					default: true,
-				},
 			],
 			defaultStyle: {
 				bgcolor: 0x00ff7f,
@@ -1853,10 +1573,7 @@ export function GetFeedbacksList(
 			},
 			...screenSelectionSubscriptionWrapper({
 				contentPath: '/-stat/screen/ASSIGN/page',
-				getValue: (evt, screen, page) => {
-					const isOn = getDataNumber(screen, 0) === 9 && getDataNumber(page, 0) == evt.options.page
-					return isOn === !!evt.options.state
-				},
+				getValue: (evt, screen, page) => getDataNumber(screen, 0) === 9 && getDataNumber(page, 0) == evt.options.page,
 			}),
 		},
 
@@ -1871,12 +1588,6 @@ export function GetFeedbacksList(
 					label: 'source',
 					id: 'source',
 					...convertChoices([...GetUserInSources()]),
-				},
-				{
-					id: 'state',
-					type: 'checkbox',
-					label: 'Is Routed To',
-					default: true,
 				},
 				{
 					type: 'dropdown',
@@ -1932,8 +1643,7 @@ export function GetFeedbacksList(
 					if (channel == undefined || channel > 31) return false
 				}
 				const data = state.get(UserRouteInPath(channel))
-				const isRouted = getDataNumber(data, 0) === source
-				return isRouted === !!evt.options.state
+				return getDataNumber(data, 0) === source
 			},
 			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const channel = evt.options.channel as number
@@ -1959,12 +1669,6 @@ export function GetFeedbacksList(
 					label: 'source',
 					id: 'source',
 					...convertChoices([...GetUserOutSources()]),
-				},
-				{
-					id: 'state',
-					type: 'checkbox',
-					label: 'Is Routed To',
-					default: true,
 				},
 				{
 					type: 'dropdown',
@@ -2020,8 +1724,7 @@ export function GetFeedbacksList(
 					if (channel == undefined || channel > 31) return false
 				}
 				const data = state.get(UserRouteOutPath(channel))
-				const isRouted = getDataNumber(data, 0) === source
-				return isRouted === !!evt.options.state
+				return getDataNumber(data, 0) === source
 			},
 			unsubscribe: (evt: CompanionFeedbackInfo): void => {
 				const channel = evt.options.channel as number
@@ -2047,12 +1750,6 @@ export function GetFeedbacksList(
 					id: 'channel',
 					...convertChoices([...GetUserOutTargets(true)]),
 				},
-				{
-					id: 'state',
-					type: 'checkbox',
-					label: 'Is stored',
-					default: true,
-				},
 			],
 			defaultStyle: {
 				bgcolor: 0x00ff7f,
@@ -2060,8 +1757,7 @@ export function GetFeedbacksList(
 			},
 			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const storedChannel = state.getStoredChannel()
-				const isStored = getOptNumber(evt.options, 'channel', 0) === storedChannel
-				return isStored === !!evt.options.state
+				return getOptNumber(evt.options, 'channel', 0) === storedChannel
 			},
 			unsubscribe: (): void => undefined,
 		},
@@ -2079,12 +1775,6 @@ export function GetFeedbacksList(
 						{ label: 'PLAY', id: 1 },
 					]),
 				},
-				{
-					id: 'state',
-					type: 'checkbox',
-					label: 'Active',
-					default: true,
-				},
 			],
 			defaultStyle: {
 				bgcolor: 0x007fff,
@@ -2094,8 +1784,7 @@ export function GetFeedbacksList(
 				getPath: () => `/config/routing/routswitch`,
 				getValue: (evt, data) => {
 					const mode = getOptNumber(evt.options, 'mode', 0)
-					const isRouted = getDataNumber(data, 0) === mode
-					return isRouted === !!evt.options.state
+					return getDataNumber(data, 0) === mode
 				},
 			}),
 		},
@@ -2120,12 +1809,6 @@ export function GetFeedbacksList(
 					...convertChoices([...GetInputBlocks()]),
 				},
 				{
-					id: 'state',
-					type: 'checkbox',
-					label: 'Is Routed To',
-					default: true,
-				},
-				{
 					type: 'dropdown',
 					label: 'Routing source block',
 					id: 'routing',
@@ -2140,8 +1823,7 @@ export function GetFeedbacksList(
 				getPath: (options) => `/config/routing/${options.mode}/${options.block}`,
 				getValue: (evt, data) => {
 					const routing = evt.options.routing as number
-					const isRouted = getDataNumber(data, 0) === routing
-					return isRouted === !!evt.options.state
+					return getDataNumber(data, 0) === routing
 				},
 			}),
 		},
@@ -2160,12 +1842,6 @@ export function GetFeedbacksList(
 					]),
 				},
 				{
-					id: 'state',
-					type: 'checkbox',
-					label: 'Is Routed To',
-					default: true,
-				},
-				{
 					type: 'dropdown',
 					label: 'Routing source block',
 					id: 'routing',
@@ -2180,8 +1856,7 @@ export function GetFeedbacksList(
 				getPath: (options) => `/config/routing/${options.mode}/AUX`,
 				getValue: (evt, data) => {
 					const routing = evt.options.routing as number
-					const isRouted = getDataNumber(data, 0) === routing
-					return isRouted === !!evt.options.state
+					return getDataNumber(data, 0) === routing
 				},
 			}),
 		},
@@ -2206,12 +1881,6 @@ export function GetFeedbacksList(
 					...convertChoices([...GetAesBlocks()]),
 				},
 				{
-					id: 'state',
-					type: 'checkbox',
-					label: 'Is Routed To',
-					default: true,
-				},
-				{
 					type: 'dropdown',
 					label: 'Routing source block',
 					id: 'routing',
@@ -2226,8 +1895,7 @@ export function GetFeedbacksList(
 				getPath: (options) => `/config/routing/AES${options.mode}/${options.block}`,
 				getValue: (evt, data) => {
 					const routing = evt.options.routing as number
-					const isRouted = getDataNumber(data, 0) === routing
-					return isRouted === !!evt.options.state
+					return getDataNumber(data, 0) === routing
 				},
 			}),
 		},
@@ -2241,12 +1909,6 @@ export function GetFeedbacksList(
 					label: 'Card block',
 					id: 'block',
 					...convertChoices([...GetInputBlocks()]),
-				},
-				{
-					id: 'state',
-					type: 'checkbox',
-					label: 'Is Routed To',
-					default: true,
 				},
 				{
 					type: 'dropdown',
@@ -2263,8 +1925,7 @@ export function GetFeedbacksList(
 				getPath: (options) => `/config/routing/CARD/${options.block}`,
 				getValue: (evt, data) => {
 					const routing = evt.options.routing as number
-					const isRouted = getDataNumber(data, 0) === routing
-					return isRouted === !!evt.options.state
+					return getDataNumber(data, 0) === routing
 				},
 			}),
 		},
@@ -2283,12 +1944,6 @@ export function GetFeedbacksList(
 					]),
 				},
 				{
-					id: 'state',
-					type: 'checkbox',
-					label: 'Is Routed To',
-					default: true,
-				},
-				{
 					type: 'dropdown',
 					label: 'Routing source block',
 					id: 'routing',
@@ -2303,8 +1958,7 @@ export function GetFeedbacksList(
 				getPath: (options) => `/config/routing/OUT/${options.block}`,
 				getValue: (evt, data) => {
 					const routing = evt.options.routing as number
-					const isRouted = getDataNumber(data, 0) === routing
-					return isRouted === !!evt.options.state
+					return getDataNumber(data, 0) === routing
 				},
 			}),
 		},
@@ -2323,12 +1977,6 @@ export function GetFeedbacksList(
 					]),
 				},
 				{
-					id: 'state',
-					type: 'checkbox',
-					label: 'Is Routed To',
-					default: true,
-				},
-				{
 					type: 'dropdown',
 					label: 'Routing source block',
 					id: 'routing',
@@ -2343,8 +1991,7 @@ export function GetFeedbacksList(
 				getPath: (options) => `/config/routing/OUT/${options.block}`,
 				getValue: (evt, data) => {
 					const routing = evt.options.routing as number
-					const isRouted = getDataNumber(data, 0) === routing
-					return isRouted === !!evt.options.state
+					return getDataNumber(data, 0) === routing
 				},
 			}),
 		},
@@ -2364,12 +2011,6 @@ export function GetFeedbacksList(
 						{ id: 2, label: 'Shutdown' },
 					]),
 				},
-				{
-					id: 'state',
-					type: 'checkbox',
-					label: 'Is active',
-					default: true,
-				},
 			],
 			defaultStyle: {
 				bgcolor: 0xff0000,
@@ -2377,10 +2018,7 @@ export function GetFeedbacksList(
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: () => `/-stat/lock`,
-				getValue: (evt, data) => {
-					const isRouted = getDataNumber(data, 0) === (evt.options.lockState as number)
-					return isRouted === !!evt.options.state
-				},
+				getValue: (evt, data) => getDataNumber(data, 0) === (evt.options.lockState as number),
 			}),
 		},
 
@@ -2395,12 +2033,6 @@ export function GetFeedbacksList(
 					id: 'src',
 					...convertChoices(insertSourceChoices),
 				},
-				{
-					id: 'state',
-					type: 'checkbox',
-					label: 'Is On',
-					default: true,
-				},
 			],
 			defaultStyle: {
 				bgcolor: 0xff7f00,
@@ -2408,10 +2040,7 @@ export function GetFeedbacksList(
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: (options) => `${options.src as string}/insert/on`,
-				getValue: (evt, data) => {
-					const isOn = getDataNumber(data, 0) === 1
-					return isOn === !!evt.options.state
-				},
+				getValue: (_evt, data) => getDataNumber(data, 0) === 1,
 			}),
 		},
 		[FeedbackId.InsertPos]: {
@@ -2476,23 +2105,16 @@ export function GetFeedbacksList(
 			type: 'boolean',
 			name: 'Undo available',
 			description: 'If undo is available, change the style of the bank',
-			options: [
-				{
-					id: 'state',
-					type: 'checkbox',
-					label: 'Is available',
-					default: true,
-				},
-			],
+			options: [],
 			defaultStyle: {
 				bgcolor: 0xff7f00,
 				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: () => '/-undo/time',
-				getValue: (evt, data) => {
+				getValue: (_evt, data) => {
 					const time = data && data[0]?.type === 's' ? data[0].value : ''
-					return !!time === !!evt.options.state
+					return !!time
 				},
 			}),
 		},

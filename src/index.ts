@@ -16,7 +16,7 @@ import {
 import { IStoredChannelObserver, X32State, X32Subscriptions } from './state.js'
 import osc from 'osc'
 import { MainPath } from './paths.js'
-import { BooleanFeedbackUpgradeMap } from './upgrades.js'
+import { BooleanFeedbackUpgradeMap, upgradeToBuiltinFeedbackInverted } from './upgrades.js'
 import { GetTargetChoices } from './choices.js'
 import debounceFn from 'debounce-fn'
 import PQueue from 'p-queue'
@@ -36,6 +36,7 @@ export const UpgradeScripts: CompanionStaticUpgradeScript<X32Config>[] = [
 	EmptyUpgradeScript, // Previous version had a script
 	EmptyUpgradeScript, // This script was for Companion 2.x to 3.0, and was not worth the effort to fixup for the newer api
 	CreateConvertToBooleanFeedbackUpgradeScript(BooleanFeedbackUpgradeMap),
+	upgradeToBuiltinFeedbackInverted,
 ]
 
 /**
