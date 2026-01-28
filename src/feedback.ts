@@ -40,7 +40,7 @@ import {
 import osc from 'osc'
 import { X32Config } from './config.js'
 import { NumberComparitorPicker } from './input.js'
-import { SetRequired } from 'type-fest'
+import type { SetRequired } from 'type-fest'
 import {
 	combineRgb,
 	CompanionBooleanFeedbackDefinition,
@@ -131,7 +131,7 @@ function subscribeFeedback(
 	ensureLoaded: (path: string) => void,
 	subs: X32Subscriptions,
 	path: string,
-	evt: CompanionFeedbackInfo
+	evt: CompanionFeedbackInfo,
 ): void {
 	subs.subscribe(path, evt.id, evt.feedbackId as FeedbackId)
 	ensureLoaded(path)
@@ -144,7 +144,7 @@ export function GetFeedbacksList(
 	_self: InstanceBaseExt<X32Config>,
 	state: X32State,
 	subs: X32Subscriptions,
-	ensureLoaded: (path: string) => void
+	ensureLoaded: (path: string) => void,
 ): CompanionFeedbackDefinitions {
 	const levelsChoices = GetLevelsChoiceConfigs(state)
 	const panningChoices = GetPanningChoiceConfigs(state)

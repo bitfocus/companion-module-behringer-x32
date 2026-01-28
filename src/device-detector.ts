@@ -74,7 +74,6 @@ class X32DeviceDetectorImpl implements X32DeviceDetector {
 			this.sendQuery()
 		})
 
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		this.osc.on('close' as any, () => {
 			debug('osc closed')
 
@@ -120,7 +119,7 @@ class X32DeviceDetectorImpl implements X32DeviceDetector {
 		if (this.osc) {
 			try {
 				this.osc.close()
-			} catch (e) {
+			} catch (_e) {
 				// Ignore
 			}
 			delete this.osc

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-enum-comparison */
 import {
 	CompanionStaticUpgradeProps,
 	CompanionStaticUpgradeResult,
@@ -11,7 +12,7 @@ import { padNumber, floatToDB } from './util.js'
 
 export const upgradeV2x0x0: CompanionStaticUpgradeScript<X32Config> = (
 	_context: CompanionUpgradeContext<X32Config>,
-	props: CompanionStaticUpgradeProps<X32Config>
+	props: CompanionStaticUpgradeProps<X32Config>,
 ): CompanionStaticUpgradeResult<X32Config> => {
 	const updatedActions: CompanionStaticUpgradeResult<X32Config>['updatedActions'] = []
 

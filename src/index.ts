@@ -63,7 +63,6 @@ class X32Instance extends InstanceBase<X32Config> implements InstanceBaseExt<X32
 	private readonly requestQueue: PQueue = new PQueue({
 		concurrency: 20,
 		timeout: 500,
-		throwOnTimeout: true,
 	})
 	private inFlightRequests: { [path: string]: () => void } = {}
 
@@ -101,7 +100,7 @@ class X32Instance extends InstanceBase<X32Config> implements InstanceBaseExt<X32
 				maxWait: 500,
 				before: true,
 				after: true,
-			}
+			},
 		)
 	}
 
@@ -191,7 +190,7 @@ class X32Instance extends InstanceBase<X32Config> implements InstanceBaseExt<X32
 		if (this.osc) {
 			try {
 				this.osc.close()
-			} catch (e) {
+			} catch (_e) {
 				// Ignore
 			}
 			// delete this.osc
@@ -235,7 +234,7 @@ class X32Instance extends InstanceBase<X32Config> implements InstanceBaseExt<X32
 					}, 5000)
 				}
 			}
-		} catch (e) {
+		} catch (_e) {
 			// Ignore
 		}
 	}
@@ -255,7 +254,7 @@ class X32Instance extends InstanceBase<X32Config> implements InstanceBaseExt<X32
 		if (this.osc) {
 			try {
 				this.osc.close()
-			} catch (e) {
+			} catch (_e) {
 				// Ignore
 			}
 		}
@@ -317,7 +316,7 @@ class X32Instance extends InstanceBase<X32Config> implements InstanceBaseExt<X32
 						this.osc.send({ address: '/xinfo', args: [] })
 						this.osc.send({ address: '/-snap/name', args: [] })
 						this.osc.send({ address: '/-snap/index', args: [] })
-					} catch (e) {
+					} catch (_e) {
 						// Ignore
 					}
 				}
@@ -330,7 +329,6 @@ class X32Instance extends InstanceBase<X32Config> implements InstanceBaseExt<X32
 			this.updateStatus(InstanceStatus.Connecting, 'Syncing')
 		})
 
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		this.osc.on('close' as any, () => {
 			if (this.heartbeat !== undefined) {
 				clearInterval(this.heartbeat)
@@ -406,7 +404,7 @@ class X32Instance extends InstanceBase<X32Config> implements InstanceBaseExt<X32
 						{ type: 'i', value: 20 },
 					],
 				})
-			} catch (e) {
+			} catch (_e) {
 				// Ignore
 			}
 		}

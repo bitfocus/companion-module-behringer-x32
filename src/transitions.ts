@@ -69,7 +69,7 @@ export class X32Transitions {
 		to: number,
 		duration: number,
 		algorithm?: Easing.algorithm,
-		curve?: Easing.curve
+		curve?: Easing.curve,
 	): void {
 		const floatTo = dbToFloat(to)
 		const floatFrom = from ? dbToFloat(from) : undefined
@@ -82,7 +82,7 @@ export class X32Transitions {
 		to: number,
 		duration: number,
 		algorithm?: Easing.algorithm,
-		curve?: Easing.curve
+		curve?: Easing.curve,
 	): void {
 		const interval = 1000 / this.fps
 		const stepCount = Math.ceil(duration / interval)

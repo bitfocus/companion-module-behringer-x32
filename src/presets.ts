@@ -3,7 +3,7 @@ import { X32Config } from './config.js'
 import { FeedbackId } from './feedback.js'
 import { X32State } from './state.js'
 import { GetLevelsChoiceConfigs } from './choices.js'
-import { SetRequired } from 'type-fest'
+import type { SetRequired } from 'type-fest'
 import {
 	combineRgb,
 	CompanionPresetDefinitions,

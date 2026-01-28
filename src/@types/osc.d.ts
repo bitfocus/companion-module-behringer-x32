@@ -18,7 +18,6 @@ declare module 'osc' {
 
 		listeners<E extends keyof T>(event: E): T[E][]
 
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		emit(event: string | symbol, ...args: any[]): boolean
 		listenerCount(type: keyof T): number
 
@@ -47,8 +46,7 @@ declare module 'osc' {
 		args: Argument | Array<Argument> | MetaArgument | Array<MetaArgument>
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-empty-interface
-	export interface OscBundle {}
+	export type OscBundle = Record<string, never>
 
 	export interface SenderInfo {
 		address: string
@@ -92,7 +90,7 @@ declare module 'osc' {
 		 * An array of multicast addresses to join when listening for multicast messages
 		 */
 		multicastMembership?: string[]
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 		socket?: any
 
 		/**

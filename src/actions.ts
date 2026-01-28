@@ -51,7 +51,7 @@ import {
 	UserRouteInPath,
 	UserRouteOutPath,
 } from './paths.js'
-import { SetRequired } from 'type-fest'
+import type { SetRequired } from 'type-fest'
 import { X32Transitions } from './transitions.js'
 import { format as formatDate } from 'date-fns'
 import {
@@ -179,7 +179,7 @@ export function GetActionsList(
 	self: InstanceBaseExt<X32Config>,
 	transitions: X32Transitions,
 	state: X32State,
-	ensureLoaded: (path: string) => void
+	ensureLoaded: (path: string) => void,
 ): CompanionActionDefinitions {
 	const levelsChoices = GetLevelsChoiceConfigs(state)
 	const panningChoices = GetPanningChoiceConfigs(state)
@@ -216,7 +216,7 @@ export function GetActionsList(
 	const getDeltaNumber = async (
 		action: CompanionActionInfo,
 		context: CompanionActionContext,
-		defVal?: number
+		defVal?: number,
 	): Promise<number> => {
 		const useVariable = action.options.useVariable
 		const rawVal = useVariable ? action.options.varDelta : action.options.delta
@@ -266,7 +266,7 @@ export function GetActionsList(
 		action: CompanionActionEvent,
 		cmd: string,
 		cmdIsCalledOn: boolean,
-		prop: 'mute' | 'on' = 'mute'
+		prop: 'mute' | 'on' = 'mute',
 	): number => {
 		const onState = getOptNumber(action, prop)
 		if (onState === MUTE_TOGGLE) {
@@ -454,7 +454,7 @@ export function GetActionsList(
 					getOptNumber(action, 'fad'),
 					getOptNumber(action, 'fadeDuration', 0),
 					getOptAlgorithm(action, 'fadeAlgorithm'),
-					getOptCurve(action, 'fadeType')
+					getOptCurve(action, 'fadeType'),
 				)
 			},
 			subscribe: (evt): void => {
@@ -531,7 +531,7 @@ export function GetActionsList(
 						currentVal + (await getDeltaNumber(action, context, 0)),
 						getOptNumber(action, 'fadeDuration', 0),
 						getOptAlgorithm(action, 'fadeAlgorithm'),
-						getOptCurve(action, 'fadeType')
+						getOptCurve(action, 'fadeType'),
 					)
 				}
 			},
@@ -561,7 +561,7 @@ export function GetActionsList(
 					getOptNumber(action, 'pan') / 100 + 0.5,
 					getOptNumber(action, 'fadeDuration', 0),
 					getOptAlgorithm(action, 'fadeAlgorithm'),
-					getOptCurve(action, 'fadeType')
+					getOptCurve(action, 'fadeType'),
 				)
 			},
 			subscribe: (evt): void => {
@@ -596,7 +596,7 @@ export function GetActionsList(
 					newVal,
 					getOptNumber(action, 'fadeDuration', 0),
 					getOptAlgorithm(action, 'fadeAlgorithm'),
-					getOptCurve(action, 'fadeType')
+					getOptCurve(action, 'fadeType'),
 				)
 			},
 			subscribe: (evt): void => {
@@ -649,7 +649,7 @@ export function GetActionsList(
 							storedVal,
 							getOptNumber(action, 'fadeDuration', 0),
 							getOptAlgorithm(action, 'fadeAlgorithm'),
-							getOptCurve(action, 'fadeType')
+							getOptCurve(action, 'fadeType'),
 						)
 					}
 				}
@@ -686,7 +686,7 @@ export function GetActionsList(
 					getOptNumber(action, 'fad'),
 					getOptNumber(action, 'fadeDuration', 0),
 					getOptAlgorithm(action, 'fadeAlgorithm'),
-					getOptCurve(action, 'fadeType')
+					getOptCurve(action, 'fadeType'),
 				)
 			},
 			subscribe: (evt): void => {
@@ -721,7 +721,7 @@ export function GetActionsList(
 						cmd,
 						currentVal,
 						currentVal + (await getDeltaNumber(action, context, 0)),
-						getOptNumber(action, 'fadeDuration', 0)
+						getOptNumber(action, 'fadeDuration', 0),
 					)
 				}
 			},
@@ -788,7 +788,7 @@ export function GetActionsList(
 							storedVal,
 							getOptNumber(action, 'fadeDuration', 0),
 							getOptAlgorithm(action, 'fadeAlgorithm'),
-							getOptCurve(action, 'fadeType')
+							getOptCurve(action, 'fadeType'),
 						)
 					}
 				}
@@ -822,7 +822,7 @@ export function GetActionsList(
 					getOptNumber(action, 'pan') / 100 + 0.5,
 					getOptNumber(action, 'fadeDuration', 0),
 					getOptAlgorithm(action, 'fadeAlgorithm'),
-					getOptCurve(action, 'fadeType')
+					getOptCurve(action, 'fadeType'),
 				)
 			},
 			subscribe: (evt): void => {
@@ -863,7 +863,7 @@ export function GetActionsList(
 					newVal,
 					getOptNumber(action, 'fadeDuration', 0),
 					getOptAlgorithm(action, 'fadeAlgorithm'),
-					getOptCurve(action, 'fadeType')
+					getOptCurve(action, 'fadeType'),
 				)
 			},
 			subscribe: (evt): void => {
@@ -928,7 +928,7 @@ export function GetActionsList(
 							storedVal,
 							getOptNumber(action, 'fadeDuration', 0),
 							getOptAlgorithm(action, 'fadeAlgorithm'),
-							getOptCurve(action, 'fadeType')
+							getOptCurve(action, 'fadeType'),
 						)
 					}
 				}
@@ -993,7 +993,7 @@ export function GetActionsList(
 						cmd,
 						currentVal,
 						currentVal + (await getDeltaNumber(action, context, 0)),
-						getOptNumber(action, 'fadeDuration', 0)
+						getOptNumber(action, 'fadeDuration', 0),
 					)
 				}
 			},
@@ -1060,7 +1060,7 @@ export function GetActionsList(
 							storedVal,
 							getOptNumber(action, 'fadeDuration', 0),
 							getOptAlgorithm(action, 'fadeAlgorithm'),
-							getOptCurve(action, 'fadeType')
+							getOptCurve(action, 'fadeType'),
 						)
 					}
 				}
@@ -1094,7 +1094,7 @@ export function GetActionsList(
 					getOptNumber(action, 'pan') / 100 + 0.5,
 					getOptNumber(action, 'fadeDuration', 0),
 					getOptAlgorithm(action, 'fadeAlgorithm'),
-					getOptCurve(action, 'fadeType')
+					getOptCurve(action, 'fadeType'),
 				)
 			},
 			subscribe: (evt): void => {
@@ -1135,7 +1135,7 @@ export function GetActionsList(
 					newVal,
 					getOptNumber(action, 'fadeDuration', 0),
 					getOptAlgorithm(action, 'fadeAlgorithm'),
-					getOptCurve(action, 'fadeType')
+					getOptCurve(action, 'fadeType'),
 				)
 			},
 			subscribe: (evt): void => {
@@ -1200,7 +1200,7 @@ export function GetActionsList(
 							storedVal,
 							getOptNumber(action, 'fadeDuration', 0),
 							getOptAlgorithm(action, 'fadeAlgorithm'),
-							getOptCurve(action, 'fadeType')
+							getOptCurve(action, 'fadeType'),
 						)
 					}
 				}

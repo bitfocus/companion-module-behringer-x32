@@ -88,7 +88,7 @@ export enum NumberComparitor {
 export function compareNumber(
 	target: InputValue | undefined,
 	comparitor: InputValue | undefined,
-	currentValue: number
+	currentValue: number,
 ): boolean {
 	const targetValue = Number(target)
 	if (isNaN(targetValue)) {
