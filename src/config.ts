@@ -27,7 +27,7 @@ export function GetConfigFields(): SomeCompanionConfigField[] {
 			type: 'number',
 			id: 'fadeFps',
 			label: 'Framerate for fades',
-			tooltip: 'Higher is smoother, but has higher impact on system performance',
+			description: 'Higher is smoother, but has higher impact on system performance',
 			width: 6,
 			min: 5,
 			max: 60,
