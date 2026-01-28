@@ -1,7 +1,6 @@
 import {
 	CompanionInputFieldDropdown,
 	CompanionInputFieldNumber,
-	CompanionOptionValues,
 	DropdownChoice,
 	DropdownChoiceId,
 	SomeCompanionActionInputField,
@@ -48,27 +47,24 @@ export const CHOICES_COLOR: DropdownChoice[] = [
 export const ColorChoicesWithVariable: SomeCompanionActionInputField[] = [
 	{
 		type: 'checkbox',
-		label: 'Use a variable for Delta',
+		label: 'Use a variable for Color',
 		default: false,
 		id: 'useVariable',
 	},
 	{
 		type: 'dropdown',
-		label: 'color',
+		label: 'Color',
 		id: 'col',
 		...convertChoices(CHOICES_COLOR),
-		isVisible: (options: CompanionOptionValues): boolean => {
-			return !options.useVariable
-		},
+		isVisibleExpression: `!$(options:useVariable)`,
 	},
 	{
 		type: 'textinput',
-		label: 'Variable Color (e.g. $(x32:color_ch_01), NOTE: unknown strings will be ignored)',
+		label: 'Variable Color',
+		description: 'e.g. $(x32:color_ch_01), NOTE: unknown strings will be ignored',
 		id: 'varCol',
 		useVariables: true,
-		isVisible: (options: CompanionOptionValues): boolean => {
-			return !!options.useVariable
-		},
+		isVisibleExpression: `!!$(options:useVariable)`,
 	},
 ]
 
@@ -132,18 +128,14 @@ export const FaderLevelDeltaChoice: SomeCompanionActionInputField[] = [
 		default: 1,
 		max: 100,
 		min: -100,
-		isVisible: (options: CompanionOptionValues): boolean => {
-			return !options.useVariable
-		},
+		isVisibleExpression: `!$(options:useVariable)`,
 	},
 	{
 		type: 'textinput',
 		label: 'Variable Delta (e.g. $(internal:custom_my_delta), NOTE: strings and out of range numbers will be ignored)',
 		id: 'varDelta',
 		useVariables: true,
-		isVisible: (options: CompanionOptionValues): boolean => {
-			return !!options.useVariable
-		},
+		isVisibleExpression: `!!$(options:useVariable)`,
 	},
 ]
 
@@ -176,18 +168,14 @@ export const PanningDelta: SomeCompanionActionInputField[] = [
 		step: 1,
 		min: -100,
 		max: 100,
-		isVisible: (options: CompanionOptionValues): boolean => {
-			return !options.useVariable
-		},
+		isVisibleExpression: `!$(options:useVariable)`,
 	},
 	{
 		type: 'textinput',
 		label: 'Variable Delta (e.g. $(internal:custom_my_delta), NOTE: strings and out of range numbers will be ignored)',
 		id: 'varDelta',
 		useVariables: true,
-		isVisible: (options: CompanionOptionValues): boolean => {
-			return !!options.useVariable
-		},
+		isVisibleExpression: `!!$(options:useVariable)`,
 	},
 ]
 
@@ -236,9 +224,7 @@ export const FadeDurationChoice: SomeCompanionActionInputField[] = [
 			{ id: 'back', label: 'Back' },
 			{ id: 'bounce', label: 'Bounce' },
 		],
-		isVisible: (options: CompanionOptionValues): boolean => {
-			return options.fadeDuration != null && (options.fadeDuration as number) > 0
-		},
+		isVisibleExpression: `$(options:fadeDuration) > 0`,
 	},
 	{
 		type: 'dropdown',
@@ -250,14 +236,7 @@ export const FadeDurationChoice: SomeCompanionActionInputField[] = [
 			{ id: 'ease-out', label: 'Ease-out' },
 			{ id: 'ease-in-out', label: 'Ease-in-out' },
 		],
-		isVisible: (options: CompanionOptionValues): boolean => {
-			return (
-				options.fadeDuration != null &&
-				options.fadeAlgorithm != null &&
-				(options.fadeDuration as number) > 0 &&
-				(options.fadeAlgorithm as string) !== 'linear'
-			)
-		},
+		isVisibleExpression: `$(options:fadeDuration) > 0 && $(options:fadeAlgorithm) != 'linear'`,
 	},
 ]
 

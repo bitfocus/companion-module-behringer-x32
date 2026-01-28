@@ -58,7 +58,6 @@ import {
 	CompanionActionDefinition,
 	CompanionActionEvent,
 	CompanionActionInfo,
-	CompanionActionContext,
 	CompanionActionDefinitions,
 	OSCSomeArguments,
 } from '@companion-module/base'
@@ -213,15 +212,11 @@ export function GetActionsList(
 		return val
 	}
 
-	const getDeltaNumber = async (
-		action: CompanionActionInfo,
-		context: CompanionActionContext,
-		defVal?: number,
-	): Promise<number> => {
+	const getDeltaNumber = async (action: CompanionActionInfo, defVal?: number): Promise<number> => {
 		const useVariable = action.options.useVariable
 		const rawVal = useVariable ? action.options.varDelta : action.options.delta
 		if (defVal !== undefined && rawVal === undefined) return defVal
-		const val = useVariable ? Number(await context.parseVariablesInString((rawVal as string).trim())) : Number(rawVal)
+		const val = useVariable ? Number((rawVal as string).trim()) : Number(rawVal)
 		if (isNaN(val) || val < -100 || val > 100) {
 			return defVal ?? 0
 		}
@@ -520,7 +515,7 @@ export function GetActionsList(
 				...FaderLevelDeltaChoice,
 				...FadeDurationChoice,
 			],
-			callback: async (action, context): Promise<void> => {
+			callback: async (action): Promise<void> => {
 				const cmd = MainFaderPath(action.options)
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
@@ -528,7 +523,7 @@ export function GetActionsList(
 					transitions.runForDb(
 						cmd,
 						currentVal,
-						currentVal + (await getDeltaNumber(action, context, 0)),
+						currentVal + (await getDeltaNumber(action, 0)),
 						getOptNumber(action, 'fadeDuration', 0),
 						getOptAlgorithm(action, 'fadeAlgorithm'),
 						getOptCurve(action, 'fadeType'),
@@ -580,11 +575,11 @@ export function GetActionsList(
 				...PanningDelta,
 				...FadeDurationChoice,
 			],
-			callback: async (action, context): Promise<void> => {
+			callback: async (action): Promise<void> => {
 				const cmd = MainPanPath(action.options)
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0]?.value : 0
-				let newVal = currentVal + (await getDeltaNumber(action, context, 0)) / 100
+				let newVal = currentVal + (await getDeltaNumber(action, 0)) / 100
 				if (newVal < 0) {
 					newVal = 0
 				} else if (newVal > 1) {
@@ -712,7 +707,7 @@ export function GetActionsList(
 				...FaderLevelDeltaChoice,
 				...FadeDurationChoice,
 			],
-			callback: async (action, context): Promise<void> => {
+			callback: async (action): Promise<void> => {
 				const cmd = SendChannelToBusPath(action.options)
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
@@ -720,7 +715,7 @@ export function GetActionsList(
 					transitions.runForDb(
 						cmd,
 						currentVal,
-						currentVal + (await getDeltaNumber(action, context, 0)),
+						currentVal + (await getDeltaNumber(action, 0)),
 						getOptNumber(action, 'fadeDuration', 0),
 					)
 				}
@@ -847,11 +842,11 @@ export function GetActionsList(
 				...PanningDelta,
 				...FadeDurationChoice,
 			],
-			callback: async (action, context): Promise<void> => {
+			callback: async (action): Promise<void> => {
 				const cmd = ChannelToBusPanPath(action.options)
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0]?.value : 0
-				let newVal = currentVal + (await getDeltaNumber(action, context, 0)) / 100
+				let newVal = currentVal + (await getDeltaNumber(action, 0)) / 100
 				if (newVal < 0) {
 					newVal = 0
 				} else if (newVal > 1) {
@@ -984,7 +979,7 @@ export function GetActionsList(
 				...FaderLevelDeltaChoice,
 				...FadeDurationChoice,
 			],
-			callback: async (action, context): Promise<void> => {
+			callback: async (action): Promise<void> => {
 				const cmd = SendBusToMatrixPath(action.options)
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
@@ -992,7 +987,7 @@ export function GetActionsList(
 					transitions.runForDb(
 						cmd,
 						currentVal,
-						currentVal + (await getDeltaNumber(action, context, 0)),
+						currentVal + (await getDeltaNumber(action, 0)),
 						getOptNumber(action, 'fadeDuration', 0),
 					)
 				}
@@ -1119,11 +1114,11 @@ export function GetActionsList(
 				...PanningDelta,
 				...FadeDurationChoice,
 			],
-			callback: async (action, context): Promise<void> => {
+			callback: async (action): Promise<void> => {
 				const cmd = BusToMatrixPanPath(action.options)
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0]?.value : 0
-				let newVal = currentVal + (await getDeltaNumber(action, context, 0)) / 100
+				let newVal = currentVal + (await getDeltaNumber(action, 0)) / 100
 				if (newVal < 0) {
 					newVal = 0
 				} else if (newVal > 1) {
@@ -1272,10 +1267,10 @@ export function GetActionsList(
 					useVariables: true,
 				},
 			],
-			callback: async (action, context): Promise<void> => {
+			callback: async (action): Promise<void> => {
 				sendOsc(`${action.options.target}/config/name`, {
 					type: 's',
-					value: await context.parseVariablesInString(`${action.options.lab}`),
+					value: `${action.options.lab}`,
 				})
 			},
 		},
@@ -1291,7 +1286,7 @@ export function GetActionsList(
 				},
 				...ColorChoicesWithVariable,
 			],
-			callback: async (action, context): Promise<void> => {
+			callback: async (action): Promise<void> => {
 				if (!action.options.useVariable) {
 					sendOsc(`${action.options.target}/config/color`, {
 						type: 'i',
@@ -1302,7 +1297,7 @@ export function GetActionsList(
 
 				const rawVal = action.options.varCol
 				if (rawVal === undefined) return
-				const id = getColorIdFromLabel(await context.parseVariablesInString((rawVal as string).trim()))
+				const id = getColorIdFromLabel((rawVal as string).trim())
 				if (id === undefined) return
 				sendOsc(`${action.options.target}/config/color`, {
 					type: 'i',
