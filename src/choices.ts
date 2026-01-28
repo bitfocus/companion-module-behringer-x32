@@ -131,7 +131,8 @@ export const FaderLevelDeltaChoice: SomeCompanionActionInputField[] = [
 	},
 	{
 		type: 'textinput',
-		label: 'Variable Delta (e.g. $(internal:custom_my_delta), NOTE: strings and out of range numbers will be ignored)',
+		label: 'Variable Delta',
+		description: 'e.g. $(internal:custom_my_delta), NOTE: strings and out of range numbers will be ignored',
 		id: 'varDelta',
 		useVariables: true,
 		isVisibleExpression: `!!$(options:useVariable)`,
@@ -169,7 +170,8 @@ export const PanningDelta: SomeCompanionActionInputField[] = [
 	},
 	{
 		type: 'textinput',
-		label: 'Variable Delta (e.g. $(internal:custom_my_delta), NOTE: strings and out of range numbers will be ignored)',
+		label: 'Variable Delta',
+		description: 'e.g. $(internal:custom_my_delta), NOTE: strings and out of range numbers will be ignored',
 		id: 'varDelta',
 		useVariables: true,
 		isVisibleExpression: `!!$(options:useVariable)`,
@@ -204,7 +206,7 @@ export const FadeDurationChoice: SomeCompanionActionInputField[] = [
 	},
 	{
 		type: 'dropdown',
-		label: 'Algorithm',
+		label: 'Fade Curve',
 		id: 'fadeAlgorithm',
 		default: 'linear',
 		choices: [
@@ -220,7 +222,7 @@ export const FadeDurationChoice: SomeCompanionActionInputField[] = [
 			{ id: 'back', label: 'Back' },
 			{ id: 'bounce', label: 'Bounce' },
 		],
-		isVisibleExpression: `$(options:fadeDuration) > 0`,
+		disableAutoExpression: true,
 	},
 	{
 		type: 'dropdown',
@@ -232,7 +234,8 @@ export const FadeDurationChoice: SomeCompanionActionInputField[] = [
 			{ id: 'ease-out', label: 'Ease-out' },
 			{ id: 'ease-in-out', label: 'Ease-in-out' },
 		],
-		isVisibleExpression: `$(options:fadeDuration) > 0 && $(options:fadeAlgorithm) != 'linear'`,
+		isVisibleExpression: `$(options:fadeAlgorithm) != 'linear'`,
+		disableAutoExpression: true,
 	},
 ]
 
