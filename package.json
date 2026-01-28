@@ -33,7 +33,6 @@
 		"@companion-module/base": "2.0.0-0-nightly-feat-2-0-20260125-231226-63855dc",
 		"date-fns": "^3.6.0",
 		"debounce-fn": "^6.0.0",
-		"debug": "^4.4.3",
 		"osc": "^2.4.5",
 		"p-queue": "^9.1.0",
 		"type-fest": "^5.4.2"

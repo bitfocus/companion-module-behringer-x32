@@ -974,7 +974,6 @@ __metadata:
     "@types/node": "npm:^22.19.7"
     date-fns: "npm:^3.6.0"
     debounce-fn: "npm:^6.0.0"
-    debug: "npm:^4.4.3"
     eslint: "npm:^9.39.2"
     husky: "npm:^9.1.7"
     lint-staged: "npm:^16.2.7"
