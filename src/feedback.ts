@@ -42,7 +42,6 @@ import { X32Config } from './config.js'
 import { NumberComparitorPicker } from './input.js'
 import type { SetRequired } from 'type-fest'
 import {
-	combineRgb,
 	CompanionBooleanFeedbackDefinition,
 	CompanionFeedbackDefinitions,
 	CompanionFeedbackInfo,
@@ -226,8 +225,8 @@ export function GetFeedbacksList(
 				},
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(255, 0, 0),
-				color: combineRgb(0, 0, 0),
+				bgcolor: 0xff0000,
+				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: () => `/-stat/urec/state`,
@@ -256,8 +255,8 @@ export function GetFeedbacksList(
 				},
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(255, 0, 0),
-				color: combineRgb(0, 0, 0),
+				bgcolor: 0xff0000,
+				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: (options) => MutePath(options.target as string),
@@ -286,8 +285,8 @@ export function GetFeedbacksList(
 				},
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(255, 0, 0),
-				color: combineRgb(0, 0, 0),
+				bgcolor: 0xff0000,
+				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: (options) => options.mute_grp as string,
@@ -322,8 +321,8 @@ export function GetFeedbacksList(
 				},
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(255, 0, 0),
-				color: combineRgb(0, 0, 0),
+				bgcolor: 0xff0000,
+				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: (options) => `${MainPath(options.source as string)}/${options.target}`,
@@ -358,8 +357,8 @@ export function GetFeedbacksList(
 				},
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(255, 0, 0),
-				color: combineRgb(0, 0, 0),
+				bgcolor: 0xff0000,
+				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: (options) => `${MainPath(options.source as string)}/${options.target}/on`,
@@ -384,8 +383,8 @@ export function GetFeedbacksList(
 				FaderLevelChoice,
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(0, 255, 0),
-				color: combineRgb(0, 0, 0),
+				bgcolor: 0x00ff00,
+				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: (options) => MainFaderPath(options),
@@ -419,8 +418,8 @@ export function GetFeedbacksList(
 				FaderLevelChoice,
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(0, 255, 0),
-				color: combineRgb(0, 0, 0),
+				bgcolor: 0x00ff00,
+				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: (options) => SendChannelToBusPath(options),
@@ -454,8 +453,8 @@ export function GetFeedbacksList(
 				FaderLevelChoice,
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(0, 255, 0),
-				color: combineRgb(0, 0, 0),
+				bgcolor: 0x00ff00,
+				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: (options) => SendBusToMatrixPath(options),
@@ -484,8 +483,8 @@ export function GetFeedbacksList(
 				PanningChoice,
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(0, 255, 0),
-				color: combineRgb(0, 0, 0),
+				bgcolor: 0x00ff00,
+				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: (options) => MainPanPath(options),
@@ -519,8 +518,8 @@ export function GetFeedbacksList(
 				PanningChoice,
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(0, 255, 0),
-				color: combineRgb(0, 0, 0),
+				bgcolor: 0x00ff00,
+				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: (options) => ChannelToBusPanPath(options),
@@ -554,8 +553,8 @@ export function GetFeedbacksList(
 				PanningChoice,
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(0, 255, 0),
-				color: combineRgb(0, 0, 0),
+				bgcolor: 0x00ff00,
+				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: (options) => BusToMatrixPanPath(options),
@@ -596,8 +595,8 @@ export function GetFeedbacksList(
 				},
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(255, 127, 0),
-				color: combineRgb(0, 0, 0),
+				bgcolor: 0xff7f00,
+				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: (options) => `/-stat/talk/${options.channel}`,
@@ -642,8 +641,8 @@ export function GetFeedbacksList(
 				},
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(255, 127, 0),
-				color: combineRgb(0, 0, 0),
+				bgcolor: 0xff7f00,
+				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: (options) => `/config/talk/${options.channel}/destmap`,
@@ -668,8 +667,8 @@ export function GetFeedbacksList(
 				},
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(255, 0, 0),
-				color: combineRgb(0, 0, 0),
+				bgcolor: 0xff0000,
+				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: () => `/-stat/osc/on`,
@@ -692,8 +691,8 @@ export function GetFeedbacksList(
 				},
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(255, 0, 0),
-				color: combineRgb(0, 0, 0),
+				bgcolor: 0xff0000,
+				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: () => `/config/osc/dest`,
@@ -716,8 +715,8 @@ export function GetFeedbacksList(
 				},
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(0, 255, 127),
-				color: combineRgb(0, 0, 0),
+				bgcolor: 0x00ff7f,
+				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: () => `/-stat/selidx`,
@@ -746,8 +745,8 @@ export function GetFeedbacksList(
 				},
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(255, 127, 0),
-				color: combineRgb(0, 0, 0),
+				bgcolor: 0xff7f00,
+				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: (options) => {
@@ -773,8 +772,8 @@ export function GetFeedbacksList(
 				},
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(255, 127, 0),
-				color: combineRgb(0, 0, 0),
+				bgcolor: 0xff7f00,
+				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: () => `/-stat/solo`,
@@ -797,8 +796,8 @@ export function GetFeedbacksList(
 				},
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(255, 127, 0),
-				color: combineRgb(0, 0, 0),
+				bgcolor: 0xff7f00,
+				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: () => `/-stat/sendsonfader`,
@@ -821,8 +820,8 @@ export function GetFeedbacksList(
 				},
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(255, 127, 0),
-				color: combineRgb(0, 0, 0),
+				bgcolor: 0xff7f00,
+				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: () => `/config/solo/mono`,
@@ -845,8 +844,8 @@ export function GetFeedbacksList(
 				},
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(255, 127, 0),
-				color: combineRgb(0, 0, 0),
+				bgcolor: 0xff7f00,
+				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: () => `/config/solo/dim`,
@@ -869,8 +868,8 @@ export function GetFeedbacksList(
 				},
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(255, 0, 0),
-				color: combineRgb(0, 0, 0),
+				bgcolor: 0xff0000,
+				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: () => `/-stat/tape/state`,
@@ -914,8 +913,8 @@ export function GetFeedbacksList(
 				},
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(0, 255, 127),
-				color: combineRgb(0, 0, 0),
+				bgcolor: 0x00ff7f,
+				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: () => `/-stat/chfaderbank`,
@@ -962,8 +961,8 @@ export function GetFeedbacksList(
 				},
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(0, 255, 127),
-				color: combineRgb(0, 0, 0),
+				bgcolor: 0x00ff7f,
+				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: () => `/-stat/grpfaderbank`,
@@ -1026,8 +1025,8 @@ export function GetFeedbacksList(
 				},
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(0, 255, 127),
-				color: combineRgb(0, 0, 0),
+				bgcolor: 0x00ff7f,
+				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: () => `/-stat/chfaderbank`,
@@ -1098,8 +1097,8 @@ export function GetFeedbacksList(
 				},
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(0, 255, 127),
-				color: combineRgb(0, 0, 0),
+				bgcolor: 0x00ff7f,
+				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: () => `/-stat/grpfaderbank`,
@@ -1145,8 +1144,8 @@ export function GetFeedbacksList(
 				},
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(255, 127, 0),
-				color: combineRgb(0, 0, 0),
+				bgcolor: 0xff7f00,
+				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: () => `/-stat/bussendbank`,
@@ -1188,8 +1187,8 @@ export function GetFeedbacksList(
 				},
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(255, 127, 0),
-				color: combineRgb(0, 0, 0),
+				bgcolor: 0xff7f00,
+				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: () => `/-stat/userbank`,
@@ -1259,8 +1258,8 @@ export function GetFeedbacksList(
 				},
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(0, 255, 127),
-				color: combineRgb(0, 0, 0),
+				bgcolor: 0x00ff7f,
+				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: () => `/-stat/screen/screen`,
@@ -1283,8 +1282,8 @@ export function GetFeedbacksList(
 				},
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(255, 0, 0),
-				color: combineRgb(0, 0, 0),
+				bgcolor: 0xff0000,
+				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: () => `/-stat/screen/mutegrp`,
@@ -1307,8 +1306,8 @@ export function GetFeedbacksList(
 				},
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(0, 255, 127),
-				color: combineRgb(0, 0, 0),
+				bgcolor: 0x00ff7f,
+				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: () => `/-stat/screen/utils`,
@@ -1366,8 +1365,8 @@ export function GetFeedbacksList(
 				},
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(0, 255, 127),
-				color: combineRgb(0, 0, 0),
+				bgcolor: 0x00ff7f,
+				color: 0x000000,
 			},
 			...screenSelectionSubscriptionWrapper({
 				contentPath: '/-stat/screen/CHAN/page',
@@ -1421,8 +1420,8 @@ export function GetFeedbacksList(
 				},
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(0, 255, 127),
-				color: combineRgb(0, 0, 0),
+				bgcolor: 0x00ff7f,
+				color: 0x000000,
 			},
 			...screenSelectionSubscriptionWrapper({
 				contentPath: '/-stat/screen/METER/page',
@@ -1488,8 +1487,8 @@ export function GetFeedbacksList(
 				},
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(0, 255, 127),
-				color: combineRgb(0, 0, 0),
+				bgcolor: 0x00ff7f,
+				color: 0x000000,
 			},
 			...screenSelectionSubscriptionWrapper({
 				contentPath: '/-stat/screen/ROUTE/page',
@@ -1547,8 +1546,8 @@ export function GetFeedbacksList(
 				},
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(0, 255, 127),
-				color: combineRgb(0, 0, 0),
+				bgcolor: 0x00ff7f,
+				color: 0x000000,
 			},
 			...screenSelectionSubscriptionWrapper({
 				contentPath: '/-stat/screen/SETUP/page',
@@ -1594,8 +1593,8 @@ export function GetFeedbacksList(
 				},
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(0, 255, 127),
-				color: combineRgb(0, 0, 0),
+				bgcolor: 0x00ff7f,
+				color: 0x000000,
 			},
 			...screenSelectionSubscriptionWrapper({
 				contentPath: '/-stat/screen/LIB/page',
@@ -1661,8 +1660,8 @@ export function GetFeedbacksList(
 				},
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(0, 255, 127),
-				color: combineRgb(0, 0, 0),
+				bgcolor: 0x00ff7f,
+				color: 0x000000,
 			},
 			...screenSelectionSubscriptionWrapper({
 				contentPath: '/-stat/screen/FX/page',
@@ -1708,8 +1707,8 @@ export function GetFeedbacksList(
 				},
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(0, 255, 127),
-				color: combineRgb(0, 0, 0),
+				bgcolor: 0x00ff7f,
+				color: 0x000000,
 			},
 			...screenSelectionSubscriptionWrapper({
 				contentPath: '/-stat/screen/MON/page',
@@ -1747,8 +1746,8 @@ export function GetFeedbacksList(
 				},
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(0, 255, 127),
-				color: combineRgb(0, 0, 0),
+				bgcolor: 0x00ff7f,
+				color: 0x000000,
 			},
 			...screenSelectionSubscriptionWrapper({
 				contentPath: '/-stat/screen/USB/page',
@@ -1802,8 +1801,8 @@ export function GetFeedbacksList(
 				},
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(0, 255, 127),
-				color: combineRgb(0, 0, 0),
+				bgcolor: 0x00ff7f,
+				color: 0x000000,
 			},
 			...screenSelectionSubscriptionWrapper({
 				contentPath: '/-stat/screen/SCENE/page',
@@ -1849,8 +1848,8 @@ export function GetFeedbacksList(
 				},
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(0, 255, 127),
-				color: combineRgb(0, 0, 0),
+				bgcolor: 0x00ff7f,
+				color: 0x000000,
 			},
 			...screenSelectionSubscriptionWrapper({
 				contentPath: '/-stat/screen/ASSIGN/page',
@@ -1894,8 +1893,8 @@ export function GetFeedbacksList(
 				},
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(255, 0, 0),
-				color: combineRgb(0, 0, 0),
+				bgcolor: 0xff0000,
+				color: 0x000000,
 			},
 			callback: (evt: CompanionFeedbackInfo): boolean => {
 				// Unsubscribe previous
@@ -1982,8 +1981,8 @@ export function GetFeedbacksList(
 				},
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(255, 0, 0),
-				color: combineRgb(0, 0, 0),
+				bgcolor: 0xff0000,
+				color: 0x000000,
 			},
 			callback: (evt: CompanionFeedbackInfo): boolean => {
 				// Unsubscribe previous
@@ -2056,8 +2055,8 @@ export function GetFeedbacksList(
 				},
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(0, 255, 127),
-				color: combineRgb(0, 0, 0),
+				bgcolor: 0x00ff7f,
+				color: 0x000000,
 			},
 			callback: (evt: CompanionFeedbackInfo): boolean => {
 				const storedChannel = state.getStoredChannel()
@@ -2088,8 +2087,8 @@ export function GetFeedbacksList(
 				},
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(0, 128, 255),
-				color: combineRgb(0, 0, 0),
+				bgcolor: 0x007fff,
+				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: () => `/config/routing/routswitch`,
@@ -2134,8 +2133,8 @@ export function GetFeedbacksList(
 				},
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(255, 0, 0),
-				color: combineRgb(0, 0, 0),
+				bgcolor: 0xff0000,
+				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: (options) => `/config/routing/${options.mode}/${options.block}`,
@@ -2174,8 +2173,8 @@ export function GetFeedbacksList(
 				},
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(255, 0, 0),
-				color: combineRgb(0, 0, 0),
+				bgcolor: 0xff0000,
+				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: (options) => `/config/routing/${options.mode}/AUX`,
@@ -2220,8 +2219,8 @@ export function GetFeedbacksList(
 				},
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(255, 0, 0),
-				color: combineRgb(0, 0, 0),
+				bgcolor: 0xff0000,
+				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: (options) => `/config/routing/AES${options.mode}/${options.block}`,
@@ -2257,8 +2256,8 @@ export function GetFeedbacksList(
 				},
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(255, 0, 0),
-				color: combineRgb(0, 0, 0),
+				bgcolor: 0xff0000,
+				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: (options) => `/config/routing/CARD/${options.block}`,
@@ -2297,8 +2296,8 @@ export function GetFeedbacksList(
 				},
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(255, 0, 0),
-				color: combineRgb(0, 0, 0),
+				bgcolor: 0xff0000,
+				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: (options) => `/config/routing/OUT/${options.block}`,
@@ -2337,8 +2336,8 @@ export function GetFeedbacksList(
 				},
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(255, 0, 0),
-				color: combineRgb(0, 0, 0),
+				bgcolor: 0xff0000,
+				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: (options) => `/config/routing/OUT/${options.block}`,
@@ -2373,8 +2372,8 @@ export function GetFeedbacksList(
 				},
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(255, 0, 0),
-				color: combineRgb(0, 0, 0),
+				bgcolor: 0xff0000,
+				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: () => `/-stat/lock`,
@@ -2404,8 +2403,8 @@ export function GetFeedbacksList(
 				},
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(255, 127, 0),
-				color: combineRgb(0, 0, 0),
+				bgcolor: 0xff7f00,
+				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: (options) => `${options.src as string}/insert/on`,
@@ -2437,8 +2436,8 @@ export function GetFeedbacksList(
 				},
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(255, 127, 0),
-				color: combineRgb(0, 0, 0),
+				bgcolor: 0xff7f00,
+				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: (options) => `${options.src as string}/insert/pos`,
@@ -2465,8 +2464,8 @@ export function GetFeedbacksList(
 				},
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(255, 127, 0),
-				color: combineRgb(0, 0, 0),
+				bgcolor: 0xff7f00,
+				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: (options) => `${options.src as string}/insert/sel`,
@@ -2486,8 +2485,8 @@ export function GetFeedbacksList(
 				},
 			],
 			defaultStyle: {
-				bgcolor: combineRgb(255, 127, 0),
-				color: combineRgb(0, 0, 0),
+				bgcolor: 0xff7f00,
+				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: () => '/-undo/time',

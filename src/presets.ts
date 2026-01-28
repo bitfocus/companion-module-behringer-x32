@@ -5,7 +5,6 @@ import { X32State } from './state.js'
 import { GetLevelsChoiceConfigs } from './choices.js'
 import type { SetRequired } from 'type-fest'
 import {
-	combineRgb,
 	CompanionPresetDefinitions,
 	CompanionPresetFeedback,
 	CompanionButtonPresetDefinition,
@@ -50,8 +49,8 @@ export function GetPresetsList(_instance: InstanceBaseExt<X32Config>, state: X32
 		style: {
 			text: 'X-Live\\nRecord',
 			size: 'auto',
-			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
+			color: 0xffffff,
+			bgcolor: 0x000000,
 		},
 		options: {
 			stepAutoProgress: true,
@@ -87,8 +86,8 @@ export function GetPresetsList(_instance: InstanceBaseExt<X32Config>, state: X32
 					state: 3,
 				},
 				style: {
-					color: combineRgb(255, 255, 255),
-					bgcolor: combineRgb(255, 0, 0),
+					color: 0xffffff,
+					bgcolor: 0xff0000,
 				},
 			},
 		],
@@ -100,8 +99,8 @@ export function GetPresetsList(_instance: InstanceBaseExt<X32Config>, state: X32
 		style: {
 			text: 'Add marker',
 			size: 'auto',
-			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
+			color: 0xffffff,
+			bgcolor: 0x000000,
 		},
 		steps: [
 			{
@@ -124,8 +123,8 @@ export function GetPresetsList(_instance: InstanceBaseExt<X32Config>, state: X32
 		style: {
 			text: 'TALK A',
 			size: 'auto',
-			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
+			color: 0xffffff,
+			bgcolor: 0x000000,
 		},
 		steps: [
 			{
@@ -157,8 +156,8 @@ export function GetPresetsList(_instance: InstanceBaseExt<X32Config>, state: X32
 					state: true,
 				},
 				style: {
-					bgcolor: combineRgb(255, 127, 0),
-					color: combineRgb(0, 0, 0),
+					bgcolor: 0xff7f00,
+					color: 0x000000,
 				},
 			},
 		],
@@ -171,8 +170,8 @@ export function GetPresetsList(_instance: InstanceBaseExt<X32Config>, state: X32
 		style: {
 			text: 'TALK A',
 			size: 'auto',
-			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
+			color: 0xffffff,
+			bgcolor: 0x000000,
 		},
 		steps: [
 			{
@@ -196,8 +195,8 @@ export function GetPresetsList(_instance: InstanceBaseExt<X32Config>, state: X32
 					state: true,
 				},
 				style: {
-					bgcolor: combineRgb(255, 127, 0),
-					color: combineRgb(0, 0, 0),
+					bgcolor: 0xff7f00,
+					color: 0x000000,
 				},
 			},
 		],
@@ -210,8 +209,8 @@ export function GetPresetsList(_instance: InstanceBaseExt<X32Config>, state: X32
 		style: {
 			text: 'TALK B',
 			size: 'auto',
-			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
+			color: 0xffffff,
+			bgcolor: 0x000000,
 		},
 		steps: [
 			{
@@ -243,8 +242,8 @@ export function GetPresetsList(_instance: InstanceBaseExt<X32Config>, state: X32
 					state: true,
 				},
 				style: {
-					bgcolor: combineRgb(255, 127, 0),
-					color: combineRgb(0, 0, 0),
+					bgcolor: 0xff7f00,
+					color: 0x000000,
 				},
 			},
 		],
@@ -257,8 +256,8 @@ export function GetPresetsList(_instance: InstanceBaseExt<X32Config>, state: X32
 		style: {
 			text: 'TALK B',
 			size: 'auto',
-			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
+			color: 0xffffff,
+			bgcolor: 0x000000,
 		},
 		steps: [
 			{
@@ -282,8 +281,8 @@ export function GetPresetsList(_instance: InstanceBaseExt<X32Config>, state: X32
 					state: true,
 				},
 				style: {
-					bgcolor: combineRgb(255, 127, 0),
-					color: combineRgb(0, 0, 0),
+					bgcolor: 0xff7f00,
+					color: 0x000000,
 				},
 			},
 		],
@@ -297,8 +296,8 @@ export function GetPresetsList(_instance: InstanceBaseExt<X32Config>, state: X32
 			style: {
 				text: 'Dip fader',
 				size: 'auto',
-				color: combineRgb(255, 255, 255),
-				bgcolor: combineRgb(0, 0, 0),
+				color: 0xffffff,
+				bgcolor: 0x000000,
 			},
 			steps: [
 				{
@@ -341,8 +340,8 @@ export function GetPresetsList(_instance: InstanceBaseExt<X32Config>, state: X32
 			style: {
 				text: 'Dip channel send',
 				size: 'auto',
-				color: combineRgb(255, 255, 255),
-				bgcolor: combineRgb(0, 0, 0),
+				color: 0xffffff,
+				bgcolor: 0x000000,
 			},
 			steps: [
 				{
@@ -388,8 +387,8 @@ export function GetPresetsList(_instance: InstanceBaseExt<X32Config>, state: X32
 			style: {
 				text: 'Dip bus send',
 				size: 'auto',
-				color: combineRgb(255, 255, 255),
-				bgcolor: combineRgb(0, 0, 0),
+				color: 0xffffff,
+				bgcolor: 0x000000,
 			},
 			steps: [
 				{
