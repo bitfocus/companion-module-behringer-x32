@@ -22,19 +22,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@companion-module/tools@npm:^2.5.0":
-  version: 2.5.0
-  resolution: "@companion-module/tools@npm:2.5.0"
+"@companion-module/tools@npm:^2.6.1":
+  version: 2.6.1
+  resolution: "@companion-module/tools@npm:2.6.1"
   dependencies:
     "@eslint/js": "npm:^9.39.2"
     eslint-config-prettier: "npm:^10.1.8"
-    eslint-plugin-n: "npm:^17.23.1"
-    eslint-plugin-prettier: "npm:^5.5.4"
+    eslint-plugin-n: "npm:^17.23.2"
+    eslint-plugin-prettier: "npm:^5.5.5"
     find-up: "npm:^7.0.0"
     parse-author: "npm:^2.0.0"
     semver: "npm:^7.7.3"
-    tar: "npm:^7.5.2"
-    webpack: "npm:^5.103.0"
+    tar: "npm:^7.5.7"
+    webpack: "npm:^5.104.1"
     webpack-cli: "npm:^6.0.1"
     zx: "npm:^8.8.5"
   peerDependencies:
@@ -60,7 +60,7 @@ __metadata:
     companion-module-check: scripts/check-connection.js
     companion-surface-build: scripts/build-surface.js
     companion-surface-check: scripts/check-surface.js
-  checksum: 10c0/5c8d6eb1ba2b2839e055c4277770d62ebc9fe66ca420f72762bfb8283d319bb32335f0187e79d04a0817f1a7a6baa19f522a2dbb33d99fa3a47d502c8e541a9c
+  checksum: 10c0/404718c14d6c9bb1747633efbbf0f07c24c9584d8db5feb7f9324575c144ca044c35d0a99fb6d21929902ce39019b872b8ec393423fb100ae2d1ad10b8c62934
   languageName: node
   linkType: hard
 
@@ -1014,7 +1014,7 @@ __metadata:
   resolution: "behringer-x32@workspace:."
   dependencies:
     "@companion-module/base": "npm:~1.14.1"
-    "@companion-module/tools": "npm:^2.5.0"
+    "@companion-module/tools": "npm:^2.6.1"
     "@types/debug": "npm:^4.1.12"
     "@types/node": "npm:^22.19.7"
     date-fns: "npm:^3.6.0"
@@ -1448,7 +1448,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-n@npm:^17.23.1":
+"eslint-plugin-n@npm:^17.23.2":
   version: 17.23.2
   resolution: "eslint-plugin-n@npm:17.23.2"
   dependencies:
@@ -1467,7 +1467,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-prettier@npm:^5.5.4":
+"eslint-plugin-prettier@npm:^5.5.5":
   version: 5.5.5
   resolution: "eslint-plugin-prettier@npm:5.5.5"
   dependencies:
@@ -3376,7 +3376,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tar@npm:^7.5.2":
+"tar@npm:^7.5.7":
   version: 7.5.7
   resolution: "tar@npm:7.5.7"
   dependencies:
@@ -3637,7 +3637,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack@npm:^5.103.0":
+"webpack@npm:^5.104.1":
   version: 5.104.1
   resolution: "webpack@npm:5.104.1"
   dependencies:
