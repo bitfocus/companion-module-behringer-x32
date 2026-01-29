@@ -1,6 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unsafe-enum-comparison */
-import type { CompanionStaticUpgradeResult, CompanionStaticUpgradeScript } from '@companion-module/base'
+import type {
+	CompanionStaticUpgradeResult,
+	CompanionStaticUpgradeScript,
+	ExpressionOptionsObject,
+} from '@companion-module/base'
 import { FeedbackId } from './feedback.js'
+import { padNumber } from './util.js'
+import { ActionId } from './actions.js'
+import { exprVal } from './upgradeUtil.js'
 
 export const BooleanFeedbackUpgradeMap: {
 	[id in FeedbackId]?: true
@@ -81,6 +88,73 @@ export const upgradeToBuiltinFeedbackInverted: CompanionStaticUpgradeScript<any>
 		}
 		delete feedback.options.state
 
+		result.updatedFeedbacks.push(feedback)
+	}
+
+	return result
+}
+
+const pathReplacements: Record<string, string | undefined> = {
+	'/main/st': 'stereo',
+	'/main/mono': 'mono',
+	st: 'stereo',
+	mlevel: 'mono',
+	mpan: 'mono',
+}
+for (let i = 1; i <= 32; i++) pathReplacements[`/ch/${padNumber(i)}`] = `channel${i}`
+for (let i = 1; i <= 8; i++) pathReplacements[`/auxin/${padNumber(i)}`] = `aux${i}`
+for (let i = 1; i <= 8; i++) pathReplacements[`/fxrtn/${padNumber(i)}`] = `fx${i}`
+for (let i = 1; i <= 16; i++) {
+	pathReplacements[`/bus/${padNumber(i)}`] = `bus${i}`
+	pathReplacements[`${padNumber(i)}/on`] = `bus${i}`
+	pathReplacements[`${padNumber(i)}/level`] = `bus${i}`
+	pathReplacements[`${padNumber(i)}/pan`] = `bus${i}`
+}
+for (let i = 1; i <= 6; i++) pathReplacements[`/mtx/${padNumber(i)}`] = `matrix${i}`
+for (let i = 1; i <= 8; i++) pathReplacements[`/dca/${padNumber(i)}`] = `dca${i}`
+for (let i = 1; i <= 6; i++) pathReplacements[`/config/mute/${i}`] = `mutegroup${i}`
+
+const actionsToUpgrade: Record<string, string[] | undefined> = {
+	[ActionId.Mute]: ['target'],
+	[ActionId.MuteGroup]: ['target'],
+	[ActionId.MuteChannelSend]: ['source', 'target'],
+}
+const feedbacksToUpgrade: Record<string, string[] | undefined> = {
+	// [ActionId.Mute]: ['target'],
+}
+
+export const upgradeChannelOrFaderValuesFromOscPaths: CompanionStaticUpgradeScript<any> = (_ctx, props) => {
+	const result: CompanionStaticUpgradeResult<any, undefined> = {
+		updatedConfig: null,
+		updatedSecrets: null,
+		updatedActions: [],
+		updatedFeedbacks: [],
+	}
+
+	const upgradeProps = (options: ExpressionOptionsObject, propKeys: string[]) => {
+		for (const propKey of propKeys) {
+			if (!options[propKey]) {
+				options[propKey] = exprVal('')
+			} else if (options[propKey]?.isExpression) {
+				continue // Skip expressions
+			} else if (typeof options[propKey].value === 'string') {
+				// Migrate value
+				options[propKey].value = pathReplacements[options[propKey].value] ?? options[propKey].value
+			}
+		}
+	}
+	for (const action of props.actions) {
+		const propsToUpgrade = actionsToUpgrade[action.actionId]
+		if (!propsToUpgrade) continue
+
+		upgradeProps(action.options, propsToUpgrade)
+		result.updatedActions.push(action)
+	}
+	for (const feedback of props.feedbacks) {
+		const propsToUpgrade = feedbacksToUpgrade[feedback.feedbackId]
+		if (!propsToUpgrade) continue
+
+		upgradeProps(feedback.options, propsToUpgrade)
 		result.updatedFeedbacks.push(feedback)
 	}
 

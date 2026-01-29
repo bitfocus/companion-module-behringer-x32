@@ -7,7 +7,7 @@ export function assertUnreachable(_never: never): void {
 }
 
 export function padNumber(i: number, len = 2): string {
-	return ('000000' + i).substr(-len)
+	return String(i).padStart(len, '0')
 }
 
 export function floatToDB(f: number): number {

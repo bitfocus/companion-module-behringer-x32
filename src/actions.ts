@@ -38,9 +38,10 @@ import {
 	GetInsertDestinationChoices,
 	GetTalkbackDestinations,
 	GetPresetsChoices,
+	MuteGroupParseOptions,
+	GetChannelSendParseOptions,
 } from './choices.js'
 import {
-	MutePath,
 	MainPath,
 	MainFaderPath,
 	SendChannelToBusPath,
@@ -50,6 +51,7 @@ import {
 	BusToMatrixPanPath,
 	UserRouteInPath,
 	UserRouteOutPath,
+	parseRefToPaths,
 } from './paths.js'
 import type { SetRequired } from 'type-fest'
 import { X32Transitions } from './transitions.js'
@@ -178,11 +180,11 @@ export function GetActionsList(
 	self: InstanceBaseExt<X32Config>,
 	transitions: X32Transitions,
 	state: X32State,
-	ensureLoaded: (path: string) => void,
+	ensureLoaded: (path: string | undefined) => void,
 ): CompanionActionDefinitions {
 	const levelsChoices = GetLevelsChoiceConfigs(state)
 	const panningChoices = GetPanningChoiceConfigs(state)
-	const muteGroups = GetMuteGroupChoices(state)
+	const muteGroups = GetMuteGroupChoices(state, true)
 	const selectChoices = GetTargetChoices(state, { skipDca: true, includeMain: true, numericIndex: true })
 	const soloChoices = GetTargetChoices(state, { includeMain: true, numericIndex: true })
 	const insertSourceChoices = GetTargetChoices(state, {
@@ -321,20 +323,25 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'Target',
 					id: 'target',
-					...convertChoices(levelsChoices.channels),
+					...convertChoices(levelsChoices.channelsNew),
 				},
 				MuteChoice,
 			],
 			callback: async (action): Promise<void> => {
-				const cmd = MutePath(action.options.target as string)
-				sendOsc(cmd, {
+				const refPaths = parseRefToPaths(action.options.target, levelsChoices.channelsParseOptions)
+				if (!refPaths?.muteOrOn) return // Not a valid path
+
+				sendOsc(refPaths.muteOrOn.path, {
 					type: 'i',
-					value: getResolveOnOffMute(action, cmd, true),
+					value: getResolveOnOffMute(action, refPaths.muteOrOn.path, refPaths.muteOrOn.isOn),
 				})
 			},
 			subscribe: (evt): void => {
 				if (evt.options.mute === MUTE_TOGGLE) {
-					ensureLoaded(MutePath(evt.options.target as string))
+					const refPaths = parseRefToPaths(evt.options.target, levelsChoices.channelsParseOptions)
+					if (!refPaths?.muteOrOn) return // Not a valid path
+
+					ensureLoaded(refPaths.muteOrOn.path)
 				}
 			},
 		},
@@ -355,15 +362,20 @@ export function GetActionsList(
 				},
 			],
 			callback: async (action): Promise<void> => {
-				const cmd = action.options.target as string
-				sendOsc(cmd, {
+				const refPaths = parseRefToPaths(action.options.target, MuteGroupParseOptions)
+				if (!refPaths?.muteOrOn) return // Not a valid path
+
+				sendOsc(refPaths.muteOrOn.path, {
 					type: 'i',
-					value: getResolveOnOffMute(action, cmd, false),
+					value: getResolveOnOffMute(action, refPaths.muteOrOn.path, refPaths.muteOrOn.isOn),
 				})
 			},
 			subscribe: (evt): void => {
 				if (evt.options.mute === MUTE_TOGGLE) {
-					ensureLoaded(evt.options.target as string)
+					const refPaths = parseRefToPaths(evt.options.target, MuteGroupParseOptions)
+					if (!refPaths?.muteOrOn) return // Not a valid path
+
+					ensureLoaded(refPaths.muteOrOn.path)
 				}
 			},
 		},
@@ -374,26 +386,34 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'Source',
 					id: 'source',
-					...convertChoices(levelsChoices.allSources),
+					...convertChoices(levelsChoices.allSourcesNew),
 				},
 				{
 					type: 'dropdown',
 					label: 'Target',
 					id: 'target',
-					...convertChoices(GetChannelSendChoices(state, 'on')),
+					...convertChoices(GetChannelSendChoices(state, 'on', true)),
 				},
 				MuteChoice,
 			],
 			callback: async (action): Promise<void> => {
-				const cmd = `${MainPath(action.options.source as string)}/${action.options.target}`
+				const sourceRef = parseRefToPaths(action.options.source, levelsChoices.allSourcesParseOptions)
+				const targetRef = parseRefToPaths(action.options.target, GetChannelSendParseOptions)
+				if (!sourceRef?.sendTo || !targetRef?.sendToSink?.on) return
+
+				const cmd = `${sourceRef.sendTo.path}/${targetRef.sendToSink.on}`
 				sendOsc(cmd, {
 					type: 'i',
-					value: getResolveOnOffMute(action, cmd, true),
+					value: getResolveOnOffMute(action, cmd, sourceRef.sendTo.isOn),
 				})
 			},
 			subscribe: (evt): void => {
 				if (evt.options.mute === MUTE_TOGGLE) {
-					ensureLoaded(`${MainPath(evt.options.source as string)}/${evt.options.target}`)
+					const sourceRef = parseRefToPaths(evt.options.source, levelsChoices.allSourcesParseOptions)
+					const targetRef = parseRefToPaths(evt.options.target, GetChannelSendParseOptions)
+					if (!sourceRef?.sendTo || !targetRef?.sendToSink?.on) return
+
+					ensureLoaded(`${sourceRef.sendTo.path}/${targetRef.sendToSink.on}`)
 				}
 			},
 		},
