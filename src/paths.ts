@@ -53,7 +53,7 @@ export interface ParseRefOptions {
 	allowBus?: boolean
 	allowMatrix?: boolean
 	allowDca?: boolean
-	allowMuteGroup?: boolean
+	// allowMuteGroup?: boolean
 }
 
 /**
@@ -69,6 +69,19 @@ export function parseRefToPaths(
 	muteOrOn?: {
 		path: string
 		isOn: boolean
+	}
+	level?: {
+		path: string
+	}
+	pan?: {
+		path: string
+	}
+	trim?: {
+		path: string
+	}
+	config: {
+		name: string
+		color: string
 	}
 	sendTo?: {
 		path: string
@@ -92,7 +105,24 @@ export function parseRefToPaths(
 		if (!options.allowStereo) return null
 
 		return {
-			muteOrOn: undefined,
+			muteOrOn: {
+				path: `/main/st/mix/on`,
+				isOn: true,
+			},
+			level: {
+				path: `/main/st/mix/fader`,
+			},
+			pan: {
+				path: `/main/st/mix/pan`,
+			},
+			config: {
+				name: `/main/st/config/name`,
+				color: `/main/st/config/color`,
+			},
+			sendTo: {
+				path: `/main/st`,
+				isOn: true,
+			},
 			sendToSink: {
 				on: `st`,
 				level: null,
@@ -103,11 +133,25 @@ export function parseRefToPaths(
 		if (!options.allowMono) return null
 
 		return {
-			muteOrOn: undefined,
+			muteOrOn: {
+				path: `/main/m/mix/on`,
+				isOn: true,
+			},
+			level: {
+				path: `/main/m/mix/fader`,
+			},
+			config: {
+				name: `/main/m/config/name`,
+				color: `/main/m/config/color`,
+			},
+			sendTo: {
+				path: `/main/m`,
+				isOn: true,
+			},
 			sendToSink: {
 				on: `mono`,
 				level: 'mlevel',
-				pan: null, //'mpan', // TODO - should this be enabled?
+				pan: null, // No pan for mono
 			},
 		}
 	}
@@ -133,6 +177,19 @@ export function parseRefToPaths(
 					path: `/ch/${String(refNumber).padStart(2, '0')}/mix/on`,
 					isOn: true,
 				},
+				level: {
+					path: `/ch/${String(refNumber).padStart(2, '0')}/mix/fader`,
+				},
+				pan: {
+					path: `/ch/${String(refNumber).padStart(2, '0')}/mix/pan`,
+				},
+				trim: {
+					path: `/ch/${String(refNumber).padStart(2, '0')}/preamp/trim`,
+				},
+				config: {
+					name: `/ch/${String(refNumber).padStart(2, '0')}/config/name`,
+					color: `/ch/${String(refNumber).padStart(2, '0')}/config/color`,
+				},
 				sendTo: {
 					path: `/ch/${String(refNumber).padStart(2, '0')}/mix`,
 					isOn: true,
@@ -150,6 +207,19 @@ export function parseRefToPaths(
 					path: `/auxin/${String(refNumber).padStart(2, '0')}/mix/on`,
 					isOn: true,
 				},
+				level: {
+					path: `/auxin/${String(refNumber).padStart(2, '0')}/mix/fader`,
+				},
+				pan: {
+					path: `/auxin/${String(refNumber).padStart(2, '0')}/mix/pan`,
+				},
+				trim: {
+					path: `/auxin/${String(refNumber).padStart(2, '0')}/preamp/trim`,
+				},
+				config: {
+					name: `/auxin/${String(refNumber).padStart(2, '0')}/config/name`,
+					color: `/auxin/${String(refNumber).padStart(2, '0')}/config/color`,
+				},
 				sendTo: {
 					path: `/auxin/${String(refNumber).padStart(2, '0')}/mix`,
 					isOn: true,
@@ -165,6 +235,16 @@ export function parseRefToPaths(
 				muteOrOn: {
 					path: `/fxrtn/${String(refNumber).padStart(2, '0')}/mix/on`,
 					isOn: true,
+				},
+				level: {
+					path: `/fxrtn/${String(refNumber).padStart(2, '0')}/mix/fader`,
+				},
+				pan: {
+					path: `/fxrtn/${String(refNumber).padStart(2, '0')}/mix/pan`,
+				},
+				config: {
+					name: `/fxrtn/${String(refNumber).padStart(2, '0')}/config/name`,
+					color: `/fxrtn/${String(refNumber).padStart(2, '0')}/config/color`,
 				},
 				sendTo: {
 					path: `/fxrtn/${String(refNumber).padStart(2, '0')}/mix`,
@@ -183,10 +263,24 @@ export function parseRefToPaths(
 					path: `/bus/${String(refNumber).padStart(2, '0')}/mix/on`,
 					isOn: true,
 				},
+				level: {
+					path: `/bus/${String(refNumber).padStart(2, '0')}/mix/fader`,
+				},
+				pan: {
+					path: `/bus/${String(refNumber).padStart(2, '0')}/mix/pan`,
+				},
+				config: {
+					name: `/bus/${String(refNumber).padStart(2, '0')}/config/name`,
+					color: `/bus/${String(refNumber).padStart(2, '0')}/config/color`,
+				},
+				sendTo: {
+					path: `/bus/${String(refNumber).padStart(2, '0')}/mix`,
+					isOn: true,
+				},
 				sendToSink: {
 					on: `${padNumber(refNumber)}/on`,
 					level: `${padNumber(refNumber)}/level`,
-					pan: `${padNumber(refNumber)}/pan`,
+					pan: refNumber % 2 == 1 ? `${padNumber(refNumber)}/pan` : null,
 				},
 			}
 		}
@@ -202,6 +296,18 @@ export function parseRefToPaths(
 					path: `/mtx/${String(refNumber).padStart(2, '0')}/mix/on`,
 					isOn: true,
 				},
+				level: {
+					path: `/mtx/${String(refNumber).padStart(2, '0')}/mix/fader`,
+				},
+				config: {
+					name: `/mtx/${String(refNumber).padStart(2, '0')}/config/name`,
+					color: `/mtx/${String(refNumber).padStart(2, '0')}/config/color`,
+				},
+				sendToSink: {
+					on: `${padNumber(refNumber)}/on`,
+					level: `${padNumber(refNumber)}/level`,
+					pan: refNumber % 2 == 1 ? `${padNumber(refNumber)}/pan` : null,
+				},
 			}
 		}
 		case 'd':
@@ -214,22 +320,29 @@ export function parseRefToPaths(
 					path: `/dca/${String(refNumber).padStart(2, '0')}/on`,
 					isOn: true,
 				},
-			}
-		}
-		case 'mute':
-		case 'mg':
-		case 'mutegroup':
-		case 'mutegrp': {
-			if (!options.allowMuteGroup) return null
-
-			// TODO
-			return {
-				muteOrOn: {
-					path: `/config/mute/${refNumber}`,
-					isOn: false,
+				config: {
+					name: `/dca/${String(refNumber).padStart(2, '0')}/config/name`,
+					color: `/dca/${String(refNumber).padStart(2, '0')}/config/color`,
+				},
+				level: {
+					path: `/dca/${String(refNumber).padStart(2, '0')}/fader`,
 				},
 			}
 		}
+		// case 'mute':
+		// case 'mg':
+		// case 'mutegroup':
+		// case 'mutegrp': {
+		// 	if (!options.allowMuteGroup) return null
+
+		// 	// TODO
+		// 	return {
+		// 		muteOrOn: {
+		// 			path: `/config/mute/${refNumber}`,
+		// 			isOn: false,
+		// 		},
+		// 	}
+		// }
 
 		default:
 			return null

@@ -12,7 +12,6 @@ import {
 	GetChannelSendChoices,
 	convertChoices,
 	CHOICES_ON_OFF,
-	GetBusSendChoices,
 	FaderLevelChoice,
 	MuteChoice,
 	HeadampGainChoice,
@@ -38,21 +37,9 @@ import {
 	GetInsertDestinationChoices,
 	GetTalkbackDestinations,
 	GetPresetsChoices,
-	MuteGroupParseOptions,
 	GetChannelSendParseOptions,
 } from './choices.js'
-import {
-	MainPath,
-	MainFaderPath,
-	SendChannelToBusPath,
-	SendBusToMatrixPath,
-	MainPanPath,
-	ChannelToBusPanPath,
-	BusToMatrixPanPath,
-	UserRouteInPath,
-	UserRouteOutPath,
-	parseRefToPaths,
-} from './paths.js'
+import { UserRouteInPath, UserRouteOutPath, parseRefToPaths } from './paths.js'
 import type { SetRequired } from 'type-fest'
 import { X32Transitions } from './transitions.js'
 import { format as formatDate } from 'date-fns'
@@ -362,20 +349,24 @@ export function GetActionsList(
 				},
 			],
 			callback: async (action): Promise<void> => {
-				const refPaths = parseRefToPaths(action.options.target, MuteGroupParseOptions)
-				if (!refPaths?.muteOrOn) return // Not a valid path
+				const muteGroupNumber = parseInt(action.options.target as string, 10)
+				if (isNaN(muteGroupNumber)) return
 
-				sendOsc(refPaths.muteOrOn.path, {
+				const mutePath = `/config/mute/${muteGroupNumber}`
+
+				sendOsc(mutePath, {
 					type: 'i',
-					value: getResolveOnOffMute(action, refPaths.muteOrOn.path, refPaths.muteOrOn.isOn),
+					value: getResolveOnOffMute(action, mutePath, false),
 				})
 			},
 			subscribe: (evt): void => {
 				if (evt.options.mute === MUTE_TOGGLE) {
-					const refPaths = parseRefToPaths(evt.options.target, MuteGroupParseOptions)
-					if (!refPaths?.muteOrOn) return // Not a valid path
+					const muteGroupNumber = parseInt(evt.options.target as string, 10)
+					if (isNaN(muteGroupNumber)) return
 
-					ensureLoaded(refPaths.muteOrOn.path)
+					const mutePath = `/config/mute/${muteGroupNumber}`
+
+					ensureLoaded(mutePath)
 				}
 			},
 		},
@@ -424,26 +415,34 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'Source',
 					id: 'source',
-					...convertChoices(levelsChoices.busSendSources),
+					...convertChoices(levelsChoices.busSendSourcesNew),
 				},
 				{
 					type: 'dropdown',
 					label: 'Target',
 					id: 'target',
-					...convertChoices(GetBusSendChoices(state)),
+					...convertChoices(levelsChoices.busSendTargetsNew),
 				},
 				MuteChoice,
 			],
 			callback: async (action): Promise<void> => {
-				const cmd = `${MainPath(action.options.source as string)}/${action.options.target}/on`
+				const sourceRef = parseRefToPaths(action.options.source, levelsChoices.busSendSourcesParseOptions)
+				const targetRef = parseRefToPaths(action.options.target, levelsChoices.busSendTargetsParseOptions)
+				if (!sourceRef?.sendTo || !targetRef?.sendToSink?.on) return
+
+				const cmd = `${sourceRef.sendTo.path}/${targetRef.sendToSink.on}`
 				sendOsc(cmd, {
 					type: 'i',
-					value: getResolveOnOffMute(action, cmd, true),
+					value: getResolveOnOffMute(action, cmd, sourceRef.sendTo.isOn),
 				})
 			},
 			subscribe: (evt): void => {
 				if (evt.options.mute === MUTE_TOGGLE) {
-					ensureLoaded(`${MainPath(evt.options.source as string)}/${evt.options.target}/on`)
+					const sourceRef = parseRefToPaths(evt.options.source, levelsChoices.busSendSourcesParseOptions)
+					const targetRef = parseRefToPaths(evt.options.target, levelsChoices.busSendTargetsParseOptions)
+					if (!sourceRef?.sendTo || !targetRef?.sendToSink?.on) return
+
+					ensureLoaded(`${sourceRef.sendTo.path}/${targetRef.sendToSink.on}`)
 				}
 			},
 		},
@@ -454,17 +453,19 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'Target',
 					id: 'target',
-					...convertChoices(levelsChoices.channels),
+					...convertChoices(levelsChoices.channelsNew),
 				},
 				FaderLevelChoice,
 				...FadeDurationChoice,
 			],
 			callback: async (action): Promise<void> => {
-				const cmd = MainFaderPath(action.options)
-				const currentState = state.get(cmd)
+				const refPaths = parseRefToPaths(action.options.target, levelsChoices.channelsParseOptions)
+				if (!refPaths?.level) return // Not a valid path
+
+				const currentState = state.get(refPaths.level.path)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
 				transitions.runForDb(
-					cmd,
+					refPaths.level.path,
 					currentVal,
 					getOptNumber(action, 'fad'),
 					getOptNumber(action, 'fadeDuration', 0),
@@ -473,8 +474,11 @@ export function GetActionsList(
 				)
 			},
 			subscribe: (evt): void => {
+				const refPaths = parseRefToPaths(evt.options.target, levelsChoices.channelsParseOptions)
+				if (!refPaths?.level) return // Not a valid path
+
 				// In case we have a fade time
-				ensureLoaded(MainFaderPath(evt.options))
+				ensureLoaded(refPaths.level.path)
 			},
 		},
 		[ActionId.FaderLevelStore]: {
@@ -484,19 +488,24 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'Target',
 					id: 'target',
-					...convertChoices(levelsChoices.channels),
+					...convertChoices(levelsChoices.channelsNew),
 				},
 			],
 			callback: async (action): Promise<void> => {
-				const cmd = MainFaderPath(action.options)
-				const currentState = state.get(cmd)
+				const refPaths = parseRefToPaths(action.options.target, levelsChoices.channelsParseOptions)
+				if (!refPaths?.level) return // Not a valid path
+
+				const currentState = state.get(refPaths.level.path)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
 				if (currentVal !== undefined) {
-					state.setPressValue(`${action.controlId}-${cmd}`, currentVal)
+					state.setPressValue(`${action.controlId}-${refPaths.level.path}`, currentVal)
 				}
 			},
 			subscribe: (evt): void => {
-				ensureLoaded(MainFaderPath(evt.options))
+				const refPaths = parseRefToPaths(evt.options.target, levelsChoices.channelsParseOptions)
+				if (!refPaths?.level) return // Not a valid path
+
+				ensureLoaded(refPaths.level.path)
 			},
 		},
 		[ActionId.FaderLevelRestore]: {
@@ -506,19 +515,21 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'Target',
 					id: 'target',
-					...convertChoices(levelsChoices.channels),
+					...convertChoices(levelsChoices.channelsNew),
 				},
 				...FadeDurationChoice,
 			],
 			callback: async (action): Promise<void> => {
-				const cmd = MainFaderPath(action.options)
-				const storedVal = state.popPressValue(`${action.controlId}-${cmd}`)
+				const refPaths = parseRefToPaths(action.options.target, levelsChoices.channelsParseOptions)
+				if (!refPaths?.level) return // Not a valid path
+
+				const storedVal = state.popPressValue(`${action.controlId}-${refPaths.level.path}`)
 				if (storedVal !== undefined) {
-					const currentState = state.get(cmd)
+					const currentState = state.get(refPaths.level.path)
 					const currentVal =
 						currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
 					if (currentVal !== undefined) {
-						transitions.runForDb(cmd, currentVal, storedVal, getOptNumber(action, 'fadeDuration', 0))
+						transitions.runForDb(refPaths.level.path, currentVal, storedVal, getOptNumber(action, 'fadeDuration', 0))
 					}
 				}
 			},
@@ -530,18 +541,20 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'Target',
 					id: 'target',
-					...convertChoices(levelsChoices.channels),
+					...convertChoices(levelsChoices.channelsNew),
 				},
 				...FaderLevelDeltaChoice,
 				...FadeDurationChoice,
 			],
 			callback: async (action): Promise<void> => {
-				const cmd = MainFaderPath(action.options)
-				const currentState = state.get(cmd)
+				const refPaths = parseRefToPaths(action.options.target, levelsChoices.channelsParseOptions)
+				if (!refPaths?.level) return // Not a valid path
+
+				const currentState = state.get(refPaths.level.path)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
 				if (typeof currentVal === 'number') {
 					transitions.runForDb(
-						cmd,
+						refPaths.level.path,
 						currentVal,
 						currentVal + (await getDeltaNumber(action, 0)),
 						getOptNumber(action, 'fadeDuration', 0),
@@ -551,7 +564,10 @@ export function GetActionsList(
 				}
 			},
 			subscribe: (evt): void => {
-				ensureLoaded(MainFaderPath(evt.options))
+				const refPaths = parseRefToPaths(evt.options.target, levelsChoices.channelsParseOptions)
+				if (!refPaths?.level) return // Not a valid path
+
+				ensureLoaded(refPaths.level.path)
 			},
 		},
 		[ActionId.Panning]: {
@@ -561,17 +577,19 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'Target',
 					id: 'target',
-					...convertChoices(panningChoices.allSources),
+					...convertChoices(panningChoices.allSourcesNew),
 				},
 				PanningChoice,
 				...FadeDurationChoice,
 			],
 			callback: async (action): Promise<void> => {
-				const cmd = MainPanPath(action.options)
-				const currentState = state.get(cmd)
+				const refPaths = parseRefToPaths(action.options.target, panningChoices.allSourcesParseOptions)
+				if (!refPaths?.pan) return // Not a valid path
+
+				const currentState = state.get(refPaths.pan.path)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0]?.value : undefined
 				transitions.run(
-					cmd,
+					refPaths.pan.path,
 					currentVal,
 					getOptNumber(action, 'pan') / 100 + 0.5,
 					getOptNumber(action, 'fadeDuration', 0),
@@ -580,7 +598,10 @@ export function GetActionsList(
 				)
 			},
 			subscribe: (evt): void => {
-				ensureLoaded(MainPanPath(evt.options))
+				const refPaths = parseRefToPaths(evt.options.target, panningChoices.allSourcesParseOptions)
+				if (!refPaths?.pan) return // Not a valid path
+
+				ensureLoaded(refPaths.pan.path)
 			},
 		},
 		[ActionId.PanningDelta]: {
@@ -590,14 +611,16 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'Target',
 					id: 'target',
-					...convertChoices(panningChoices.allSources),
+					...convertChoices(panningChoices.allSourcesNew),
 				},
 				...PanningDelta,
 				...FadeDurationChoice,
 			],
 			callback: async (action): Promise<void> => {
-				const cmd = MainPanPath(action.options)
-				const currentState = state.get(cmd)
+				const refPaths = parseRefToPaths(action.options.target, panningChoices.allSourcesParseOptions)
+				if (!refPaths?.pan) return // Not a valid path
+
+				const currentState = state.get(refPaths.pan.path)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0]?.value : 0
 				let newVal = currentVal + (await getDeltaNumber(action, 0)) / 100
 				if (newVal < 0) {
@@ -606,7 +629,7 @@ export function GetActionsList(
 					newVal = 1
 				}
 				transitions.run(
-					cmd,
+					refPaths.pan.path,
 					currentVal,
 					newVal,
 					getOptNumber(action, 'fadeDuration', 0),
@@ -615,7 +638,10 @@ export function GetActionsList(
 				)
 			},
 			subscribe: (evt): void => {
-				ensureLoaded(MainPanPath(evt.options))
+				const refPaths = parseRefToPaths(evt.options.target, panningChoices.allSourcesParseOptions)
+				if (!refPaths?.pan) return // Not a valid path
+
+				ensureLoaded(refPaths.pan.path)
 			},
 		},
 		[ActionId.PanningStore]: {
@@ -625,19 +651,24 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'Target',
 					id: 'target',
-					...convertChoices(panningChoices.allSources),
+					...convertChoices(panningChoices.allSourcesNew),
 				},
 			],
 			callback: async (action): Promise<void> => {
-				const cmd = MainPanPath(action.options)
-				const currentState = state.get(cmd)
+				const refPaths = parseRefToPaths(action.options.target, panningChoices.allSourcesParseOptions)
+				if (!refPaths?.pan) return // Not a valid path
+
+				const currentState = state.get(refPaths.pan.path)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0].value : undefined
 				if (currentVal !== undefined) {
-					state.setPressValue(`${action.controlId}-${cmd}`, currentVal)
+					state.setPressValue(`${action.controlId}-${refPaths.pan.path}`, currentVal)
 				}
 			},
 			subscribe: (evt): void => {
-				ensureLoaded(MainPanPath(evt.options))
+				const refPaths = parseRefToPaths(evt.options.target, panningChoices.allSourcesParseOptions)
+				if (!refPaths?.pan) return // Not a valid path
+
+				ensureLoaded(refPaths.pan.path)
 			},
 		},
 		[ActionId.PanningRestore]: {
@@ -647,19 +678,21 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'Target',
 					id: 'target',
-					...convertChoices(panningChoices.allSources),
+					...convertChoices(panningChoices.allSourcesNew),
 				},
 				...FadeDurationChoice,
 			],
 			callback: async (action): Promise<void> => {
-				const cmd = MainPanPath(action.options)
-				const storedVal = state.popPressValue(`${action.controlId}-${cmd}`)
+				const refPaths = parseRefToPaths(action.options.target, panningChoices.allSourcesParseOptions)
+				if (!refPaths?.pan) return // Not a valid path
+
+				const storedVal = state.popPressValue(`${action.controlId}-${refPaths.pan.path}`)
 				if (storedVal != undefined) {
-					const currentState = state.get(cmd)
+					const currentState = state.get(refPaths.pan.path)
 					const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0].value : undefined
 					if (currentVal !== undefined) {
 						transitions.run(
-							cmd,
+							refPaths.pan.path,
 							currentVal,
 							storedVal,
 							getOptNumber(action, 'fadeDuration', 0),
@@ -670,7 +703,10 @@ export function GetActionsList(
 				}
 			},
 			subscribe: (evt): void => {
-				ensureLoaded(MainPanPath(evt.options))
+				const refPaths = parseRefToPaths(evt.options.target, panningChoices.allSourcesParseOptions)
+				if (!refPaths?.pan) return // Not a valid path
+
+				ensureLoaded(refPaths.pan.path)
 			},
 		},
 		[ActionId.ChannelSendLevel]: {
@@ -680,19 +716,23 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'Source',
 					id: 'source',
-					...convertChoices(levelsChoices.allSources),
+					...convertChoices(levelsChoices.allSourcesNew),
 				},
 				{
 					type: 'dropdown',
 					label: 'Target',
 					id: 'target',
-					...convertChoices(levelsChoices.channelSendTargets),
+					...convertChoices(levelsChoices.channelSendTargetsNew),
 				},
 				FaderLevelChoice,
 				...FadeDurationChoice,
 			],
 			callback: async (action): Promise<void> => {
-				const cmd = SendChannelToBusPath(action.options)
+				const sourceRef = parseRefToPaths(action.options.source, levelsChoices.allSourcesParseOptions)
+				const targetRef = parseRefToPaths(action.options.target, levelsChoices.channelSendTargetsParseOptions)
+				if (!sourceRef?.sendTo || !targetRef?.sendToSink?.level) return
+
+				const cmd = `${sourceRef.sendTo.path}/${targetRef.sendToSink.level}`
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
 				transitions.runForDb(
@@ -705,8 +745,12 @@ export function GetActionsList(
 				)
 			},
 			subscribe: (evt): void => {
+				const sourceRef = parseRefToPaths(evt.options.source, levelsChoices.allSourcesParseOptions)
+				const targetRef = parseRefToPaths(evt.options.target, levelsChoices.channelSendTargetsParseOptions)
+				if (!sourceRef?.sendTo || !targetRef?.sendToSink?.level) return
+
 				// In case we have a fade time
-				ensureLoaded(SendChannelToBusPath(evt.options))
+				ensureLoaded(`${sourceRef.sendTo.path}/${targetRef.sendToSink.level}`)
 			},
 		},
 		[ActionId.ChannelSendLevelDelta]: {
@@ -716,19 +760,23 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'Source',
 					id: 'source',
-					...convertChoices(levelsChoices.allSources),
+					...convertChoices(levelsChoices.allSourcesNew),
 				},
 				{
 					type: 'dropdown',
 					label: 'Target',
 					id: 'target',
-					...convertChoices(levelsChoices.channelSendTargets),
+					...convertChoices(levelsChoices.channelSendTargetsNew),
 				},
 				...FaderLevelDeltaChoice,
 				...FadeDurationChoice,
 			],
 			callback: async (action): Promise<void> => {
-				const cmd = SendChannelToBusPath(action.options)
+				const sourceRef = parseRefToPaths(action.options.source, levelsChoices.allSourcesParseOptions)
+				const targetRef = parseRefToPaths(action.options.target, levelsChoices.channelSendTargetsParseOptions)
+				if (!sourceRef?.sendTo || !targetRef?.sendToSink?.level) return
+
+				const cmd = `${sourceRef.sendTo.path}/${targetRef.sendToSink.level}`
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
 				if (typeof currentVal === 'number') {
@@ -741,7 +789,12 @@ export function GetActionsList(
 				}
 			},
 			subscribe: (evt): void => {
-				ensureLoaded(SendChannelToBusPath(evt.options))
+				const sourceRef = parseRefToPaths(evt.options.source, levelsChoices.allSourcesParseOptions)
+				const targetRef = parseRefToPaths(evt.options.target, levelsChoices.channelSendTargetsParseOptions)
+				if (!sourceRef?.sendTo || !targetRef?.sendToSink?.level) return
+
+				// In case we have a fade time
+				ensureLoaded(`${sourceRef.sendTo.path}/${targetRef.sendToSink.level}`)
 			},
 		},
 		[ActionId.ChannelSendLevelStore]: {
@@ -751,17 +804,21 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'Source',
 					id: 'source',
-					...convertChoices(levelsChoices.allSources),
+					...convertChoices(levelsChoices.allSourcesNew),
 				},
 				{
 					type: 'dropdown',
 					label: 'Target',
 					id: 'target',
-					...convertChoices(levelsChoices.channelSendTargets),
+					...convertChoices(levelsChoices.channelSendTargetsNew),
 				},
 			],
 			callback: async (action): Promise<void> => {
-				const cmd = SendChannelToBusPath(action.options)
+				const sourceRef = parseRefToPaths(action.options.source, levelsChoices.allSourcesParseOptions)
+				const targetRef = parseRefToPaths(action.options.target, levelsChoices.channelSendTargetsParseOptions)
+				if (!sourceRef?.sendTo || !targetRef?.sendToSink?.level) return
+
+				const cmd = `${sourceRef.sendTo.path}/${targetRef.sendToSink.level}`
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
 				if (currentVal !== undefined) {
@@ -769,7 +826,12 @@ export function GetActionsList(
 				}
 			},
 			subscribe: (evt): void => {
-				ensureLoaded(SendChannelToBusPath(evt.options))
+				const sourceRef = parseRefToPaths(evt.options.source, levelsChoices.allSourcesParseOptions)
+				const targetRef = parseRefToPaths(evt.options.target, levelsChoices.channelSendTargetsParseOptions)
+				if (!sourceRef?.sendTo || !targetRef?.sendToSink?.level) return
+
+				// In case we have a fade time
+				ensureLoaded(`${sourceRef.sendTo.path}/${targetRef.sendToSink.level}`)
 			},
 		},
 		[ActionId.ChannelSendLevelRestore]: {
@@ -779,18 +841,22 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'Source',
 					id: 'source',
-					...convertChoices(levelsChoices.allSources),
+					...convertChoices(levelsChoices.allSourcesNew),
 				},
 				{
 					type: 'dropdown',
 					label: 'Target',
 					id: 'target',
-					...convertChoices(levelsChoices.channelSendTargets),
+					...convertChoices(levelsChoices.channelSendTargetsNew),
 				},
 				...FadeDurationChoice,
 			],
 			callback: async (action): Promise<void> => {
-				const cmd = SendChannelToBusPath(action.options)
+				const sourceRef = parseRefToPaths(action.options.source, levelsChoices.allSourcesParseOptions)
+				const targetRef = parseRefToPaths(action.options.target, levelsChoices.channelSendTargetsParseOptions)
+				if (!sourceRef?.sendTo || !targetRef?.sendToSink?.level) return
+
+				const cmd = `${sourceRef.sendTo.path}/${targetRef.sendToSink.level}`
 				const storedVal = state.popPressValue(`${action.controlId}-${cmd}`)
 				if (storedVal !== undefined) {
 					const currentState = state.get(cmd)
@@ -816,19 +882,23 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'Source',
 					id: 'source',
-					...convertChoices(panningChoices.allSources),
+					...convertChoices(panningChoices.allSourcesNew),
 				},
 				{
 					type: 'dropdown',
 					label: 'Target',
 					id: 'target',
-					...convertChoices(panningChoices.channelSendTargets),
+					...convertChoices(panningChoices.channelSendTargetsNew),
 				},
 				PanningChoice,
 				...FadeDurationChoice,
 			],
 			callback: async (action): Promise<void> => {
-				const cmd = ChannelToBusPanPath(action.options)
+				const sourceRef = parseRefToPaths(action.options.source, levelsChoices.allSourcesParseOptions)
+				const targetRef = parseRefToPaths(action.options.target, levelsChoices.channelSendTargetsParseOptions)
+				if (!sourceRef?.sendTo || !targetRef?.sendToSink?.pan) return
+
+				const cmd = `${sourceRef.sendTo.path}/${targetRef.sendToSink.pan}`
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0]?.value : undefined
 				transitions.run(
@@ -841,7 +911,11 @@ export function GetActionsList(
 				)
 			},
 			subscribe: (evt): void => {
-				ensureLoaded(ChannelToBusPanPath(evt.options))
+				const sourceRef = parseRefToPaths(evt.options.source, levelsChoices.allSourcesParseOptions)
+				const targetRef = parseRefToPaths(evt.options.target, levelsChoices.channelSendTargetsParseOptions)
+				if (!sourceRef?.sendTo || !targetRef?.sendToSink?.pan) return
+
+				ensureLoaded(`${sourceRef.sendTo.path}/${targetRef.sendToSink.pan}`)
 			},
 		},
 		[ActionId.ChannelSendPanningDelta]: {
@@ -851,19 +925,23 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'Source',
 					id: 'source',
-					...convertChoices(panningChoices.allSources),
+					...convertChoices(panningChoices.allSourcesNew),
 				},
 				{
 					type: 'dropdown',
 					label: 'Target',
 					id: 'target',
-					...convertChoices(panningChoices.channelSendTargets),
+					...convertChoices(panningChoices.channelSendTargetsNew),
 				},
 				...PanningDelta,
 				...FadeDurationChoice,
 			],
 			callback: async (action): Promise<void> => {
-				const cmd = ChannelToBusPanPath(action.options)
+				const sourceRef = parseRefToPaths(action.options.source, levelsChoices.allSourcesParseOptions)
+				const targetRef = parseRefToPaths(action.options.target, levelsChoices.channelSendTargetsParseOptions)
+				if (!sourceRef?.sendTo || !targetRef?.sendToSink?.pan) return
+
+				const cmd = `${sourceRef.sendTo.path}/${targetRef.sendToSink.pan}`
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0]?.value : 0
 				let newVal = currentVal + (await getDeltaNumber(action, 0)) / 100
@@ -882,7 +960,11 @@ export function GetActionsList(
 				)
 			},
 			subscribe: (evt): void => {
-				ensureLoaded(ChannelToBusPanPath(evt.options))
+				const sourceRef = parseRefToPaths(evt.options.source, levelsChoices.allSourcesParseOptions)
+				const targetRef = parseRefToPaths(evt.options.target, levelsChoices.channelSendTargetsParseOptions)
+				if (!sourceRef?.sendTo || !targetRef?.sendToSink?.pan) return
+
+				ensureLoaded(`${sourceRef.sendTo.path}/${targetRef.sendToSink.pan}`)
 			},
 		},
 		[ActionId.ChannelSendPanningStore]: {
@@ -892,17 +974,21 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'Source',
 					id: 'source',
-					...convertChoices(panningChoices.allSources),
+					...convertChoices(panningChoices.allSourcesNew),
 				},
 				{
 					type: 'dropdown',
 					label: 'Target',
 					id: 'target',
-					...convertChoices(panningChoices.channelSendTargets),
+					...convertChoices(panningChoices.channelSendTargetsNew),
 				},
 			],
 			callback: async (action): Promise<void> => {
-				const cmd = ChannelToBusPanPath(action.options)
+				const sourceRef = parseRefToPaths(action.options.source, levelsChoices.allSourcesParseOptions)
+				const targetRef = parseRefToPaths(action.options.target, levelsChoices.channelSendTargetsParseOptions)
+				if (!sourceRef?.sendTo || !targetRef?.sendToSink?.pan) return
+
+				const cmd = `${sourceRef.sendTo.path}/${targetRef.sendToSink.pan}`
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0].value : undefined
 				if (currentVal !== undefined) {
@@ -910,7 +996,11 @@ export function GetActionsList(
 				}
 			},
 			subscribe: (evt): void => {
-				ensureLoaded(ChannelToBusPanPath(evt.options))
+				const sourceRef = parseRefToPaths(evt.options.source, levelsChoices.allSourcesParseOptions)
+				const targetRef = parseRefToPaths(evt.options.target, levelsChoices.channelSendTargetsParseOptions)
+				if (!sourceRef?.sendTo || !targetRef?.sendToSink?.pan) return
+
+				ensureLoaded(`${sourceRef.sendTo.path}/${targetRef.sendToSink.pan}`)
 			},
 		},
 		[ActionId.ChannelSendPanningRestore]: {
@@ -920,18 +1010,22 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'Source',
 					id: 'source',
-					...convertChoices(panningChoices.allSources),
+					...convertChoices(panningChoices.allSourcesNew),
 				},
 				{
 					type: 'dropdown',
 					label: 'Target',
 					id: 'target',
-					...convertChoices(panningChoices.channelSendTargets),
+					...convertChoices(panningChoices.channelSendTargetsNew),
 				},
 				...FadeDurationChoice,
 			],
 			callback: async (action): Promise<void> => {
-				const cmd = ChannelToBusPanPath(action.options)
+				const sourceRef = parseRefToPaths(action.options.source, levelsChoices.allSourcesParseOptions)
+				const targetRef = parseRefToPaths(action.options.target, levelsChoices.channelSendTargetsParseOptions)
+				if (!sourceRef?.sendTo || !targetRef?.sendToSink?.pan) return
+
+				const cmd = `${sourceRef.sendTo.path}/${targetRef.sendToSink.pan}`
 				const storedVal = state.popPressValue(`${action.controlId}-${cmd}`)
 				if (storedVal != undefined) {
 					const currentState = state.get(cmd)
@@ -949,7 +1043,11 @@ export function GetActionsList(
 				}
 			},
 			subscribe: (evt): void => {
-				ensureLoaded(ChannelToBusPanPath(evt.options))
+				const sourceRef = parseRefToPaths(evt.options.source, levelsChoices.allSourcesParseOptions)
+				const targetRef = parseRefToPaths(evt.options.target, levelsChoices.channelSendTargetsParseOptions)
+				if (!sourceRef?.sendTo || !targetRef?.sendToSink?.pan) return
+
+				ensureLoaded(`${sourceRef.sendTo.path}/${targetRef.sendToSink.pan}`)
 			},
 		},
 		[ActionId.BusSendLevel]: {
@@ -959,26 +1057,34 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'Source',
 					id: 'source',
-					...convertChoices(levelsChoices.busSendSources),
+					...convertChoices(levelsChoices.busSendSourcesNew),
 				},
 				{
 					type: 'dropdown',
 					label: 'Target',
 					id: 'target',
-					...convertChoices(levelsChoices.busSendTargets),
+					...convertChoices(levelsChoices.busSendTargetsNew),
 				},
 				FaderLevelChoice,
 				...FadeDurationChoice,
 			],
 			callback: async (action): Promise<void> => {
-				const cmd = SendBusToMatrixPath(action.options)
+				const sourceRef = parseRefToPaths(action.options.source, levelsChoices.busSendSourcesParseOptions)
+				const targetRef = parseRefToPaths(action.options.target, levelsChoices.busSendTargetsParseOptions)
+				if (!sourceRef?.sendTo || !targetRef?.sendToSink?.level) return
+
+				const cmd = `${sourceRef.sendTo.path}/${targetRef.sendToSink.level}`
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
 				transitions.runForDb(cmd, currentVal, getOptNumber(action, 'fad'), getOptNumber(action, 'fadeDuration', 0))
 			},
 			subscribe: (evt): void => {
+				const sourceRef = parseRefToPaths(evt.options.source, levelsChoices.busSendSourcesParseOptions)
+				const targetRef = parseRefToPaths(evt.options.target, levelsChoices.busSendTargetsParseOptions)
+				if (!sourceRef?.sendTo || !targetRef?.sendToSink?.level) return
+
 				// In case we have a fade time
-				ensureLoaded(SendBusToMatrixPath(evt.options))
+				ensureLoaded(`${sourceRef.sendTo.path}/${targetRef.sendToSink.level}`)
 			},
 		},
 		[ActionId.BusSendLevelDelta]: {
@@ -988,19 +1094,23 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'Source',
 					id: 'source',
-					...convertChoices(levelsChoices.busSendSources),
+					...convertChoices(levelsChoices.busSendSourcesNew),
 				},
 				{
 					type: 'dropdown',
 					label: 'Target',
 					id: 'target',
-					...convertChoices(levelsChoices.busSendTargets),
+					...convertChoices(levelsChoices.busSendTargetsNew),
 				},
 				...FaderLevelDeltaChoice,
 				...FadeDurationChoice,
 			],
 			callback: async (action): Promise<void> => {
-				const cmd = SendBusToMatrixPath(action.options)
+				const sourceRef = parseRefToPaths(action.options.source, levelsChoices.busSendSourcesParseOptions)
+				const targetRef = parseRefToPaths(action.options.target, levelsChoices.busSendTargetsParseOptions)
+				if (!sourceRef?.sendTo || !targetRef?.sendToSink?.level) return
+
+				const cmd = `${sourceRef.sendTo.path}/${targetRef.sendToSink.level}`
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
 				if (typeof currentVal === 'number') {
@@ -1013,7 +1123,12 @@ export function GetActionsList(
 				}
 			},
 			subscribe: (evt): void => {
-				ensureLoaded(SendBusToMatrixPath(evt.options))
+				const sourceRef = parseRefToPaths(evt.options.source, levelsChoices.busSendSourcesParseOptions)
+				const targetRef = parseRefToPaths(evt.options.target, levelsChoices.busSendTargetsParseOptions)
+				if (!sourceRef?.sendTo || !targetRef?.sendToSink?.level) return
+
+				// In case we have a fade time
+				ensureLoaded(`${sourceRef.sendTo.path}/${targetRef.sendToSink.level}`)
 			},
 		},
 		[ActionId.BusSendLevelStore]: {
@@ -1023,17 +1138,21 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'Source',
 					id: 'source',
-					...convertChoices(levelsChoices.busSendSources),
+					...convertChoices(levelsChoices.busSendSourcesNew),
 				},
 				{
 					type: 'dropdown',
 					label: 'Target',
 					id: 'target',
-					...convertChoices(levelsChoices.busSendTargets),
+					...convertChoices(levelsChoices.busSendTargetsNew),
 				},
 			],
 			callback: async (action): Promise<void> => {
-				const cmd = SendBusToMatrixPath(action.options)
+				const sourceRef = parseRefToPaths(action.options.source, levelsChoices.busSendSourcesParseOptions)
+				const targetRef = parseRefToPaths(action.options.target, levelsChoices.busSendTargetsParseOptions)
+				if (!sourceRef?.sendTo || !targetRef?.sendToSink?.level) return
+
+				const cmd = `${sourceRef.sendTo.path}/${targetRef.sendToSink.level}`
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? floatToDB(currentState[0]?.value) : undefined
 				if (currentVal !== undefined) {
@@ -1041,7 +1160,12 @@ export function GetActionsList(
 				}
 			},
 			subscribe: (evt): void => {
-				ensureLoaded(SendBusToMatrixPath(evt.options))
+				const sourceRef = parseRefToPaths(evt.options.source, levelsChoices.busSendSourcesParseOptions)
+				const targetRef = parseRefToPaths(evt.options.target, levelsChoices.busSendTargetsParseOptions)
+				if (!sourceRef?.sendTo || !targetRef?.sendToSink?.level) return
+
+				// In case we have a fade time
+				ensureLoaded(`${sourceRef.sendTo.path}/${targetRef.sendToSink.level}`)
 			},
 		},
 		[ActionId.BusSendLevelRestore]: {
@@ -1051,18 +1175,22 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'Source',
 					id: 'source',
-					...convertChoices(levelsChoices.busSendSources),
+					...convertChoices(levelsChoices.busSendSourcesNew),
 				},
 				{
 					type: 'dropdown',
 					label: 'Target',
 					id: 'target',
-					...convertChoices(levelsChoices.busSendTargets),
+					...convertChoices(levelsChoices.busSendTargetsNew),
 				},
 				...FadeDurationChoice,
 			],
 			callback: async (action): Promise<void> => {
-				const cmd = SendBusToMatrixPath(action.options)
+				const sourceRef = parseRefToPaths(action.options.source, levelsChoices.busSendSourcesParseOptions)
+				const targetRef = parseRefToPaths(action.options.target, levelsChoices.busSendTargetsParseOptions)
+				if (!sourceRef?.sendTo || !targetRef?.sendToSink?.level) return
+
+				const cmd = `${sourceRef.sendTo.path}/${targetRef.sendToSink.level}`
 				const storedVal = state.popPressValue(`${action.controlId}-${cmd}`)
 				if (storedVal !== undefined) {
 					const currentState = state.get(cmd)
@@ -1088,19 +1216,23 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'Source',
 					id: 'source',
-					...convertChoices(panningChoices.busSendSource),
+					...convertChoices(panningChoices.busSendSourceNew),
 				},
 				{
 					type: 'dropdown',
 					label: 'Target',
 					id: 'target',
-					...convertChoices(panningChoices.busSendTarget),
+					...convertChoices(panningChoices.busSendTargetNew),
 				},
 				PanningChoice,
 				...FadeDurationChoice,
 			],
 			callback: async (action): Promise<void> => {
-				const cmd = BusToMatrixPanPath(action.options)
+				const sourceRef = parseRefToPaths(action.options.source, panningChoices.busSendSourceParseOptions)
+				const targetRef = parseRefToPaths(action.options.target, panningChoices.busSendTargetParseOptions)
+				if (!sourceRef?.sendTo || !targetRef?.sendToSink?.pan) return
+
+				const cmd = `${sourceRef.sendTo.path}/${targetRef.sendToSink.pan}`
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0]?.value : undefined
 				transitions.run(
@@ -1113,7 +1245,12 @@ export function GetActionsList(
 				)
 			},
 			subscribe: (evt): void => {
-				ensureLoaded(BusToMatrixPanPath(evt.options))
+				const sourceRef = parseRefToPaths(evt.options.source, panningChoices.busSendSourceParseOptions)
+				const targetRef = parseRefToPaths(evt.options.target, panningChoices.busSendTargetParseOptions)
+				if (!sourceRef?.sendTo || !targetRef?.sendToSink?.pan) return
+
+				// In case we have a fade time
+				ensureLoaded(`${sourceRef.sendTo.path}/${targetRef.sendToSink.pan}`)
 			},
 		},
 		[ActionId.BusSendPanningDelta]: {
@@ -1123,19 +1260,23 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'Source',
 					id: 'source',
-					...convertChoices(panningChoices.busSendSource),
+					...convertChoices(panningChoices.busSendSourceNew),
 				},
 				{
 					type: 'dropdown',
 					label: 'Target',
 					id: 'target',
-					...convertChoices(panningChoices.busSendTarget),
+					...convertChoices(panningChoices.busSendTargetNew),
 				},
 				...PanningDelta,
 				...FadeDurationChoice,
 			],
 			callback: async (action): Promise<void> => {
-				const cmd = BusToMatrixPanPath(action.options)
+				const sourceRef = parseRefToPaths(action.options.source, panningChoices.busSendSourceParseOptions)
+				const targetRef = parseRefToPaths(action.options.target, panningChoices.busSendTargetParseOptions)
+				if (!sourceRef?.sendTo || !targetRef?.sendToSink?.pan) return
+
+				const cmd = `${sourceRef.sendTo.path}/${targetRef.sendToSink.pan}`
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0]?.value : 0
 				let newVal = currentVal + (await getDeltaNumber(action, 0)) / 100
@@ -1154,7 +1295,12 @@ export function GetActionsList(
 				)
 			},
 			subscribe: (evt): void => {
-				ensureLoaded(BusToMatrixPanPath(evt.options))
+				const sourceRef = parseRefToPaths(evt.options.source, panningChoices.busSendSourceParseOptions)
+				const targetRef = parseRefToPaths(evt.options.target, panningChoices.busSendTargetParseOptions)
+				if (!sourceRef?.sendTo || !targetRef?.sendToSink?.pan) return
+
+				// In case we have a fade time
+				ensureLoaded(`${sourceRef.sendTo.path}/${targetRef.sendToSink.pan}`)
 			},
 		},
 		[ActionId.BusSendPanningStore]: {
@@ -1164,17 +1310,21 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'Source',
 					id: 'source',
-					...convertChoices(panningChoices.busSendSource),
+					...convertChoices(panningChoices.busSendSourceNew),
 				},
 				{
 					type: 'dropdown',
 					label: 'Target',
 					id: 'target',
-					...convertChoices(panningChoices.busSendTarget),
+					...convertChoices(panningChoices.busSendTargetNew),
 				},
 			],
 			callback: async (action): Promise<void> => {
-				const cmd = BusToMatrixPanPath(action.options)
+				const sourceRef = parseRefToPaths(action.options.source, panningChoices.busSendSourceParseOptions)
+				const targetRef = parseRefToPaths(action.options.target, panningChoices.busSendTargetParseOptions)
+				if (!sourceRef?.sendTo || !targetRef?.sendToSink?.pan) return
+
+				const cmd = `${sourceRef.sendTo.path}/${targetRef.sendToSink.pan}`
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'f' ? currentState[0].value : undefined
 				if (currentVal !== undefined) {
@@ -1182,7 +1332,12 @@ export function GetActionsList(
 				}
 			},
 			subscribe: (evt): void => {
-				ensureLoaded(BusToMatrixPanPath(evt.options))
+				const sourceRef = parseRefToPaths(evt.options.source, panningChoices.busSendSourceParseOptions)
+				const targetRef = parseRefToPaths(evt.options.target, panningChoices.busSendTargetParseOptions)
+				if (!sourceRef?.sendTo || !targetRef?.sendToSink?.pan) return
+
+				// In case we have a fade time
+				ensureLoaded(`${sourceRef.sendTo.path}/${targetRef.sendToSink.pan}`)
 			},
 		},
 		[ActionId.BusSendPanningRestore]: {
@@ -1192,18 +1347,22 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'Source',
 					id: 'source',
-					...convertChoices(panningChoices.busSendSource),
+					...convertChoices(panningChoices.busSendSourceNew),
 				},
 				{
 					type: 'dropdown',
 					label: 'Target',
 					id: 'target',
-					...convertChoices(panningChoices.busSendTarget),
+					...convertChoices(panningChoices.busSendTargetNew),
 				},
 				...FadeDurationChoice,
 			],
 			callback: async (action): Promise<void> => {
-				const cmd = BusToMatrixPanPath(action.options)
+				const sourceRef = parseRefToPaths(action.options.source, panningChoices.busSendSourceParseOptions)
+				const targetRef = parseRefToPaths(action.options.target, panningChoices.busSendTargetParseOptions)
+				if (!sourceRef?.sendTo || !targetRef?.sendToSink?.pan) return
+
+				const cmd = `${sourceRef.sendTo.path}/${targetRef.sendToSink.pan}`
 				const storedVal = state.popPressValue(`${action.controlId}-${cmd}`)
 				if (storedVal != undefined) {
 					const currentState = state.get(cmd)
@@ -1221,7 +1380,12 @@ export function GetActionsList(
 				}
 			},
 			subscribe: (evt): void => {
-				ensureLoaded(BusToMatrixPanPath(evt.options))
+				const sourceRef = parseRefToPaths(evt.options.source, panningChoices.busSendSourceParseOptions)
+				const targetRef = parseRefToPaths(evt.options.target, panningChoices.busSendTargetParseOptions)
+				if (!sourceRef?.sendTo || !targetRef?.sendToSink?.pan) return
+
+				// In case we have a fade time
+				ensureLoaded(`${sourceRef.sendTo.path}/${targetRef.sendToSink.pan}`)
 			},
 		},
 		[ActionId.InputTrim]: {
@@ -1231,7 +1395,7 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'Input',
 					id: 'input',
-					...convertChoices(levelsChoices.allSources),
+					...convertChoices(levelsChoices.allSourcesNew),
 				},
 				{
 					type: 'number',
@@ -1245,7 +1409,10 @@ export function GetActionsList(
 				},
 			],
 			callback: async (action): Promise<void> => {
-				sendOsc(`${action.options.input}/preamp/trim`, {
+				const inputRef = parseRefToPaths(action.options.input, levelsChoices.allSourcesParseOptions)
+				if (!inputRef?.trim) return
+
+				sendOsc(inputRef.trim.path, {
 					type: 'f',
 					value: trimToFloat(getOptNumber(action, 'trim')),
 				})
@@ -1258,6 +1425,7 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'Headamp',
 					id: 'headamp',
+					// nocommit - revisit this
 					...convertChoices(GetHeadampChoices()),
 				},
 				HeadampGainChoice,
@@ -1276,7 +1444,7 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'Target',
 					id: 'target',
-					...convertChoices(levelsChoices.channels),
+					...convertChoices(levelsChoices.channelsNew),
 				},
 				{
 					type: 'textinput',
@@ -1287,7 +1455,10 @@ export function GetActionsList(
 				},
 			],
 			callback: async (action): Promise<void> => {
-				sendOsc(`${action.options.target}/config/name`, {
+				const targetRef = parseRefToPaths(action.options.target, levelsChoices.channelsParseOptions)
+				if (!targetRef?.config) return
+
+				sendOsc(targetRef.config.name, {
 					type: 's',
 					value: `${action.options.lab}`,
 				})
@@ -1301,13 +1472,17 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'Target',
 					id: 'target',
-					...convertChoices(levelsChoices.channels),
+					...convertChoices(levelsChoices.channelsNew),
 				},
+				// nocommit - inline this variables handling
 				...ColorChoicesWithVariable,
 			],
 			callback: async (action): Promise<void> => {
+				const targetRef = parseRefToPaths(action.options.target, levelsChoices.channelsParseOptions)
+				if (!targetRef?.config) return
+
 				if (!action.options.useVariable) {
-					sendOsc(`${action.options.target}/config/color`, {
+					sendOsc(targetRef.config.color, {
 						type: 'i',
 						value: getOptNumber(action, 'col'),
 					})
@@ -1318,7 +1493,7 @@ export function GetActionsList(
 				if (rawVal === undefined) return
 				const id = getColorIdFromLabel((rawVal as string).trim())
 				if (id === undefined) return
-				sendOsc(`${action.options.target}/config/color`, {
+				sendOsc(targetRef.config.color, {
 					type: 'i',
 					value: id as number,
 				})
@@ -1389,6 +1564,7 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'Target',
 					id: 'select',
+					// nocommit - continue from here!
 					...convertChoices(selectChoices),
 				},
 			],

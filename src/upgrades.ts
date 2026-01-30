@@ -94,12 +94,11 @@ export const upgradeToBuiltinFeedbackInverted: CompanionStaticUpgradeScript<any>
 	return result
 }
 
-const pathReplacements: Record<string, string | undefined> = {
+const pathReplacements: Record<string, string | number | undefined> = {
 	'/main/st': 'stereo',
 	'/main/mono': 'mono',
 	st: 'stereo',
 	mlevel: 'mono',
-	mpan: 'mono',
 }
 for (let i = 1; i <= 32; i++) pathReplacements[`/ch/${padNumber(i)}`] = `channel${i}`
 for (let i = 1; i <= 8; i++) pathReplacements[`/auxin/${padNumber(i)}`] = `aux${i}`
@@ -112,12 +111,41 @@ for (let i = 1; i <= 16; i++) {
 }
 for (let i = 1; i <= 6; i++) pathReplacements[`/mtx/${padNumber(i)}`] = `matrix${i}`
 for (let i = 1; i <= 8; i++) pathReplacements[`/dca/${padNumber(i)}`] = `dca${i}`
-for (let i = 1; i <= 6; i++) pathReplacements[`/config/mute/${i}`] = `mutegroup${i}`
+for (let i = 1; i <= 6; i++) pathReplacements[`/config/mute/${i}`] = i
+for (let i = 1; i <= 32; i++) pathReplacements[padNumber(i)] = i
 
 const actionsToUpgrade: Record<string, string[] | undefined> = {
 	[ActionId.Mute]: ['target'],
 	[ActionId.MuteGroup]: ['target'],
 	[ActionId.MuteChannelSend]: ['source', 'target'],
+	[ActionId.MuteBusSend]: ['source', 'target'],
+	[ActionId.FaderLevel]: ['target'],
+	[ActionId.FaderLevelStore]: ['target'],
+	[ActionId.FaderLevelRestore]: ['target'],
+	[ActionId.FaderLevelDelta]: ['target'],
+	[ActionId.Panning]: ['target'],
+	[ActionId.PanningDelta]: ['target'],
+	[ActionId.PanningStore]: ['target'],
+	[ActionId.PanningRestore]: ['target'],
+	[ActionId.ChannelSendLevel]: ['source', 'target'],
+	[ActionId.ChannelSendLevelDelta]: ['source', 'target'],
+	[ActionId.ChannelSendLevelStore]: ['source', 'target'],
+	[ActionId.ChannelSendLevelRestore]: ['source', 'target'],
+	[ActionId.ChannelSendPanning]: ['source', 'target'],
+	[ActionId.ChannelSendPanningDelta]: ['source', 'target'],
+	[ActionId.ChannelSendPanningStore]: ['source', 'target'],
+	[ActionId.ChannelSendPanningRestore]: ['source', 'target'],
+	[ActionId.BusSendLevel]: ['source', 'target'],
+	[ActionId.BusSendLevelDelta]: ['source', 'target'],
+	[ActionId.BusSendLevelStore]: ['source', 'target'],
+	[ActionId.BusSendLevelRestore]: ['source', 'target'],
+	[ActionId.BusSendPanning]: ['source', 'target'],
+	[ActionId.BusSendPanningDelta]: ['source', 'target'],
+	[ActionId.BusSendPanningStore]: ['source', 'target'],
+	[ActionId.BusSendPanningRestore]: ['source', 'target'],
+	[ActionId.InputTrim]: ['input'],
+	[ActionId.Label]: ['target'],
+	[ActionId.Color]: ['target'],
 }
 const feedbacksToUpgrade: Record<string, string[] | undefined> = {
 	// [ActionId.Mute]: ['target'],
