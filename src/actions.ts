@@ -1582,6 +1582,7 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'Target',
 					id: 'solo',
+					// nocommit me
 					...convertChoices(soloChoices),
 				},
 				{
@@ -1589,6 +1590,7 @@ export function GetActionsList(
 					label: 'On / Off',
 					id: 'on',
 					...convertChoices(CHOICES_ON_OFF),
+					disableAutoExpression: true,
 				},
 			],
 			callback: async (action): Promise<void> => {
@@ -1626,6 +1628,7 @@ export function GetActionsList(
 					label: 'Function',
 					id: 'tFunc',
 					...convertChoices(CHOICES_TAPE_FUNC),
+					disableAutoExpression: true,
 				},
 			],
 			callback: async (action): Promise<void> => {
@@ -1658,6 +1661,7 @@ export function GetActionsList(
 					label: 'On / Off',
 					id: 'on',
 					...convertChoices(CHOICES_ON_OFF),
+					disableAutoExpression: true,
 				},
 			],
 			callback: async (action): Promise<void> => {
@@ -1698,6 +1702,7 @@ export function GetActionsList(
 					label: 'Destinations',
 					id: 'dest',
 					default: [],
+					// nocommit
 					choices: GetTalkbackDestinations(state),
 				},
 			],
@@ -1734,6 +1739,7 @@ export function GetActionsList(
 					label: 'Destinations',
 					id: 'dest',
 					default: 0,
+					// nocommit
 					choices: GetTalkbackDestinations(state),
 				},
 				{
@@ -1741,6 +1747,7 @@ export function GetActionsList(
 					label: 'Active',
 					id: 'on',
 					...convertChoices(CHOICES_ON_OFF),
+					disableAutoExpression: true,
 				},
 			],
 			callback: (action): void => {
@@ -1841,6 +1848,7 @@ export function GetActionsList(
 					label: 'On / Off',
 					id: 'on',
 					...convertChoices(CHOICES_ON_OFF),
+					disableAutoExpression: true,
 				},
 			],
 			callback: async (action): Promise<void> => {
@@ -1865,6 +1873,7 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'destination',
 					id: 'destination',
+					// nocommit
 					...convertChoices(GetOscillatorDestinations(state)),
 				},
 			],
@@ -1883,6 +1892,7 @@ export function GetActionsList(
 					label: 'On / Off',
 					id: 'on',
 					...convertChoices(CHOICES_ON_OFF),
+					disableAutoExpression: true,
 				},
 			],
 			callback: async (action): Promise<void> => {
@@ -1908,6 +1918,7 @@ export function GetActionsList(
 					label: 'On / Off',
 					id: 'on',
 					...convertChoices(CHOICES_ON_OFF),
+					disableAutoExpression: true,
 				},
 			],
 			callback: async (action): Promise<void> => {
@@ -1996,6 +2007,7 @@ export function GetActionsList(
 							label: 'BUS MASTERS',
 						},
 					]),
+					disableAutoExpression: true,
 				},
 			],
 			callback: async (action): Promise<void> => {
@@ -2032,6 +2044,7 @@ export function GetActionsList(
 							label: 'MATRIX 1 - 6 / MAIN C',
 						},
 					]),
+					disableAutoExpression: true,
 				},
 			],
 			callback: async (action): Promise<void> => {
@@ -2084,6 +2097,7 @@ export function GetActionsList(
 							label: 'BUS 1-8',
 						},
 					]),
+					disableAutoExpression: true,
 				},
 			],
 			callback: async (action): Promise<void> => {
@@ -2144,6 +2158,7 @@ export function GetActionsList(
 							label: 'FX RTN',
 						},
 					]),
+					disableAutoExpression: true,
 				},
 			],
 			callback: async (action): Promise<void> => {
@@ -2161,6 +2176,7 @@ export function GetActionsList(
 					label: 'On / Off',
 					id: 'on',
 					...convertChoices(CHOICES_ON_OFF),
+					disableAutoExpression: true,
 				},
 			],
 			callback: async (action): Promise<void> => {
@@ -2203,6 +2219,7 @@ export function GetActionsList(
 							label: 'Bus 13-16',
 						},
 					]),
+					disableAutoExpression: true,
 				},
 			],
 			callback: async (action): Promise<void> => {
@@ -2234,6 +2251,7 @@ export function GetActionsList(
 							label: 'Set C',
 						},
 					]),
+					disableAutoExpression: true,
 				},
 			],
 			callback: async (action): Promise<void> => {
@@ -2293,6 +2311,7 @@ export function GetActionsList(
 							label: 'ASSIGN',
 						},
 					]),
+					disableAutoExpression: true,
 				},
 			],
 			callback: async (action): Promise<void> => {
@@ -2311,6 +2330,7 @@ export function GetActionsList(
 					label: 'On / Off',
 					id: 'on',
 					...convertChoices(CHOICES_ON_OFF),
+					disableAutoExpression: true,
 				},
 			],
 			callback: async (action): Promise<void> => {
@@ -2336,6 +2356,7 @@ export function GetActionsList(
 					label: 'On / Off',
 					id: 'on',
 					...convertChoices(CHOICES_ON_OFF),
+					disableAutoExpression: true,
 				},
 			],
 			callback: async (action): Promise<void> => {
@@ -2390,6 +2411,7 @@ export function GetActionsList(
 							label: 'MAIN',
 						},
 					]),
+					disableAutoExpression: true,
 				},
 			],
 			callback: async (action): Promise<void> => {
@@ -2434,6 +2456,7 @@ export function GetActionsList(
 							label: 'AUTOMIX',
 						},
 					]),
+					disableAutoExpression: true,
 				},
 			],
 			callback: async (action): Promise<void> => {
@@ -2490,6 +2513,7 @@ export function GetActionsList(
 							label: 'PATCH USER',
 						},
 					]),
+					disableAutoExpression: true,
 				},
 			],
 			callback: async (action): Promise<void> => {
@@ -2538,6 +2562,7 @@ export function GetActionsList(
 							label: 'CARD',
 						},
 					]),
+					disableAutoExpression: true,
 				},
 			],
 			callback: async (action): Promise<void> => {
@@ -2574,6 +2599,7 @@ export function GetActionsList(
 							label: 'MONITOR',
 						},
 					]),
+					disableAutoExpression: true,
 				},
 			],
 			callback: async (action): Promise<void> => {
@@ -2630,6 +2656,7 @@ export function GetActionsList(
 							label: 'FX8',
 						},
 					]),
+					disableAutoExpression: true,
 				},
 			],
 			callback: async (action): Promise<void> => {
@@ -2666,6 +2693,7 @@ export function GetActionsList(
 							label: 'OSCILLATOR',
 						},
 					]),
+					disableAutoExpression: true,
 				},
 			],
 			callback: async (action): Promise<void> => {
@@ -2694,6 +2722,7 @@ export function GetActionsList(
 							label: 'CONFIG',
 						},
 					]),
+					disableAutoExpression: true,
 				},
 			],
 			callback: async (action): Promise<void> => {
@@ -2738,6 +2767,7 @@ export function GetActionsList(
 							label: 'MIDI',
 						},
 					]),
+					disableAutoExpression: true,
 				},
 			],
 			callback: async (action): Promise<void> => {
@@ -2774,6 +2804,7 @@ export function GetActionsList(
 							label: 'Set C',
 						},
 					]),
+					disableAutoExpression: true,
 				},
 			],
 			callback: async (action): Promise<void> => {
@@ -2802,6 +2833,7 @@ export function GetActionsList(
 							label: 'Prev',
 						},
 					]),
+					disableAutoExpression: true,
 				},
 			],
 			callback: async (action): Promise<void> => {
@@ -2887,6 +2919,7 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'source',
 					id: 'source',
+					// nocommit
 					...convertChoices(GetUserInSources()),
 				},
 				{
@@ -2894,6 +2927,7 @@ export function GetActionsList(
 					label: 'destination channel',
 					id: 'channel',
 					default: 1,
+					// nocommit
 					choices: [
 						{
 							id: -1,
@@ -2924,6 +2958,7 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'source',
 					id: 'source',
+					// nocommit
 					...convertChoices(GetUserOutSources()),
 				},
 				{
@@ -2936,6 +2971,7 @@ export function GetActionsList(
 							id: -1,
 							label: 'STORED CHANNEL',
 						},
+						// nocommit
 						...GetUserOutTargets(),
 					],
 				},
@@ -2962,6 +2998,7 @@ export function GetActionsList(
 					label: 'destination output',
 					id: 'channel',
 					default: 1,
+					// nocommit
 					choices: GetUserOutTargets(true),
 				},
 			],
@@ -2984,6 +3021,7 @@ export function GetActionsList(
 						{ label: 'RECORD', id: 0 },
 						{ label: 'PLAY', id: 1 },
 					],
+					disableAutoExpression: true,
 				},
 			],
 			callback: (action): void => {
@@ -3014,12 +3052,14 @@ export function GetActionsList(
 						{ label: 'RECORD', id: 'IN' },
 						{ label: 'PLAY', id: 'PLAY' },
 					]),
+					disableAutoExpression: true,
 				},
 				{
 					type: 'dropdown',
 					label: 'Input blocks',
 					id: 'block',
 					...convertChoices(GetInputBlocks()),
+					disableAutoExpression: true,
 				},
 				{
 					type: 'dropdown',
@@ -3027,6 +3067,7 @@ export function GetActionsList(
 					id: 'routing',
 					default: 0,
 					choices: GetInputBlockRoutes(),
+					disableAutoExpression: true,
 				},
 			],
 			callback: (action): void => {
@@ -3050,12 +3091,14 @@ export function GetActionsList(
 						{ label: 'RECORD', id: 'IN' },
 						{ label: 'PLAY', id: 'PLAY' },
 					]),
+					disableAutoExpression: true,
 				},
 				{
 					type: 'dropdown',
 					label: 'Routing source block',
 					id: 'routing',
 					...convertChoices(GetAuxBlockRoutes()),
+					disableAutoExpression: true,
 				},
 			],
 			callback: (action): void => {
@@ -3079,18 +3122,21 @@ export function GetActionsList(
 						{ label: 'AES50 A', id: 'A' },
 						{ label: 'AES50 B', id: 'B' },
 					],
+					disableAutoExpression: true,
 				},
 				{
 					type: 'dropdown',
 					label: 'Input blocks',
 					id: 'block',
 					...convertChoices(GetAesBlocks()),
+					disableAutoExpression: true,
 				},
 				{
 					type: 'dropdown',
 					label: 'Routing source block',
 					id: 'routing',
 					...convertChoices(GetAesCardRouteBlocks()),
+					disableAutoExpression: true,
 				},
 			],
 			callback: (action): void => {
@@ -3111,12 +3157,14 @@ export function GetActionsList(
 					label: 'Input blocks',
 					id: 'block',
 					...convertChoices(GetInputBlocks()),
+					disableAutoExpression: true,
 				},
 				{
 					type: 'dropdown',
 					label: 'Routing source block',
 					id: 'routing',
 					...convertChoices(GetAesCardRouteBlocks()),
+					disableAutoExpression: true,
 				},
 			],
 			callback: (action): void => {
@@ -3139,12 +3187,14 @@ export function GetActionsList(
 						{ id: '1-4', label: '1-4' },
 						{ id: '9-12', label: '9-12' },
 					]),
+					disableAutoExpression: true,
 				},
 				{
 					type: 'dropdown',
 					label: 'Routing source block',
 					id: 'routing',
 					...convertChoices(GetLeftOutputBlockRoutes()),
+					disableAutoExpression: true,
 				},
 			],
 			callback: (action): void => {
@@ -3167,12 +3217,14 @@ export function GetActionsList(
 						{ id: '5-8', label: '5-8' },
 						{ id: '13-16', label: '13-16' },
 					]),
+					disableAutoExpression: true,
 				},
 				{
 					type: 'dropdown',
 					label: 'Routing source block',
 					id: 'routing',
 					...convertChoices(GetRightOutputBlockRoutes()),
+					disableAutoExpression: true,
 				},
 			],
 			callback: (action): void => {
@@ -3196,6 +3248,7 @@ export function GetActionsList(
 						{ id: 3, label: 'Toggle Lock' },
 						{ id: 2, label: 'Shutdown' },
 					]),
+					disableAutoExpression: true,
 				},
 			],
 			callback: (action): void => {
@@ -3271,6 +3324,7 @@ export function GetActionsList(
 						{ id: 0, label: 'SD1' },
 						{ id: 1, label: 'SD2' },
 					]),
+					disableAutoExpression: true,
 				},
 			],
 			callback: (action): void => {
@@ -3291,6 +3345,7 @@ export function GetActionsList(
 						{ id: 1, label: '16 tracks' },
 						{ id: 2, label: '8 tracks' },
 					]),
+					disableAutoExpression: true,
 				},
 			],
 			callback: (action): void => {
@@ -3310,6 +3365,7 @@ export function GetActionsList(
 						{ id: 0, label: 'SD' },
 						{ id: 1, label: 'USB' },
 					]),
+					disableAutoExpression: true,
 				},
 			],
 			callback: (action): void => {
@@ -3329,6 +3385,7 @@ export function GetActionsList(
 						{ id: 0, label: 'SD1' },
 						{ id: 1, label: 'SD2' },
 					]),
+					disableAutoExpression: true,
 				},
 			],
 			callback: (action): void => {
@@ -3350,6 +3407,7 @@ export function GetActionsList(
 						{ id: 1, label: 'Play' },
 						{ id: 2, label: 'Auto' },
 					]),
+					disableAutoExpression: true,
 				},
 			],
 			callback: (action): void => {
@@ -3369,6 +3427,7 @@ export function GetActionsList(
 						{ id: 0, label: 'No-op' },
 						{ id: 1, label: 'Clear alert' },
 					]),
+					disableAutoExpression: true,
 				},
 			],
 			callback: (action): void => {
@@ -3387,6 +3446,7 @@ export function GetActionsList(
 					min: 0,
 					max: 86399999,
 					default: 0,
+					disableAutoExpression: true,
 				},
 			],
 			callback: (action): void => {
@@ -3453,6 +3513,7 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'Source',
 					id: 'src',
+					// nocommit
 					...convertChoices(insertSourceChoices),
 				},
 				{
@@ -3460,6 +3521,7 @@ export function GetActionsList(
 					label: 'On / Off',
 					id: 'on',
 					...convertChoices(CHOICES_ON_OFF),
+					disableAutoExpression: true,
 				},
 			],
 			callback: (action): void => {
@@ -3481,6 +3543,7 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'Source',
 					id: 'src',
+					// nocommit
 					...convertChoices(insertSourceChoices),
 				},
 				{
@@ -3491,6 +3554,7 @@ export function GetActionsList(
 						{ id: 0, label: 'PRE' },
 						{ id: 1, label: 'POST' },
 					]),
+					disableAutoExpression: true,
 				},
 			],
 			callback: (action): void => {
@@ -3506,6 +3570,7 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'Source',
 					id: 'src',
+					// nocommit
 					...convertChoices(insertSourceChoices),
 				},
 				{
@@ -3513,6 +3578,7 @@ export function GetActionsList(
 					label: 'Destination',
 					id: 'dest',
 					...convertChoices(GetInsertDestinationChoices()),
+					disableAutoExpression: true,
 				},
 			],
 			callback: (action): void => {
@@ -3529,6 +3595,7 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'Preset to load',
 					id: 'preset',
+					// nocommit
 					...convertChoices(GetPresetsChoices('ch', state)),
 				},
 				{
@@ -3541,6 +3608,7 @@ export function GetActionsList(
 							id: -1,
 							label: 'SELECTED CHANNEL',
 						},
+						// nocommit
 						...selectChoices,
 					],
 				},
@@ -3620,6 +3688,7 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'Preset to load',
 					id: 'preset',
+					// nocommit
 					...convertChoices(GetPresetsChoices('fx', state)),
 				},
 				{
@@ -3627,6 +3696,7 @@ export function GetActionsList(
 					label: 'Target channel',
 					id: 'channel',
 					default: 0,
+					// nocommit?
 					choices: [...[...Array(8).keys()].map((x) => ({ label: `${x + 1}`, id: x }))],
 				},
 			],
@@ -3755,6 +3825,7 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'Preset to load',
 					id: 'preset',
+					// nocommit
 					...convertChoices(GetPresetsChoices('mon', state)),
 				},
 			],
