@@ -5,13 +5,13 @@ __metadata:
   version: 8
   cacheKey: 10c0
 
-"@companion-module/base@npm:2.0.0-0-nightly-feat-2-0-20260125-231226-63855dc":
-  version: 2.0.0-0-nightly-feat-2-0-20260125-231226-63855dc
-  resolution: "@companion-module/base@npm:2.0.0-0-nightly-feat-2-0-20260125-231226-63855dc"
+"@companion-module/base@npm:2.0.0-0-nightly-feat-2-0-20260131-124809-4f9655d":
+  version: 2.0.0-0-nightly-feat-2-0-20260131-124809-4f9655d
+  resolution: "@companion-module/base@npm:2.0.0-0-nightly-feat-2-0-20260131-124809-4f9655d"
   dependencies:
     colord: "npm:^2.9.3"
     tslib: "npm:^2.8.1"
-  checksum: 10c0/a7d264a2532480877593b82be8cbc8ebccae79376f6cd7299f07fe062576a57f0e89ea1938de933b581186fef5725c8c43a3877d5d42ba88785d6a3f7670d15e
+  checksum: 10c0/bf0bfeef7033d1ffffacdb435f40b361648049ac772e1e1f9d80ddc5b61ddf548f2f30bbeb34ee73a5aa72f5e8517da718c00b89295c27f078330cfd76af512a
   languageName: node
   linkType: hard
 
@@ -968,7 +968,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "behringer-x32@workspace:."
   dependencies:
-    "@companion-module/base": "npm:2.0.0-0-nightly-feat-2-0-20260125-231226-63855dc"
+    "@companion-module/base": "npm:2.0.0-0-nightly-feat-2-0-20260131-124809-4f9655d"
     "@companion-module/tools": "npm:^2.6.1"
     "@types/debug": "npm:^4.1.12"
     "@types/node": "npm:^22.19.7"

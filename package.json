@@ -30,7 +30,7 @@
 		"node": "^22.20"
 	},
 	"dependencies": {
-		"@companion-module/base": "2.0.0-0-nightly-feat-2-0-20260125-231226-63855dc",
+		"@companion-module/base": "2.0.0-0-nightly-feat-2-0-20260131-124809-4f9655d",
 		"date-fns": "^3.6.0",
 		"debounce-fn": "^6.0.0",
 		"osc": "^2.4.5",
