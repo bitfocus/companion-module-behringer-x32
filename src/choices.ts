@@ -3,6 +3,7 @@ import {
 	CompanionInputFieldNumber,
 	DropdownChoice,
 	DropdownChoiceId,
+	JsonValue,
 	SomeCompanionActionInputField,
 } from '@companion-module/base'
 import { X32State } from './state.js'
@@ -27,56 +28,78 @@ export const CHOICES_ON_OFF: DropdownChoice[] = [
 ]
 
 export const CHOICES_COLOR: DropdownChoice[] = [
-	{ label: 'Off', id: '0' },
-	{ label: 'Red', id: '1' },
-	{ label: 'Green', id: '2' },
-	{ label: 'Yellow', id: '3' },
-	{ label: 'Blue', id: '4' },
-	{ label: 'Magenta', id: '5' },
-	{ label: 'Cyan', id: '6' },
-	{ label: 'White', id: '7' },
-	{ label: 'Off Inverted', id: '8' },
-	{ label: 'Red Inverted', id: '9' },
-	{ label: 'Green Inverted', id: '10' },
-	{ label: 'Yellow Inverted', id: '11' },
-	{ label: 'Blue Inverted', id: '12' },
-	{ label: 'Magenta Inverted', id: '13' },
-	{ label: 'Cyan Inverted', id: '14' },
-	{ label: 'White Inverted', id: '15' },
+	{ label: 'Off', id: 'off' },
+	{ label: 'Red', id: 'red' },
+	{ label: 'Green', id: 'green' },
+	{ label: 'Yellow', id: 'yellow' },
+	{ label: 'Blue', id: 'blue' },
+	{ label: 'Magenta', id: 'magenta' },
+	{ label: 'Cyan', id: 'cyan' },
+	{ label: 'White', id: 'white' },
+	{ label: 'Off Inverted', id: 'offinverted' },
+	{ label: 'Red Inverted', id: 'redinverted' },
+	{ label: 'Green Inverted', id: 'greeninverted' },
+	{ label: 'Yellow Inverted', id: 'yellowinverted' },
+	{ label: 'Blue Inverted', id: 'blueinverted' },
+	{ label: 'Magenta Inverted', id: 'magentainverted' },
+	{ label: 'Cyan Inverted', id: 'cyaninverted' },
+	{ label: 'White Inverted', id: 'whiteinverted' },
 ]
 
-export const ColorChoicesWithVariable: SomeCompanionActionInputField[] = [
-	{
-		type: 'checkbox',
-		label: 'Use a variable for Color',
-		default: false,
-		id: 'useVariable',
-	},
-	{
-		type: 'dropdown',
-		label: 'Color',
-		id: 'col',
-		...convertChoices(CHOICES_COLOR),
-		isVisibleExpression: `!$(options:useVariable)`,
-	},
-	{
-		type: 'textinput',
-		label: 'Variable Color',
-		description: 'e.g. $(x32:color_ch_01), NOTE: unknown strings will be ignored',
-		id: 'varCol',
-		useVariables: true,
-		isVisibleExpression: `!!$(options:useVariable)`,
-	},
-]
+export function parseColorNameToValue(ref: JsonValue | undefined): number | null {
+	if (!ref) return null
+	ref = String(ref).toLowerCase().trim()
 
-export function getColorLabelFromId(id: DropdownChoiceId): string | undefined {
-	const choice = CHOICES_COLOR.find((item) => item.id == id)
-	return choice ? choice.label : undefined
+	// sanitise to <ascii>
+	ref = ref.replace(/[^a-z]/g, '')
+
+	switch (ref) {
+		case 'off':
+			return 0
+		case 'red':
+			return 1
+		case 'green':
+			return 2
+		case 'yellow':
+			return 3
+		case 'blue':
+			return 4
+		case 'magenta':
+			return 5
+		case 'cyan':
+			return 6
+		case 'white':
+			return 7
+		case 'offinverted':
+			return 8
+		case 'redinverted':
+			return 9
+		case 'greeninverted':
+			return 10
+		case 'yellowinverted':
+			return 11
+		case 'blueinverted':
+			return 12
+		case 'magentainverted':
+			return 13
+		case 'cyaninverted':
+			return 14
+		case 'whiteinverted':
+			return 15
+		default:
+			return null
+	}
 }
 
-export function getColorIdFromLabel(label: string): DropdownChoiceId | undefined {
-	const choice = CHOICES_COLOR.find((item) => item.label === label)
-	return choice ? choice.id : undefined
+export function getColorChoiceFromId(id: JsonValue | undefined): DropdownChoice | undefined {
+	id = Number(id)
+
+	// This is not efficient, but is easy
+	for (const choice of CHOICES_COLOR) {
+		const number = parseColorNameToValue(choice.id)
+		if (number === id) return choice
+	}
+	return undefined
 }
 
 export const CHOICES_TAPE_FUNC: DropdownChoice[] = [

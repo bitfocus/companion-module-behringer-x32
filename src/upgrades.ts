@@ -8,6 +8,7 @@ import { FeedbackId } from './feedback.js'
 import { padNumber } from './util.js'
 import { ActionId } from './actions.js'
 import { exprVal } from './upgradeUtil.js'
+import { getColorChoiceFromId } from './choices.js'
 
 export const BooleanFeedbackUpgradeMap: {
 	[id in FeedbackId]?: true
@@ -182,6 +183,24 @@ export const upgradeChannelOrFaderValuesFromOscPaths: CompanionStaticUpgradeScri
 			// nocommit - manual because of numeric and overlapping :(
 		} else if (action.actionId === ActionId.Select) {
 			// nocommit - manual because of numeric and overlapping :(
+		} else if (action.actionId === ActionId.TalkbackConfigSingleSource) {
+			// nocommit - manual because of numeric and overlapping :(
+		} else if (action.actionId === ActionId.TalkbackConfig) {
+			// nocommit - manual because of numeric and overlapping :(
+		} else if (action.actionId === ActionId.Color) {
+			// Merge the split color fields
+			if (action.options.useVariable !== undefined) {
+				action.options.col =
+					action.options.useVariable.value && action.options.varCol
+						? {
+								isExpression: true,
+								value: `parseVariables('${action.options.varCol.value}')`,
+							}
+						: {
+								isExpression: false,
+								value: getColorChoiceFromId(action.options.col?.value)?.id ?? action.options.col?.value,
+							}
+			}
 		}
 
 		const propsToUpgrade = actionsToUpgrade[action.actionId]

@@ -3,8 +3,6 @@ import { X32Config } from './config.js'
 import { trimToFloat, headampGainToFloat, floatToDB, InstanceBaseExt, padNumber } from './util.js'
 import {
 	CHOICES_TAPE_FUNC,
-	ColorChoicesWithVariable,
-	getColorIdFromLabel,
 	GetTargetChoices,
 	MUTE_TOGGLE,
 	GetMuteGroupChoices,
@@ -39,6 +37,8 @@ import {
 	GetPresetsChoices,
 	GetChannelSendParseOptions,
 	TalkbackDestinationsParseOptions,
+	CHOICES_COLOR,
+	parseColorNameToValue,
 } from './choices.js'
 import { ParseRefOptions, UserRouteInPath, UserRouteOutPath, parseHeadampRef, parseRefToPaths } from './paths.js'
 import type { SetRequired } from 'type-fest'
@@ -1547,28 +1547,24 @@ export function GetActionsList(
 					id: 'target',
 					...convertChoices(levelsChoices.channelsNew),
 				},
-				// nocommit - inline this variables handling
-				...ColorChoicesWithVariable,
+				{
+					type: 'dropdown',
+					label: 'Color',
+					id: 'col',
+					...convertChoices(CHOICES_COLOR),
+					allowInvalidValues: true,
+				},
 			],
 			callback: async (action): Promise<void> => {
 				const targetRef = parseRefToPaths(action.options.target, levelsChoices.channelsParseOptions)
 				if (!targetRef?.config) return
 
-				if (!action.options.useVariable) {
-					sendOsc(targetRef.config.color, {
-						type: 'i',
-						value: getOptNumber(action, 'col'),
-					})
-					return
-				}
+				const color = parseColorNameToValue(action.options.col)
+				if (typeof color !== 'number') return
 
-				const rawVal = action.options.varCol
-				if (rawVal === undefined) return
-				const id = getColorIdFromLabel((rawVal as string).trim())
-				if (id === undefined) return
 				sendOsc(targetRef.config.color, {
 					type: 'i',
-					value: id as number,
+					value: color,
 				})
 			},
 		},
@@ -3013,15 +3009,14 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'source',
 					id: 'source',
-					// nocommit
 					...convertChoices(GetUserInSources()),
+					disableAutoExpression: true,
 				},
 				{
 					type: 'dropdown',
 					label: 'destination channel',
 					id: 'channel',
 					default: 1,
-					// nocommit
 					choices: [
 						{
 							id: -1,
@@ -3029,6 +3024,7 @@ export function GetActionsList(
 						},
 						...GetUserInTargets(),
 					],
+					disableAutoExpression: true,
 				},
 			],
 			callback: (action): void => {
@@ -3052,8 +3048,8 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'source',
 					id: 'source',
-					// nocommit
 					...convertChoices(GetUserOutSources()),
+					disableAutoExpression: true,
 				},
 				{
 					type: 'dropdown',
@@ -3065,9 +3061,9 @@ export function GetActionsList(
 							id: -1,
 							label: 'STORED CHANNEL',
 						},
-						// nocommit
 						...GetUserOutTargets(),
 					],
+					disableAutoExpression: true,
 				},
 			],
 			callback: (action): void => {
@@ -3092,8 +3088,8 @@ export function GetActionsList(
 					label: 'destination output',
 					id: 'channel',
 					default: 1,
-					// nocommit
 					choices: GetUserOutTargets(true),
+					disableAutoExpression: true,
 				},
 			],
 			callback: (action): void => {

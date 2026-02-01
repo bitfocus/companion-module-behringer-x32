@@ -1,7 +1,7 @@
 import { X32Config } from './config.js'
 import { X32State } from './state.js'
 import osc from 'osc'
-import { GetTargetChoices, getColorLabelFromId } from './choices.js'
+import { GetTargetChoices, getColorChoiceFromId } from './choices.js'
 import { MainPath } from './paths.js'
 import { formatDb, floatToDB, InstanceBaseExt } from './util.js'
 import { CompanionVariableDefinition, CompanionVariableValues } from '@companion-module/base'
@@ -182,7 +182,7 @@ export function updateNameVariables(instance: InstanceBaseExt<X32Config>, state:
 		variables[`name${sanitiseName(target.id as string)}`] = nameStr || target.label
 
 		const colorVal = state.get(`${target.id}/config/color`)
-		const colorStr = getColorLabelFromId(colorVal && colorVal[0]?.type === 'i' ? colorVal[0].value : '')
+		const colorStr = getColorChoiceFromId(colorVal && colorVal[0]?.type === 'i' ? colorVal[0].value : '')?.label
 		variables[`color${sanitiseName(target.id as string)}`] = colorStr || 'unknown'
 
 		const faderVal = state.get(`${MainPath(target.id as string)}/fader`)
