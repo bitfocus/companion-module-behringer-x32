@@ -564,7 +564,7 @@ export function GetBusSendChoices(
 	}
 	const increment = type == 'pan' ? 2 : 1
 	for (let i = 1; i <= 6; i += increment) {
-		appendTarget(`/mtx/${padNumber(i)}`, `mtx${i}`, padNumber(i), `Matrix ${i}`)
+		appendTarget(`/mtx/${padNumber(i)}`, `matrix${i}`, padNumber(i), `Matrix ${i}`)
 	}
 	return res
 }

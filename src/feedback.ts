@@ -246,7 +246,9 @@ export function GetFeedbacksList(
 					id: 'target',
 					type: 'dropdown',
 					label: 'Target',
+					// nocommit
 					...convertChoices(levelsChoices.channels),
+					allowInvalidValues: true,
 				},
 			],
 			defaultStyle: {
@@ -267,7 +269,9 @@ export function GetFeedbacksList(
 					id: 'mute_grp',
 					type: 'dropdown',
 					label: 'Target',
+					// nocommit
 					...convertChoices(muteGroups),
+					allowInvalidValues: true,
 				},
 			],
 			defaultStyle: {
@@ -288,13 +292,17 @@ export function GetFeedbacksList(
 					type: 'dropdown',
 					label: 'Source',
 					id: 'source',
+					// nocommit
 					...convertChoices(levelsChoices.allSources),
+					allowInvalidValues: true,
 				},
 				{
 					type: 'dropdown',
 					label: 'Target',
 					id: 'target',
+					// nocommit
 					...convertChoices(GetChannelSendChoices(state, 'on')),
+					allowInvalidValues: true,
 				},
 			],
 			defaultStyle: {
@@ -315,13 +323,17 @@ export function GetFeedbacksList(
 					type: 'dropdown',
 					label: 'Source',
 					id: 'source',
+					// nocommit
 					...convertChoices(levelsChoices.busSendSources),
+					allowInvalidValues: true,
 				},
 				{
 					type: 'dropdown',
 					label: 'Target',
 					id: 'target',
+					// nocommit
 					...convertChoices(levelsChoices.busSendTargets),
+					allowInvalidValues: true,
 				},
 			],
 			defaultStyle: {
@@ -342,7 +354,9 @@ export function GetFeedbacksList(
 					type: 'dropdown',
 					label: 'Target',
 					id: 'target',
+					// nocommit
 					...convertChoices(levelsChoices.channels),
+					allowInvalidValues: true,
 				},
 				NumberComparitorPicker(),
 				FaderLevelChoice,
@@ -371,13 +385,17 @@ export function GetFeedbacksList(
 					type: 'dropdown',
 					label: 'Source',
 					id: 'source',
+					// nocommit
 					...convertChoices(levelsChoices.allSources),
+					allowInvalidValues: true,
 				},
 				{
 					type: 'dropdown',
 					label: 'Target',
 					id: 'target',
+					// nocommit
 					...convertChoices(levelsChoices.channelSendTargets),
+					allowInvalidValues: true,
 				},
 				NumberComparitorPicker(),
 				FaderLevelChoice,
@@ -406,13 +424,17 @@ export function GetFeedbacksList(
 					type: 'dropdown',
 					label: 'Source',
 					id: 'source',
+					// nocommit
 					...convertChoices(levelsChoices.busSendSources),
+					allowInvalidValues: true,
 				},
 				{
 					type: 'dropdown',
 					label: 'Target',
 					id: 'target',
+					// nocommit
 					...convertChoices(levelsChoices.busSendTargets),
+					allowInvalidValues: true,
 				},
 				NumberComparitorPicker(),
 				FaderLevelChoice,
@@ -442,7 +464,9 @@ export function GetFeedbacksList(
 					type: 'dropdown',
 					label: 'Target',
 					id: 'target',
+					// nocommit
 					...convertChoices(panningChoices.allSources),
+					allowInvalidValues: true,
 				},
 				NumberComparitorPicker(),
 				PanningChoice,
@@ -471,13 +495,17 @@ export function GetFeedbacksList(
 					type: 'dropdown',
 					label: 'Source',
 					id: 'source',
+					// nocommit
 					...convertChoices(panningChoices.allSources),
+					allowInvalidValues: true,
 				},
 				{
 					type: 'dropdown',
 					label: 'Target',
 					id: 'target',
+					// nocommit
 					...convertChoices(panningChoices.channelSendTargets),
+					allowInvalidValues: true,
 				},
 				NumberComparitorPicker(),
 				PanningChoice,
@@ -506,13 +534,17 @@ export function GetFeedbacksList(
 					type: 'dropdown',
 					label: 'Source',
 					id: 'source',
+					// nocommit
 					...convertChoices(panningChoices.busSendSource),
+					allowInvalidValues: true,
 				},
 				{
 					type: 'dropdown',
 					label: 'Target',
 					id: 'target',
+					// nocommit
 					...convertChoices(panningChoices.busSendTarget),
+					allowInvalidValues: true,
 				},
 				NumberComparitorPicker(),
 				PanningChoice,
@@ -551,6 +583,7 @@ export function GetFeedbacksList(
 							label: 'B',
 						},
 					]),
+					disableAutoExpression: true,
 				},
 			],
 			defaultStyle: {
@@ -581,6 +614,7 @@ export function GetFeedbacksList(
 							label: 'B',
 						},
 					]),
+					disableAutoExpression: true,
 				},
 				{
 					type: 'dropdown',
@@ -627,6 +661,8 @@ export function GetFeedbacksList(
 					label: 'destination',
 					id: 'destination',
 					...convertChoices(GetOscillatorDestinations(state)),
+					// nocommit
+					allowInvalidValues: true,
 				},
 			],
 			defaultStyle: {
@@ -651,6 +687,8 @@ export function GetFeedbacksList(
 					label: 'Target',
 					id: 'select',
 					...convertChoices(selectChoices),
+					// nocommit
+					allowInvalidValues: true,
 				},
 			],
 			defaultStyle: {
@@ -675,6 +713,8 @@ export function GetFeedbacksList(
 					label: 'Target',
 					id: 'solo',
 					...convertChoices(soloChoices),
+					// nocommit
+					allowInvalidValues: true,
 				},
 			],
 			defaultStyle: {
@@ -755,6 +795,7 @@ export function GetFeedbacksList(
 					label: 'Function',
 					id: 'tapeFunc',
 					...convertChoices(CHOICES_TAPE_FUNC),
+					disableAutoExpression: true,
 				},
 			],
 			defaultStyle: {
@@ -794,6 +835,7 @@ export function GetFeedbacksList(
 							label: 'BUS MASTERS',
 						},
 					]),
+					disableAutoExpression: true,
 				},
 			],
 			defaultStyle: {
@@ -833,6 +875,7 @@ export function GetFeedbacksList(
 							label: 'MATRIX 1 - 6 / MAIN C',
 						},
 					]),
+					disableAutoExpression: true,
 				},
 			],
 			defaultStyle: {
@@ -888,6 +931,7 @@ export function GetFeedbacksList(
 							label: 'BUS 1-8',
 						},
 					]),
+					disableAutoExpression: true,
 				},
 			],
 			defaultStyle: {
@@ -951,6 +995,7 @@ export function GetFeedbacksList(
 							label: 'FX RTN',
 						},
 					]),
+					disableAutoExpression: true,
 				},
 			],
 			defaultStyle: {
@@ -989,6 +1034,7 @@ export function GetFeedbacksList(
 							label: 'Bus 13-16',
 						},
 					]),
+					disableAutoExpression: true,
 				},
 			],
 			defaultStyle: {
@@ -1023,6 +1069,7 @@ export function GetFeedbacksList(
 							label: 'Set C',
 						},
 					]),
+					disableAutoExpression: true,
 				},
 			],
 			defaultStyle: {
@@ -1085,6 +1132,7 @@ export function GetFeedbacksList(
 							label: 'ASSIGN',
 						},
 					]),
+					disableAutoExpression: true,
 				},
 			],
 			defaultStyle: {
@@ -1163,6 +1211,7 @@ export function GetFeedbacksList(
 							label: 'MAIN',
 						},
 					]),
+					disableAutoExpression: true,
 				},
 			],
 			defaultStyle: {
@@ -1209,6 +1258,7 @@ export function GetFeedbacksList(
 							label: 'AUTOMIX',
 						},
 					]),
+					disableAutoExpression: true,
 				},
 			],
 			defaultStyle: {
@@ -1267,6 +1317,7 @@ export function GetFeedbacksList(
 							label: 'PATCH USER',
 						},
 					]),
+					disableAutoExpression: true,
 				},
 			],
 			defaultStyle: {
@@ -1317,6 +1368,7 @@ export function GetFeedbacksList(
 							label: 'CARD',
 						},
 					]),
+					disableAutoExpression: true,
 				},
 			],
 			defaultStyle: {
@@ -1355,6 +1407,7 @@ export function GetFeedbacksList(
 							label: 'MONITOR',
 						},
 					]),
+					disableAutoExpression: true,
 				},
 			],
 			defaultStyle: {
@@ -1413,6 +1466,7 @@ export function GetFeedbacksList(
 							label: 'FX8',
 						},
 					]),
+					disableAutoExpression: true,
 				},
 			],
 			defaultStyle: {
@@ -1451,6 +1505,7 @@ export function GetFeedbacksList(
 							label: 'OSCILLATOR',
 						},
 					]),
+					disableAutoExpression: true,
 				},
 			],
 			defaultStyle: {
@@ -1481,6 +1536,7 @@ export function GetFeedbacksList(
 							label: 'CONFIG',
 						},
 					]),
+					disableAutoExpression: true,
 				},
 			],
 			defaultStyle: {
@@ -1527,6 +1583,7 @@ export function GetFeedbacksList(
 							label: 'MIDI',
 						},
 					]),
+					disableAutoExpression: true,
 				},
 			],
 			defaultStyle: {
@@ -1565,6 +1622,7 @@ export function GetFeedbacksList(
 							label: 'SET C',
 						},
 					]),
+					disableAutoExpression: true,
 				},
 			],
 			defaultStyle: {
@@ -1588,6 +1646,8 @@ export function GetFeedbacksList(
 					label: 'source',
 					id: 'source',
 					...convertChoices([...GetUserInSources()]),
+					// nocommit
+					allowInvalidValues: true,
 				},
 				{
 					type: 'dropdown',
@@ -1601,6 +1661,8 @@ export function GetFeedbacksList(
 						},
 						...GetUserInTargets(),
 					],
+					// nocommit
+					allowInvalidValues: true,
 				},
 			],
 			defaultStyle: {
@@ -1669,6 +1731,8 @@ export function GetFeedbacksList(
 					label: 'source',
 					id: 'source',
 					...convertChoices([...GetUserOutSources()]),
+					// nocommit
+					allowInvalidValues: true,
 				},
 				{
 					type: 'dropdown',
@@ -1682,6 +1746,8 @@ export function GetFeedbacksList(
 						},
 						...GetUserOutTargets(),
 					],
+					// nocommit
+					allowInvalidValues: true,
 				},
 			],
 			defaultStyle: {
@@ -1749,6 +1815,8 @@ export function GetFeedbacksList(
 					label: 'destination output',
 					id: 'channel',
 					...convertChoices([...GetUserOutTargets(true)]),
+					// nocommit
+					allowInvalidValues: true,
 				},
 			],
 			defaultStyle: {
@@ -1774,6 +1842,7 @@ export function GetFeedbacksList(
 						{ label: 'RECORD', id: 0 },
 						{ label: 'PLAY', id: 1 },
 					]),
+					disableAutoExpression: true,
 				},
 			],
 			defaultStyle: {
@@ -1801,18 +1870,23 @@ export function GetFeedbacksList(
 						{ label: 'RECORD', id: 'IN' },
 						{ label: 'PLAY', id: 'PLAY' },
 					]),
+					disableAutoExpression: true,
 				},
 				{
 					type: 'dropdown',
 					label: 'Input block',
 					id: 'block',
 					...convertChoices([...GetInputBlocks()]),
+					// nocommit
+					allowInvalidValues: true,
 				},
 				{
 					type: 'dropdown',
 					label: 'Routing source block',
 					id: 'routing',
 					...convertChoices([...GetInputBlockRoutes()]),
+					// nocommit
+					allowInvalidValues: true,
 				},
 			],
 			defaultStyle: {
@@ -1840,12 +1914,15 @@ export function GetFeedbacksList(
 						{ label: 'RECORD', id: 'IN' },
 						{ label: 'PLAY', id: 'PLAY' },
 					]),
+					disableAutoExpression: true,
 				},
 				{
 					type: 'dropdown',
 					label: 'Routing source block',
 					id: 'routing',
 					...convertChoices([...GetAuxBlockRoutes()]),
+					// nocommit
+					allowInvalidValues: true,
 				},
 			],
 			defaultStyle: {
@@ -1873,18 +1950,21 @@ export function GetFeedbacksList(
 						{ label: 'AES50 A', id: 'A' },
 						{ label: 'AES50 B', id: 'B' },
 					]),
+					disableAutoExpression: true,
 				},
 				{
 					type: 'dropdown',
 					label: 'AES50 block',
 					id: 'block',
 					...convertChoices([...GetAesBlocks()]),
+					disableAutoExpression: true,
 				},
 				{
 					type: 'dropdown',
 					label: 'Routing source block',
 					id: 'routing',
 					...convertChoices([...GetAesCardRouteBlocks()]),
+					disableAutoExpression: true,
 				},
 			],
 			defaultStyle: {
@@ -1909,12 +1989,14 @@ export function GetFeedbacksList(
 					label: 'Card block',
 					id: 'block',
 					...convertChoices([...GetInputBlocks()]),
+					disableAutoExpression: true,
 				},
 				{
 					type: 'dropdown',
 					label: 'Routing source block',
 					id: 'routing',
 					...convertChoices([...GetAesCardRouteBlocks()]),
+					disableAutoExpression: true,
 				},
 			],
 			defaultStyle: {
@@ -1942,12 +2024,14 @@ export function GetFeedbacksList(
 						{ id: '1-4', label: '1-4' },
 						{ id: '9-12', label: '9-12' },
 					]),
+					disableAutoExpression: true,
 				},
 				{
 					type: 'dropdown',
 					label: 'Routing source block',
 					id: 'routing',
 					...convertChoices([...GetLeftOutputBlockRoutes()]),
+					disableAutoExpression: true,
 				},
 			],
 			defaultStyle: {
@@ -1975,12 +2059,14 @@ export function GetFeedbacksList(
 						{ id: '5-8', label: '5-8' },
 						{ id: '13-16', label: '13-16' },
 					]),
+					disableAutoExpression: true,
 				},
 				{
 					type: 'dropdown',
 					label: 'Routing source block',
 					id: 'routing',
 					...convertChoices([...GetRightOutputBlockRoutes()]),
+					disableAutoExpression: true,
 				},
 			],
 			defaultStyle: {
@@ -2010,6 +2096,7 @@ export function GetFeedbacksList(
 						{ id: 1, label: 'Lock' },
 						{ id: 2, label: 'Shutdown' },
 					]),
+					disableAutoExpression: true,
 				},
 			],
 			defaultStyle: {
@@ -2032,6 +2119,8 @@ export function GetFeedbacksList(
 					label: 'Source',
 					id: 'src',
 					...convertChoices(insertSourceChoices),
+					// nocommit
+					allowInvalidValues: true,
 				},
 			],
 			defaultStyle: {
@@ -2053,6 +2142,8 @@ export function GetFeedbacksList(
 					label: 'Source',
 					id: 'src',
 					...convertChoices(insertSourceChoices),
+					// nocommit
+					allowInvalidValues: true,
 				},
 				{
 					type: 'dropdown',
@@ -2062,6 +2153,7 @@ export function GetFeedbacksList(
 						{ id: 0, label: 'PRE' },
 						{ id: 1, label: 'POST' },
 					]),
+					disableAutoExpression: true,
 				},
 			],
 			defaultStyle: {
@@ -2084,12 +2176,15 @@ export function GetFeedbacksList(
 					label: 'Source',
 					id: 'src',
 					...convertChoices(insertSourceChoices),
+					// nocommit
+					allowInvalidValues: true,
 				},
 				{
 					type: 'dropdown',
 					label: 'Destination',
 					id: 'dest',
 					...convertChoices(GetInsertDestinationChoices()),
+					disableAutoExpression: true,
 				},
 			],
 			defaultStyle: {
