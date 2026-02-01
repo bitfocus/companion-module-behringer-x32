@@ -1,6 +1,6 @@
 import { X32State } from './state.js'
 import { X32Config } from './config.js'
-import { trimToFloat, headampGainToFloat, floatToDB, InstanceBaseExt } from './util.js'
+import { trimToFloat, headampGainToFloat, floatToDB, InstanceBaseExt, padNumber } from './util.js'
 import {
 	CHOICES_TAPE_FUNC,
 	ColorChoicesWithVariable,
@@ -38,8 +38,9 @@ import {
 	GetTalkbackDestinations,
 	GetPresetsChoices,
 	GetChannelSendParseOptions,
+	TalkbackDestinationsParseOptions,
 } from './choices.js'
-import { UserRouteInPath, UserRouteOutPath, parseRefToPaths } from './paths.js'
+import { ParseRefOptions, UserRouteInPath, UserRouteOutPath, parseHeadampRef, parseRefToPaths } from './paths.js'
 import type { SetRequired } from 'type-fest'
 import { X32Transitions } from './transitions.js'
 import { format as formatDate } from 'date-fns'
@@ -173,7 +174,27 @@ export function GetActionsList(
 	const panningChoices = GetPanningChoiceConfigs(state)
 	const muteGroups = GetMuteGroupChoices(state, true)
 	const selectChoices = GetTargetChoices(state, { skipDca: true, includeMain: true, numericIndex: true })
-	const soloChoices = GetTargetChoices(state, { includeMain: true, numericIndex: true })
+	const selectChoicesNew = GetTargetChoices(state, { skipDca: true, includeMain: true, numericIndex: true }, true)
+	const selectChoicesParseOptions: ParseRefOptions = {
+		allowStereo: true,
+		allowMono: true,
+		allowChannel: true,
+		allowAuxIn: true,
+		allowFx: true,
+		allowBus: true,
+		allowMatrix: true,
+	}
+	const soloChoices = GetTargetChoices(state, { includeMain: true, numericIndex: true }, true)
+	const soloChoicesParseOptions: ParseRefOptions = {
+		allowStereo: true,
+		allowMono: true,
+		allowChannel: true,
+		allowAuxIn: true,
+		allowFx: true,
+		allowBus: true,
+		allowMatrix: true,
+		allowDca: true,
+	}
 	const insertSourceChoices = GetTargetChoices(state, {
 		includeMain: true,
 		skipAuxIn: true,
@@ -1474,13 +1495,16 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'Headamp',
 					id: 'headamp',
-					// nocommit - revisit this
 					...convertChoices(GetHeadampChoices()),
+					expressionDescription: `eg 'local1', 'aes-a1', 'aes-b1'`,
 				},
 				HeadampGainChoice,
 			],
 			callback: async (action): Promise<void> => {
-				sendOsc(`${action.options.headamp}/gain`, {
+				const refPath = parseHeadampRef(action.options.headamp)
+				if (!refPath) return
+
+				sendOsc(`${refPath}/gain`, {
 					type: 'f',
 					value: headampGainToFloat(getOptNumber(action, 'gain')),
 				})
@@ -1613,14 +1637,16 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'Target',
 					id: 'select',
-					// nocommit - continue from here!
-					...convertChoices(selectChoices),
+					...convertChoices(selectChoicesNew),
 				},
 			],
 			callback: async (action): Promise<void> => {
+				const selectRef = parseRefToPaths(action.options.select, selectChoicesParseOptions)
+				if (selectRef?.selectNumber === undefined) return
+
 				sendOsc(`/-stat/selidx`, {
 					type: 'i',
-					value: getOptNumber(action, 'select'),
+					value: selectRef.selectNumber,
 				})
 			},
 		},
@@ -1631,7 +1657,6 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'Target',
 					id: 'solo',
-					// nocommit me
 					...convertChoices(soloChoices),
 				},
 				{
@@ -1643,8 +1668,10 @@ export function GetActionsList(
 				},
 			],
 			callback: async (action): Promise<void> => {
-				const ch = `${getOptNumber(action, 'solo') + 1}`.padStart(2, '0')
-				const cmd = `/-stat/solosw/${ch}`
+				const soloRef = parseRefToPaths(action.options.solo, soloChoicesParseOptions)
+				if (soloRef?.soloNumber === undefined) return
+
+				const cmd = `/-stat/solosw/${padNumber(soloRef.soloNumber, 2)}`
 				const onState = getResolveOnOffMute(action, cmd, true, 'on')
 
 				sendOsc(cmd, {
@@ -1654,8 +1681,10 @@ export function GetActionsList(
 			},
 			subscribe: (evt): void => {
 				if (evt.options.on === MUTE_TOGGLE) {
-					const ch = `${getOptNumber(evt, 'solo') + 1}`.padStart(2, '0')
-					ensureLoaded(`/-stat/solosw/${ch}`)
+					const soloRef = parseRefToPaths(evt.options.solo, soloChoicesParseOptions)
+					if (soloRef?.soloNumber === undefined) return
+
+					ensureLoaded(`/-stat/solosw/${padNumber(soloRef.soloNumber, 2)}`)
 				}
 			},
 		},
@@ -1704,6 +1733,7 @@ export function GetActionsList(
 							label: 'B',
 						},
 					]),
+					disableAutoExpression: true,
 				},
 				{
 					type: 'dropdown',
@@ -1745,19 +1775,30 @@ export function GetActionsList(
 							label: 'B',
 						},
 					]),
+					disableAutoExpression: true,
 				},
 				{
 					type: 'multidropdown',
 					label: 'Destinations',
 					id: 'dest',
 					default: [],
-					// nocommit
-					choices: GetTalkbackDestinations(state),
+					choices: GetTalkbackDestinations(state, true),
 				},
 			],
 			callback: (action): void => {
+				const talkbackDests = Array.isArray(action.options.dest) ? action.options.dest : [action.options.dest]
+				const talkbackDestsRefs = talkbackDests
+					.map((d) => parseRefToPaths(d, TalkbackDestinationsParseOptions))
+					.filter((v) => !!v)
+
+				let bitmap = 0
+				for (const destRef of talkbackDestsRefs) {
+					if (destRef?.talkbackDestMask !== undefined) {
+						bitmap = bitmap | destRef.talkbackDestMask
+					}
+				}
+
 				const cmd = `/config/talk/${action.options.function}/destmap`
-				const bitmap = (action.options.dest as number[]).reduce((acc, x) => acc + Math.pow(2, x), 0)
 				sendOsc(cmd, {
 					type: 'i',
 					value: bitmap,
@@ -1782,14 +1823,14 @@ export function GetActionsList(
 							label: 'B',
 						},
 					]),
+					disableAutoExpression: true,
 				},
 				{
 					type: 'dropdown',
 					label: 'Destinations',
 					id: 'dest',
 					default: 0,
-					// nocommit
-					choices: GetTalkbackDestinations(state),
+					choices: GetTalkbackDestinations(state, true),
 				},
 				{
 					type: 'dropdown',
@@ -1800,20 +1841,22 @@ export function GetActionsList(
 				},
 			],
 			callback: (action): void => {
+				const destRef = parseRefToPaths(action.options.dest, TalkbackDestinationsParseOptions)
+				if (!destRef?.talkbackDestMask) return
+
 				const cmd = `/config/talk/${action.options.function}/destmap`
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'i' ? currentState[0]?.value : 0
-				const mask = Math.pow(2, action.options.dest as number)
 				let bitmap: number
 				switch (action.options.on) {
 					case 0:
-						bitmap = currentVal & ~mask
+						bitmap = currentVal & ~destRef.talkbackDestMask
 						break
 					case 1:
-						bitmap = currentVal | mask
+						bitmap = currentVal | destRef.talkbackDestMask
 						break
 					default:
-						bitmap = currentVal ^ mask
+						bitmap = currentVal ^ destRef.talkbackDestMask
 				}
 				sendOsc(cmd, {
 					type: 'i',
@@ -1841,6 +1884,7 @@ export function GetActionsList(
 							label: 'B',
 						},
 					]),
+					disableAutoExpression: true,
 				},
 			],
 			callback: (action): void => {
@@ -1872,6 +1916,7 @@ export function GetActionsList(
 							label: 'B',
 						},
 					]),
+					disableAutoExpression: true,
 				},
 			],
 			callback: (action): void => {

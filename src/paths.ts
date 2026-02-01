@@ -93,6 +93,9 @@ export function parseRefToPaths(
 		level: string | null
 		pan: string | null
 	}
+	selectNumber?: number
+	soloNumber?: number
+	talkbackDestMask?: number
 } | null {
 	if (!ref) return null
 	ref = String(ref).toLowerCase().trim()
@@ -128,6 +131,9 @@ export function parseRefToPaths(
 				level: null,
 				pan: null,
 			},
+			selectNumber: 70,
+			soloNumber: 71,
+			talkbackDestMask: 1 << 16,
 		}
 	} else if (ref === 'mono' || ref === 'mo' || ref === 'mon') {
 		if (!options.allowMono) return null
@@ -153,6 +159,9 @@ export function parseRefToPaths(
 				level: 'mlevel',
 				pan: null, // No pan for mono
 			},
+			selectNumber: 71,
+			soloNumber: 72,
+			talkbackDestMask: 1 << 17,
 		}
 	}
 
@@ -170,6 +179,7 @@ export function parseRefToPaths(
 		case 'ch':
 		case 'channel': {
 			if (!options.allowChannel) return null
+			if (refNumber < 1 || refNumber > 32) return null
 
 			// TODO
 			return {
@@ -194,12 +204,15 @@ export function parseRefToPaths(
 					path: `/ch/${String(refNumber).padStart(2, '0')}/mix`,
 					isOn: true,
 				},
+				selectNumber: refNumber - 1,
+				soloNumber: refNumber,
 			}
 		}
 		case 'a':
 		case 'out':
 		case 'aux': {
 			if (!options.allowAuxIn) return null
+			if (refNumber < 1 || refNumber > 8) return null
 
 			// TODO
 			return {
@@ -224,11 +237,14 @@ export function parseRefToPaths(
 					path: `/auxin/${String(refNumber).padStart(2, '0')}/mix`,
 					isOn: true,
 				},
+				selectNumber: refNumber - 1 + 32,
+				soloNumber: refNumber + 32,
 			}
 		}
 		case 'f':
 		case 'fx': {
 			if (!options.allowFx) return null
+			if (refNumber < 1 || refNumber > 8) return null
 
 			// TODO
 			return {
@@ -250,12 +266,15 @@ export function parseRefToPaths(
 					path: `/fxrtn/${String(refNumber).padStart(2, '0')}/mix`,
 					isOn: true,
 				},
+				selectNumber: refNumber - 1 + 40,
+				soloNumber: refNumber + 40,
 			}
 		}
 		case 'b':
 		case 'bus':
 		case 'mix': {
 			if (!options.allowBus) return null
+			if (refNumber < 1 || refNumber > 16) return null
 
 			// TODO
 			return {
@@ -282,6 +301,9 @@ export function parseRefToPaths(
 					level: `${padNumber(refNumber)}/level`,
 					pan: refNumber % 2 == 1 ? `${padNumber(refNumber)}/pan` : null,
 				},
+				selectNumber: refNumber - 1 + 48,
+				soloNumber: refNumber + 48,
+				talkbackDestMask: 1 << (refNumber - 1),
 			}
 		}
 		case 'm':
@@ -289,6 +311,7 @@ export function parseRefToPaths(
 		case 'matrix':
 		case 'mtx': {
 			if (!options.allowMatrix) return null
+			if (refNumber < 1 || refNumber > 6) return null
 
 			// TODO
 			return {
@@ -308,11 +331,14 @@ export function parseRefToPaths(
 					level: `${padNumber(refNumber)}/level`,
 					pan: refNumber % 2 == 1 ? `${padNumber(refNumber)}/pan` : null,
 				},
+				selectNumber: refNumber - 1 + 64,
+				soloNumber: refNumber + 64,
 			}
 		}
 		case 'd':
 		case 'dca': {
 			if (!options.allowDca) return null
+			if (refNumber < 1 || refNumber > 8) return null
 
 			// TODO
 			return {
@@ -327,6 +353,7 @@ export function parseRefToPaths(
 				level: {
 					path: `/dca/${String(refNumber).padStart(2, '0')}/fader`,
 				},
+				soloNumber: refNumber + 72,
 			}
 		}
 		// case 'mute':
@@ -344,6 +371,44 @@ export function parseRefToPaths(
 		// 	}
 		// }
 
+		default:
+			return null
+	}
+}
+
+export function parseHeadampRef(ref: JsonValue | undefined): string | null {
+	if (!ref) return null
+	ref = String(ref).toLowerCase().trim()
+
+	// sanitise to <ascii><number>
+	ref = ref.replace(/[^a-z0-9]/g, '')
+
+	const match = ref.match(/^([a-z]+)([0-9]+)$/)
+	if (!match) return null // Unknown format
+
+	const refType = match[1]
+	const refNumber = parseInt(match[2], 10)
+	if (isNaN(refNumber)) return null
+
+	switch (refType) {
+		case 'local':
+		case 'l':
+		case 'loc':
+		case 'xlr':
+		case 'x':
+			if (refNumber < 1 || refNumber > 32) return null
+
+			return `/headamp/${padNumber(refNumber - 1, 3)}`
+		case 'a':
+		case 'aesa':
+			if (refNumber < 1 || refNumber > 32) return null
+
+			return `/headamp/${padNumber(refNumber - 1 + 32, 3)}`
+		case 'b':
+		case 'aesb':
+			if (refNumber < 1 || refNumber > 32) return null
+
+			return `/headamp/${padNumber(refNumber - 1 + 64, 3)}`
 		default:
 			return null
 	}

@@ -113,6 +113,9 @@ for (let i = 1; i <= 6; i++) pathReplacements[`/mtx/${padNumber(i)}`] = `matrix$
 for (let i = 1; i <= 8; i++) pathReplacements[`/dca/${padNumber(i)}`] = `dca${i}`
 for (let i = 1; i <= 6; i++) pathReplacements[`/config/mute/${i}`] = i
 for (let i = 1; i <= 32; i++) pathReplacements[padNumber(i)] = i
+for (let i = 1; i <= 32; i++) pathReplacements[`/headamp/${padNumber(i - 1, 3)}`] = `local${i}`
+for (let i = 1; i <= 32; i++) pathReplacements[`/headamp/${padNumber(i - 1 + 32, 3)}`] = `aes-a${i}`
+for (let i = 1; i <= 32; i++) pathReplacements[`/headamp/${padNumber(i - 1 + 64, 3)}`] = `aes-b${i}`
 
 const actionsToUpgrade: Record<string, string[] | undefined> = {
 	[ActionId.Mute]: ['target'],
@@ -146,6 +149,8 @@ const actionsToUpgrade: Record<string, string[] | undefined> = {
 	[ActionId.InputTrim]: ['input'],
 	[ActionId.Label]: ['target'],
 	[ActionId.Color]: ['target'],
+	[ActionId.Select]: ['select'],
+	[ActionId.HeadampGain]: ['headamp'],
 }
 const feedbacksToUpgrade: Record<string, string[] | undefined> = {
 	// [ActionId.Mute]: ['target'],
@@ -172,6 +177,13 @@ export const upgradeChannelOrFaderValuesFromOscPaths: CompanionStaticUpgradeScri
 		}
 	}
 	for (const action of props.actions) {
+		// A couple of cases that need manual handling due to unclear & overlapping values
+		if (action.actionId === ActionId.Solo) {
+			// nocommit - manual because of numeric and overlapping :(
+		} else if (action.actionId === ActionId.Select) {
+			// nocommit - manual because of numeric and overlapping :(
+		}
+
 		const propsToUpgrade = actionsToUpgrade[action.actionId]
 		if (!propsToUpgrade) continue
 

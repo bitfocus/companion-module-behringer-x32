@@ -591,21 +591,21 @@ export function GetHeadampChoices(): DropdownChoice[] {
 
 	for (let i = 1; i <= 32; i++) {
 		res.push({
-			id: `/headamp/${padNumber(res.length, 3)}`,
+			id: `local${i}`,
 			label: `Local XLR ${i}`,
 		})
 	}
 
 	for (let i = 1; i <= 32; i++) {
 		res.push({
-			id: `/headamp/${padNumber(res.length, 3)}`,
+			id: `aes-a${i}`,
 			label: `AES50-A ${i}`,
 		})
 	}
 
 	for (let i = 1; i <= 32; i++) {
 		res.push({
-			id: `/headamp/${padNumber(res.length, 3)}`,
+			id: `aes-b${i}`,
 			label: `AES50-B ${i}`,
 		})
 	}
@@ -871,16 +871,25 @@ export function GetRightOutputBlockRoutes(): DropdownChoice[] {
 	].map((src, i) => ({ id: i, label: src }))
 }
 
-export function GetTalkbackDestinations(state: X32State): DropdownChoice[] {
-	return GetTargetChoices(state, {
-		numericIndex: true,
-		includeMain: true,
-		skipDca: true,
-		skipMatrix: true,
-		skipInputs: true,
-		skipAuxIn: true,
-		skipFxRtn: true,
-	})
+export function GetTalkbackDestinations(state: X32State, refNaming?: boolean): DropdownChoice[] {
+	return GetTargetChoices(
+		state,
+		{
+			numericIndex: true,
+			includeMain: true,
+			skipDca: true,
+			skipMatrix: true,
+			skipInputs: true,
+			skipAuxIn: true,
+			skipFxRtn: true,
+		},
+		refNaming,
+	)
+}
+export const TalkbackDestinationsParseOptions: ParseRefOptions = {
+	allowStereo: true,
+	allowMono: true,
+	allowBus: true,
 }
 
 export function GetInsertDestinationChoices(): DropdownChoice[] {
