@@ -1,7 +1,6 @@
 import { X32State, X32Subscriptions } from './state.js'
 import {
 	GetMuteGroupChoices,
-	GetTargetChoices,
 	GetChannelSendChoices,
 	convertChoices,
 	GetOscillatorDestinations,
@@ -26,6 +25,7 @@ import {
 	GetChannelSendParseOptions,
 	OscillatorDestinationsParseOptions,
 	TalkbackDestinationsParseOptions,
+	GetTargetChoicesNew,
 } from './choices.js'
 import { compareNumber, floatToDB, InstanceBaseExt, padNumber, stringifyValueAlways } from './util.js'
 import { UserRouteInPath, UserRouteOutPath, parseRefToPaths, ParseRefOptions } from './paths.js'
@@ -135,7 +135,6 @@ export function GetFeedbacksList(
 	const levelsChoices = GetLevelsChoiceConfigs(state)
 	const panningChoices = GetPanningChoiceConfigs(state)
 	const muteGroups = GetMuteGroupChoices(state)
-	const selectChoices = GetTargetChoices(state, { skipDca: true, includeMain: true, numericIndex: true }, true)
 	const selectChoicesParseOptions: ParseRefOptions = {
 		allowStereo: true,
 		allowMono: true,
@@ -145,7 +144,7 @@ export function GetFeedbacksList(
 		allowBus: true,
 		allowMatrix: true,
 	}
-	const soloChoices = GetTargetChoices(state, { includeMain: true, numericIndex: true }, true)
+	const selectChoices = GetTargetChoicesNew(state, selectChoicesParseOptions)
 	const soloChoicesParseOptions: ParseRefOptions = {
 		allowStereo: true,
 		allowMono: true,
@@ -156,16 +155,7 @@ export function GetFeedbacksList(
 		allowMatrix: true,
 		allowDca: true,
 	}
-	const insertSourceChoices = GetTargetChoices(
-		state,
-		{
-			includeMain: true,
-			skipAuxIn: true,
-			skipFxRtn: true,
-			skipDca: true,
-		},
-		true,
-	)
+	const soloChoices = GetTargetChoicesNew(state, soloChoicesParseOptions)
 	const insertSourceParseOptions: ParseRefOptions = {
 		allowStereo: true,
 		allowMono: true,
@@ -173,6 +163,7 @@ export function GetFeedbacksList(
 		allowBus: true,
 		allowMatrix: true,
 	}
+	const insertSourceChoices = GetTargetChoicesNew(state, insertSourceParseOptions)
 
 	const feedbackSubscriptionWrapper = (input: {
 		getPath: (options: CompanionOptionValues) => string | null

@@ -3,7 +3,6 @@ import { X32Config } from './config.js'
 import { trimToFloat, headampGainToFloat, floatToDB, InstanceBaseExt, padNumber, stringifyValueAlways } from './util.js'
 import {
 	CHOICES_TAPE_FUNC,
-	GetTargetChoices,
 	MUTE_TOGGLE,
 	GetMuteGroupChoices,
 	CHOICES_MUTE_GROUP,
@@ -40,6 +39,7 @@ import {
 	CHOICES_COLOR,
 	parseColorNameToValue,
 	OscillatorDestinationsParseOptions,
+	GetTargetChoicesNew,
 } from './choices.js'
 import { ParseRefOptions, UserRouteInPath, UserRouteOutPath, parseHeadampRef, parseRefToPaths } from './paths.js'
 import type { SetRequired } from 'type-fest'
@@ -174,7 +174,6 @@ export function GetActionsList(
 	const levelsChoices = GetLevelsChoiceConfigs(state)
 	const panningChoices = GetPanningChoiceConfigs(state)
 	const muteGroups = GetMuteGroupChoices(state)
-	const selectChoices = GetTargetChoices(state, { skipDca: true, includeMain: true, numericIndex: true }, true)
 	const selectChoicesParseOptions: ParseRefOptions = {
 		allowStereo: true,
 		allowMono: true,
@@ -184,7 +183,7 @@ export function GetActionsList(
 		allowBus: true,
 		allowMatrix: true,
 	}
-	const soloChoices = GetTargetChoices(state, { includeMain: true, numericIndex: true }, true)
+	const selectChoices = GetTargetChoicesNew(state, selectChoicesParseOptions)
 	const soloChoicesParseOptions: ParseRefOptions = {
 		allowStereo: true,
 		allowMono: true,
@@ -195,16 +194,7 @@ export function GetActionsList(
 		allowMatrix: true,
 		allowDca: true,
 	}
-	const insertSourceChoices = GetTargetChoices(
-		state,
-		{
-			includeMain: true,
-			skipAuxIn: true,
-			skipFxRtn: true,
-			skipDca: true,
-		},
-		true,
-	)
+	const soloChoices = GetTargetChoicesNew(state, soloChoicesParseOptions)
 	const insertSourceParseOptions: ParseRefOptions = {
 		allowStereo: true,
 		allowMono: true,
@@ -212,6 +202,7 @@ export function GetActionsList(
 		allowBus: true,
 		allowMatrix: true,
 	}
+	const insertSourceChoices = GetTargetChoicesNew(state, insertSourceParseOptions)
 
 	const sendOsc = (cmd: string, args: OSCSomeArguments): void => {
 		// HACK: We send commands on a different port than we run /xremote on, so that we get change events for what we send.

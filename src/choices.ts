@@ -8,7 +8,20 @@ import {
 } from '@companion-module/base'
 import { X32State } from './state.js'
 import { padNumber, stringifyValueAlways } from './util.js'
-import { ParseRefOptions } from './paths.js'
+import {
+	getAuxPaths,
+	getBusPaths,
+	getChannelPaths,
+	getDcaPaths,
+	getFxPaths,
+	getMatrixPaths,
+	MainLeftPaths,
+	MainMonoPaths,
+	MainRightPaths,
+	MainStereoPaths,
+	ParseRefOptions,
+	SourcePaths,
+} from './paths.js'
 
 export const MUTE_TOGGLE = 2
 export const CHOICES_MUTE: DropdownChoice[] = [
@@ -267,7 +280,7 @@ export const FadeDurationChoice: SomeCompanionActionInputField[] = [
 export function convertChoices(choices: DropdownChoice[]): { choices: DropdownChoice[]; default: DropdownChoiceId } {
 	return {
 		choices,
-		default: choices[0].id,
+		default: choices[0]?.id,
 	}
 }
 
@@ -283,58 +296,45 @@ export function GetLevelsChoiceConfigs(state: X32State): {
 	busSendTargets: DropdownChoice[]
 	busSendTargetsParseOptions: ParseRefOptions
 } {
+	const channelsParseOptions: ParseRefOptions = {
+		allowStereo: true,
+		allowMono: true,
+		allowChannel: true,
+		allowAuxIn: true,
+		allowFx: true,
+		allowBus: true,
+		allowMatrix: true,
+		allowDca: true,
+	}
+	const allSourcesParseOptions: ParseRefOptions = {
+		allowChannel: true,
+		allowAuxIn: true,
+		allowFx: true,
+	}
+	const channelSendTargetsParseOptions: ParseRefOptions = {
+		allowBus: true,
+		allowMono: true,
+	}
+	const busSendSourcesParseOptions: ParseRefOptions = {
+		allowStereo: true,
+		allowMono: true,
+		allowBus: true,
+	}
+	const busSendTargetsParseOptions: ParseRefOptions = {
+		allowMatrix: true,
+	}
+
 	return {
-		channels: GetTargetChoices(state, { includeMain: true }, true),
-		channelsParseOptions: {
-			allowStereo: true,
-			allowMono: true,
-			allowChannel: true,
-			allowAuxIn: true,
-			allowFx: true,
-			allowBus: true,
-			allowMatrix: true,
-			allowDca: true,
-		},
-		allSources: GetTargetChoices(
-			state,
-			{
-				includeMain: false,
-				skipDca: true,
-				skipBus: true,
-				skipMatrix: true,
-			},
-			true,
-		),
-		allSourcesParseOptions: {
-			allowChannel: true,
-			allowAuxIn: true,
-			allowFx: true,
-		},
-		channelSendTargets: GetChannelSendChoices(state, 'level'),
-		channelSendTargetsParseOptions: {
-			allowBus: true,
-			allowMono: true,
-		},
-		busSendSources: GetTargetChoices(
-			state,
-			{
-				skipInputs: true,
-				includeMain: true,
-				skipDca: true,
-				skipBus: false,
-				skipMatrix: true,
-			},
-			true,
-		),
-		busSendSourcesParseOptions: {
-			allowStereo: true,
-			allowMono: true,
-			allowBus: true,
-		},
-		busSendTargets: GetBusSendChoices(state, undefined),
-		busSendTargetsParseOptions: {
-			allowMatrix: true,
-		},
+		channels: GetTargetChoicesNew(state, channelsParseOptions),
+		channelsParseOptions,
+		allSources: GetTargetChoicesNew(state, allSourcesParseOptions),
+		allSourcesParseOptions,
+		channelSendTargets: GetTargetChoicesNew(state, channelSendTargetsParseOptions),
+		channelSendTargetsParseOptions,
+		busSendSources: GetTargetChoicesNew(state, busSendSourcesParseOptions),
+		busSendSourcesParseOptions,
+		busSendTargets: GetTargetChoicesNew(state, busSendTargetsParseOptions),
+		busSendTargetsParseOptions,
 	}
 }
 
@@ -348,48 +348,100 @@ export function GetPanningChoiceConfigs(state: X32State): {
 	busSendTarget: DropdownChoice[]
 	busSendTargetParseOptions: ParseRefOptions
 } {
+	const allSourcesParseOptions: ParseRefOptions = {
+		allowStereo: true,
+		allowChannel: true,
+		allowAuxIn: true,
+		allowFx: true,
+		allowBus: true,
+	}
+	const channelSendTargetsParseOptions: ParseRefOptions = {
+		allowBus: true,
+	}
+	const busSendSourceParseOptions: ParseRefOptions = {
+		allowStereo: true,
+		allowBus: true,
+	}
+	const busSendTargetParseOptions: ParseRefOptions = {
+		allowMatrix: true,
+	}
+
+	const leftOnly = (statePath: SourcePaths) => !statePath.isStereoRight
+
 	return {
-		allSources: GetTargetChoices(
-			state,
-			{
-				skipDca: true,
-				skipMatrix: true,
-				includeST: true,
-			},
-			true,
-		),
-		allSourcesParseOptions: {
-			allowStereo: true,
-			allowChannel: true,
-			allowAuxIn: true,
-			allowFx: true,
-			allowBus: true,
-		},
-		channelSendTargets: GetChannelSendChoices(state, 'pan'),
-		channelSendTargetsParseOptions: {
-			allowBus: true,
-		},
-		busSendSource: GetTargetChoices(
-			state,
-			{
-				skipInputs: true,
-				includeST: true,
-				skipDca: true,
-				skipMatrix: true,
-			},
-			true,
-		),
-		busSendSourceParseOptions: {
-			allowStereo: true,
-			allowBus: true,
-		},
-		busSendTarget: GetBusSendChoices(state, 'pan'),
-		busSendTargetParseOptions: {
-			allowMatrix: true,
-		},
+		allSources: GetTargetChoicesNew(state, allSourcesParseOptions),
+		allSourcesParseOptions,
+		channelSendTargets: GetTargetChoicesNew(state, channelSendTargetsParseOptions, {
+			filter: leftOnly,
+		}),
+		channelSendTargetsParseOptions,
+		busSendSource: GetTargetChoicesNew(state, busSendSourceParseOptions),
+		busSendSourceParseOptions,
+		busSendTarget: GetTargetChoicesNew(state, busSendTargetParseOptions, {
+			filter: leftOnly,
+		}),
+		busSendTargetParseOptions,
 	}
 }
 
+export function GetTargetChoicesNew(
+	state: X32State,
+	options: ParseRefOptions,
+	extraOpts?: {
+		defaultNames?: boolean
+		filter?: (sourcePaths: SourcePaths) => boolean
+	},
+): DropdownChoice[] {
+	const res: DropdownChoice[] = []
+
+	const getNameFromState = (paths: SourcePaths): string | undefined => {
+		if (extraOpts?.defaultNames || !paths.namePath) {
+			return undefined
+		}
+
+		const val = state.get(paths.namePath)
+		return val && val[0]?.type === 's' ? val[0].value : undefined
+	}
+
+	const appendTarget = (paths: SourcePaths): void => {
+		const realname = getNameFromState(paths)
+		res.push({
+			id: paths.defaultRef,
+			label: realname && realname !== paths.defaultName ? `${realname} (${paths.defaultName})` : paths.defaultName,
+		})
+	}
+
+	const repeatSource = (count: number, getPaths: (i: number) => SourcePaths | null) => {
+		for (let i = 1; i <= count; i++) {
+			const paths = getPaths(i)
+			if (!paths) continue
+
+			// Allow external filter
+			if (extraOpts?.filter && !extraOpts.filter(paths)) continue
+
+			appendTarget(paths)
+		}
+	}
+
+	if (options.allowChannel) repeatSource(32, getChannelPaths)
+	if (options.allowAuxIn) repeatSource(8, getAuxPaths)
+	if (options.allowAuxIn) repeatSource(8, getFxPaths)
+	if (options.allowBus) repeatSource(16, getBusPaths)
+	if (options.allowMatrix) repeatSource(6, getMatrixPaths)
+
+	if (options.allowStereo) appendTarget(MainStereoPaths)
+	if (options.allowMono) appendTarget(MainMonoPaths)
+	if (options.allowLR) {
+		appendTarget(MainLeftPaths)
+		appendTarget(MainRightPaths)
+	}
+
+	if (options.allowDca) repeatSource(8, getDcaPaths)
+
+	return res
+}
+
+/** @deprecated */
 export function GetTargetChoices(
 	state: X32State,
 	options: ChannelChoicesOptions,
@@ -462,31 +514,13 @@ export function GetTargetChoices(
 	return res
 }
 
-// export function GetMixBusChoices(state: X32State): DropdownChoice[] {
-//   const res: DropdownChoice[] = []
-
-//   const appendTarget = (id: string, defaultName: string): void => {
-//     const val = state.get(`/bus/${id}/config/name`)
-//     const realname = val && val[0]?.type === 's' ? val[0].value : undefined
-//     res.push({
-//       id: id,
-//       label: realname && realname !== defaultName ? `${realname} (${defaultName})` : defaultName
-//     })
-//   }
-
-//   for (let i = 1; i <= 16; i++) {
-//     appendTarget(`${padNumber(i)}`, `MixBus ${i}`)
-//   }
-
-//   return res
-// }
-
 export const GetChannelSendParseOptions: ParseRefOptions = {
 	allowBus: true,
 	allowMono: true,
 	allowStereo: true,
 }
 
+/** @deprecated */
 export function GetChannelSendChoices(state: X32State, type: 'on' | 'level' | 'pan'): DropdownChoice[] {
 	const res: DropdownChoice[] = []
 
@@ -516,24 +550,6 @@ export function GetChannelSendChoices(state: X32State, type: 'on' | 'level' | 'p
 			break
 	}
 
-	return res
-}
-
-export function GetBusSendChoices(state: X32State, type: 'pan' | 'other' = 'other'): DropdownChoice[] {
-	const res: DropdownChoice[] = []
-
-	const appendTarget = (statePath: string, refName: string, defaultName: string): void => {
-		const val = state.get(`${statePath}/config/name`)
-		const realname = val && val[0]?.type === 's' ? val[0].value : undefined
-		res.push({
-			id: refName,
-			label: realname && realname !== defaultName ? `${realname} (${defaultName})` : defaultName,
-		})
-	}
-	const increment = type == 'pan' ? 2 : 1
-	for (let i = 1; i <= 6; i += increment) {
-		appendTarget(`/mtx/${padNumber(i)}`, `matrix${i}`, `Matrix ${i}`)
-	}
 	return res
 }
 
@@ -582,26 +598,7 @@ export function GetHeadampChoices(): DropdownChoice[] {
 }
 
 export function GetOscillatorDestinations(state: X32State): DropdownChoice[] {
-	return [
-		...GetTargetChoices(state, { skipDca: true, skipInputs: true, skipMatrix: true }, true),
-		{
-			label: 'Main L',
-			id: 'left',
-		},
-		{
-			label: 'Main R',
-			id: 'right',
-		},
-		{
-			label: 'Main L+R',
-			id: 'stereo',
-		},
-		{
-			label: 'Main M/C',
-			id: 'mono',
-		},
-		...GetTargetChoices(state, { skipDca: true, skipInputs: true, skipBus: true }, true),
-	]
+	return GetTargetChoicesNew(state, OscillatorDestinationsParseOptions)
 }
 export const OscillatorDestinationsParseOptions: ParseRefOptions = {
 	allowStereo: true,
@@ -851,19 +848,7 @@ export function GetRightOutputBlockRoutes(): DropdownChoice[] {
 }
 
 export function GetTalkbackDestinations(state: X32State): DropdownChoice[] {
-	return GetTargetChoices(
-		state,
-		{
-			numericIndex: true,
-			includeMain: true,
-			skipDca: true,
-			skipMatrix: true,
-			skipInputs: true,
-			skipAuxIn: true,
-			skipFxRtn: true,
-		},
-		true,
-	)
+	return GetTargetChoicesNew(state, TalkbackDestinationsParseOptions)
 }
 export const TalkbackDestinationsParseOptions: ParseRefOptions = {
 	allowStereo: true,

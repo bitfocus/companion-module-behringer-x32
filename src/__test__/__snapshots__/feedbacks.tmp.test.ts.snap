@@ -3838,22 +3838,6 @@ exports[`Feedbacks test > Check Change from oscillator destination state (oscill
           "label": "MixBus 16",
         },
         {
-          "id": "left",
-          "label": "Main L",
-        },
-        {
-          "id": "right",
-          "label": "Main R",
-        },
-        {
-          "id": "stereo",
-          "label": "Main L+R",
-        },
-        {
-          "id": "mono",
-          "label": "Main M/C",
-        },
-        {
           "id": "matrix1",
           "label": "Matrix 1",
         },
@@ -3876,6 +3860,22 @@ exports[`Feedbacks test > Check Change from oscillator destination state (oscill
         {
           "id": "matrix6",
           "label": "Matrix 6",
+        },
+        {
+          "id": "stereo",
+          "label": "Main Stereo",
+        },
+        {
+          "id": "mono",
+          "label": "Main Mono",
+        },
+        {
+          "id": "left",
+          "label": "Main Left",
+        },
+        {
+          "id": "right",
+          "label": "Main Right",
         },
       ],
       "default": "bus1",

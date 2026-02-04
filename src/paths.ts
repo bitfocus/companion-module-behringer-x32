@@ -23,19 +23,16 @@ export interface ParseRefOptions {
 	allowBus?: boolean
 	allowMatrix?: boolean
 	allowDca?: boolean
-	// allowMuteGroup?: boolean
 }
 
-/**
- * Parse a user provided reference string into the paths it refers to.
- * Note: This tries to be as loose as possible, with various abbreviations supported.
- * @param ref The reference string
- * @returns
- */
-export function parseRefToPaths(
-	ref: JsonValue | undefined,
-	options: ParseRefOptions,
-): {
+export interface SourcePaths {
+	defaultRef: string
+	defaultName: string
+	namePath: string | null
+
+	/** If this can be stereo linked, and would be the right channel */
+	isStereoRight?: boolean
+
 	muteOrOn?: {
 		path: string
 		isOn: boolean
@@ -72,7 +69,15 @@ export function parseRefToPaths(
 	soloNumber?: number
 	talkbackDestMask?: number
 	oscillatorDestValue?: number
-} | null {
+}
+
+/**
+ * Parse a user provided reference string into the paths it refers to.
+ * Note: This tries to be as loose as possible, with various abbreviations supported.
+ * @param ref The reference string
+ * @returns
+ */
+export function parseRefToPaths(ref: JsonValue | undefined, options: ParseRefOptions): SourcePaths | null {
 	if (!ref) return null
 	ref = stringifyValueAlways(ref).toLowerCase().trim()
 
@@ -83,86 +88,19 @@ export function parseRefToPaths(
 	if (ref === 'stereo' || ref === 'st' || ref === 'mainlr') {
 		if (!options.allowStereo) return null
 
-		return {
-			muteOrOn: {
-				path: `/main/st/mix/on`,
-				isOn: true,
-			},
-			level: {
-				path: `/main/st/mix/fader`,
-			},
-			pan: {
-				path: `/main/st/mix/pan`,
-			},
-			config: {
-				name: `/main/st/config/name`,
-				color: `/main/st/config/color`,
-			},
-			sendTo: {
-				path: `/main/st`,
-				isOn: true,
-			},
-			sendToSink: {
-				on: `st`,
-				level: null,
-				pan: null,
-			},
-			insertSource: {
-				onPath: `/main/st/insert/on`,
-				posPath: `/main/st/insert/pos`,
-				selPath: `/main/st/insert/sel`,
-			},
-			selectNumber: 70,
-			soloNumber: 71,
-			talkbackDestMask: 1 << 16,
-			oscillatorDestValue: 18,
-		}
+		return MainStereoPaths
 	} else if (ref === 'mono' || ref === 'mo' || ref === 'mon' || ref === 'mainmc') {
 		if (!options.allowMono) return null
 
-		return {
-			muteOrOn: {
-				path: `/main/m/mix/on`,
-				isOn: true,
-			},
-			level: {
-				path: `/main/m/mix/fader`,
-			},
-			config: {
-				name: `/main/m/config/name`,
-				color: `/main/m/config/color`,
-			},
-			sendTo: {
-				path: `/main/m`,
-				isOn: true,
-			},
-			sendToSink: {
-				on: `mono`,
-				level: 'mlevel',
-				pan: null, // No pan for mono
-			},
-			insertSource: {
-				onPath: `/main/m/insert/on`,
-				posPath: `/main/m/insert/pos`,
-				selPath: `/main/m/insert/sel`,
-			},
-			selectNumber: 71,
-			soloNumber: 72,
-			talkbackDestMask: 1 << 17,
-			oscillatorDestValue: 19,
-		}
+		return MainMonoPaths
 	} else if (ref === 'left' || ref === 'l' || ref === 'mainl') {
 		if (!options.allowLR) return null
 
-		return {
-			oscillatorDestValue: 16,
-		}
+		return MainLeftPaths
 	} else if (ref === 'right' || ref === 'r' || ref === 'mainr') {
 		if (!options.allowLR) return null
 
-		return {
-			oscillatorDestValue: 17,
-		}
+		return MainRightPaths
 	}
 
 	const match = ref.match(/^([a-z]+)([0-9]+)$/)
@@ -179,197 +117,357 @@ export function parseRefToPaths(
 		case 'ch':
 		case 'channel': {
 			if (!options.allowChannel) return null
-			if (refNumber < 1 || refNumber > 32) return null
-
-			return {
-				muteOrOn: {
-					path: `/ch/${String(refNumber).padStart(2, '0')}/mix/on`,
-					isOn: true,
-				},
-				level: {
-					path: `/ch/${String(refNumber).padStart(2, '0')}/mix/fader`,
-				},
-				pan: {
-					path: `/ch/${String(refNumber).padStart(2, '0')}/mix/pan`,
-				},
-				trim: {
-					path: `/ch/${String(refNumber).padStart(2, '0')}/preamp/trim`,
-				},
-				config: {
-					name: `/ch/${String(refNumber).padStart(2, '0')}/config/name`,
-					color: `/ch/${String(refNumber).padStart(2, '0')}/config/color`,
-				},
-				sendTo: {
-					path: `/ch/${String(refNumber).padStart(2, '0')}/mix`,
-					isOn: true,
-				},
-				insertSource: {
-					onPath: `/ch/${String(refNumber).padStart(2, '0')}/insert/on`,
-					posPath: `/ch/${String(refNumber).padStart(2, '0')}/insert/pos`,
-					selPath: `/ch/${String(refNumber).padStart(2, '0')}/insert/sel`,
-				},
-				selectNumber: refNumber - 1,
-				soloNumber: refNumber,
-			}
+			return getChannelPaths(refNumber)
 		}
 		case 'a':
 		case 'out':
 		case 'aux': {
 			if (!options.allowAuxIn) return null
-			if (refNumber < 1 || refNumber > 8) return null
-
-			return {
-				muteOrOn: {
-					path: `/auxin/${String(refNumber).padStart(2, '0')}/mix/on`,
-					isOn: true,
-				},
-				level: {
-					path: `/auxin/${String(refNumber).padStart(2, '0')}/mix/fader`,
-				},
-				pan: {
-					path: `/auxin/${String(refNumber).padStart(2, '0')}/mix/pan`,
-				},
-				trim: {
-					path: `/auxin/${String(refNumber).padStart(2, '0')}/preamp/trim`,
-				},
-				config: {
-					name: `/auxin/${String(refNumber).padStart(2, '0')}/config/name`,
-					color: `/auxin/${String(refNumber).padStart(2, '0')}/config/color`,
-				},
-				sendTo: {
-					path: `/auxin/${String(refNumber).padStart(2, '0')}/mix`,
-					isOn: true,
-				},
-				selectNumber: refNumber - 1 + 32,
-				soloNumber: refNumber + 32,
-			}
+			return getAuxPaths(refNumber)
 		}
 		case 'f':
 		case 'fx': {
 			if (!options.allowFx) return null
-			if (refNumber < 1 || refNumber > 8) return null
-
-			return {
-				muteOrOn: {
-					path: `/fxrtn/${String(refNumber).padStart(2, '0')}/mix/on`,
-					isOn: true,
-				},
-				level: {
-					path: `/fxrtn/${String(refNumber).padStart(2, '0')}/mix/fader`,
-				},
-				pan: {
-					path: `/fxrtn/${String(refNumber).padStart(2, '0')}/mix/pan`,
-				},
-				config: {
-					name: `/fxrtn/${String(refNumber).padStart(2, '0')}/config/name`,
-					color: `/fxrtn/${String(refNumber).padStart(2, '0')}/config/color`,
-				},
-				sendTo: {
-					path: `/fxrtn/${String(refNumber).padStart(2, '0')}/mix`,
-					isOn: true,
-				},
-				selectNumber: refNumber - 1 + 40,
-				soloNumber: refNumber + 40,
-			}
+			return getFxPaths(refNumber)
 		}
 		case 'b':
 		case 'bus':
 		case 'mix': {
 			if (!options.allowBus) return null
-			if (refNumber < 1 || refNumber > 16) return null
-
-			return {
-				muteOrOn: {
-					path: `/bus/${String(refNumber).padStart(2, '0')}/mix/on`,
-					isOn: true,
-				},
-				level: {
-					path: `/bus/${String(refNumber).padStart(2, '0')}/mix/fader`,
-				},
-				pan: {
-					path: `/bus/${String(refNumber).padStart(2, '0')}/mix/pan`,
-				},
-				config: {
-					name: `/bus/${String(refNumber).padStart(2, '0')}/config/name`,
-					color: `/bus/${String(refNumber).padStart(2, '0')}/config/color`,
-				},
-				sendTo: {
-					path: `/bus/${String(refNumber).padStart(2, '0')}/mix`,
-					isOn: true,
-				},
-				sendToSink: {
-					on: `${padNumber(refNumber)}/on`,
-					level: `${padNumber(refNumber)}/level`,
-					pan: refNumber % 2 == 1 ? `${padNumber(refNumber)}/pan` : null,
-				},
-				insertSource: {
-					onPath: `/bus/${String(refNumber).padStart(2, '0')}/insert/on`,
-					posPath: `/bus/${String(refNumber).padStart(2, '0')}/insert/pos`,
-					selPath: `/bus/${String(refNumber).padStart(2, '0')}/insert/sel`,
-				},
-				selectNumber: refNumber - 1 + 48,
-				soloNumber: refNumber + 48,
-				talkbackDestMask: 1 << (refNumber - 1),
-				oscillatorDestValue: refNumber - 1,
-			}
+			return getBusPaths(refNumber)
 		}
 		case 'm':
 		case 'mat':
 		case 'matrix':
 		case 'mtx': {
 			if (!options.allowMatrix) return null
-			if (refNumber < 1 || refNumber > 6) return null
-
-			return {
-				muteOrOn: {
-					path: `/mtx/${String(refNumber).padStart(2, '0')}/mix/on`,
-					isOn: true,
-				},
-				level: {
-					path: `/mtx/${String(refNumber).padStart(2, '0')}/mix/fader`,
-				},
-				config: {
-					name: `/mtx/${String(refNumber).padStart(2, '0')}/config/name`,
-					color: `/mtx/${String(refNumber).padStart(2, '0')}/config/color`,
-				},
-				sendToSink: {
-					on: `${padNumber(refNumber)}/on`,
-					level: `${padNumber(refNumber)}/level`,
-					pan: refNumber % 2 == 1 ? `${padNumber(refNumber)}/pan` : null,
-				},
-				insertSource: {
-					onPath: `/mtx/${String(refNumber).padStart(2, '0')}/insert/on`,
-					posPath: `/mtx/${String(refNumber).padStart(2, '0')}/insert/pos`,
-					selPath: `/mtx/${String(refNumber).padStart(2, '0')}/insert/sel`,
-				},
-				selectNumber: refNumber - 1 + 64,
-				soloNumber: refNumber + 64,
-				oscillatorDestValue: refNumber + 19,
-			}
+			return getMatrixPaths(refNumber)
 		}
 		case 'd':
 		case 'dca': {
 			if (!options.allowDca) return null
-			if (refNumber < 1 || refNumber > 8) return null
-
-			return {
-				muteOrOn: {
-					path: `/dca/${String(refNumber).padStart(2, '0')}/on`,
-					isOn: true,
-				},
-				config: {
-					name: `/dca/${String(refNumber).padStart(2, '0')}/config/name`,
-					color: `/dca/${String(refNumber).padStart(2, '0')}/config/color`,
-				},
-				level: {
-					path: `/dca/${String(refNumber).padStart(2, '0')}/fader`,
-				},
-				soloNumber: refNumber + 72,
-			}
+			return getDcaPaths(refNumber)
 		}
 
 		default:
 			return null
+	}
+}
+
+export const MainStereoPaths: SourcePaths = {
+	defaultName: `Main Stereo`,
+	defaultRef: `stereo`,
+	namePath: `/main/st/config/name`,
+
+	muteOrOn: {
+		path: `/main/st/mix/on`,
+		isOn: true,
+	},
+	level: {
+		path: `/main/st/mix/fader`,
+	},
+	pan: {
+		path: `/main/st/mix/pan`,
+	},
+	config: {
+		name: `/main/st/config/name`,
+		color: `/main/st/config/color`,
+	},
+	sendTo: {
+		path: `/main/st`,
+		isOn: true,
+	},
+	sendToSink: {
+		on: `st`,
+		level: null,
+		pan: null,
+	},
+	insertSource: {
+		onPath: `/main/st/insert/on`,
+		posPath: `/main/st/insert/pos`,
+		selPath: `/main/st/insert/sel`,
+	},
+	selectNumber: 70,
+	soloNumber: 71,
+	talkbackDestMask: 1 << 16,
+	oscillatorDestValue: 18,
+}
+export const MainMonoPaths: SourcePaths = {
+	defaultName: `Main Mono`,
+	defaultRef: `mono`,
+	namePath: `/main/m/config/name`,
+
+	muteOrOn: {
+		path: `/main/m/mix/on`,
+		isOn: true,
+	},
+	level: {
+		path: `/main/m/mix/fader`,
+	},
+	config: {
+		name: `/main/m/config/name`,
+		color: `/main/m/config/color`,
+	},
+	sendTo: {
+		path: `/main/m`,
+		isOn: true,
+	},
+	sendToSink: {
+		on: `mono`,
+		level: 'mlevel',
+		pan: null, // No pan for mono
+	},
+	insertSource: {
+		onPath: `/main/m/insert/on`,
+		posPath: `/main/m/insert/pos`,
+		selPath: `/main/m/insert/sel`,
+	},
+	selectNumber: 71,
+	soloNumber: 72,
+	talkbackDestMask: 1 << 17,
+	oscillatorDestValue: 19,
+}
+export const MainLeftPaths: SourcePaths = {
+	defaultName: `Main Left`,
+	defaultRef: `left`,
+	namePath: null,
+
+	oscillatorDestValue: 16,
+}
+export const MainRightPaths: SourcePaths = {
+	defaultName: `Main Right`,
+	defaultRef: `right`,
+	namePath: null,
+
+	oscillatorDestValue: 17,
+}
+
+export function getChannelPaths(channelNumber: number): SourcePaths | null {
+	if (channelNumber < 1 || channelNumber > 32) return null
+
+	const basePath = `/ch/${String(channelNumber).padStart(2, '0')}`
+
+	return {
+		defaultName: `Channel ${channelNumber}`,
+		defaultRef: `channel${channelNumber}`,
+		namePath: `${basePath}/config/name`,
+
+		isStereoRight: channelNumber % 2 === 0,
+
+		muteOrOn: {
+			path: `${basePath}/mix/on`,
+			isOn: true,
+		},
+		level: {
+			path: `${basePath}/mix/fader`,
+		},
+		pan: {
+			path: `${basePath}/mix/pan`,
+		},
+		trim: {
+			path: `${basePath}/preamp/trim`,
+		},
+		config: {
+			name: `${basePath}/config/name`,
+			color: `${basePath}/config/color`,
+		},
+		sendTo: {
+			path: `${basePath}/mix`,
+			isOn: true,
+		},
+		insertSource: {
+			onPath: `${basePath}/insert/on`,
+			posPath: `${basePath}/insert/pos`,
+			selPath: `${basePath}/insert/sel`,
+		},
+		selectNumber: channelNumber - 1,
+		soloNumber: channelNumber,
+	}
+}
+
+export function getAuxPaths(auxNumber: number): SourcePaths | null {
+	if (auxNumber < 1 || auxNumber > 8) return null
+
+	const basePath = `/auxin/${String(auxNumber).padStart(2, '0')}`
+
+	return {
+		defaultName: `Aux In ${auxNumber}`,
+		defaultRef: `aux${auxNumber}`,
+		namePath: `${basePath}/config/name`,
+
+		isStereoRight: auxNumber % 2 === 0,
+
+		muteOrOn: {
+			path: `${basePath}/mix/on`,
+			isOn: true,
+		},
+		level: {
+			path: `${basePath}/mix/fader`,
+		},
+		pan: {
+			path: `${basePath}/mix/pan`,
+		},
+		trim: {
+			path: `${basePath}/preamp/trim`,
+		},
+		config: {
+			name: `${basePath}/config/name`,
+			color: `${basePath}/config/color`,
+		},
+		sendTo: {
+			path: `${basePath}/mix`,
+			isOn: true,
+		},
+		selectNumber: auxNumber - 1 + 32,
+		soloNumber: auxNumber + 32,
+	}
+}
+
+export function getFxPaths(fxNumber: number): SourcePaths | null {
+	if (fxNumber < 1 || fxNumber > 8) return null
+
+	const basePath = `/fxrtn/${String(fxNumber).padStart(2, '0')}`
+
+	return {
+		defaultName: `FX Return ${Math.floor((fxNumber + 1) / 2)} ${fxNumber % 2 === 1 ? 'L' : 'R'}`,
+		defaultRef: `fx${fxNumber}`,
+		namePath: `${basePath}/config/name`,
+
+		isStereoRight: fxNumber % 2 === 0,
+
+		muteOrOn: {
+			path: `${basePath}/mix/on`,
+			isOn: true,
+		},
+		level: {
+			path: `${basePath}/mix/fader`,
+		},
+		pan: {
+			path: `${basePath}/mix/pan`,
+		},
+		config: {
+			name: `${basePath}/config/name`,
+			color: `${basePath}/config/color`,
+		},
+		sendTo: {
+			path: `${basePath}/mix`,
+			isOn: true,
+		},
+		selectNumber: fxNumber - 1 + 40,
+		soloNumber: fxNumber + 40,
+	}
+}
+
+export function getBusPaths(busNumber: number): SourcePaths | null {
+	if (busNumber < 1 || busNumber > 16) return null
+
+	const basePath = `/bus/${String(busNumber).padStart(2, '0')}`
+
+	return {
+		defaultName: `MixBus ${busNumber}`,
+		defaultRef: `bus${busNumber}`,
+		namePath: `${basePath}/config/name`,
+
+		isStereoRight: busNumber % 2 === 0,
+
+		muteOrOn: {
+			path: `${basePath}/mix/on`,
+			isOn: true,
+		},
+		level: {
+			path: `${basePath}/mix/fader`,
+		},
+		pan: {
+			path: `${basePath}/mix/pan`,
+		},
+		config: {
+			name: `${basePath}/config/name`,
+			color: `${basePath}/config/color`,
+		},
+		sendTo: {
+			path: `${basePath}/mix`,
+			isOn: true,
+		},
+		sendToSink: {
+			on: `${padNumber(busNumber)}/on`,
+			level: `${padNumber(busNumber)}/level`,
+			pan: busNumber % 2 == 1 ? `${padNumber(busNumber)}/pan` : null,
+		},
+		insertSource: {
+			onPath: `${basePath}/insert/on`,
+			posPath: `${basePath}/insert/pos`,
+			selPath: `${basePath}/insert/sel`,
+		},
+		selectNumber: busNumber - 1 + 48,
+		soloNumber: busNumber + 48,
+		talkbackDestMask: 1 << (busNumber - 1),
+		oscillatorDestValue: busNumber - 1,
+	}
+}
+
+export function getMatrixPaths(matrixNumber: number): SourcePaths | null {
+	if (matrixNumber < 1 || matrixNumber > 6) return null
+
+	const basePath = `/mtx/${String(matrixNumber).padStart(2, '0')}`
+
+	return {
+		defaultName: `Matrix ${matrixNumber}`,
+		defaultRef: `matrix${matrixNumber}`,
+		namePath: `${basePath}/config/name`,
+
+		isStereoRight: matrixNumber % 2 === 0,
+
+		muteOrOn: {
+			path: `${basePath}/mix/on`,
+			isOn: true,
+		},
+		level: {
+			path: `${basePath}/mix/fader`,
+		},
+		config: {
+			name: `${basePath}/config/name`,
+			color: `${basePath}/config/color`,
+		},
+		sendToSink: {
+			on: `${padNumber(matrixNumber)}/on`,
+			level: `${padNumber(matrixNumber)}/level`,
+			pan: matrixNumber % 2 == 1 ? `${padNumber(matrixNumber)}/pan` : null,
+		},
+		insertSource: {
+			onPath: `${basePath}/insert/on`,
+			posPath: `${basePath}/insert/pos`,
+			selPath: `${basePath}/insert/sel`,
+		},
+		selectNumber: matrixNumber - 1 + 64,
+		soloNumber: matrixNumber + 64,
+		oscillatorDestValue: matrixNumber + 19,
+	}
+}
+
+export function getDcaPaths(dcaNumber: number): SourcePaths | null {
+	if (dcaNumber < 1 || dcaNumber > 8) return null
+
+	const basePath = `/dca/${String(dcaNumber).padStart(2, '0')}`
+
+	return {
+		defaultName: `DCA ${dcaNumber}`,
+		defaultRef: `dca${dcaNumber}`,
+		namePath: `${basePath}/config/name`,
+
+		isStereoRight: dcaNumber % 2 === 0,
+
+		muteOrOn: {
+			path: `${basePath}/on`,
+			isOn: true,
+		},
+		config: {
+			name: `${basePath}/config/name`,
+			color: `${basePath}/config/color`,
+		},
+		level: {
+			path: `${basePath}/fader`,
+		},
+		soloNumber: dcaNumber + 72,
 	}
 }
 
