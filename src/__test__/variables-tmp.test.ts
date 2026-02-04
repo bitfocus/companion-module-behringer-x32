@@ -1,19 +1,26 @@
 // eslint-disable-next-line n/no-unpublished-import
-import { vi, it, expect } from 'vitest'
+import { vi, it, expect, describe } from 'vitest'
 import { X32State } from '../state.js'
 import { InstanceBaseExt } from '../util.js'
-import { InitVariables } from '../variables.js'
+import * as variableFns from '../variables.js'
 
-it('Variables test', () => {
-	const mockDefs = vi.fn()
-	const mockVals = vi.fn()
-	const mockInstance: Pick<InstanceBaseExt<any>, 'setVariableDefinitions' | 'setVariableValues'> = {
-		setVariableDefinitions: mockDefs,
-		setVariableValues: mockVals,
+describe('Variables test', () => {
+	for (const [name, fn] of Object.entries(variableFns)) {
+		if (typeof fn !== 'function') continue
+		if (name === 'updateDeviceInfoVariables') continue
+
+		it(name, () => {
+			const mockDefs = vi.fn()
+			const mockVals = vi.fn()
+			const mockInstance: Pick<InstanceBaseExt<any>, 'setVariableDefinitions' | 'setVariableValues'> = {
+				setVariableDefinitions: mockDefs,
+				setVariableValues: mockVals,
+			}
+
+			fn(mockInstance as InstanceBaseExt<any>, new X32State() as any)
+
+			expect(mockDefs.mock.calls[0]).toMatchSnapshot()
+			expect(mockVals.mock.calls[0]).toMatchSnapshot()
+		})
 	}
-
-	InitVariables(mockInstance as InstanceBaseExt<any>, new X32State())
-
-	expect(mockDefs).toHaveBeenCalledOnce()
-	expect(mockDefs.mock.calls[0]).toMatchSnapshot()
 })
