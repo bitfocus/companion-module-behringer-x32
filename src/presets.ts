@@ -1,8 +1,6 @@
-import { ActionId } from './actions.js'
 import { X32Config } from './config.js'
 import { FeedbackId } from './feedback.js'
 import { X32State } from './state.js'
-import { GetLevelsChoiceConfigs } from './choices.js'
 import type { SetRequired } from 'type-fest'
 import {
 	CompanionPresetDefinitions,
@@ -29,11 +27,12 @@ interface CompanionPresetExt extends CompanionButtonPresetDefinition {
 	// >
 }
 
-export function GetPresetsList(_instance: InstanceBaseExt<X32Config>, state: X32State): CompanionPresetDefinitions {
+export function GetPresetsList(_instance: InstanceBaseExt<X32Config>, _state: X32State): CompanionPresetDefinitions {
 	const presets: {
 		[id: string]: CompanionPresetExt | undefined
 	} = {}
 
+	/*
 	const levelsChoices = GetLevelsChoiceConfigs(state)
 
 	const sampleChannel = levelsChoices.channels[0]
@@ -425,6 +424,7 @@ export function GetPresetsList(_instance: InstanceBaseExt<X32Config>, state: X32
 			feedbacks: [],
 		}
 	}
+	*/
 
 	return presets
 }

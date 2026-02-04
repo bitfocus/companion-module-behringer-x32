@@ -272,30 +272,19 @@ export function convertChoices(choices: DropdownChoice[]): { choices: DropdownCh
 }
 
 export function GetLevelsChoiceConfigs(state: X32State): {
-	/** @deprecated */
 	channels: DropdownChoice[]
-	channelsNew: DropdownChoice[]
 	channelsParseOptions: ParseRefOptions
-	/** @deprecated */
 	allSources: DropdownChoice[]
-	allSourcesNew: DropdownChoice[]
 	allSourcesParseOptions: ParseRefOptions
-	/** @deprecated */
 	channelSendTargets: DropdownChoice[]
-	channelSendTargetsNew: DropdownChoice[]
 	channelSendTargetsParseOptions: ParseRefOptions
-	/** @deprecated */
 	busSendSources: DropdownChoice[]
-	busSendSourcesNew: DropdownChoice[]
 	busSendSourcesParseOptions: ParseRefOptions
-	/** @deprecated */
 	busSendTargets: DropdownChoice[]
-	busSendTargetsNew: DropdownChoice[]
 	busSendTargetsParseOptions: ParseRefOptions
 } {
 	return {
-		channels: GetTargetChoices(state, { includeMain: true }),
-		channelsNew: GetTargetChoices(state, { includeMain: true }, true),
+		channels: GetTargetChoices(state, { includeMain: true }, true),
 		channelsParseOptions: {
 			allowStereo: true,
 			allowMono: true,
@@ -306,13 +295,7 @@ export function GetLevelsChoiceConfigs(state: X32State): {
 			allowMatrix: true,
 			allowDca: true,
 		},
-		allSources: GetTargetChoices(state, {
-			includeMain: false,
-			skipDca: true,
-			skipBus: true,
-			skipMatrix: true,
-		}),
-		allSourcesNew: GetTargetChoices(
+		allSources: GetTargetChoices(
 			state,
 			{
 				includeMain: false,
@@ -327,20 +310,12 @@ export function GetLevelsChoiceConfigs(state: X32State): {
 			allowAuxIn: true,
 			allowFx: true,
 		},
-		channelSendTargets: GetChannelSendChoices(state, 'level'),
-		channelSendTargetsNew: GetChannelSendChoices(state, 'level', true),
+		channelSendTargets: GetChannelSendChoices(state, 'level', true),
 		channelSendTargetsParseOptions: {
 			allowBus: true,
 			allowMono: true,
 		},
-		busSendSources: GetTargetChoices(state, {
-			skipInputs: true,
-			includeMain: true,
-			skipDca: true,
-			skipBus: false,
-			skipMatrix: true,
-		}),
-		busSendSourcesNew: GetTargetChoices(
+		busSendSources: GetTargetChoices(
 			state,
 			{
 				skipInputs: true,
@@ -356,8 +331,7 @@ export function GetLevelsChoiceConfigs(state: X32State): {
 			allowMono: true,
 			allowBus: true,
 		},
-		busSendTargets: GetBusSendChoices(state),
-		busSendTargetsNew: GetBusSendChoices(state, undefined, true),
+		busSendTargets: GetBusSendChoices(state, undefined, true),
 		busSendTargetsParseOptions: {
 			allowMatrix: true,
 		},
@@ -365,30 +339,17 @@ export function GetLevelsChoiceConfigs(state: X32State): {
 }
 
 export function GetPanningChoiceConfigs(state: X32State): {
-	/** @deprecated */
 	allSources: DropdownChoice[]
-	allSourcesNew: DropdownChoice[]
 	allSourcesParseOptions: ParseRefOptions
-	/** @deprecated */
 	channelSendTargets: DropdownChoice[]
-	channelSendTargetsNew: DropdownChoice[]
 	channelSendTargetsParseOptions: ParseRefOptions
-	/** @deprecated */
 	busSendSource: DropdownChoice[]
-	busSendSourceNew: DropdownChoice[]
 	busSendSourceParseOptions: ParseRefOptions
-	/** @deprecated */
 	busSendTarget: DropdownChoice[]
-	busSendTargetNew: DropdownChoice[]
 	busSendTargetParseOptions: ParseRefOptions
 } {
 	return {
-		allSources: GetTargetChoices(state, {
-			skipDca: true,
-			skipMatrix: true,
-			includeST: true,
-		}),
-		allSourcesNew: GetTargetChoices(
+		allSources: GetTargetChoices(
 			state,
 			{
 				skipDca: true,
@@ -404,18 +365,11 @@ export function GetPanningChoiceConfigs(state: X32State): {
 			allowFx: true,
 			allowBus: true,
 		},
-		channelSendTargets: GetChannelSendChoices(state, 'pan'),
-		channelSendTargetsNew: GetChannelSendChoices(state, 'pan', true),
+		channelSendTargets: GetChannelSendChoices(state, 'pan', true),
 		channelSendTargetsParseOptions: {
 			allowBus: true,
 		},
-		busSendSource: GetTargetChoices(state, {
-			skipInputs: true,
-			includeST: true,
-			skipDca: true,
-			skipMatrix: true,
-		}),
-		busSendSourceNew: GetTargetChoices(
+		busSendSource: GetTargetChoices(
 			state,
 			{
 				skipInputs: true,
@@ -429,8 +383,7 @@ export function GetPanningChoiceConfigs(state: X32State): {
 			allowStereo: true,
 			allowBus: true,
 		},
-		busSendTarget: GetBusSendChoices(state, 'pan'),
-		busSendTargetNew: GetBusSendChoices(state, 'pan', true),
+		busSendTarget: GetBusSendChoices(state, 'pan', true),
 		busSendTargetParseOptions: {
 			allowMatrix: true,
 		},
@@ -592,12 +545,12 @@ export function GetBusSendChoices(
 	return res
 }
 
-export function GetMuteGroupChoices(_state: X32State, numberNaming?: boolean): DropdownChoice[] {
+export function GetMuteGroupChoices(_state: X32State): DropdownChoice[] {
 	const res: DropdownChoice[] = []
 
 	for (let i = 1; i <= 6; i++) {
 		res.push({
-			id: numberNaming ? i : `/config/mute/${i}`,
+			id: i,
 			label: `Mute group ${i}`,
 		})
 	}

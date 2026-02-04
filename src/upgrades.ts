@@ -158,7 +158,20 @@ const actionsToUpgrade: Record<string, string[] | undefined> = {
 	[ActionId.InsertSelect]: ['src'],
 }
 const feedbacksToUpgrade: Record<string, string[] | undefined> = {
-	// [ActionId.Mute]: ['target'],
+	[FeedbackId.Mute]: ['target'],
+	[FeedbackId.MuteGroup]: ['mute_grp'],
+	[FeedbackId.MuteChannelSend]: ['source', 'target'],
+	[FeedbackId.MuteBusSend]: ['source', 'target'],
+	[FeedbackId.FaderLevel]: ['target'],
+	[FeedbackId.ChannelSendLevel]: ['source', 'target'],
+	[FeedbackId.BusSendLevel]: ['source', 'target'],
+	[FeedbackId.ChannelPanning]: ['target'],
+	[FeedbackId.ChannelSendPanning]: ['source', 'target'],
+	[FeedbackId.BusSendPanning]: ['source', 'target'],
+	[FeedbackId.OscillatorDestination]: ['destination'],
+	[FeedbackId.InsertOn]: ['src'],
+	[FeedbackId.InsertPos]: ['src'],
+	[FeedbackId.InsertSelect]: ['src'],
 }
 
 export const upgradeChannelOrFaderValuesFromOscPaths: CompanionStaticUpgradeScript<any> = (_ctx, props) => {
@@ -235,6 +248,19 @@ export const upgradeChannelOrFaderValuesFromOscPaths: CompanionStaticUpgradeScri
 		result.updatedActions.push(action)
 	}
 	for (const feedback of props.feedbacks) {
+		if (feedback.feedbackId === FeedbackId.Solo) {
+			if (feedback.options.solo) {
+				feedback.options.solo.value =
+					soloOrSelectChoicesLookup[Number(feedback.options.solo.value)] || feedback.options.solo.value
+			}
+		} else if (feedback.feedbackId === FeedbackId.Select) {
+			if (feedback.options.select) {
+				// This uses a few less than solo, but no harm in mapping the extra ones
+				feedback.options.select.value =
+					soloOrSelectChoicesLookup[Number(feedback.options.select.value)] || feedback.options.select.value
+			}
+		}
+
 		const propsToUpgrade = feedbacksToUpgrade[feedback.feedbackId]
 		if (!propsToUpgrade) continue
 

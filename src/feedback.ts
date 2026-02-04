@@ -23,20 +23,11 @@ import {
 	GetUserOutTargets,
 	GetInsertDestinationChoices,
 	GetTalkbackDestinations,
+	GetChannelSendParseOptions,
+	OscillatorDestinationsParseOptions,
 } from './choices.js'
-import { compareNumber, floatToDB, InstanceBaseExt } from './util.js'
-import {
-	MutePath,
-	MainPath,
-	MainFaderPath,
-	SendChannelToBusPath,
-	SendBusToMatrixPath,
-	MainPanPath,
-	ChannelToBusPanPath,
-	BusToMatrixPanPath,
-	UserRouteInPath,
-	UserRouteOutPath,
-} from './paths.js'
+import { compareNumber, floatToDB, InstanceBaseExt, padNumber } from './util.js'
+import { UserRouteInPath, UserRouteOutPath, parseRefToPaths, ParseRefOptions } from './paths.js'
 import osc from 'osc'
 import { X32Config } from './config.js'
 import { NumberComparitorPicker } from './input.js'
@@ -143,14 +134,44 @@ export function GetFeedbacksList(
 	const levelsChoices = GetLevelsChoiceConfigs(state)
 	const panningChoices = GetPanningChoiceConfigs(state)
 	const muteGroups = GetMuteGroupChoices(state)
-	const selectChoices = GetTargetChoices(state, { skipDca: true, includeMain: true, numericIndex: true })
-	const soloChoices = GetTargetChoices(state, { includeMain: true, numericIndex: true })
-	const insertSourceChoices = GetTargetChoices(state, {
-		includeMain: true,
-		skipAuxIn: true,
-		skipFxRtn: true,
-		skipDca: true,
-	})
+	const selectChoices = GetTargetChoices(state, { skipDca: true, includeMain: true, numericIndex: true }, true)
+	const selectChoicesParseOptions: ParseRefOptions = {
+		allowStereo: true,
+		allowMono: true,
+		allowChannel: true,
+		allowAuxIn: true,
+		allowFx: true,
+		allowBus: true,
+		allowMatrix: true,
+	}
+	const soloChoices = GetTargetChoices(state, { includeMain: true, numericIndex: true }, true)
+	const soloChoicesParseOptions: ParseRefOptions = {
+		allowStereo: true,
+		allowMono: true,
+		allowChannel: true,
+		allowAuxIn: true,
+		allowFx: true,
+		allowBus: true,
+		allowMatrix: true,
+		allowDca: true,
+	}
+	const insertSourceChoices = GetTargetChoices(
+		state,
+		{
+			includeMain: true,
+			skipAuxIn: true,
+			skipFxRtn: true,
+			skipDca: true,
+		},
+		true,
+	)
+	const insertSourceParseOptions: ParseRefOptions = {
+		allowStereo: true,
+		allowMono: true,
+		allowChannel: true,
+		allowBus: true,
+		allowMatrix: true,
+	}
 
 	const feedbackSubscriptionWrapper = (input: {
 		getPath: (options: CompanionOptionValues) => string | null
@@ -246,7 +267,6 @@ export function GetFeedbacksList(
 					id: 'target',
 					type: 'dropdown',
 					label: 'Target',
-					// nocommit
 					...convertChoices(levelsChoices.channels),
 					allowInvalidValues: true,
 				},
@@ -256,7 +276,12 @@ export function GetFeedbacksList(
 				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
-				getPath: (options) => MutePath(options.target as string),
+				getPath: (options) => {
+					const refPaths = parseRefToPaths(options.target, levelsChoices.channelsParseOptions)
+					if (!refPaths?.muteOrOn) return null // Not a valid path
+
+					return refPaths.muteOrOn.path
+				},
 				getValue: (_evt, data) => getDataNumber(data, 0) === 0,
 			}),
 		},
@@ -269,7 +294,6 @@ export function GetFeedbacksList(
 					id: 'mute_grp',
 					type: 'dropdown',
 					label: 'Target',
-					// nocommit
 					...convertChoices(muteGroups),
 					allowInvalidValues: true,
 				},
@@ -279,7 +303,12 @@ export function GetFeedbacksList(
 				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
-				getPath: (options) => options.mute_grp as string,
+				getPath: (options) => {
+					const muteGroupNumber = parseInt(options.mute_grp as string, 10)
+					if (isNaN(muteGroupNumber)) return null
+
+					return `/config/mute/${muteGroupNumber}`
+				},
 				getValue: (_evt, data) => getDataNumber(data, 0) === 1,
 			}),
 		},
@@ -292,7 +321,6 @@ export function GetFeedbacksList(
 					type: 'dropdown',
 					label: 'Source',
 					id: 'source',
-					// nocommit
 					...convertChoices(levelsChoices.allSources),
 					allowInvalidValues: true,
 				},
@@ -300,8 +328,7 @@ export function GetFeedbacksList(
 					type: 'dropdown',
 					label: 'Target',
 					id: 'target',
-					// nocommit
-					...convertChoices(GetChannelSendChoices(state, 'on')),
+					...convertChoices(GetChannelSendChoices(state, 'on', true)),
 					allowInvalidValues: true,
 				},
 			],
@@ -310,7 +337,13 @@ export function GetFeedbacksList(
 				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
-				getPath: (options) => `${MainPath(options.source as string)}/${options.target}`,
+				getPath: (options) => {
+					const sourceRef = parseRefToPaths(options.source, levelsChoices.allSourcesParseOptions)
+					const targetRef = parseRefToPaths(options.target, GetChannelSendParseOptions)
+					if (!sourceRef?.sendTo || !targetRef?.sendToSink?.on) return null
+
+					return `${sourceRef.sendTo.path}/${targetRef.sendToSink.on}`
+				},
 				getValue: (_evt, data) => getDataNumber(data, 0) === 0,
 			}),
 		},
@@ -323,7 +356,6 @@ export function GetFeedbacksList(
 					type: 'dropdown',
 					label: 'Source',
 					id: 'source',
-					// nocommit
 					...convertChoices(levelsChoices.busSendSources),
 					allowInvalidValues: true,
 				},
@@ -331,7 +363,6 @@ export function GetFeedbacksList(
 					type: 'dropdown',
 					label: 'Target',
 					id: 'target',
-					// nocommit
 					...convertChoices(levelsChoices.busSendTargets),
 					allowInvalidValues: true,
 				},
@@ -341,7 +372,13 @@ export function GetFeedbacksList(
 				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
-				getPath: (options) => `${MainPath(options.source as string)}/${options.target}/on`,
+				getPath: (options) => {
+					const sourceRef = parseRefToPaths(options.source, levelsChoices.busSendSourcesParseOptions)
+					const targetRef = parseRefToPaths(options.target, levelsChoices.busSendTargetsParseOptions)
+					if (!sourceRef?.sendTo || !targetRef?.sendToSink?.on) return null
+
+					return `${sourceRef.sendTo.path}/${targetRef.sendToSink.on}`
+				},
 				getValue: (_evt, data) => getDataNumber(data, 0) === 0,
 			}),
 		},
@@ -354,7 +391,6 @@ export function GetFeedbacksList(
 					type: 'dropdown',
 					label: 'Target',
 					id: 'target',
-					// nocommit
 					...convertChoices(levelsChoices.channels),
 					allowInvalidValues: true,
 				},
@@ -366,7 +402,12 @@ export function GetFeedbacksList(
 				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
-				getPath: (options) => MainFaderPath(options),
+				getPath: (options) => {
+					const refPaths = parseRefToPaths(options.target, levelsChoices.channelsParseOptions)
+					if (!refPaths?.level) return null // Not a valid path
+
+					return refPaths.level.path
+				},
 				getValue: (evt, data) => {
 					const currentVal = data && data[0]?.type === 'f' ? data[0]?.value : undefined
 					return (
@@ -385,7 +426,6 @@ export function GetFeedbacksList(
 					type: 'dropdown',
 					label: 'Source',
 					id: 'source',
-					// nocommit
 					...convertChoices(levelsChoices.allSources),
 					allowInvalidValues: true,
 				},
@@ -393,7 +433,6 @@ export function GetFeedbacksList(
 					type: 'dropdown',
 					label: 'Target',
 					id: 'target',
-					// nocommit
 					...convertChoices(levelsChoices.channelSendTargets),
 					allowInvalidValues: true,
 				},
@@ -405,7 +444,13 @@ export function GetFeedbacksList(
 				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
-				getPath: (options) => SendChannelToBusPath(options),
+				getPath: (options) => {
+					const sourceRef = parseRefToPaths(options.source, levelsChoices.allSourcesParseOptions)
+					const targetRef = parseRefToPaths(options.target, levelsChoices.channelSendTargetsParseOptions)
+					if (!sourceRef?.sendTo || !targetRef?.sendToSink?.level) return null
+
+					return `${sourceRef.sendTo.path}/${targetRef.sendToSink.level}`
+				},
 				getValue: (evt, data) => {
 					const currentVal = data && data[0]?.type === 'f' ? data[0]?.value : undefined
 					return (
@@ -424,7 +469,6 @@ export function GetFeedbacksList(
 					type: 'dropdown',
 					label: 'Source',
 					id: 'source',
-					// nocommit
 					...convertChoices(levelsChoices.busSendSources),
 					allowInvalidValues: true,
 				},
@@ -432,7 +476,6 @@ export function GetFeedbacksList(
 					type: 'dropdown',
 					label: 'Target',
 					id: 'target',
-					// nocommit
 					...convertChoices(levelsChoices.busSendTargets),
 					allowInvalidValues: true,
 				},
@@ -444,7 +487,13 @@ export function GetFeedbacksList(
 				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
-				getPath: (options) => SendBusToMatrixPath(options),
+				getPath: (options) => {
+					const sourceRef = parseRefToPaths(options.source, levelsChoices.busSendSourcesParseOptions)
+					const targetRef = parseRefToPaths(options.target, levelsChoices.busSendTargetsParseOptions)
+					if (!sourceRef?.sendTo || !targetRef?.sendToSink?.level) return null
+
+					return `${sourceRef.sendTo.path}/${targetRef.sendToSink.level}`
+				},
 				getValue: (evt, data) => {
 					const currentVal = data && data[0]?.type === 'f' ? data[0]?.value : undefined
 					return (
@@ -464,7 +513,6 @@ export function GetFeedbacksList(
 					type: 'dropdown',
 					label: 'Target',
 					id: 'target',
-					// nocommit
 					...convertChoices(panningChoices.allSources),
 					allowInvalidValues: true,
 				},
@@ -476,7 +524,12 @@ export function GetFeedbacksList(
 				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
-				getPath: (options) => MainPanPath(options),
+				getPath: (options) => {
+					const refPaths = parseRefToPaths(options.target, panningChoices.allSourcesParseOptions)
+					if (!refPaths?.pan) return null // Not a valid path
+
+					return refPaths.pan.path
+				},
 				getValue: (evt, data) => {
 					const currentVal = data && data[0]?.type === 'f' ? data[0]?.value : undefined
 					return (
@@ -495,7 +548,6 @@ export function GetFeedbacksList(
 					type: 'dropdown',
 					label: 'Source',
 					id: 'source',
-					// nocommit
 					...convertChoices(panningChoices.allSources),
 					allowInvalidValues: true,
 				},
@@ -503,7 +555,6 @@ export function GetFeedbacksList(
 					type: 'dropdown',
 					label: 'Target',
 					id: 'target',
-					// nocommit
 					...convertChoices(panningChoices.channelSendTargets),
 					allowInvalidValues: true,
 				},
@@ -515,7 +566,13 @@ export function GetFeedbacksList(
 				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
-				getPath: (options) => ChannelToBusPanPath(options),
+				getPath: (options) => {
+					const sourceRef = parseRefToPaths(options.source, levelsChoices.allSourcesParseOptions)
+					const targetRef = parseRefToPaths(options.target, levelsChoices.channelSendTargetsParseOptions)
+					if (!sourceRef?.sendTo || !targetRef?.sendToSink?.pan) return null
+
+					return `${sourceRef.sendTo.path}/${targetRef.sendToSink.pan}`
+				},
 				getValue: (evt, data) => {
 					const currentVal = data && data[0]?.type === 'f' ? data[0]?.value : undefined
 					return (
@@ -534,7 +591,6 @@ export function GetFeedbacksList(
 					type: 'dropdown',
 					label: 'Source',
 					id: 'source',
-					// nocommit
 					...convertChoices(panningChoices.busSendSource),
 					allowInvalidValues: true,
 				},
@@ -542,7 +598,6 @@ export function GetFeedbacksList(
 					type: 'dropdown',
 					label: 'Target',
 					id: 'target',
-					// nocommit
 					...convertChoices(panningChoices.busSendTarget),
 					allowInvalidValues: true,
 				},
@@ -554,7 +609,13 @@ export function GetFeedbacksList(
 				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
-				getPath: (options) => BusToMatrixPanPath(options),
+				getPath: (options) => {
+					const sourceRef = parseRefToPaths(options.source, panningChoices.busSendSourceParseOptions)
+					const targetRef = parseRefToPaths(options.target, panningChoices.busSendTargetParseOptions)
+					if (!sourceRef?.sendTo || !targetRef?.sendToSink?.pan) return null
+
+					return `${sourceRef.sendTo.path}/${targetRef.sendToSink.pan}`
+				},
 				getValue: (evt, data) => {
 					const currentVal = data && data[0]?.type === 'f' ? data[0]?.value : undefined
 					return (
@@ -660,8 +721,7 @@ export function GetFeedbacksList(
 					type: 'dropdown',
 					label: 'destination',
 					id: 'destination',
-					...convertChoices(GetOscillatorDestinations(state)),
-					// nocommit
+					...convertChoices(GetOscillatorDestinations(state, true)),
 					allowInvalidValues: true,
 				},
 			],
@@ -672,8 +732,11 @@ export function GetFeedbacksList(
 			...feedbackSubscriptionWrapper({
 				getPath: () => `/config/osc/dest`,
 				getValue: (evt, data) => {
+					const destRef = parseRefToPaths(evt.options.destination, OscillatorDestinationsParseOptions)
+					if (!destRef?.oscillatorDestValue) return false
+
 					const destination = getDataNumber(data, 0)
-					return destination === Number(evt.options.destination)
+					return destination === destRef.oscillatorDestValue
 				},
 			}),
 		},
@@ -687,7 +750,6 @@ export function GetFeedbacksList(
 					label: 'Target',
 					id: 'select',
 					...convertChoices(selectChoices),
-					// nocommit
 					allowInvalidValues: true,
 				},
 			],
@@ -698,8 +760,11 @@ export function GetFeedbacksList(
 			...feedbackSubscriptionWrapper({
 				getPath: () => `/-stat/selidx`,
 				getValue: (evt, data) => {
+					const selectRef = parseRefToPaths(evt.options.select, selectChoicesParseOptions)
+					if (selectRef?.selectNumber === undefined) return false
+
 					const selectedChannel = getDataNumber(data, 0)
-					return selectedChannel == evt.options.select
+					return selectedChannel == selectRef.selectNumber
 				},
 			}),
 		},
@@ -713,7 +778,6 @@ export function GetFeedbacksList(
 					label: 'Target',
 					id: 'solo',
 					...convertChoices(soloChoices),
-					// nocommit
 					allowInvalidValues: true,
 				},
 			],
@@ -723,8 +787,9 @@ export function GetFeedbacksList(
 			},
 			...feedbackSubscriptionWrapper({
 				getPath: (options) => {
-					const ch = `${getOptNumber(options, 'solo') + 1}`.padStart(2, '0')
-					return `/-stat/solosw/${ch}`
+					const soloRef = parseRefToPaths(options.solo, soloChoicesParseOptions)
+					if (soloRef?.soloNumber === undefined) return null
+					return `/-stat/solosw/${padNumber(soloRef.soloNumber)}`
 				},
 				getValue: (_evt, data) => getDataNumber(data, 0) !== 0,
 			}),
@@ -1646,7 +1711,6 @@ export function GetFeedbacksList(
 					label: 'source',
 					id: 'source',
 					...convertChoices([...GetUserInSources()]),
-					// nocommit
 					allowInvalidValues: true,
 				},
 				{
@@ -1661,7 +1725,6 @@ export function GetFeedbacksList(
 						},
 						...GetUserInTargets(),
 					],
-					// nocommit
 					allowInvalidValues: true,
 				},
 			],
@@ -1731,7 +1794,6 @@ export function GetFeedbacksList(
 					label: 'source',
 					id: 'source',
 					...convertChoices([...GetUserOutSources()]),
-					// nocommit
 					allowInvalidValues: true,
 				},
 				{
@@ -1746,7 +1808,6 @@ export function GetFeedbacksList(
 						},
 						...GetUserOutTargets(),
 					],
-					// nocommit
 					allowInvalidValues: true,
 				},
 			],
@@ -1815,7 +1876,6 @@ export function GetFeedbacksList(
 					label: 'destination output',
 					id: 'channel',
 					...convertChoices([...GetUserOutTargets(true)]),
-					// nocommit
 					allowInvalidValues: true,
 				},
 			],
@@ -1877,7 +1937,6 @@ export function GetFeedbacksList(
 					label: 'Input block',
 					id: 'block',
 					...convertChoices([...GetInputBlocks()]),
-					// nocommit
 					allowInvalidValues: true,
 				},
 				{
@@ -1885,7 +1944,6 @@ export function GetFeedbacksList(
 					label: 'Routing source block',
 					id: 'routing',
 					...convertChoices([...GetInputBlockRoutes()]),
-					// nocommit
 					allowInvalidValues: true,
 				},
 			],
@@ -1921,7 +1979,6 @@ export function GetFeedbacksList(
 					label: 'Routing source block',
 					id: 'routing',
 					...convertChoices([...GetAuxBlockRoutes()]),
-					// nocommit
 					allowInvalidValues: true,
 				},
 			],
@@ -2119,7 +2176,6 @@ export function GetFeedbacksList(
 					label: 'Source',
 					id: 'src',
 					...convertChoices(insertSourceChoices),
-					// nocommit
 					allowInvalidValues: true,
 				},
 			],
@@ -2128,7 +2184,10 @@ export function GetFeedbacksList(
 				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
-				getPath: (options) => `${options.src as string}/insert/on`,
+				getPath: (options) => {
+					const srcRef = parseRefToPaths(options.src, insertSourceParseOptions)
+					return srcRef?.insertSource?.onPath ?? null
+				},
 				getValue: (_evt, data) => getDataNumber(data, 0) === 1,
 			}),
 		},
@@ -2142,7 +2201,6 @@ export function GetFeedbacksList(
 					label: 'Source',
 					id: 'src',
 					...convertChoices(insertSourceChoices),
-					// nocommit
 					allowInvalidValues: true,
 				},
 				{
@@ -2161,7 +2219,10 @@ export function GetFeedbacksList(
 				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
-				getPath: (options) => `${options.src as string}/insert/pos`,
+				getPath: (options) => {
+					const srcRef = parseRefToPaths(options.src, insertSourceParseOptions)
+					return srcRef?.insertSource?.posPath ?? null
+				},
 				getValue: (evt, data) => getDataNumber(data, 0) === evt.options.pos,
 			}),
 		},
@@ -2176,7 +2237,6 @@ export function GetFeedbacksList(
 					label: 'Source',
 					id: 'src',
 					...convertChoices(insertSourceChoices),
-					// nocommit
 					allowInvalidValues: true,
 				},
 				{
@@ -2192,7 +2252,10 @@ export function GetFeedbacksList(
 				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
-				getPath: (options) => `${options.src as string}/insert/sel`,
+				getPath: (options) => {
+					const srcRef = parseRefToPaths(options.src, insertSourceParseOptions)
+					return srcRef?.insertSource?.selPath ?? null
+				},
 				getValue: (evt, data) => getDataNumber(data, 0) === evt.options.dest,
 			}),
 		},

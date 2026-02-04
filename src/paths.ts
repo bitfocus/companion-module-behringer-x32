@@ -1,37 +1,8 @@
 import type { JsonValue } from '@companion-module/base'
 import { padNumber } from './util.js'
 
-/** @deprecated */
-export function MutePath(prefix: string): string {
-	return `${MainPath(prefix)}/on`
-}
-
 export function MainPath(prefix: string): string {
 	return prefix.indexOf('dca/') !== -1 ? `${prefix}` : `${prefix}/mix`
-}
-
-export function MainFaderPath(options: { [key: string]: JsonValue | undefined }): string {
-	return `${MainPath(options.target as string)}/fader`
-}
-
-export function SendChannelToBusPath(options: { [key: string]: JsonValue | undefined }): string {
-	return `${MainPath(options.source as string)}/${options.target}`
-}
-
-export function SendBusToMatrixPath(options: { [key: string]: JsonValue | undefined }): string {
-	return `${MainPath(options.source as string)}/${options.target}/level`
-}
-
-export function MainPanPath(options: { [key: string]: JsonValue | undefined }): string {
-	return `${MainPath(options.target as string)}/pan`
-}
-
-export function ChannelToBusPanPath(options: { [key: string]: JsonValue | undefined }): string {
-	return `${MainPath(options.source as string)}/${options.target}`
-}
-
-export function BusToMatrixPanPath(options: { [key: string]: JsonValue | undefined }): string {
-	return `${MainPath(options.source as string)}/${options.target}/pan`
 }
 
 export function UserRouteInPath(channel: JsonValue | undefined): string {
@@ -87,7 +58,7 @@ export function parseRefToPaths(
 	sendTo?: {
 		path: string
 		isOn: boolean
-	} | null // TODO
+	} | null
 	insertSource?: {
 		onPath: string
 		posPath: string
@@ -212,7 +183,6 @@ export function parseRefToPaths(
 			if (!options.allowChannel) return null
 			if (refNumber < 1 || refNumber > 32) return null
 
-			// TODO
 			return {
 				muteOrOn: {
 					path: `/ch/${String(refNumber).padStart(2, '0')}/mix/on`,
@@ -250,7 +220,6 @@ export function parseRefToPaths(
 			if (!options.allowAuxIn) return null
 			if (refNumber < 1 || refNumber > 8) return null
 
-			// TODO
 			return {
 				muteOrOn: {
 					path: `/auxin/${String(refNumber).padStart(2, '0')}/mix/on`,
@@ -282,7 +251,6 @@ export function parseRefToPaths(
 			if (!options.allowFx) return null
 			if (refNumber < 1 || refNumber > 8) return null
 
-			// TODO
 			return {
 				muteOrOn: {
 					path: `/fxrtn/${String(refNumber).padStart(2, '0')}/mix/on`,
@@ -312,7 +280,6 @@ export function parseRefToPaths(
 			if (!options.allowBus) return null
 			if (refNumber < 1 || refNumber > 16) return null
 
-			// TODO
 			return {
 				muteOrOn: {
 					path: `/bus/${String(refNumber).padStart(2, '0')}/mix/on`,
@@ -355,7 +322,6 @@ export function parseRefToPaths(
 			if (!options.allowMatrix) return null
 			if (refNumber < 1 || refNumber > 6) return null
 
-			// TODO
 			return {
 				muteOrOn: {
 					path: `/mtx/${String(refNumber).padStart(2, '0')}/mix/on`,
@@ -388,7 +354,6 @@ export function parseRefToPaths(
 			if (!options.allowDca) return null
 			if (refNumber < 1 || refNumber > 8) return null
 
-			// TODO
 			return {
 				muteOrOn: {
 					path: `/dca/${String(refNumber).padStart(2, '0')}/on`,
@@ -404,20 +369,6 @@ export function parseRefToPaths(
 				soloNumber: refNumber + 72,
 			}
 		}
-		// case 'mute':
-		// case 'mg':
-		// case 'mutegroup':
-		// case 'mutegrp': {
-		// 	if (!options.allowMuteGroup) return null
-
-		// 	// TODO
-		// 	return {
-		// 		muteOrOn: {
-		// 			path: `/config/mute/${refNumber}`,
-		// 			isOn: false,
-		// 		},
-		// 	}
-		// }
 
 		default:
 			return null
