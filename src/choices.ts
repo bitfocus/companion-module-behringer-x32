@@ -911,24 +911,27 @@ export function GetInsertDestinationChoices(): DropdownChoice[] {
 }
 
 export function GetPresetsChoices(lib: 'ch' | 'fx' | 'r' | 'mon', state: X32State): DropdownChoice[] {
-	const options = [...Array(100).keys()].map((x) => `${x + 1}`.padStart(3, '0'))
-	const choices: DropdownChoice[] = []
-	options.forEach((option) => {
+	const options = [...Array(100).keys()]
+	return options.map((i) => {
+		const option = i + 1
+
 		const hasDataState = state.get(`/-libs/${lib}/${option}/hasdata`)
 		const hasDataValue = hasDataState && hasDataState[0]?.type === 'i' && hasDataState[0].value === 1
 		if (hasDataValue) {
 			const nameState = state.get(`/-libs/${lib}/${option}/name`)
 			const nameValue = nameState && nameState[0]?.type === 's' ? nameState[0].value : undefined
-			choices.push({
+			return {
 				id: option,
-				label: nameValue && nameValue.trim().length > 0 ? `${option} (${nameValue})` : `${option}`,
-			})
+				label:
+					nameValue && nameValue.trim().length > 0
+						? `${padNumber(option, 3)} (${nameValue})`
+						: `${padNumber(option, 3)}`,
+			}
 		} else {
-			choices.push({
+			return {
 				id: option,
-				label: `${option} (No data)`,
-			})
+				label: `${padNumber(option, 3)} (No data)`,
+			}
 		}
 	})
-	return choices
 }

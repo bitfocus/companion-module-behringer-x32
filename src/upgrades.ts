@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-enum-comparison */
 import type {
+	CompanionMigrationOptionValues,
 	CompanionStaticUpgradeResult,
 	CompanionStaticUpgradeScript,
 	ExpressionOptionsObject,
@@ -96,7 +97,7 @@ export const upgradeToBuiltinFeedbackInverted: CompanionStaticUpgradeScript<any>
 	return result
 }
 
-const pathReplacements: Record<string, string | number | undefined> = {
+const pathReplacements: Record<string | number, string | number | undefined> = {
 	'/main/st': 'stereo',
 	'/main/mono': 'mono',
 	st: 'stereo',
@@ -197,28 +198,14 @@ export const upgradeChannelOrFaderValuesFromOscPaths: CompanionStaticUpgradeScri
 	for (const action of props.actions) {
 		// A couple of cases that need manual handling due to unclear & overlapping values
 		if (action.actionId === ActionId.Solo) {
-			if (action.options.solo) {
-				action.options.solo.value =
-					soloOrSelectChoicesLookup[Number(action.options.solo.value)] || action.options.solo.value
-			}
+			fixupNumericOption(action.options, 'solo', soloOrSelectChoicesLookup)
 		} else if (action.actionId === ActionId.Select) {
-			if (action.options.select) {
-				// This uses a few less than solo, but no harm in mapping the extra ones
-				action.options.select.value =
-					soloOrSelectChoicesLookup[Number(action.options.select.value)] || action.options.select.value
-			}
+			// This uses a few less than solo, but no harm in mapping the extra ones
+			fixupNumericOption(action.options, 'select', soloOrSelectChoicesLookup)
 		} else if (action.actionId === ActionId.TalkbackConfigSingleSource) {
-			if (action.options.dest) {
-				action.options.dest.value =
-					talkbackTargetChoicesLookup[Number(action.options.dest.value)] || action.options.dest.value
-			}
+			fixupNumericOption(action.options, 'dest', talkbackTargetChoicesLookup)
 		} else if (action.actionId === ActionId.TalkbackConfig) {
-			if (action.options.dest) {
-				const destArr = Array.isArray(action.options.dest.value)
-					? action.options.dest.value
-					: [action.options.dest.value]
-				action.options.dest.value = destArr.map((v) => talkbackTargetChoicesLookup[Number(v)] || v) as JsonValue
-			}
+			fixupNumericOption(action.options, 'dest', talkbackTargetChoicesLookup, { asArray: true })
 		} else if (action.actionId === ActionId.Color) {
 			// Merge the split color fields
 			if (action.options.useVariable !== undefined) {
@@ -234,11 +221,9 @@ export const upgradeChannelOrFaderValuesFromOscPaths: CompanionStaticUpgradeScri
 							}
 			}
 		} else if (action.actionId === ActionId.OscillatorDestination) {
-			if (action.options.destination) {
-				action.options.destination.value =
-					oscillatorDestinationChoicesLookup[Number(action.options.destination.value)] ||
-					action.options.destination.value
-			}
+			fixupNumericOption(action.options, 'destination', oscillatorDestinationChoicesLookup)
+		} else if (action.actionId === ActionId.LoadChannelPreset) {
+			fixupNumericOption(action.options, 'channel', soloOrSelectChoicesLookup, { includeSelectedAsMinusOne: true })
 		}
 
 		const propsToUpgrade = actionsToUpgrade[action.actionId]
@@ -249,16 +234,12 @@ export const upgradeChannelOrFaderValuesFromOscPaths: CompanionStaticUpgradeScri
 	}
 	for (const feedback of props.feedbacks) {
 		if (feedback.feedbackId === FeedbackId.Solo) {
-			if (feedback.options.solo) {
-				feedback.options.solo.value =
-					soloOrSelectChoicesLookup[Number(feedback.options.solo.value)] || feedback.options.solo.value
-			}
+			fixupNumericOption(feedback.options, 'solo', soloOrSelectChoicesLookup)
 		} else if (feedback.feedbackId === FeedbackId.Select) {
-			if (feedback.options.select) {
-				// This uses a few less than solo, but no harm in mapping the extra ones
-				feedback.options.select.value =
-					soloOrSelectChoicesLookup[Number(feedback.options.select.value)] || feedback.options.select.value
-			}
+			// This uses a few less than solo, but no harm in mapping the extra ones
+			fixupNumericOption(feedback.options, 'select', soloOrSelectChoicesLookup)
+		} else if (feedback.feedbackId === FeedbackId.OscillatorDestination) {
+			fixupNumericOption(feedback.options, 'destination', oscillatorDestinationChoicesLookup)
 		}
 
 		const propsToUpgrade = feedbacksToUpgrade[feedback.feedbackId]
@@ -269,6 +250,32 @@ export const upgradeChannelOrFaderValuesFromOscPaths: CompanionStaticUpgradeScri
 	}
 
 	return result
+}
+
+function fixupNumericOption(
+	options: CompanionMigrationOptionValues,
+	key: string,
+	newValues: Array<string>,
+	opts?: {
+		asArray?: boolean
+		includeSelectedAsMinusOne?: boolean
+	},
+): void {
+	if (!options[key]) return
+
+	const translateValue = (val: JsonValue | undefined): JsonValue | undefined => {
+		if (opts?.includeSelectedAsMinusOne && val === -1) {
+			return 'selected'
+		}
+		return newValues[Number(val)] || val
+	}
+
+	if (opts?.asArray) {
+		const rawArr = Array.isArray(options[key].value) ? options[key].value : [options[key].value]
+		options[key].value = rawArr.map((v) => translateValue(v)) as JsonValue
+	} else {
+		options[key].value = translateValue(options[key].value)
+	}
 }
 
 const soloOrSelectChoicesLookup = [

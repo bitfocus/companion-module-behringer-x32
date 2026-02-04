@@ -174,8 +174,7 @@ export function GetActionsList(
 	const levelsChoices = GetLevelsChoiceConfigs(state)
 	const panningChoices = GetPanningChoiceConfigs(state)
 	const muteGroups = GetMuteGroupChoices(state)
-	const selectChoices = GetTargetChoices(state, { skipDca: true, includeMain: true, numericIndex: true })
-	const selectChoicesNew = GetTargetChoices(state, { skipDca: true, includeMain: true, numericIndex: true }, true)
+	const selectChoices = GetTargetChoices(state, { skipDca: true, includeMain: true, numericIndex: true }, true)
 	const selectChoicesParseOptions: ParseRefOptions = {
 		allowStereo: true,
 		allowMono: true,
@@ -1647,7 +1646,7 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'Target',
 					id: 'select',
-					...convertChoices(selectChoicesNew),
+					...convertChoices(selectChoices),
 					allowInvalidValues: true,
 				},
 			],
@@ -3714,7 +3713,6 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'Preset to load',
 					id: 'preset',
-					// nocommit
 					...convertChoices(GetPresetsChoices('ch', state)),
 					allowInvalidValues: true,
 				},
@@ -3722,15 +3720,13 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'Target channel',
 					id: 'channel',
-					default: 0,
-					choices: [
+					...convertChoices([
 						{
-							id: -1,
-							label: 'SELECTED CHANNEL',
+							id: 'selected',
+							label: '- Selected Channel -',
 						},
-						// nocommit
 						...selectChoices,
-					],
+					]),
 					allowInvalidValues: true,
 				},
 				{
@@ -3771,6 +3767,17 @@ export function GetActionsList(
 				},
 			],
 			callback: (action): void => {
+				let selectedChannel = -1
+				if (action.options.channel !== 'selected') {
+					const channelRef = parseRefToPaths(action.options.channel, selectChoicesParseOptions)
+					if (channelRef?.selectNumber === undefined) return
+
+					selectedChannel = channelRef.selectNumber
+				} else {
+					const selected = state.get('/-stat/selidx')
+					selectedChannel = selected && selected[0].type === 'i' ? selected[0]?.value : 0
+				}
+
 				const preset = getOptNumber(action, 'preset', 0)
 				const paddedPreset = `${preset}`.padStart(3, '0')
 				const hasDataState = state.get(`/-libs/ch/${paddedPreset}/hasdata`)
@@ -3787,15 +3794,11 @@ export function GetActionsList(
 					!!action.options.config,
 					!!action.options.ha,
 				].reduce<number>((acc, cur) => (acc << 1) | (cur ? 1 : 0), 0)
-				let channel = getOptNumber(action, 'channel', 0)
-				if (channel == -1) {
-					const selected = state.get('/-stat/selidx')
-					channel = selected && selected[0].type === 'i' ? selected[0]?.value : 0
-				}
+
 				sendOsc('/load', [
 					{ type: 's', value: 'libchan' },
 					{ type: 'i', value: preset - 1 },
-					{ type: 'i', value: channel },
+					{ type: 'i', value: selectedChannel },
 					{ type: 'i', value: scopeBits },
 				])
 			},
@@ -3809,7 +3812,6 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'Preset to load',
 					id: 'preset',
-					// nocommit
 					...convertChoices(GetPresetsChoices('fx', state)),
 					allowInvalidValues: true,
 				},
@@ -3818,7 +3820,7 @@ export function GetActionsList(
 					label: 'Target channel',
 					id: 'channel',
 					default: 0,
-					// nocommit?
+					// TODO - rework this to be tidier
 					choices: [...[...Array(8).keys()].map((x) => ({ label: `${x + 1}`, id: x }))],
 				},
 			],
@@ -3947,7 +3949,6 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'Preset to load',
 					id: 'preset',
-					// nocommit
 					...convertChoices(GetPresetsChoices('mon', state)),
 					allowInvalidValues: true,
 				},
