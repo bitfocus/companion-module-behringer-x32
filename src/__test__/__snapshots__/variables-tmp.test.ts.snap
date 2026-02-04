@@ -1020,3075 +1020,3075 @@ exports[`Variables test 1`] = `
       "variableId": "fader_dca_08",
     },
     {
-      "name": "Fader: Channel 1 to Bus 1",
+      "name": "Fader: Channel 1 to MixBus 1",
       "variableId": "fader_ch_01_to_bus_01",
     },
     {
-      "name": "Fader: Channel 1 to Bus 2",
+      "name": "Fader: Channel 1 to MixBus 2",
       "variableId": "fader_ch_01_to_bus_02",
     },
     {
-      "name": "Fader: Channel 1 to Bus 3",
+      "name": "Fader: Channel 1 to MixBus 3",
       "variableId": "fader_ch_01_to_bus_03",
     },
     {
-      "name": "Fader: Channel 1 to Bus 4",
+      "name": "Fader: Channel 1 to MixBus 4",
       "variableId": "fader_ch_01_to_bus_04",
     },
     {
-      "name": "Fader: Channel 1 to Bus 5",
+      "name": "Fader: Channel 1 to MixBus 5",
       "variableId": "fader_ch_01_to_bus_05",
     },
     {
-      "name": "Fader: Channel 1 to Bus 6",
+      "name": "Fader: Channel 1 to MixBus 6",
       "variableId": "fader_ch_01_to_bus_06",
     },
     {
-      "name": "Fader: Channel 1 to Bus 7",
+      "name": "Fader: Channel 1 to MixBus 7",
       "variableId": "fader_ch_01_to_bus_07",
     },
     {
-      "name": "Fader: Channel 1 to Bus 8",
+      "name": "Fader: Channel 1 to MixBus 8",
       "variableId": "fader_ch_01_to_bus_08",
     },
     {
-      "name": "Fader: Channel 1 to Bus 9",
+      "name": "Fader: Channel 1 to MixBus 9",
       "variableId": "fader_ch_01_to_bus_09",
     },
     {
-      "name": "Fader: Channel 1 to Bus 10",
+      "name": "Fader: Channel 1 to MixBus 10",
       "variableId": "fader_ch_01_to_bus_10",
     },
     {
-      "name": "Fader: Channel 1 to Bus 11",
+      "name": "Fader: Channel 1 to MixBus 11",
       "variableId": "fader_ch_01_to_bus_11",
     },
     {
-      "name": "Fader: Channel 1 to Bus 12",
+      "name": "Fader: Channel 1 to MixBus 12",
       "variableId": "fader_ch_01_to_bus_12",
     },
     {
-      "name": "Fader: Channel 1 to Bus 13",
+      "name": "Fader: Channel 1 to MixBus 13",
       "variableId": "fader_ch_01_to_bus_13",
     },
     {
-      "name": "Fader: Channel 1 to Bus 14",
+      "name": "Fader: Channel 1 to MixBus 14",
       "variableId": "fader_ch_01_to_bus_14",
     },
     {
-      "name": "Fader: Channel 1 to Bus 15",
+      "name": "Fader: Channel 1 to MixBus 15",
       "variableId": "fader_ch_01_to_bus_15",
     },
     {
-      "name": "Fader: Channel 1 to Bus 16",
+      "name": "Fader: Channel 1 to MixBus 16",
       "variableId": "fader_ch_01_to_bus_16",
     },
     {
-      "name": "Fader: Channel 2 to Bus 1",
+      "name": "Fader: Channel 2 to MixBus 1",
       "variableId": "fader_ch_02_to_bus_01",
     },
     {
-      "name": "Fader: Channel 2 to Bus 2",
+      "name": "Fader: Channel 2 to MixBus 2",
       "variableId": "fader_ch_02_to_bus_02",
     },
     {
-      "name": "Fader: Channel 2 to Bus 3",
+      "name": "Fader: Channel 2 to MixBus 3",
       "variableId": "fader_ch_02_to_bus_03",
     },
     {
-      "name": "Fader: Channel 2 to Bus 4",
+      "name": "Fader: Channel 2 to MixBus 4",
       "variableId": "fader_ch_02_to_bus_04",
     },
     {
-      "name": "Fader: Channel 2 to Bus 5",
+      "name": "Fader: Channel 2 to MixBus 5",
       "variableId": "fader_ch_02_to_bus_05",
     },
     {
-      "name": "Fader: Channel 2 to Bus 6",
+      "name": "Fader: Channel 2 to MixBus 6",
       "variableId": "fader_ch_02_to_bus_06",
     },
     {
-      "name": "Fader: Channel 2 to Bus 7",
+      "name": "Fader: Channel 2 to MixBus 7",
       "variableId": "fader_ch_02_to_bus_07",
     },
     {
-      "name": "Fader: Channel 2 to Bus 8",
+      "name": "Fader: Channel 2 to MixBus 8",
       "variableId": "fader_ch_02_to_bus_08",
     },
     {
-      "name": "Fader: Channel 2 to Bus 9",
+      "name": "Fader: Channel 2 to MixBus 9",
       "variableId": "fader_ch_02_to_bus_09",
     },
     {
-      "name": "Fader: Channel 2 to Bus 10",
+      "name": "Fader: Channel 2 to MixBus 10",
       "variableId": "fader_ch_02_to_bus_10",
     },
     {
-      "name": "Fader: Channel 2 to Bus 11",
+      "name": "Fader: Channel 2 to MixBus 11",
       "variableId": "fader_ch_02_to_bus_11",
     },
     {
-      "name": "Fader: Channel 2 to Bus 12",
+      "name": "Fader: Channel 2 to MixBus 12",
       "variableId": "fader_ch_02_to_bus_12",
     },
     {
-      "name": "Fader: Channel 2 to Bus 13",
+      "name": "Fader: Channel 2 to MixBus 13",
       "variableId": "fader_ch_02_to_bus_13",
     },
     {
-      "name": "Fader: Channel 2 to Bus 14",
+      "name": "Fader: Channel 2 to MixBus 14",
       "variableId": "fader_ch_02_to_bus_14",
     },
     {
-      "name": "Fader: Channel 2 to Bus 15",
+      "name": "Fader: Channel 2 to MixBus 15",
       "variableId": "fader_ch_02_to_bus_15",
     },
     {
-      "name": "Fader: Channel 2 to Bus 16",
+      "name": "Fader: Channel 2 to MixBus 16",
       "variableId": "fader_ch_02_to_bus_16",
     },
     {
-      "name": "Fader: Channel 3 to Bus 1",
+      "name": "Fader: Channel 3 to MixBus 1",
       "variableId": "fader_ch_03_to_bus_01",
     },
     {
-      "name": "Fader: Channel 3 to Bus 2",
+      "name": "Fader: Channel 3 to MixBus 2",
       "variableId": "fader_ch_03_to_bus_02",
     },
     {
-      "name": "Fader: Channel 3 to Bus 3",
+      "name": "Fader: Channel 3 to MixBus 3",
       "variableId": "fader_ch_03_to_bus_03",
     },
     {
-      "name": "Fader: Channel 3 to Bus 4",
+      "name": "Fader: Channel 3 to MixBus 4",
       "variableId": "fader_ch_03_to_bus_04",
     },
     {
-      "name": "Fader: Channel 3 to Bus 5",
+      "name": "Fader: Channel 3 to MixBus 5",
       "variableId": "fader_ch_03_to_bus_05",
     },
     {
-      "name": "Fader: Channel 3 to Bus 6",
+      "name": "Fader: Channel 3 to MixBus 6",
       "variableId": "fader_ch_03_to_bus_06",
     },
     {
-      "name": "Fader: Channel 3 to Bus 7",
+      "name": "Fader: Channel 3 to MixBus 7",
       "variableId": "fader_ch_03_to_bus_07",
     },
     {
-      "name": "Fader: Channel 3 to Bus 8",
+      "name": "Fader: Channel 3 to MixBus 8",
       "variableId": "fader_ch_03_to_bus_08",
     },
     {
-      "name": "Fader: Channel 3 to Bus 9",
+      "name": "Fader: Channel 3 to MixBus 9",
       "variableId": "fader_ch_03_to_bus_09",
     },
     {
-      "name": "Fader: Channel 3 to Bus 10",
+      "name": "Fader: Channel 3 to MixBus 10",
       "variableId": "fader_ch_03_to_bus_10",
     },
     {
-      "name": "Fader: Channel 3 to Bus 11",
+      "name": "Fader: Channel 3 to MixBus 11",
       "variableId": "fader_ch_03_to_bus_11",
     },
     {
-      "name": "Fader: Channel 3 to Bus 12",
+      "name": "Fader: Channel 3 to MixBus 12",
       "variableId": "fader_ch_03_to_bus_12",
     },
     {
-      "name": "Fader: Channel 3 to Bus 13",
+      "name": "Fader: Channel 3 to MixBus 13",
       "variableId": "fader_ch_03_to_bus_13",
     },
     {
-      "name": "Fader: Channel 3 to Bus 14",
+      "name": "Fader: Channel 3 to MixBus 14",
       "variableId": "fader_ch_03_to_bus_14",
     },
     {
-      "name": "Fader: Channel 3 to Bus 15",
+      "name": "Fader: Channel 3 to MixBus 15",
       "variableId": "fader_ch_03_to_bus_15",
     },
     {
-      "name": "Fader: Channel 3 to Bus 16",
+      "name": "Fader: Channel 3 to MixBus 16",
       "variableId": "fader_ch_03_to_bus_16",
     },
     {
-      "name": "Fader: Channel 4 to Bus 1",
+      "name": "Fader: Channel 4 to MixBus 1",
       "variableId": "fader_ch_04_to_bus_01",
     },
     {
-      "name": "Fader: Channel 4 to Bus 2",
+      "name": "Fader: Channel 4 to MixBus 2",
       "variableId": "fader_ch_04_to_bus_02",
     },
     {
-      "name": "Fader: Channel 4 to Bus 3",
+      "name": "Fader: Channel 4 to MixBus 3",
       "variableId": "fader_ch_04_to_bus_03",
     },
     {
-      "name": "Fader: Channel 4 to Bus 4",
+      "name": "Fader: Channel 4 to MixBus 4",
       "variableId": "fader_ch_04_to_bus_04",
     },
     {
-      "name": "Fader: Channel 4 to Bus 5",
+      "name": "Fader: Channel 4 to MixBus 5",
       "variableId": "fader_ch_04_to_bus_05",
     },
     {
-      "name": "Fader: Channel 4 to Bus 6",
+      "name": "Fader: Channel 4 to MixBus 6",
       "variableId": "fader_ch_04_to_bus_06",
     },
     {
-      "name": "Fader: Channel 4 to Bus 7",
+      "name": "Fader: Channel 4 to MixBus 7",
       "variableId": "fader_ch_04_to_bus_07",
     },
     {
-      "name": "Fader: Channel 4 to Bus 8",
+      "name": "Fader: Channel 4 to MixBus 8",
       "variableId": "fader_ch_04_to_bus_08",
     },
     {
-      "name": "Fader: Channel 4 to Bus 9",
+      "name": "Fader: Channel 4 to MixBus 9",
       "variableId": "fader_ch_04_to_bus_09",
     },
     {
-      "name": "Fader: Channel 4 to Bus 10",
+      "name": "Fader: Channel 4 to MixBus 10",
       "variableId": "fader_ch_04_to_bus_10",
     },
     {
-      "name": "Fader: Channel 4 to Bus 11",
+      "name": "Fader: Channel 4 to MixBus 11",
       "variableId": "fader_ch_04_to_bus_11",
     },
     {
-      "name": "Fader: Channel 4 to Bus 12",
+      "name": "Fader: Channel 4 to MixBus 12",
       "variableId": "fader_ch_04_to_bus_12",
     },
     {
-      "name": "Fader: Channel 4 to Bus 13",
+      "name": "Fader: Channel 4 to MixBus 13",
       "variableId": "fader_ch_04_to_bus_13",
     },
     {
-      "name": "Fader: Channel 4 to Bus 14",
+      "name": "Fader: Channel 4 to MixBus 14",
       "variableId": "fader_ch_04_to_bus_14",
     },
     {
-      "name": "Fader: Channel 4 to Bus 15",
+      "name": "Fader: Channel 4 to MixBus 15",
       "variableId": "fader_ch_04_to_bus_15",
     },
     {
-      "name": "Fader: Channel 4 to Bus 16",
+      "name": "Fader: Channel 4 to MixBus 16",
       "variableId": "fader_ch_04_to_bus_16",
     },
     {
-      "name": "Fader: Channel 5 to Bus 1",
+      "name": "Fader: Channel 5 to MixBus 1",
       "variableId": "fader_ch_05_to_bus_01",
     },
     {
-      "name": "Fader: Channel 5 to Bus 2",
+      "name": "Fader: Channel 5 to MixBus 2",
       "variableId": "fader_ch_05_to_bus_02",
     },
     {
-      "name": "Fader: Channel 5 to Bus 3",
+      "name": "Fader: Channel 5 to MixBus 3",
       "variableId": "fader_ch_05_to_bus_03",
     },
     {
-      "name": "Fader: Channel 5 to Bus 4",
+      "name": "Fader: Channel 5 to MixBus 4",
       "variableId": "fader_ch_05_to_bus_04",
     },
     {
-      "name": "Fader: Channel 5 to Bus 5",
+      "name": "Fader: Channel 5 to MixBus 5",
       "variableId": "fader_ch_05_to_bus_05",
     },
     {
-      "name": "Fader: Channel 5 to Bus 6",
+      "name": "Fader: Channel 5 to MixBus 6",
       "variableId": "fader_ch_05_to_bus_06",
     },
     {
-      "name": "Fader: Channel 5 to Bus 7",
+      "name": "Fader: Channel 5 to MixBus 7",
       "variableId": "fader_ch_05_to_bus_07",
     },
     {
-      "name": "Fader: Channel 5 to Bus 8",
+      "name": "Fader: Channel 5 to MixBus 8",
       "variableId": "fader_ch_05_to_bus_08",
     },
     {
-      "name": "Fader: Channel 5 to Bus 9",
+      "name": "Fader: Channel 5 to MixBus 9",
       "variableId": "fader_ch_05_to_bus_09",
     },
     {
-      "name": "Fader: Channel 5 to Bus 10",
+      "name": "Fader: Channel 5 to MixBus 10",
       "variableId": "fader_ch_05_to_bus_10",
     },
     {
-      "name": "Fader: Channel 5 to Bus 11",
+      "name": "Fader: Channel 5 to MixBus 11",
       "variableId": "fader_ch_05_to_bus_11",
     },
     {
-      "name": "Fader: Channel 5 to Bus 12",
+      "name": "Fader: Channel 5 to MixBus 12",
       "variableId": "fader_ch_05_to_bus_12",
     },
     {
-      "name": "Fader: Channel 5 to Bus 13",
+      "name": "Fader: Channel 5 to MixBus 13",
       "variableId": "fader_ch_05_to_bus_13",
     },
     {
-      "name": "Fader: Channel 5 to Bus 14",
+      "name": "Fader: Channel 5 to MixBus 14",
       "variableId": "fader_ch_05_to_bus_14",
     },
     {
-      "name": "Fader: Channel 5 to Bus 15",
+      "name": "Fader: Channel 5 to MixBus 15",
       "variableId": "fader_ch_05_to_bus_15",
     },
     {
-      "name": "Fader: Channel 5 to Bus 16",
+      "name": "Fader: Channel 5 to MixBus 16",
       "variableId": "fader_ch_05_to_bus_16",
     },
     {
-      "name": "Fader: Channel 6 to Bus 1",
+      "name": "Fader: Channel 6 to MixBus 1",
       "variableId": "fader_ch_06_to_bus_01",
     },
     {
-      "name": "Fader: Channel 6 to Bus 2",
+      "name": "Fader: Channel 6 to MixBus 2",
       "variableId": "fader_ch_06_to_bus_02",
     },
     {
-      "name": "Fader: Channel 6 to Bus 3",
+      "name": "Fader: Channel 6 to MixBus 3",
       "variableId": "fader_ch_06_to_bus_03",
     },
     {
-      "name": "Fader: Channel 6 to Bus 4",
+      "name": "Fader: Channel 6 to MixBus 4",
       "variableId": "fader_ch_06_to_bus_04",
     },
     {
-      "name": "Fader: Channel 6 to Bus 5",
+      "name": "Fader: Channel 6 to MixBus 5",
       "variableId": "fader_ch_06_to_bus_05",
     },
     {
-      "name": "Fader: Channel 6 to Bus 6",
+      "name": "Fader: Channel 6 to MixBus 6",
       "variableId": "fader_ch_06_to_bus_06",
     },
     {
-      "name": "Fader: Channel 6 to Bus 7",
+      "name": "Fader: Channel 6 to MixBus 7",
       "variableId": "fader_ch_06_to_bus_07",
     },
     {
-      "name": "Fader: Channel 6 to Bus 8",
+      "name": "Fader: Channel 6 to MixBus 8",
       "variableId": "fader_ch_06_to_bus_08",
     },
     {
-      "name": "Fader: Channel 6 to Bus 9",
+      "name": "Fader: Channel 6 to MixBus 9",
       "variableId": "fader_ch_06_to_bus_09",
     },
     {
-      "name": "Fader: Channel 6 to Bus 10",
+      "name": "Fader: Channel 6 to MixBus 10",
       "variableId": "fader_ch_06_to_bus_10",
     },
     {
-      "name": "Fader: Channel 6 to Bus 11",
+      "name": "Fader: Channel 6 to MixBus 11",
       "variableId": "fader_ch_06_to_bus_11",
     },
     {
-      "name": "Fader: Channel 6 to Bus 12",
+      "name": "Fader: Channel 6 to MixBus 12",
       "variableId": "fader_ch_06_to_bus_12",
     },
     {
-      "name": "Fader: Channel 6 to Bus 13",
+      "name": "Fader: Channel 6 to MixBus 13",
       "variableId": "fader_ch_06_to_bus_13",
     },
     {
-      "name": "Fader: Channel 6 to Bus 14",
+      "name": "Fader: Channel 6 to MixBus 14",
       "variableId": "fader_ch_06_to_bus_14",
     },
     {
-      "name": "Fader: Channel 6 to Bus 15",
+      "name": "Fader: Channel 6 to MixBus 15",
       "variableId": "fader_ch_06_to_bus_15",
     },
     {
-      "name": "Fader: Channel 6 to Bus 16",
+      "name": "Fader: Channel 6 to MixBus 16",
       "variableId": "fader_ch_06_to_bus_16",
     },
     {
-      "name": "Fader: Channel 7 to Bus 1",
+      "name": "Fader: Channel 7 to MixBus 1",
       "variableId": "fader_ch_07_to_bus_01",
     },
     {
-      "name": "Fader: Channel 7 to Bus 2",
+      "name": "Fader: Channel 7 to MixBus 2",
       "variableId": "fader_ch_07_to_bus_02",
     },
     {
-      "name": "Fader: Channel 7 to Bus 3",
+      "name": "Fader: Channel 7 to MixBus 3",
       "variableId": "fader_ch_07_to_bus_03",
     },
     {
-      "name": "Fader: Channel 7 to Bus 4",
+      "name": "Fader: Channel 7 to MixBus 4",
       "variableId": "fader_ch_07_to_bus_04",
     },
     {
-      "name": "Fader: Channel 7 to Bus 5",
+      "name": "Fader: Channel 7 to MixBus 5",
       "variableId": "fader_ch_07_to_bus_05",
     },
     {
-      "name": "Fader: Channel 7 to Bus 6",
+      "name": "Fader: Channel 7 to MixBus 6",
       "variableId": "fader_ch_07_to_bus_06",
     },
     {
-      "name": "Fader: Channel 7 to Bus 7",
+      "name": "Fader: Channel 7 to MixBus 7",
       "variableId": "fader_ch_07_to_bus_07",
     },
     {
-      "name": "Fader: Channel 7 to Bus 8",
+      "name": "Fader: Channel 7 to MixBus 8",
       "variableId": "fader_ch_07_to_bus_08",
     },
     {
-      "name": "Fader: Channel 7 to Bus 9",
+      "name": "Fader: Channel 7 to MixBus 9",
       "variableId": "fader_ch_07_to_bus_09",
     },
     {
-      "name": "Fader: Channel 7 to Bus 10",
+      "name": "Fader: Channel 7 to MixBus 10",
       "variableId": "fader_ch_07_to_bus_10",
     },
     {
-      "name": "Fader: Channel 7 to Bus 11",
+      "name": "Fader: Channel 7 to MixBus 11",
       "variableId": "fader_ch_07_to_bus_11",
     },
     {
-      "name": "Fader: Channel 7 to Bus 12",
+      "name": "Fader: Channel 7 to MixBus 12",
       "variableId": "fader_ch_07_to_bus_12",
     },
     {
-      "name": "Fader: Channel 7 to Bus 13",
+      "name": "Fader: Channel 7 to MixBus 13",
       "variableId": "fader_ch_07_to_bus_13",
     },
     {
-      "name": "Fader: Channel 7 to Bus 14",
+      "name": "Fader: Channel 7 to MixBus 14",
       "variableId": "fader_ch_07_to_bus_14",
     },
     {
-      "name": "Fader: Channel 7 to Bus 15",
+      "name": "Fader: Channel 7 to MixBus 15",
       "variableId": "fader_ch_07_to_bus_15",
     },
     {
-      "name": "Fader: Channel 7 to Bus 16",
+      "name": "Fader: Channel 7 to MixBus 16",
       "variableId": "fader_ch_07_to_bus_16",
     },
     {
-      "name": "Fader: Channel 8 to Bus 1",
+      "name": "Fader: Channel 8 to MixBus 1",
       "variableId": "fader_ch_08_to_bus_01",
     },
     {
-      "name": "Fader: Channel 8 to Bus 2",
+      "name": "Fader: Channel 8 to MixBus 2",
       "variableId": "fader_ch_08_to_bus_02",
     },
     {
-      "name": "Fader: Channel 8 to Bus 3",
+      "name": "Fader: Channel 8 to MixBus 3",
       "variableId": "fader_ch_08_to_bus_03",
     },
     {
-      "name": "Fader: Channel 8 to Bus 4",
+      "name": "Fader: Channel 8 to MixBus 4",
       "variableId": "fader_ch_08_to_bus_04",
     },
     {
-      "name": "Fader: Channel 8 to Bus 5",
+      "name": "Fader: Channel 8 to MixBus 5",
       "variableId": "fader_ch_08_to_bus_05",
     },
     {
-      "name": "Fader: Channel 8 to Bus 6",
+      "name": "Fader: Channel 8 to MixBus 6",
       "variableId": "fader_ch_08_to_bus_06",
     },
     {
-      "name": "Fader: Channel 8 to Bus 7",
+      "name": "Fader: Channel 8 to MixBus 7",
       "variableId": "fader_ch_08_to_bus_07",
     },
     {
-      "name": "Fader: Channel 8 to Bus 8",
+      "name": "Fader: Channel 8 to MixBus 8",
       "variableId": "fader_ch_08_to_bus_08",
     },
     {
-      "name": "Fader: Channel 8 to Bus 9",
+      "name": "Fader: Channel 8 to MixBus 9",
       "variableId": "fader_ch_08_to_bus_09",
     },
     {
-      "name": "Fader: Channel 8 to Bus 10",
+      "name": "Fader: Channel 8 to MixBus 10",
       "variableId": "fader_ch_08_to_bus_10",
     },
     {
-      "name": "Fader: Channel 8 to Bus 11",
+      "name": "Fader: Channel 8 to MixBus 11",
       "variableId": "fader_ch_08_to_bus_11",
     },
     {
-      "name": "Fader: Channel 8 to Bus 12",
+      "name": "Fader: Channel 8 to MixBus 12",
       "variableId": "fader_ch_08_to_bus_12",
     },
     {
-      "name": "Fader: Channel 8 to Bus 13",
+      "name": "Fader: Channel 8 to MixBus 13",
       "variableId": "fader_ch_08_to_bus_13",
     },
     {
-      "name": "Fader: Channel 8 to Bus 14",
+      "name": "Fader: Channel 8 to MixBus 14",
       "variableId": "fader_ch_08_to_bus_14",
     },
     {
-      "name": "Fader: Channel 8 to Bus 15",
+      "name": "Fader: Channel 8 to MixBus 15",
       "variableId": "fader_ch_08_to_bus_15",
     },
     {
-      "name": "Fader: Channel 8 to Bus 16",
+      "name": "Fader: Channel 8 to MixBus 16",
       "variableId": "fader_ch_08_to_bus_16",
     },
     {
-      "name": "Fader: Channel 9 to Bus 1",
+      "name": "Fader: Channel 9 to MixBus 1",
       "variableId": "fader_ch_09_to_bus_01",
     },
     {
-      "name": "Fader: Channel 9 to Bus 2",
+      "name": "Fader: Channel 9 to MixBus 2",
       "variableId": "fader_ch_09_to_bus_02",
     },
     {
-      "name": "Fader: Channel 9 to Bus 3",
+      "name": "Fader: Channel 9 to MixBus 3",
       "variableId": "fader_ch_09_to_bus_03",
     },
     {
-      "name": "Fader: Channel 9 to Bus 4",
+      "name": "Fader: Channel 9 to MixBus 4",
       "variableId": "fader_ch_09_to_bus_04",
     },
     {
-      "name": "Fader: Channel 9 to Bus 5",
+      "name": "Fader: Channel 9 to MixBus 5",
       "variableId": "fader_ch_09_to_bus_05",
     },
     {
-      "name": "Fader: Channel 9 to Bus 6",
+      "name": "Fader: Channel 9 to MixBus 6",
       "variableId": "fader_ch_09_to_bus_06",
     },
     {
-      "name": "Fader: Channel 9 to Bus 7",
+      "name": "Fader: Channel 9 to MixBus 7",
       "variableId": "fader_ch_09_to_bus_07",
     },
     {
-      "name": "Fader: Channel 9 to Bus 8",
+      "name": "Fader: Channel 9 to MixBus 8",
       "variableId": "fader_ch_09_to_bus_08",
     },
     {
-      "name": "Fader: Channel 9 to Bus 9",
+      "name": "Fader: Channel 9 to MixBus 9",
       "variableId": "fader_ch_09_to_bus_09",
     },
     {
-      "name": "Fader: Channel 9 to Bus 10",
+      "name": "Fader: Channel 9 to MixBus 10",
       "variableId": "fader_ch_09_to_bus_10",
     },
     {
-      "name": "Fader: Channel 9 to Bus 11",
+      "name": "Fader: Channel 9 to MixBus 11",
       "variableId": "fader_ch_09_to_bus_11",
     },
     {
-      "name": "Fader: Channel 9 to Bus 12",
+      "name": "Fader: Channel 9 to MixBus 12",
       "variableId": "fader_ch_09_to_bus_12",
     },
     {
-      "name": "Fader: Channel 9 to Bus 13",
+      "name": "Fader: Channel 9 to MixBus 13",
       "variableId": "fader_ch_09_to_bus_13",
     },
     {
-      "name": "Fader: Channel 9 to Bus 14",
+      "name": "Fader: Channel 9 to MixBus 14",
       "variableId": "fader_ch_09_to_bus_14",
     },
     {
-      "name": "Fader: Channel 9 to Bus 15",
+      "name": "Fader: Channel 9 to MixBus 15",
       "variableId": "fader_ch_09_to_bus_15",
     },
     {
-      "name": "Fader: Channel 9 to Bus 16",
+      "name": "Fader: Channel 9 to MixBus 16",
       "variableId": "fader_ch_09_to_bus_16",
     },
     {
-      "name": "Fader: Channel 10 to Bus 1",
+      "name": "Fader: Channel 10 to MixBus 1",
       "variableId": "fader_ch_10_to_bus_01",
     },
     {
-      "name": "Fader: Channel 10 to Bus 2",
+      "name": "Fader: Channel 10 to MixBus 2",
       "variableId": "fader_ch_10_to_bus_02",
     },
     {
-      "name": "Fader: Channel 10 to Bus 3",
+      "name": "Fader: Channel 10 to MixBus 3",
       "variableId": "fader_ch_10_to_bus_03",
     },
     {
-      "name": "Fader: Channel 10 to Bus 4",
+      "name": "Fader: Channel 10 to MixBus 4",
       "variableId": "fader_ch_10_to_bus_04",
     },
     {
-      "name": "Fader: Channel 10 to Bus 5",
+      "name": "Fader: Channel 10 to MixBus 5",
       "variableId": "fader_ch_10_to_bus_05",
     },
     {
-      "name": "Fader: Channel 10 to Bus 6",
+      "name": "Fader: Channel 10 to MixBus 6",
       "variableId": "fader_ch_10_to_bus_06",
     },
     {
-      "name": "Fader: Channel 10 to Bus 7",
+      "name": "Fader: Channel 10 to MixBus 7",
       "variableId": "fader_ch_10_to_bus_07",
     },
     {
-      "name": "Fader: Channel 10 to Bus 8",
+      "name": "Fader: Channel 10 to MixBus 8",
       "variableId": "fader_ch_10_to_bus_08",
     },
     {
-      "name": "Fader: Channel 10 to Bus 9",
+      "name": "Fader: Channel 10 to MixBus 9",
       "variableId": "fader_ch_10_to_bus_09",
     },
     {
-      "name": "Fader: Channel 10 to Bus 10",
+      "name": "Fader: Channel 10 to MixBus 10",
       "variableId": "fader_ch_10_to_bus_10",
     },
     {
-      "name": "Fader: Channel 10 to Bus 11",
+      "name": "Fader: Channel 10 to MixBus 11",
       "variableId": "fader_ch_10_to_bus_11",
     },
     {
-      "name": "Fader: Channel 10 to Bus 12",
+      "name": "Fader: Channel 10 to MixBus 12",
       "variableId": "fader_ch_10_to_bus_12",
     },
     {
-      "name": "Fader: Channel 10 to Bus 13",
+      "name": "Fader: Channel 10 to MixBus 13",
       "variableId": "fader_ch_10_to_bus_13",
     },
     {
-      "name": "Fader: Channel 10 to Bus 14",
+      "name": "Fader: Channel 10 to MixBus 14",
       "variableId": "fader_ch_10_to_bus_14",
     },
     {
-      "name": "Fader: Channel 10 to Bus 15",
+      "name": "Fader: Channel 10 to MixBus 15",
       "variableId": "fader_ch_10_to_bus_15",
     },
     {
-      "name": "Fader: Channel 10 to Bus 16",
+      "name": "Fader: Channel 10 to MixBus 16",
       "variableId": "fader_ch_10_to_bus_16",
     },
     {
-      "name": "Fader: Channel 11 to Bus 1",
+      "name": "Fader: Channel 11 to MixBus 1",
       "variableId": "fader_ch_11_to_bus_01",
     },
     {
-      "name": "Fader: Channel 11 to Bus 2",
+      "name": "Fader: Channel 11 to MixBus 2",
       "variableId": "fader_ch_11_to_bus_02",
     },
     {
-      "name": "Fader: Channel 11 to Bus 3",
+      "name": "Fader: Channel 11 to MixBus 3",
       "variableId": "fader_ch_11_to_bus_03",
     },
     {
-      "name": "Fader: Channel 11 to Bus 4",
+      "name": "Fader: Channel 11 to MixBus 4",
       "variableId": "fader_ch_11_to_bus_04",
     },
     {
-      "name": "Fader: Channel 11 to Bus 5",
+      "name": "Fader: Channel 11 to MixBus 5",
       "variableId": "fader_ch_11_to_bus_05",
     },
     {
-      "name": "Fader: Channel 11 to Bus 6",
+      "name": "Fader: Channel 11 to MixBus 6",
       "variableId": "fader_ch_11_to_bus_06",
     },
     {
-      "name": "Fader: Channel 11 to Bus 7",
+      "name": "Fader: Channel 11 to MixBus 7",
       "variableId": "fader_ch_11_to_bus_07",
     },
     {
-      "name": "Fader: Channel 11 to Bus 8",
+      "name": "Fader: Channel 11 to MixBus 8",
       "variableId": "fader_ch_11_to_bus_08",
     },
     {
-      "name": "Fader: Channel 11 to Bus 9",
+      "name": "Fader: Channel 11 to MixBus 9",
       "variableId": "fader_ch_11_to_bus_09",
     },
     {
-      "name": "Fader: Channel 11 to Bus 10",
+      "name": "Fader: Channel 11 to MixBus 10",
       "variableId": "fader_ch_11_to_bus_10",
     },
     {
-      "name": "Fader: Channel 11 to Bus 11",
+      "name": "Fader: Channel 11 to MixBus 11",
       "variableId": "fader_ch_11_to_bus_11",
     },
     {
-      "name": "Fader: Channel 11 to Bus 12",
+      "name": "Fader: Channel 11 to MixBus 12",
       "variableId": "fader_ch_11_to_bus_12",
     },
     {
-      "name": "Fader: Channel 11 to Bus 13",
+      "name": "Fader: Channel 11 to MixBus 13",
       "variableId": "fader_ch_11_to_bus_13",
     },
     {
-      "name": "Fader: Channel 11 to Bus 14",
+      "name": "Fader: Channel 11 to MixBus 14",
       "variableId": "fader_ch_11_to_bus_14",
     },
     {
-      "name": "Fader: Channel 11 to Bus 15",
+      "name": "Fader: Channel 11 to MixBus 15",
       "variableId": "fader_ch_11_to_bus_15",
     },
     {
-      "name": "Fader: Channel 11 to Bus 16",
+      "name": "Fader: Channel 11 to MixBus 16",
       "variableId": "fader_ch_11_to_bus_16",
     },
     {
-      "name": "Fader: Channel 12 to Bus 1",
+      "name": "Fader: Channel 12 to MixBus 1",
       "variableId": "fader_ch_12_to_bus_01",
     },
     {
-      "name": "Fader: Channel 12 to Bus 2",
+      "name": "Fader: Channel 12 to MixBus 2",
       "variableId": "fader_ch_12_to_bus_02",
     },
     {
-      "name": "Fader: Channel 12 to Bus 3",
+      "name": "Fader: Channel 12 to MixBus 3",
       "variableId": "fader_ch_12_to_bus_03",
     },
     {
-      "name": "Fader: Channel 12 to Bus 4",
+      "name": "Fader: Channel 12 to MixBus 4",
       "variableId": "fader_ch_12_to_bus_04",
     },
     {
-      "name": "Fader: Channel 12 to Bus 5",
+      "name": "Fader: Channel 12 to MixBus 5",
       "variableId": "fader_ch_12_to_bus_05",
     },
     {
-      "name": "Fader: Channel 12 to Bus 6",
+      "name": "Fader: Channel 12 to MixBus 6",
       "variableId": "fader_ch_12_to_bus_06",
     },
     {
-      "name": "Fader: Channel 12 to Bus 7",
+      "name": "Fader: Channel 12 to MixBus 7",
       "variableId": "fader_ch_12_to_bus_07",
     },
     {
-      "name": "Fader: Channel 12 to Bus 8",
+      "name": "Fader: Channel 12 to MixBus 8",
       "variableId": "fader_ch_12_to_bus_08",
     },
     {
-      "name": "Fader: Channel 12 to Bus 9",
+      "name": "Fader: Channel 12 to MixBus 9",
       "variableId": "fader_ch_12_to_bus_09",
     },
     {
-      "name": "Fader: Channel 12 to Bus 10",
+      "name": "Fader: Channel 12 to MixBus 10",
       "variableId": "fader_ch_12_to_bus_10",
     },
     {
-      "name": "Fader: Channel 12 to Bus 11",
+      "name": "Fader: Channel 12 to MixBus 11",
       "variableId": "fader_ch_12_to_bus_11",
     },
     {
-      "name": "Fader: Channel 12 to Bus 12",
+      "name": "Fader: Channel 12 to MixBus 12",
       "variableId": "fader_ch_12_to_bus_12",
     },
     {
-      "name": "Fader: Channel 12 to Bus 13",
+      "name": "Fader: Channel 12 to MixBus 13",
       "variableId": "fader_ch_12_to_bus_13",
     },
     {
-      "name": "Fader: Channel 12 to Bus 14",
+      "name": "Fader: Channel 12 to MixBus 14",
       "variableId": "fader_ch_12_to_bus_14",
     },
     {
-      "name": "Fader: Channel 12 to Bus 15",
+      "name": "Fader: Channel 12 to MixBus 15",
       "variableId": "fader_ch_12_to_bus_15",
     },
     {
-      "name": "Fader: Channel 12 to Bus 16",
+      "name": "Fader: Channel 12 to MixBus 16",
       "variableId": "fader_ch_12_to_bus_16",
     },
     {
-      "name": "Fader: Channel 13 to Bus 1",
+      "name": "Fader: Channel 13 to MixBus 1",
       "variableId": "fader_ch_13_to_bus_01",
     },
     {
-      "name": "Fader: Channel 13 to Bus 2",
+      "name": "Fader: Channel 13 to MixBus 2",
       "variableId": "fader_ch_13_to_bus_02",
     },
     {
-      "name": "Fader: Channel 13 to Bus 3",
+      "name": "Fader: Channel 13 to MixBus 3",
       "variableId": "fader_ch_13_to_bus_03",
     },
     {
-      "name": "Fader: Channel 13 to Bus 4",
+      "name": "Fader: Channel 13 to MixBus 4",
       "variableId": "fader_ch_13_to_bus_04",
     },
     {
-      "name": "Fader: Channel 13 to Bus 5",
+      "name": "Fader: Channel 13 to MixBus 5",
       "variableId": "fader_ch_13_to_bus_05",
     },
     {
-      "name": "Fader: Channel 13 to Bus 6",
+      "name": "Fader: Channel 13 to MixBus 6",
       "variableId": "fader_ch_13_to_bus_06",
     },
     {
-      "name": "Fader: Channel 13 to Bus 7",
+      "name": "Fader: Channel 13 to MixBus 7",
       "variableId": "fader_ch_13_to_bus_07",
     },
     {
-      "name": "Fader: Channel 13 to Bus 8",
+      "name": "Fader: Channel 13 to MixBus 8",
       "variableId": "fader_ch_13_to_bus_08",
     },
     {
-      "name": "Fader: Channel 13 to Bus 9",
+      "name": "Fader: Channel 13 to MixBus 9",
       "variableId": "fader_ch_13_to_bus_09",
     },
     {
-      "name": "Fader: Channel 13 to Bus 10",
+      "name": "Fader: Channel 13 to MixBus 10",
       "variableId": "fader_ch_13_to_bus_10",
     },
     {
-      "name": "Fader: Channel 13 to Bus 11",
+      "name": "Fader: Channel 13 to MixBus 11",
       "variableId": "fader_ch_13_to_bus_11",
     },
     {
-      "name": "Fader: Channel 13 to Bus 12",
+      "name": "Fader: Channel 13 to MixBus 12",
       "variableId": "fader_ch_13_to_bus_12",
     },
     {
-      "name": "Fader: Channel 13 to Bus 13",
+      "name": "Fader: Channel 13 to MixBus 13",
       "variableId": "fader_ch_13_to_bus_13",
     },
     {
-      "name": "Fader: Channel 13 to Bus 14",
+      "name": "Fader: Channel 13 to MixBus 14",
       "variableId": "fader_ch_13_to_bus_14",
     },
     {
-      "name": "Fader: Channel 13 to Bus 15",
+      "name": "Fader: Channel 13 to MixBus 15",
       "variableId": "fader_ch_13_to_bus_15",
     },
     {
-      "name": "Fader: Channel 13 to Bus 16",
+      "name": "Fader: Channel 13 to MixBus 16",
       "variableId": "fader_ch_13_to_bus_16",
     },
     {
-      "name": "Fader: Channel 14 to Bus 1",
+      "name": "Fader: Channel 14 to MixBus 1",
       "variableId": "fader_ch_14_to_bus_01",
     },
     {
-      "name": "Fader: Channel 14 to Bus 2",
+      "name": "Fader: Channel 14 to MixBus 2",
       "variableId": "fader_ch_14_to_bus_02",
     },
     {
-      "name": "Fader: Channel 14 to Bus 3",
+      "name": "Fader: Channel 14 to MixBus 3",
       "variableId": "fader_ch_14_to_bus_03",
     },
     {
-      "name": "Fader: Channel 14 to Bus 4",
+      "name": "Fader: Channel 14 to MixBus 4",
       "variableId": "fader_ch_14_to_bus_04",
     },
     {
-      "name": "Fader: Channel 14 to Bus 5",
+      "name": "Fader: Channel 14 to MixBus 5",
       "variableId": "fader_ch_14_to_bus_05",
     },
     {
-      "name": "Fader: Channel 14 to Bus 6",
+      "name": "Fader: Channel 14 to MixBus 6",
       "variableId": "fader_ch_14_to_bus_06",
     },
     {
-      "name": "Fader: Channel 14 to Bus 7",
+      "name": "Fader: Channel 14 to MixBus 7",
       "variableId": "fader_ch_14_to_bus_07",
     },
     {
-      "name": "Fader: Channel 14 to Bus 8",
+      "name": "Fader: Channel 14 to MixBus 8",
       "variableId": "fader_ch_14_to_bus_08",
     },
     {
-      "name": "Fader: Channel 14 to Bus 9",
+      "name": "Fader: Channel 14 to MixBus 9",
       "variableId": "fader_ch_14_to_bus_09",
     },
     {
-      "name": "Fader: Channel 14 to Bus 10",
+      "name": "Fader: Channel 14 to MixBus 10",
       "variableId": "fader_ch_14_to_bus_10",
     },
     {
-      "name": "Fader: Channel 14 to Bus 11",
+      "name": "Fader: Channel 14 to MixBus 11",
       "variableId": "fader_ch_14_to_bus_11",
     },
     {
-      "name": "Fader: Channel 14 to Bus 12",
+      "name": "Fader: Channel 14 to MixBus 12",
       "variableId": "fader_ch_14_to_bus_12",
     },
     {
-      "name": "Fader: Channel 14 to Bus 13",
+      "name": "Fader: Channel 14 to MixBus 13",
       "variableId": "fader_ch_14_to_bus_13",
     },
     {
-      "name": "Fader: Channel 14 to Bus 14",
+      "name": "Fader: Channel 14 to MixBus 14",
       "variableId": "fader_ch_14_to_bus_14",
     },
     {
-      "name": "Fader: Channel 14 to Bus 15",
+      "name": "Fader: Channel 14 to MixBus 15",
       "variableId": "fader_ch_14_to_bus_15",
     },
     {
-      "name": "Fader: Channel 14 to Bus 16",
+      "name": "Fader: Channel 14 to MixBus 16",
       "variableId": "fader_ch_14_to_bus_16",
     },
     {
-      "name": "Fader: Channel 15 to Bus 1",
+      "name": "Fader: Channel 15 to MixBus 1",
       "variableId": "fader_ch_15_to_bus_01",
     },
     {
-      "name": "Fader: Channel 15 to Bus 2",
+      "name": "Fader: Channel 15 to MixBus 2",
       "variableId": "fader_ch_15_to_bus_02",
     },
     {
-      "name": "Fader: Channel 15 to Bus 3",
+      "name": "Fader: Channel 15 to MixBus 3",
       "variableId": "fader_ch_15_to_bus_03",
     },
     {
-      "name": "Fader: Channel 15 to Bus 4",
+      "name": "Fader: Channel 15 to MixBus 4",
       "variableId": "fader_ch_15_to_bus_04",
     },
     {
-      "name": "Fader: Channel 15 to Bus 5",
+      "name": "Fader: Channel 15 to MixBus 5",
       "variableId": "fader_ch_15_to_bus_05",
     },
     {
-      "name": "Fader: Channel 15 to Bus 6",
+      "name": "Fader: Channel 15 to MixBus 6",
       "variableId": "fader_ch_15_to_bus_06",
     },
     {
-      "name": "Fader: Channel 15 to Bus 7",
+      "name": "Fader: Channel 15 to MixBus 7",
       "variableId": "fader_ch_15_to_bus_07",
     },
     {
-      "name": "Fader: Channel 15 to Bus 8",
+      "name": "Fader: Channel 15 to MixBus 8",
       "variableId": "fader_ch_15_to_bus_08",
     },
     {
-      "name": "Fader: Channel 15 to Bus 9",
+      "name": "Fader: Channel 15 to MixBus 9",
       "variableId": "fader_ch_15_to_bus_09",
     },
     {
-      "name": "Fader: Channel 15 to Bus 10",
+      "name": "Fader: Channel 15 to MixBus 10",
       "variableId": "fader_ch_15_to_bus_10",
     },
     {
-      "name": "Fader: Channel 15 to Bus 11",
+      "name": "Fader: Channel 15 to MixBus 11",
       "variableId": "fader_ch_15_to_bus_11",
     },
     {
-      "name": "Fader: Channel 15 to Bus 12",
+      "name": "Fader: Channel 15 to MixBus 12",
       "variableId": "fader_ch_15_to_bus_12",
     },
     {
-      "name": "Fader: Channel 15 to Bus 13",
+      "name": "Fader: Channel 15 to MixBus 13",
       "variableId": "fader_ch_15_to_bus_13",
     },
     {
-      "name": "Fader: Channel 15 to Bus 14",
+      "name": "Fader: Channel 15 to MixBus 14",
       "variableId": "fader_ch_15_to_bus_14",
     },
     {
-      "name": "Fader: Channel 15 to Bus 15",
+      "name": "Fader: Channel 15 to MixBus 15",
       "variableId": "fader_ch_15_to_bus_15",
     },
     {
-      "name": "Fader: Channel 15 to Bus 16",
+      "name": "Fader: Channel 15 to MixBus 16",
       "variableId": "fader_ch_15_to_bus_16",
     },
     {
-      "name": "Fader: Channel 16 to Bus 1",
+      "name": "Fader: Channel 16 to MixBus 1",
       "variableId": "fader_ch_16_to_bus_01",
     },
     {
-      "name": "Fader: Channel 16 to Bus 2",
+      "name": "Fader: Channel 16 to MixBus 2",
       "variableId": "fader_ch_16_to_bus_02",
     },
     {
-      "name": "Fader: Channel 16 to Bus 3",
+      "name": "Fader: Channel 16 to MixBus 3",
       "variableId": "fader_ch_16_to_bus_03",
     },
     {
-      "name": "Fader: Channel 16 to Bus 4",
+      "name": "Fader: Channel 16 to MixBus 4",
       "variableId": "fader_ch_16_to_bus_04",
     },
     {
-      "name": "Fader: Channel 16 to Bus 5",
+      "name": "Fader: Channel 16 to MixBus 5",
       "variableId": "fader_ch_16_to_bus_05",
     },
     {
-      "name": "Fader: Channel 16 to Bus 6",
+      "name": "Fader: Channel 16 to MixBus 6",
       "variableId": "fader_ch_16_to_bus_06",
     },
     {
-      "name": "Fader: Channel 16 to Bus 7",
+      "name": "Fader: Channel 16 to MixBus 7",
       "variableId": "fader_ch_16_to_bus_07",
     },
     {
-      "name": "Fader: Channel 16 to Bus 8",
+      "name": "Fader: Channel 16 to MixBus 8",
       "variableId": "fader_ch_16_to_bus_08",
     },
     {
-      "name": "Fader: Channel 16 to Bus 9",
+      "name": "Fader: Channel 16 to MixBus 9",
       "variableId": "fader_ch_16_to_bus_09",
     },
     {
-      "name": "Fader: Channel 16 to Bus 10",
+      "name": "Fader: Channel 16 to MixBus 10",
       "variableId": "fader_ch_16_to_bus_10",
     },
     {
-      "name": "Fader: Channel 16 to Bus 11",
+      "name": "Fader: Channel 16 to MixBus 11",
       "variableId": "fader_ch_16_to_bus_11",
     },
     {
-      "name": "Fader: Channel 16 to Bus 12",
+      "name": "Fader: Channel 16 to MixBus 12",
       "variableId": "fader_ch_16_to_bus_12",
     },
     {
-      "name": "Fader: Channel 16 to Bus 13",
+      "name": "Fader: Channel 16 to MixBus 13",
       "variableId": "fader_ch_16_to_bus_13",
     },
     {
-      "name": "Fader: Channel 16 to Bus 14",
+      "name": "Fader: Channel 16 to MixBus 14",
       "variableId": "fader_ch_16_to_bus_14",
     },
     {
-      "name": "Fader: Channel 16 to Bus 15",
+      "name": "Fader: Channel 16 to MixBus 15",
       "variableId": "fader_ch_16_to_bus_15",
     },
     {
-      "name": "Fader: Channel 16 to Bus 16",
+      "name": "Fader: Channel 16 to MixBus 16",
       "variableId": "fader_ch_16_to_bus_16",
     },
     {
-      "name": "Fader: Channel 17 to Bus 1",
+      "name": "Fader: Channel 17 to MixBus 1",
       "variableId": "fader_ch_17_to_bus_01",
     },
     {
-      "name": "Fader: Channel 17 to Bus 2",
+      "name": "Fader: Channel 17 to MixBus 2",
       "variableId": "fader_ch_17_to_bus_02",
     },
     {
-      "name": "Fader: Channel 17 to Bus 3",
+      "name": "Fader: Channel 17 to MixBus 3",
       "variableId": "fader_ch_17_to_bus_03",
     },
     {
-      "name": "Fader: Channel 17 to Bus 4",
+      "name": "Fader: Channel 17 to MixBus 4",
       "variableId": "fader_ch_17_to_bus_04",
     },
     {
-      "name": "Fader: Channel 17 to Bus 5",
+      "name": "Fader: Channel 17 to MixBus 5",
       "variableId": "fader_ch_17_to_bus_05",
     },
     {
-      "name": "Fader: Channel 17 to Bus 6",
+      "name": "Fader: Channel 17 to MixBus 6",
       "variableId": "fader_ch_17_to_bus_06",
     },
     {
-      "name": "Fader: Channel 17 to Bus 7",
+      "name": "Fader: Channel 17 to MixBus 7",
       "variableId": "fader_ch_17_to_bus_07",
     },
     {
-      "name": "Fader: Channel 17 to Bus 8",
+      "name": "Fader: Channel 17 to MixBus 8",
       "variableId": "fader_ch_17_to_bus_08",
     },
     {
-      "name": "Fader: Channel 17 to Bus 9",
+      "name": "Fader: Channel 17 to MixBus 9",
       "variableId": "fader_ch_17_to_bus_09",
     },
     {
-      "name": "Fader: Channel 17 to Bus 10",
+      "name": "Fader: Channel 17 to MixBus 10",
       "variableId": "fader_ch_17_to_bus_10",
     },
     {
-      "name": "Fader: Channel 17 to Bus 11",
+      "name": "Fader: Channel 17 to MixBus 11",
       "variableId": "fader_ch_17_to_bus_11",
     },
     {
-      "name": "Fader: Channel 17 to Bus 12",
+      "name": "Fader: Channel 17 to MixBus 12",
       "variableId": "fader_ch_17_to_bus_12",
     },
     {
-      "name": "Fader: Channel 17 to Bus 13",
+      "name": "Fader: Channel 17 to MixBus 13",
       "variableId": "fader_ch_17_to_bus_13",
     },
     {
-      "name": "Fader: Channel 17 to Bus 14",
+      "name": "Fader: Channel 17 to MixBus 14",
       "variableId": "fader_ch_17_to_bus_14",
     },
     {
-      "name": "Fader: Channel 17 to Bus 15",
+      "name": "Fader: Channel 17 to MixBus 15",
       "variableId": "fader_ch_17_to_bus_15",
     },
     {
-      "name": "Fader: Channel 17 to Bus 16",
+      "name": "Fader: Channel 17 to MixBus 16",
       "variableId": "fader_ch_17_to_bus_16",
     },
     {
-      "name": "Fader: Channel 18 to Bus 1",
+      "name": "Fader: Channel 18 to MixBus 1",
       "variableId": "fader_ch_18_to_bus_01",
     },
     {
-      "name": "Fader: Channel 18 to Bus 2",
+      "name": "Fader: Channel 18 to MixBus 2",
       "variableId": "fader_ch_18_to_bus_02",
     },
     {
-      "name": "Fader: Channel 18 to Bus 3",
+      "name": "Fader: Channel 18 to MixBus 3",
       "variableId": "fader_ch_18_to_bus_03",
     },
     {
-      "name": "Fader: Channel 18 to Bus 4",
+      "name": "Fader: Channel 18 to MixBus 4",
       "variableId": "fader_ch_18_to_bus_04",
     },
     {
-      "name": "Fader: Channel 18 to Bus 5",
+      "name": "Fader: Channel 18 to MixBus 5",
       "variableId": "fader_ch_18_to_bus_05",
     },
     {
-      "name": "Fader: Channel 18 to Bus 6",
+      "name": "Fader: Channel 18 to MixBus 6",
       "variableId": "fader_ch_18_to_bus_06",
     },
     {
-      "name": "Fader: Channel 18 to Bus 7",
+      "name": "Fader: Channel 18 to MixBus 7",
       "variableId": "fader_ch_18_to_bus_07",
     },
     {
-      "name": "Fader: Channel 18 to Bus 8",
+      "name": "Fader: Channel 18 to MixBus 8",
       "variableId": "fader_ch_18_to_bus_08",
     },
     {
-      "name": "Fader: Channel 18 to Bus 9",
+      "name": "Fader: Channel 18 to MixBus 9",
       "variableId": "fader_ch_18_to_bus_09",
     },
     {
-      "name": "Fader: Channel 18 to Bus 10",
+      "name": "Fader: Channel 18 to MixBus 10",
       "variableId": "fader_ch_18_to_bus_10",
     },
     {
-      "name": "Fader: Channel 18 to Bus 11",
+      "name": "Fader: Channel 18 to MixBus 11",
       "variableId": "fader_ch_18_to_bus_11",
     },
     {
-      "name": "Fader: Channel 18 to Bus 12",
+      "name": "Fader: Channel 18 to MixBus 12",
       "variableId": "fader_ch_18_to_bus_12",
     },
     {
-      "name": "Fader: Channel 18 to Bus 13",
+      "name": "Fader: Channel 18 to MixBus 13",
       "variableId": "fader_ch_18_to_bus_13",
     },
     {
-      "name": "Fader: Channel 18 to Bus 14",
+      "name": "Fader: Channel 18 to MixBus 14",
       "variableId": "fader_ch_18_to_bus_14",
     },
     {
-      "name": "Fader: Channel 18 to Bus 15",
+      "name": "Fader: Channel 18 to MixBus 15",
       "variableId": "fader_ch_18_to_bus_15",
     },
     {
-      "name": "Fader: Channel 18 to Bus 16",
+      "name": "Fader: Channel 18 to MixBus 16",
       "variableId": "fader_ch_18_to_bus_16",
     },
     {
-      "name": "Fader: Channel 19 to Bus 1",
+      "name": "Fader: Channel 19 to MixBus 1",
       "variableId": "fader_ch_19_to_bus_01",
     },
     {
-      "name": "Fader: Channel 19 to Bus 2",
+      "name": "Fader: Channel 19 to MixBus 2",
       "variableId": "fader_ch_19_to_bus_02",
     },
     {
-      "name": "Fader: Channel 19 to Bus 3",
+      "name": "Fader: Channel 19 to MixBus 3",
       "variableId": "fader_ch_19_to_bus_03",
     },
     {
-      "name": "Fader: Channel 19 to Bus 4",
+      "name": "Fader: Channel 19 to MixBus 4",
       "variableId": "fader_ch_19_to_bus_04",
     },
     {
-      "name": "Fader: Channel 19 to Bus 5",
+      "name": "Fader: Channel 19 to MixBus 5",
       "variableId": "fader_ch_19_to_bus_05",
     },
     {
-      "name": "Fader: Channel 19 to Bus 6",
+      "name": "Fader: Channel 19 to MixBus 6",
       "variableId": "fader_ch_19_to_bus_06",
     },
     {
-      "name": "Fader: Channel 19 to Bus 7",
+      "name": "Fader: Channel 19 to MixBus 7",
       "variableId": "fader_ch_19_to_bus_07",
     },
     {
-      "name": "Fader: Channel 19 to Bus 8",
+      "name": "Fader: Channel 19 to MixBus 8",
       "variableId": "fader_ch_19_to_bus_08",
     },
     {
-      "name": "Fader: Channel 19 to Bus 9",
+      "name": "Fader: Channel 19 to MixBus 9",
       "variableId": "fader_ch_19_to_bus_09",
     },
     {
-      "name": "Fader: Channel 19 to Bus 10",
+      "name": "Fader: Channel 19 to MixBus 10",
       "variableId": "fader_ch_19_to_bus_10",
     },
     {
-      "name": "Fader: Channel 19 to Bus 11",
+      "name": "Fader: Channel 19 to MixBus 11",
       "variableId": "fader_ch_19_to_bus_11",
     },
     {
-      "name": "Fader: Channel 19 to Bus 12",
+      "name": "Fader: Channel 19 to MixBus 12",
       "variableId": "fader_ch_19_to_bus_12",
     },
     {
-      "name": "Fader: Channel 19 to Bus 13",
+      "name": "Fader: Channel 19 to MixBus 13",
       "variableId": "fader_ch_19_to_bus_13",
     },
     {
-      "name": "Fader: Channel 19 to Bus 14",
+      "name": "Fader: Channel 19 to MixBus 14",
       "variableId": "fader_ch_19_to_bus_14",
     },
     {
-      "name": "Fader: Channel 19 to Bus 15",
+      "name": "Fader: Channel 19 to MixBus 15",
       "variableId": "fader_ch_19_to_bus_15",
     },
     {
-      "name": "Fader: Channel 19 to Bus 16",
+      "name": "Fader: Channel 19 to MixBus 16",
       "variableId": "fader_ch_19_to_bus_16",
     },
     {
-      "name": "Fader: Channel 20 to Bus 1",
+      "name": "Fader: Channel 20 to MixBus 1",
       "variableId": "fader_ch_20_to_bus_01",
     },
     {
-      "name": "Fader: Channel 20 to Bus 2",
+      "name": "Fader: Channel 20 to MixBus 2",
       "variableId": "fader_ch_20_to_bus_02",
     },
     {
-      "name": "Fader: Channel 20 to Bus 3",
+      "name": "Fader: Channel 20 to MixBus 3",
       "variableId": "fader_ch_20_to_bus_03",
     },
     {
-      "name": "Fader: Channel 20 to Bus 4",
+      "name": "Fader: Channel 20 to MixBus 4",
       "variableId": "fader_ch_20_to_bus_04",
     },
     {
-      "name": "Fader: Channel 20 to Bus 5",
+      "name": "Fader: Channel 20 to MixBus 5",
       "variableId": "fader_ch_20_to_bus_05",
     },
     {
-      "name": "Fader: Channel 20 to Bus 6",
+      "name": "Fader: Channel 20 to MixBus 6",
       "variableId": "fader_ch_20_to_bus_06",
     },
     {
-      "name": "Fader: Channel 20 to Bus 7",
+      "name": "Fader: Channel 20 to MixBus 7",
       "variableId": "fader_ch_20_to_bus_07",
     },
     {
-      "name": "Fader: Channel 20 to Bus 8",
+      "name": "Fader: Channel 20 to MixBus 8",
       "variableId": "fader_ch_20_to_bus_08",
     },
     {
-      "name": "Fader: Channel 20 to Bus 9",
+      "name": "Fader: Channel 20 to MixBus 9",
       "variableId": "fader_ch_20_to_bus_09",
     },
     {
-      "name": "Fader: Channel 20 to Bus 10",
+      "name": "Fader: Channel 20 to MixBus 10",
       "variableId": "fader_ch_20_to_bus_10",
     },
     {
-      "name": "Fader: Channel 20 to Bus 11",
+      "name": "Fader: Channel 20 to MixBus 11",
       "variableId": "fader_ch_20_to_bus_11",
     },
     {
-      "name": "Fader: Channel 20 to Bus 12",
+      "name": "Fader: Channel 20 to MixBus 12",
       "variableId": "fader_ch_20_to_bus_12",
     },
     {
-      "name": "Fader: Channel 20 to Bus 13",
+      "name": "Fader: Channel 20 to MixBus 13",
       "variableId": "fader_ch_20_to_bus_13",
     },
     {
-      "name": "Fader: Channel 20 to Bus 14",
+      "name": "Fader: Channel 20 to MixBus 14",
       "variableId": "fader_ch_20_to_bus_14",
     },
     {
-      "name": "Fader: Channel 20 to Bus 15",
+      "name": "Fader: Channel 20 to MixBus 15",
       "variableId": "fader_ch_20_to_bus_15",
     },
     {
-      "name": "Fader: Channel 20 to Bus 16",
+      "name": "Fader: Channel 20 to MixBus 16",
       "variableId": "fader_ch_20_to_bus_16",
     },
     {
-      "name": "Fader: Channel 21 to Bus 1",
+      "name": "Fader: Channel 21 to MixBus 1",
       "variableId": "fader_ch_21_to_bus_01",
     },
     {
-      "name": "Fader: Channel 21 to Bus 2",
+      "name": "Fader: Channel 21 to MixBus 2",
       "variableId": "fader_ch_21_to_bus_02",
     },
     {
-      "name": "Fader: Channel 21 to Bus 3",
+      "name": "Fader: Channel 21 to MixBus 3",
       "variableId": "fader_ch_21_to_bus_03",
     },
     {
-      "name": "Fader: Channel 21 to Bus 4",
+      "name": "Fader: Channel 21 to MixBus 4",
       "variableId": "fader_ch_21_to_bus_04",
     },
     {
-      "name": "Fader: Channel 21 to Bus 5",
+      "name": "Fader: Channel 21 to MixBus 5",
       "variableId": "fader_ch_21_to_bus_05",
     },
     {
-      "name": "Fader: Channel 21 to Bus 6",
+      "name": "Fader: Channel 21 to MixBus 6",
       "variableId": "fader_ch_21_to_bus_06",
     },
     {
-      "name": "Fader: Channel 21 to Bus 7",
+      "name": "Fader: Channel 21 to MixBus 7",
       "variableId": "fader_ch_21_to_bus_07",
     },
     {
-      "name": "Fader: Channel 21 to Bus 8",
+      "name": "Fader: Channel 21 to MixBus 8",
       "variableId": "fader_ch_21_to_bus_08",
     },
     {
-      "name": "Fader: Channel 21 to Bus 9",
+      "name": "Fader: Channel 21 to MixBus 9",
       "variableId": "fader_ch_21_to_bus_09",
     },
     {
-      "name": "Fader: Channel 21 to Bus 10",
+      "name": "Fader: Channel 21 to MixBus 10",
       "variableId": "fader_ch_21_to_bus_10",
     },
     {
-      "name": "Fader: Channel 21 to Bus 11",
+      "name": "Fader: Channel 21 to MixBus 11",
       "variableId": "fader_ch_21_to_bus_11",
     },
     {
-      "name": "Fader: Channel 21 to Bus 12",
+      "name": "Fader: Channel 21 to MixBus 12",
       "variableId": "fader_ch_21_to_bus_12",
     },
     {
-      "name": "Fader: Channel 21 to Bus 13",
+      "name": "Fader: Channel 21 to MixBus 13",
       "variableId": "fader_ch_21_to_bus_13",
     },
     {
-      "name": "Fader: Channel 21 to Bus 14",
+      "name": "Fader: Channel 21 to MixBus 14",
       "variableId": "fader_ch_21_to_bus_14",
     },
     {
-      "name": "Fader: Channel 21 to Bus 15",
+      "name": "Fader: Channel 21 to MixBus 15",
       "variableId": "fader_ch_21_to_bus_15",
     },
     {
-      "name": "Fader: Channel 21 to Bus 16",
+      "name": "Fader: Channel 21 to MixBus 16",
       "variableId": "fader_ch_21_to_bus_16",
     },
     {
-      "name": "Fader: Channel 22 to Bus 1",
+      "name": "Fader: Channel 22 to MixBus 1",
       "variableId": "fader_ch_22_to_bus_01",
     },
     {
-      "name": "Fader: Channel 22 to Bus 2",
+      "name": "Fader: Channel 22 to MixBus 2",
       "variableId": "fader_ch_22_to_bus_02",
     },
     {
-      "name": "Fader: Channel 22 to Bus 3",
+      "name": "Fader: Channel 22 to MixBus 3",
       "variableId": "fader_ch_22_to_bus_03",
     },
     {
-      "name": "Fader: Channel 22 to Bus 4",
+      "name": "Fader: Channel 22 to MixBus 4",
       "variableId": "fader_ch_22_to_bus_04",
     },
     {
-      "name": "Fader: Channel 22 to Bus 5",
+      "name": "Fader: Channel 22 to MixBus 5",
       "variableId": "fader_ch_22_to_bus_05",
     },
     {
-      "name": "Fader: Channel 22 to Bus 6",
+      "name": "Fader: Channel 22 to MixBus 6",
       "variableId": "fader_ch_22_to_bus_06",
     },
     {
-      "name": "Fader: Channel 22 to Bus 7",
+      "name": "Fader: Channel 22 to MixBus 7",
       "variableId": "fader_ch_22_to_bus_07",
     },
     {
-      "name": "Fader: Channel 22 to Bus 8",
+      "name": "Fader: Channel 22 to MixBus 8",
       "variableId": "fader_ch_22_to_bus_08",
     },
     {
-      "name": "Fader: Channel 22 to Bus 9",
+      "name": "Fader: Channel 22 to MixBus 9",
       "variableId": "fader_ch_22_to_bus_09",
     },
     {
-      "name": "Fader: Channel 22 to Bus 10",
+      "name": "Fader: Channel 22 to MixBus 10",
       "variableId": "fader_ch_22_to_bus_10",
     },
     {
-      "name": "Fader: Channel 22 to Bus 11",
+      "name": "Fader: Channel 22 to MixBus 11",
       "variableId": "fader_ch_22_to_bus_11",
     },
     {
-      "name": "Fader: Channel 22 to Bus 12",
+      "name": "Fader: Channel 22 to MixBus 12",
       "variableId": "fader_ch_22_to_bus_12",
     },
     {
-      "name": "Fader: Channel 22 to Bus 13",
+      "name": "Fader: Channel 22 to MixBus 13",
       "variableId": "fader_ch_22_to_bus_13",
     },
     {
-      "name": "Fader: Channel 22 to Bus 14",
+      "name": "Fader: Channel 22 to MixBus 14",
       "variableId": "fader_ch_22_to_bus_14",
     },
     {
-      "name": "Fader: Channel 22 to Bus 15",
+      "name": "Fader: Channel 22 to MixBus 15",
       "variableId": "fader_ch_22_to_bus_15",
     },
     {
-      "name": "Fader: Channel 22 to Bus 16",
+      "name": "Fader: Channel 22 to MixBus 16",
       "variableId": "fader_ch_22_to_bus_16",
     },
     {
-      "name": "Fader: Channel 23 to Bus 1",
+      "name": "Fader: Channel 23 to MixBus 1",
       "variableId": "fader_ch_23_to_bus_01",
     },
     {
-      "name": "Fader: Channel 23 to Bus 2",
+      "name": "Fader: Channel 23 to MixBus 2",
       "variableId": "fader_ch_23_to_bus_02",
     },
     {
-      "name": "Fader: Channel 23 to Bus 3",
+      "name": "Fader: Channel 23 to MixBus 3",
       "variableId": "fader_ch_23_to_bus_03",
     },
     {
-      "name": "Fader: Channel 23 to Bus 4",
+      "name": "Fader: Channel 23 to MixBus 4",
       "variableId": "fader_ch_23_to_bus_04",
     },
     {
-      "name": "Fader: Channel 23 to Bus 5",
+      "name": "Fader: Channel 23 to MixBus 5",
       "variableId": "fader_ch_23_to_bus_05",
     },
     {
-      "name": "Fader: Channel 23 to Bus 6",
+      "name": "Fader: Channel 23 to MixBus 6",
       "variableId": "fader_ch_23_to_bus_06",
     },
     {
-      "name": "Fader: Channel 23 to Bus 7",
+      "name": "Fader: Channel 23 to MixBus 7",
       "variableId": "fader_ch_23_to_bus_07",
     },
     {
-      "name": "Fader: Channel 23 to Bus 8",
+      "name": "Fader: Channel 23 to MixBus 8",
       "variableId": "fader_ch_23_to_bus_08",
     },
     {
-      "name": "Fader: Channel 23 to Bus 9",
+      "name": "Fader: Channel 23 to MixBus 9",
       "variableId": "fader_ch_23_to_bus_09",
     },
     {
-      "name": "Fader: Channel 23 to Bus 10",
+      "name": "Fader: Channel 23 to MixBus 10",
       "variableId": "fader_ch_23_to_bus_10",
     },
     {
-      "name": "Fader: Channel 23 to Bus 11",
+      "name": "Fader: Channel 23 to MixBus 11",
       "variableId": "fader_ch_23_to_bus_11",
     },
     {
-      "name": "Fader: Channel 23 to Bus 12",
+      "name": "Fader: Channel 23 to MixBus 12",
       "variableId": "fader_ch_23_to_bus_12",
     },
     {
-      "name": "Fader: Channel 23 to Bus 13",
+      "name": "Fader: Channel 23 to MixBus 13",
       "variableId": "fader_ch_23_to_bus_13",
     },
     {
-      "name": "Fader: Channel 23 to Bus 14",
+      "name": "Fader: Channel 23 to MixBus 14",
       "variableId": "fader_ch_23_to_bus_14",
     },
     {
-      "name": "Fader: Channel 23 to Bus 15",
+      "name": "Fader: Channel 23 to MixBus 15",
       "variableId": "fader_ch_23_to_bus_15",
     },
     {
-      "name": "Fader: Channel 23 to Bus 16",
+      "name": "Fader: Channel 23 to MixBus 16",
       "variableId": "fader_ch_23_to_bus_16",
     },
     {
-      "name": "Fader: Channel 24 to Bus 1",
+      "name": "Fader: Channel 24 to MixBus 1",
       "variableId": "fader_ch_24_to_bus_01",
     },
     {
-      "name": "Fader: Channel 24 to Bus 2",
+      "name": "Fader: Channel 24 to MixBus 2",
       "variableId": "fader_ch_24_to_bus_02",
     },
     {
-      "name": "Fader: Channel 24 to Bus 3",
+      "name": "Fader: Channel 24 to MixBus 3",
       "variableId": "fader_ch_24_to_bus_03",
     },
     {
-      "name": "Fader: Channel 24 to Bus 4",
+      "name": "Fader: Channel 24 to MixBus 4",
       "variableId": "fader_ch_24_to_bus_04",
     },
     {
-      "name": "Fader: Channel 24 to Bus 5",
+      "name": "Fader: Channel 24 to MixBus 5",
       "variableId": "fader_ch_24_to_bus_05",
     },
     {
-      "name": "Fader: Channel 24 to Bus 6",
+      "name": "Fader: Channel 24 to MixBus 6",
       "variableId": "fader_ch_24_to_bus_06",
     },
     {
-      "name": "Fader: Channel 24 to Bus 7",
+      "name": "Fader: Channel 24 to MixBus 7",
       "variableId": "fader_ch_24_to_bus_07",
     },
     {
-      "name": "Fader: Channel 24 to Bus 8",
+      "name": "Fader: Channel 24 to MixBus 8",
       "variableId": "fader_ch_24_to_bus_08",
     },
     {
-      "name": "Fader: Channel 24 to Bus 9",
+      "name": "Fader: Channel 24 to MixBus 9",
       "variableId": "fader_ch_24_to_bus_09",
     },
     {
-      "name": "Fader: Channel 24 to Bus 10",
+      "name": "Fader: Channel 24 to MixBus 10",
       "variableId": "fader_ch_24_to_bus_10",
     },
     {
-      "name": "Fader: Channel 24 to Bus 11",
+      "name": "Fader: Channel 24 to MixBus 11",
       "variableId": "fader_ch_24_to_bus_11",
     },
     {
-      "name": "Fader: Channel 24 to Bus 12",
+      "name": "Fader: Channel 24 to MixBus 12",
       "variableId": "fader_ch_24_to_bus_12",
     },
     {
-      "name": "Fader: Channel 24 to Bus 13",
+      "name": "Fader: Channel 24 to MixBus 13",
       "variableId": "fader_ch_24_to_bus_13",
     },
     {
-      "name": "Fader: Channel 24 to Bus 14",
+      "name": "Fader: Channel 24 to MixBus 14",
       "variableId": "fader_ch_24_to_bus_14",
     },
     {
-      "name": "Fader: Channel 24 to Bus 15",
+      "name": "Fader: Channel 24 to MixBus 15",
       "variableId": "fader_ch_24_to_bus_15",
     },
     {
-      "name": "Fader: Channel 24 to Bus 16",
+      "name": "Fader: Channel 24 to MixBus 16",
       "variableId": "fader_ch_24_to_bus_16",
     },
     {
-      "name": "Fader: Channel 25 to Bus 1",
+      "name": "Fader: Channel 25 to MixBus 1",
       "variableId": "fader_ch_25_to_bus_01",
     },
     {
-      "name": "Fader: Channel 25 to Bus 2",
+      "name": "Fader: Channel 25 to MixBus 2",
       "variableId": "fader_ch_25_to_bus_02",
     },
     {
-      "name": "Fader: Channel 25 to Bus 3",
+      "name": "Fader: Channel 25 to MixBus 3",
       "variableId": "fader_ch_25_to_bus_03",
     },
     {
-      "name": "Fader: Channel 25 to Bus 4",
+      "name": "Fader: Channel 25 to MixBus 4",
       "variableId": "fader_ch_25_to_bus_04",
     },
     {
-      "name": "Fader: Channel 25 to Bus 5",
+      "name": "Fader: Channel 25 to MixBus 5",
       "variableId": "fader_ch_25_to_bus_05",
     },
     {
-      "name": "Fader: Channel 25 to Bus 6",
+      "name": "Fader: Channel 25 to MixBus 6",
       "variableId": "fader_ch_25_to_bus_06",
     },
     {
-      "name": "Fader: Channel 25 to Bus 7",
+      "name": "Fader: Channel 25 to MixBus 7",
       "variableId": "fader_ch_25_to_bus_07",
     },
     {
-      "name": "Fader: Channel 25 to Bus 8",
+      "name": "Fader: Channel 25 to MixBus 8",
       "variableId": "fader_ch_25_to_bus_08",
     },
     {
-      "name": "Fader: Channel 25 to Bus 9",
+      "name": "Fader: Channel 25 to MixBus 9",
       "variableId": "fader_ch_25_to_bus_09",
     },
     {
-      "name": "Fader: Channel 25 to Bus 10",
+      "name": "Fader: Channel 25 to MixBus 10",
       "variableId": "fader_ch_25_to_bus_10",
     },
     {
-      "name": "Fader: Channel 25 to Bus 11",
+      "name": "Fader: Channel 25 to MixBus 11",
       "variableId": "fader_ch_25_to_bus_11",
     },
     {
-      "name": "Fader: Channel 25 to Bus 12",
+      "name": "Fader: Channel 25 to MixBus 12",
       "variableId": "fader_ch_25_to_bus_12",
     },
     {
-      "name": "Fader: Channel 25 to Bus 13",
+      "name": "Fader: Channel 25 to MixBus 13",
       "variableId": "fader_ch_25_to_bus_13",
     },
     {
-      "name": "Fader: Channel 25 to Bus 14",
+      "name": "Fader: Channel 25 to MixBus 14",
       "variableId": "fader_ch_25_to_bus_14",
     },
     {
-      "name": "Fader: Channel 25 to Bus 15",
+      "name": "Fader: Channel 25 to MixBus 15",
       "variableId": "fader_ch_25_to_bus_15",
     },
     {
-      "name": "Fader: Channel 25 to Bus 16",
+      "name": "Fader: Channel 25 to MixBus 16",
       "variableId": "fader_ch_25_to_bus_16",
     },
     {
-      "name": "Fader: Channel 26 to Bus 1",
+      "name": "Fader: Channel 26 to MixBus 1",
       "variableId": "fader_ch_26_to_bus_01",
     },
     {
-      "name": "Fader: Channel 26 to Bus 2",
+      "name": "Fader: Channel 26 to MixBus 2",
       "variableId": "fader_ch_26_to_bus_02",
     },
     {
-      "name": "Fader: Channel 26 to Bus 3",
+      "name": "Fader: Channel 26 to MixBus 3",
       "variableId": "fader_ch_26_to_bus_03",
     },
     {
-      "name": "Fader: Channel 26 to Bus 4",
+      "name": "Fader: Channel 26 to MixBus 4",
       "variableId": "fader_ch_26_to_bus_04",
     },
     {
-      "name": "Fader: Channel 26 to Bus 5",
+      "name": "Fader: Channel 26 to MixBus 5",
       "variableId": "fader_ch_26_to_bus_05",
     },
     {
-      "name": "Fader: Channel 26 to Bus 6",
+      "name": "Fader: Channel 26 to MixBus 6",
       "variableId": "fader_ch_26_to_bus_06",
     },
     {
-      "name": "Fader: Channel 26 to Bus 7",
+      "name": "Fader: Channel 26 to MixBus 7",
       "variableId": "fader_ch_26_to_bus_07",
     },
     {
-      "name": "Fader: Channel 26 to Bus 8",
+      "name": "Fader: Channel 26 to MixBus 8",
       "variableId": "fader_ch_26_to_bus_08",
     },
     {
-      "name": "Fader: Channel 26 to Bus 9",
+      "name": "Fader: Channel 26 to MixBus 9",
       "variableId": "fader_ch_26_to_bus_09",
     },
     {
-      "name": "Fader: Channel 26 to Bus 10",
+      "name": "Fader: Channel 26 to MixBus 10",
       "variableId": "fader_ch_26_to_bus_10",
     },
     {
-      "name": "Fader: Channel 26 to Bus 11",
+      "name": "Fader: Channel 26 to MixBus 11",
       "variableId": "fader_ch_26_to_bus_11",
     },
     {
-      "name": "Fader: Channel 26 to Bus 12",
+      "name": "Fader: Channel 26 to MixBus 12",
       "variableId": "fader_ch_26_to_bus_12",
     },
     {
-      "name": "Fader: Channel 26 to Bus 13",
+      "name": "Fader: Channel 26 to MixBus 13",
       "variableId": "fader_ch_26_to_bus_13",
     },
     {
-      "name": "Fader: Channel 26 to Bus 14",
+      "name": "Fader: Channel 26 to MixBus 14",
       "variableId": "fader_ch_26_to_bus_14",
     },
     {
-      "name": "Fader: Channel 26 to Bus 15",
+      "name": "Fader: Channel 26 to MixBus 15",
       "variableId": "fader_ch_26_to_bus_15",
     },
     {
-      "name": "Fader: Channel 26 to Bus 16",
+      "name": "Fader: Channel 26 to MixBus 16",
       "variableId": "fader_ch_26_to_bus_16",
     },
     {
-      "name": "Fader: Channel 27 to Bus 1",
+      "name": "Fader: Channel 27 to MixBus 1",
       "variableId": "fader_ch_27_to_bus_01",
     },
     {
-      "name": "Fader: Channel 27 to Bus 2",
+      "name": "Fader: Channel 27 to MixBus 2",
       "variableId": "fader_ch_27_to_bus_02",
     },
     {
-      "name": "Fader: Channel 27 to Bus 3",
+      "name": "Fader: Channel 27 to MixBus 3",
       "variableId": "fader_ch_27_to_bus_03",
     },
     {
-      "name": "Fader: Channel 27 to Bus 4",
+      "name": "Fader: Channel 27 to MixBus 4",
       "variableId": "fader_ch_27_to_bus_04",
     },
     {
-      "name": "Fader: Channel 27 to Bus 5",
+      "name": "Fader: Channel 27 to MixBus 5",
       "variableId": "fader_ch_27_to_bus_05",
     },
     {
-      "name": "Fader: Channel 27 to Bus 6",
+      "name": "Fader: Channel 27 to MixBus 6",
       "variableId": "fader_ch_27_to_bus_06",
     },
     {
-      "name": "Fader: Channel 27 to Bus 7",
+      "name": "Fader: Channel 27 to MixBus 7",
       "variableId": "fader_ch_27_to_bus_07",
     },
     {
-      "name": "Fader: Channel 27 to Bus 8",
+      "name": "Fader: Channel 27 to MixBus 8",
       "variableId": "fader_ch_27_to_bus_08",
     },
     {
-      "name": "Fader: Channel 27 to Bus 9",
+      "name": "Fader: Channel 27 to MixBus 9",
       "variableId": "fader_ch_27_to_bus_09",
     },
     {
-      "name": "Fader: Channel 27 to Bus 10",
+      "name": "Fader: Channel 27 to MixBus 10",
       "variableId": "fader_ch_27_to_bus_10",
     },
     {
-      "name": "Fader: Channel 27 to Bus 11",
+      "name": "Fader: Channel 27 to MixBus 11",
       "variableId": "fader_ch_27_to_bus_11",
     },
     {
-      "name": "Fader: Channel 27 to Bus 12",
+      "name": "Fader: Channel 27 to MixBus 12",
       "variableId": "fader_ch_27_to_bus_12",
     },
     {
-      "name": "Fader: Channel 27 to Bus 13",
+      "name": "Fader: Channel 27 to MixBus 13",
       "variableId": "fader_ch_27_to_bus_13",
     },
     {
-      "name": "Fader: Channel 27 to Bus 14",
+      "name": "Fader: Channel 27 to MixBus 14",
       "variableId": "fader_ch_27_to_bus_14",
     },
     {
-      "name": "Fader: Channel 27 to Bus 15",
+      "name": "Fader: Channel 27 to MixBus 15",
       "variableId": "fader_ch_27_to_bus_15",
     },
     {
-      "name": "Fader: Channel 27 to Bus 16",
+      "name": "Fader: Channel 27 to MixBus 16",
       "variableId": "fader_ch_27_to_bus_16",
     },
     {
-      "name": "Fader: Channel 28 to Bus 1",
+      "name": "Fader: Channel 28 to MixBus 1",
       "variableId": "fader_ch_28_to_bus_01",
     },
     {
-      "name": "Fader: Channel 28 to Bus 2",
+      "name": "Fader: Channel 28 to MixBus 2",
       "variableId": "fader_ch_28_to_bus_02",
     },
     {
-      "name": "Fader: Channel 28 to Bus 3",
+      "name": "Fader: Channel 28 to MixBus 3",
       "variableId": "fader_ch_28_to_bus_03",
     },
     {
-      "name": "Fader: Channel 28 to Bus 4",
+      "name": "Fader: Channel 28 to MixBus 4",
       "variableId": "fader_ch_28_to_bus_04",
     },
     {
-      "name": "Fader: Channel 28 to Bus 5",
+      "name": "Fader: Channel 28 to MixBus 5",
       "variableId": "fader_ch_28_to_bus_05",
     },
     {
-      "name": "Fader: Channel 28 to Bus 6",
+      "name": "Fader: Channel 28 to MixBus 6",
       "variableId": "fader_ch_28_to_bus_06",
     },
     {
-      "name": "Fader: Channel 28 to Bus 7",
+      "name": "Fader: Channel 28 to MixBus 7",
       "variableId": "fader_ch_28_to_bus_07",
     },
     {
-      "name": "Fader: Channel 28 to Bus 8",
+      "name": "Fader: Channel 28 to MixBus 8",
       "variableId": "fader_ch_28_to_bus_08",
     },
     {
-      "name": "Fader: Channel 28 to Bus 9",
+      "name": "Fader: Channel 28 to MixBus 9",
       "variableId": "fader_ch_28_to_bus_09",
     },
     {
-      "name": "Fader: Channel 28 to Bus 10",
+      "name": "Fader: Channel 28 to MixBus 10",
       "variableId": "fader_ch_28_to_bus_10",
     },
     {
-      "name": "Fader: Channel 28 to Bus 11",
+      "name": "Fader: Channel 28 to MixBus 11",
       "variableId": "fader_ch_28_to_bus_11",
     },
     {
-      "name": "Fader: Channel 28 to Bus 12",
+      "name": "Fader: Channel 28 to MixBus 12",
       "variableId": "fader_ch_28_to_bus_12",
     },
     {
-      "name": "Fader: Channel 28 to Bus 13",
+      "name": "Fader: Channel 28 to MixBus 13",
       "variableId": "fader_ch_28_to_bus_13",
     },
     {
-      "name": "Fader: Channel 28 to Bus 14",
+      "name": "Fader: Channel 28 to MixBus 14",
       "variableId": "fader_ch_28_to_bus_14",
     },
     {
-      "name": "Fader: Channel 28 to Bus 15",
+      "name": "Fader: Channel 28 to MixBus 15",
       "variableId": "fader_ch_28_to_bus_15",
     },
     {
-      "name": "Fader: Channel 28 to Bus 16",
+      "name": "Fader: Channel 28 to MixBus 16",
       "variableId": "fader_ch_28_to_bus_16",
     },
     {
-      "name": "Fader: Channel 29 to Bus 1",
+      "name": "Fader: Channel 29 to MixBus 1",
       "variableId": "fader_ch_29_to_bus_01",
     },
     {
-      "name": "Fader: Channel 29 to Bus 2",
+      "name": "Fader: Channel 29 to MixBus 2",
       "variableId": "fader_ch_29_to_bus_02",
     },
     {
-      "name": "Fader: Channel 29 to Bus 3",
+      "name": "Fader: Channel 29 to MixBus 3",
       "variableId": "fader_ch_29_to_bus_03",
     },
     {
-      "name": "Fader: Channel 29 to Bus 4",
+      "name": "Fader: Channel 29 to MixBus 4",
       "variableId": "fader_ch_29_to_bus_04",
     },
     {
-      "name": "Fader: Channel 29 to Bus 5",
+      "name": "Fader: Channel 29 to MixBus 5",
       "variableId": "fader_ch_29_to_bus_05",
     },
     {
-      "name": "Fader: Channel 29 to Bus 6",
+      "name": "Fader: Channel 29 to MixBus 6",
       "variableId": "fader_ch_29_to_bus_06",
     },
     {
-      "name": "Fader: Channel 29 to Bus 7",
+      "name": "Fader: Channel 29 to MixBus 7",
       "variableId": "fader_ch_29_to_bus_07",
     },
     {
-      "name": "Fader: Channel 29 to Bus 8",
+      "name": "Fader: Channel 29 to MixBus 8",
       "variableId": "fader_ch_29_to_bus_08",
     },
     {
-      "name": "Fader: Channel 29 to Bus 9",
+      "name": "Fader: Channel 29 to MixBus 9",
       "variableId": "fader_ch_29_to_bus_09",
     },
     {
-      "name": "Fader: Channel 29 to Bus 10",
+      "name": "Fader: Channel 29 to MixBus 10",
       "variableId": "fader_ch_29_to_bus_10",
     },
     {
-      "name": "Fader: Channel 29 to Bus 11",
+      "name": "Fader: Channel 29 to MixBus 11",
       "variableId": "fader_ch_29_to_bus_11",
     },
     {
-      "name": "Fader: Channel 29 to Bus 12",
+      "name": "Fader: Channel 29 to MixBus 12",
       "variableId": "fader_ch_29_to_bus_12",
     },
     {
-      "name": "Fader: Channel 29 to Bus 13",
+      "name": "Fader: Channel 29 to MixBus 13",
       "variableId": "fader_ch_29_to_bus_13",
     },
     {
-      "name": "Fader: Channel 29 to Bus 14",
+      "name": "Fader: Channel 29 to MixBus 14",
       "variableId": "fader_ch_29_to_bus_14",
     },
     {
-      "name": "Fader: Channel 29 to Bus 15",
+      "name": "Fader: Channel 29 to MixBus 15",
       "variableId": "fader_ch_29_to_bus_15",
     },
     {
-      "name": "Fader: Channel 29 to Bus 16",
+      "name": "Fader: Channel 29 to MixBus 16",
       "variableId": "fader_ch_29_to_bus_16",
     },
     {
-      "name": "Fader: Channel 30 to Bus 1",
+      "name": "Fader: Channel 30 to MixBus 1",
       "variableId": "fader_ch_30_to_bus_01",
     },
     {
-      "name": "Fader: Channel 30 to Bus 2",
+      "name": "Fader: Channel 30 to MixBus 2",
       "variableId": "fader_ch_30_to_bus_02",
     },
     {
-      "name": "Fader: Channel 30 to Bus 3",
+      "name": "Fader: Channel 30 to MixBus 3",
       "variableId": "fader_ch_30_to_bus_03",
     },
     {
-      "name": "Fader: Channel 30 to Bus 4",
+      "name": "Fader: Channel 30 to MixBus 4",
       "variableId": "fader_ch_30_to_bus_04",
     },
     {
-      "name": "Fader: Channel 30 to Bus 5",
+      "name": "Fader: Channel 30 to MixBus 5",
       "variableId": "fader_ch_30_to_bus_05",
     },
     {
-      "name": "Fader: Channel 30 to Bus 6",
+      "name": "Fader: Channel 30 to MixBus 6",
       "variableId": "fader_ch_30_to_bus_06",
     },
     {
-      "name": "Fader: Channel 30 to Bus 7",
+      "name": "Fader: Channel 30 to MixBus 7",
       "variableId": "fader_ch_30_to_bus_07",
     },
     {
-      "name": "Fader: Channel 30 to Bus 8",
+      "name": "Fader: Channel 30 to MixBus 8",
       "variableId": "fader_ch_30_to_bus_08",
     },
     {
-      "name": "Fader: Channel 30 to Bus 9",
+      "name": "Fader: Channel 30 to MixBus 9",
       "variableId": "fader_ch_30_to_bus_09",
     },
     {
-      "name": "Fader: Channel 30 to Bus 10",
+      "name": "Fader: Channel 30 to MixBus 10",
       "variableId": "fader_ch_30_to_bus_10",
     },
     {
-      "name": "Fader: Channel 30 to Bus 11",
+      "name": "Fader: Channel 30 to MixBus 11",
       "variableId": "fader_ch_30_to_bus_11",
     },
     {
-      "name": "Fader: Channel 30 to Bus 12",
+      "name": "Fader: Channel 30 to MixBus 12",
       "variableId": "fader_ch_30_to_bus_12",
     },
     {
-      "name": "Fader: Channel 30 to Bus 13",
+      "name": "Fader: Channel 30 to MixBus 13",
       "variableId": "fader_ch_30_to_bus_13",
     },
     {
-      "name": "Fader: Channel 30 to Bus 14",
+      "name": "Fader: Channel 30 to MixBus 14",
       "variableId": "fader_ch_30_to_bus_14",
     },
     {
-      "name": "Fader: Channel 30 to Bus 15",
+      "name": "Fader: Channel 30 to MixBus 15",
       "variableId": "fader_ch_30_to_bus_15",
     },
     {
-      "name": "Fader: Channel 30 to Bus 16",
+      "name": "Fader: Channel 30 to MixBus 16",
       "variableId": "fader_ch_30_to_bus_16",
     },
     {
-      "name": "Fader: Channel 31 to Bus 1",
+      "name": "Fader: Channel 31 to MixBus 1",
       "variableId": "fader_ch_31_to_bus_01",
     },
     {
-      "name": "Fader: Channel 31 to Bus 2",
+      "name": "Fader: Channel 31 to MixBus 2",
       "variableId": "fader_ch_31_to_bus_02",
     },
     {
-      "name": "Fader: Channel 31 to Bus 3",
+      "name": "Fader: Channel 31 to MixBus 3",
       "variableId": "fader_ch_31_to_bus_03",
     },
     {
-      "name": "Fader: Channel 31 to Bus 4",
+      "name": "Fader: Channel 31 to MixBus 4",
       "variableId": "fader_ch_31_to_bus_04",
     },
     {
-      "name": "Fader: Channel 31 to Bus 5",
+      "name": "Fader: Channel 31 to MixBus 5",
       "variableId": "fader_ch_31_to_bus_05",
     },
     {
-      "name": "Fader: Channel 31 to Bus 6",
+      "name": "Fader: Channel 31 to MixBus 6",
       "variableId": "fader_ch_31_to_bus_06",
     },
     {
-      "name": "Fader: Channel 31 to Bus 7",
+      "name": "Fader: Channel 31 to MixBus 7",
       "variableId": "fader_ch_31_to_bus_07",
     },
     {
-      "name": "Fader: Channel 31 to Bus 8",
+      "name": "Fader: Channel 31 to MixBus 8",
       "variableId": "fader_ch_31_to_bus_08",
     },
     {
-      "name": "Fader: Channel 31 to Bus 9",
+      "name": "Fader: Channel 31 to MixBus 9",
       "variableId": "fader_ch_31_to_bus_09",
     },
     {
-      "name": "Fader: Channel 31 to Bus 10",
+      "name": "Fader: Channel 31 to MixBus 10",
       "variableId": "fader_ch_31_to_bus_10",
     },
     {
-      "name": "Fader: Channel 31 to Bus 11",
+      "name": "Fader: Channel 31 to MixBus 11",
       "variableId": "fader_ch_31_to_bus_11",
     },
     {
-      "name": "Fader: Channel 31 to Bus 12",
+      "name": "Fader: Channel 31 to MixBus 12",
       "variableId": "fader_ch_31_to_bus_12",
     },
     {
-      "name": "Fader: Channel 31 to Bus 13",
+      "name": "Fader: Channel 31 to MixBus 13",
       "variableId": "fader_ch_31_to_bus_13",
     },
     {
-      "name": "Fader: Channel 31 to Bus 14",
+      "name": "Fader: Channel 31 to MixBus 14",
       "variableId": "fader_ch_31_to_bus_14",
     },
     {
-      "name": "Fader: Channel 31 to Bus 15",
+      "name": "Fader: Channel 31 to MixBus 15",
       "variableId": "fader_ch_31_to_bus_15",
     },
     {
-      "name": "Fader: Channel 31 to Bus 16",
+      "name": "Fader: Channel 31 to MixBus 16",
       "variableId": "fader_ch_31_to_bus_16",
     },
     {
-      "name": "Fader: Channel 32 to Bus 1",
+      "name": "Fader: Channel 32 to MixBus 1",
       "variableId": "fader_ch_32_to_bus_01",
     },
     {
-      "name": "Fader: Channel 32 to Bus 2",
+      "name": "Fader: Channel 32 to MixBus 2",
       "variableId": "fader_ch_32_to_bus_02",
     },
     {
-      "name": "Fader: Channel 32 to Bus 3",
+      "name": "Fader: Channel 32 to MixBus 3",
       "variableId": "fader_ch_32_to_bus_03",
     },
     {
-      "name": "Fader: Channel 32 to Bus 4",
+      "name": "Fader: Channel 32 to MixBus 4",
       "variableId": "fader_ch_32_to_bus_04",
     },
     {
-      "name": "Fader: Channel 32 to Bus 5",
+      "name": "Fader: Channel 32 to MixBus 5",
       "variableId": "fader_ch_32_to_bus_05",
     },
     {
-      "name": "Fader: Channel 32 to Bus 6",
+      "name": "Fader: Channel 32 to MixBus 6",
       "variableId": "fader_ch_32_to_bus_06",
     },
     {
-      "name": "Fader: Channel 32 to Bus 7",
+      "name": "Fader: Channel 32 to MixBus 7",
       "variableId": "fader_ch_32_to_bus_07",
     },
     {
-      "name": "Fader: Channel 32 to Bus 8",
+      "name": "Fader: Channel 32 to MixBus 8",
       "variableId": "fader_ch_32_to_bus_08",
     },
     {
-      "name": "Fader: Channel 32 to Bus 9",
+      "name": "Fader: Channel 32 to MixBus 9",
       "variableId": "fader_ch_32_to_bus_09",
     },
     {
-      "name": "Fader: Channel 32 to Bus 10",
+      "name": "Fader: Channel 32 to MixBus 10",
       "variableId": "fader_ch_32_to_bus_10",
     },
     {
-      "name": "Fader: Channel 32 to Bus 11",
+      "name": "Fader: Channel 32 to MixBus 11",
       "variableId": "fader_ch_32_to_bus_11",
     },
     {
-      "name": "Fader: Channel 32 to Bus 12",
+      "name": "Fader: Channel 32 to MixBus 12",
       "variableId": "fader_ch_32_to_bus_12",
     },
     {
-      "name": "Fader: Channel 32 to Bus 13",
+      "name": "Fader: Channel 32 to MixBus 13",
       "variableId": "fader_ch_32_to_bus_13",
     },
     {
-      "name": "Fader: Channel 32 to Bus 14",
+      "name": "Fader: Channel 32 to MixBus 14",
       "variableId": "fader_ch_32_to_bus_14",
     },
     {
-      "name": "Fader: Channel 32 to Bus 15",
+      "name": "Fader: Channel 32 to MixBus 15",
       "variableId": "fader_ch_32_to_bus_15",
     },
     {
-      "name": "Fader: Channel 32 to Bus 16",
+      "name": "Fader: Channel 32 to MixBus 16",
       "variableId": "fader_ch_32_to_bus_16",
     },
     {
-      "name": "Fader: Aux In 1 to Bus 1",
+      "name": "Fader: Aux In 1 to MixBus 1",
       "variableId": "fader_auxin_01_to_bus_01",
     },
     {
-      "name": "Fader: Aux In 1 to Bus 2",
+      "name": "Fader: Aux In 1 to MixBus 2",
       "variableId": "fader_auxin_01_to_bus_02",
     },
     {
-      "name": "Fader: Aux In 1 to Bus 3",
+      "name": "Fader: Aux In 1 to MixBus 3",
       "variableId": "fader_auxin_01_to_bus_03",
     },
     {
-      "name": "Fader: Aux In 1 to Bus 4",
+      "name": "Fader: Aux In 1 to MixBus 4",
       "variableId": "fader_auxin_01_to_bus_04",
     },
     {
-      "name": "Fader: Aux In 1 to Bus 5",
+      "name": "Fader: Aux In 1 to MixBus 5",
       "variableId": "fader_auxin_01_to_bus_05",
     },
     {
-      "name": "Fader: Aux In 1 to Bus 6",
+      "name": "Fader: Aux In 1 to MixBus 6",
       "variableId": "fader_auxin_01_to_bus_06",
     },
     {
-      "name": "Fader: Aux In 1 to Bus 7",
+      "name": "Fader: Aux In 1 to MixBus 7",
       "variableId": "fader_auxin_01_to_bus_07",
     },
     {
-      "name": "Fader: Aux In 1 to Bus 8",
+      "name": "Fader: Aux In 1 to MixBus 8",
       "variableId": "fader_auxin_01_to_bus_08",
     },
     {
-      "name": "Fader: Aux In 1 to Bus 9",
+      "name": "Fader: Aux In 1 to MixBus 9",
       "variableId": "fader_auxin_01_to_bus_09",
     },
     {
-      "name": "Fader: Aux In 1 to Bus 10",
+      "name": "Fader: Aux In 1 to MixBus 10",
       "variableId": "fader_auxin_01_to_bus_10",
     },
     {
-      "name": "Fader: Aux In 1 to Bus 11",
+      "name": "Fader: Aux In 1 to MixBus 11",
       "variableId": "fader_auxin_01_to_bus_11",
     },
     {
-      "name": "Fader: Aux In 1 to Bus 12",
+      "name": "Fader: Aux In 1 to MixBus 12",
       "variableId": "fader_auxin_01_to_bus_12",
     },
     {
-      "name": "Fader: Aux In 1 to Bus 13",
+      "name": "Fader: Aux In 1 to MixBus 13",
       "variableId": "fader_auxin_01_to_bus_13",
     },
     {
-      "name": "Fader: Aux In 1 to Bus 14",
+      "name": "Fader: Aux In 1 to MixBus 14",
       "variableId": "fader_auxin_01_to_bus_14",
     },
     {
-      "name": "Fader: Aux In 1 to Bus 15",
+      "name": "Fader: Aux In 1 to MixBus 15",
       "variableId": "fader_auxin_01_to_bus_15",
     },
     {
-      "name": "Fader: Aux In 1 to Bus 16",
+      "name": "Fader: Aux In 1 to MixBus 16",
       "variableId": "fader_auxin_01_to_bus_16",
     },
     {
-      "name": "Fader: Aux In 2 to Bus 1",
+      "name": "Fader: Aux In 2 to MixBus 1",
       "variableId": "fader_auxin_02_to_bus_01",
     },
     {
-      "name": "Fader: Aux In 2 to Bus 2",
+      "name": "Fader: Aux In 2 to MixBus 2",
       "variableId": "fader_auxin_02_to_bus_02",
     },
     {
-      "name": "Fader: Aux In 2 to Bus 3",
+      "name": "Fader: Aux In 2 to MixBus 3",
       "variableId": "fader_auxin_02_to_bus_03",
     },
     {
-      "name": "Fader: Aux In 2 to Bus 4",
+      "name": "Fader: Aux In 2 to MixBus 4",
       "variableId": "fader_auxin_02_to_bus_04",
     },
     {
-      "name": "Fader: Aux In 2 to Bus 5",
+      "name": "Fader: Aux In 2 to MixBus 5",
       "variableId": "fader_auxin_02_to_bus_05",
     },
     {
-      "name": "Fader: Aux In 2 to Bus 6",
+      "name": "Fader: Aux In 2 to MixBus 6",
       "variableId": "fader_auxin_02_to_bus_06",
     },
     {
-      "name": "Fader: Aux In 2 to Bus 7",
+      "name": "Fader: Aux In 2 to MixBus 7",
       "variableId": "fader_auxin_02_to_bus_07",
     },
     {
-      "name": "Fader: Aux In 2 to Bus 8",
+      "name": "Fader: Aux In 2 to MixBus 8",
       "variableId": "fader_auxin_02_to_bus_08",
     },
     {
-      "name": "Fader: Aux In 2 to Bus 9",
+      "name": "Fader: Aux In 2 to MixBus 9",
       "variableId": "fader_auxin_02_to_bus_09",
     },
     {
-      "name": "Fader: Aux In 2 to Bus 10",
+      "name": "Fader: Aux In 2 to MixBus 10",
       "variableId": "fader_auxin_02_to_bus_10",
     },
     {
-      "name": "Fader: Aux In 2 to Bus 11",
+      "name": "Fader: Aux In 2 to MixBus 11",
       "variableId": "fader_auxin_02_to_bus_11",
     },
     {
-      "name": "Fader: Aux In 2 to Bus 12",
+      "name": "Fader: Aux In 2 to MixBus 12",
       "variableId": "fader_auxin_02_to_bus_12",
     },
     {
-      "name": "Fader: Aux In 2 to Bus 13",
+      "name": "Fader: Aux In 2 to MixBus 13",
       "variableId": "fader_auxin_02_to_bus_13",
     },
     {
-      "name": "Fader: Aux In 2 to Bus 14",
+      "name": "Fader: Aux In 2 to MixBus 14",
       "variableId": "fader_auxin_02_to_bus_14",
     },
     {
-      "name": "Fader: Aux In 2 to Bus 15",
+      "name": "Fader: Aux In 2 to MixBus 15",
       "variableId": "fader_auxin_02_to_bus_15",
     },
     {
-      "name": "Fader: Aux In 2 to Bus 16",
+      "name": "Fader: Aux In 2 to MixBus 16",
       "variableId": "fader_auxin_02_to_bus_16",
     },
     {
-      "name": "Fader: Aux In 3 to Bus 1",
+      "name": "Fader: Aux In 3 to MixBus 1",
       "variableId": "fader_auxin_03_to_bus_01",
     },
     {
-      "name": "Fader: Aux In 3 to Bus 2",
+      "name": "Fader: Aux In 3 to MixBus 2",
       "variableId": "fader_auxin_03_to_bus_02",
     },
     {
-      "name": "Fader: Aux In 3 to Bus 3",
+      "name": "Fader: Aux In 3 to MixBus 3",
       "variableId": "fader_auxin_03_to_bus_03",
     },
     {
-      "name": "Fader: Aux In 3 to Bus 4",
+      "name": "Fader: Aux In 3 to MixBus 4",
       "variableId": "fader_auxin_03_to_bus_04",
     },
     {
-      "name": "Fader: Aux In 3 to Bus 5",
+      "name": "Fader: Aux In 3 to MixBus 5",
       "variableId": "fader_auxin_03_to_bus_05",
     },
     {
-      "name": "Fader: Aux In 3 to Bus 6",
+      "name": "Fader: Aux In 3 to MixBus 6",
       "variableId": "fader_auxin_03_to_bus_06",
     },
     {
-      "name": "Fader: Aux In 3 to Bus 7",
+      "name": "Fader: Aux In 3 to MixBus 7",
       "variableId": "fader_auxin_03_to_bus_07",
     },
     {
-      "name": "Fader: Aux In 3 to Bus 8",
+      "name": "Fader: Aux In 3 to MixBus 8",
       "variableId": "fader_auxin_03_to_bus_08",
     },
     {
-      "name": "Fader: Aux In 3 to Bus 9",
+      "name": "Fader: Aux In 3 to MixBus 9",
       "variableId": "fader_auxin_03_to_bus_09",
     },
     {
-      "name": "Fader: Aux In 3 to Bus 10",
+      "name": "Fader: Aux In 3 to MixBus 10",
       "variableId": "fader_auxin_03_to_bus_10",
     },
     {
-      "name": "Fader: Aux In 3 to Bus 11",
+      "name": "Fader: Aux In 3 to MixBus 11",
       "variableId": "fader_auxin_03_to_bus_11",
     },
     {
-      "name": "Fader: Aux In 3 to Bus 12",
+      "name": "Fader: Aux In 3 to MixBus 12",
       "variableId": "fader_auxin_03_to_bus_12",
     },
     {
-      "name": "Fader: Aux In 3 to Bus 13",
+      "name": "Fader: Aux In 3 to MixBus 13",
       "variableId": "fader_auxin_03_to_bus_13",
     },
     {
-      "name": "Fader: Aux In 3 to Bus 14",
+      "name": "Fader: Aux In 3 to MixBus 14",
       "variableId": "fader_auxin_03_to_bus_14",
     },
     {
-      "name": "Fader: Aux In 3 to Bus 15",
+      "name": "Fader: Aux In 3 to MixBus 15",
       "variableId": "fader_auxin_03_to_bus_15",
     },
     {
-      "name": "Fader: Aux In 3 to Bus 16",
+      "name": "Fader: Aux In 3 to MixBus 16",
       "variableId": "fader_auxin_03_to_bus_16",
     },
     {
-      "name": "Fader: Aux In 4 to Bus 1",
+      "name": "Fader: Aux In 4 to MixBus 1",
       "variableId": "fader_auxin_04_to_bus_01",
     },
     {
-      "name": "Fader: Aux In 4 to Bus 2",
+      "name": "Fader: Aux In 4 to MixBus 2",
       "variableId": "fader_auxin_04_to_bus_02",
     },
     {
-      "name": "Fader: Aux In 4 to Bus 3",
+      "name": "Fader: Aux In 4 to MixBus 3",
       "variableId": "fader_auxin_04_to_bus_03",
     },
     {
-      "name": "Fader: Aux In 4 to Bus 4",
+      "name": "Fader: Aux In 4 to MixBus 4",
       "variableId": "fader_auxin_04_to_bus_04",
     },
     {
-      "name": "Fader: Aux In 4 to Bus 5",
+      "name": "Fader: Aux In 4 to MixBus 5",
       "variableId": "fader_auxin_04_to_bus_05",
     },
     {
-      "name": "Fader: Aux In 4 to Bus 6",
+      "name": "Fader: Aux In 4 to MixBus 6",
       "variableId": "fader_auxin_04_to_bus_06",
     },
     {
-      "name": "Fader: Aux In 4 to Bus 7",
+      "name": "Fader: Aux In 4 to MixBus 7",
       "variableId": "fader_auxin_04_to_bus_07",
     },
     {
-      "name": "Fader: Aux In 4 to Bus 8",
+      "name": "Fader: Aux In 4 to MixBus 8",
       "variableId": "fader_auxin_04_to_bus_08",
     },
     {
-      "name": "Fader: Aux In 4 to Bus 9",
+      "name": "Fader: Aux In 4 to MixBus 9",
       "variableId": "fader_auxin_04_to_bus_09",
     },
     {
-      "name": "Fader: Aux In 4 to Bus 10",
+      "name": "Fader: Aux In 4 to MixBus 10",
       "variableId": "fader_auxin_04_to_bus_10",
     },
     {
-      "name": "Fader: Aux In 4 to Bus 11",
+      "name": "Fader: Aux In 4 to MixBus 11",
       "variableId": "fader_auxin_04_to_bus_11",
     },
     {
-      "name": "Fader: Aux In 4 to Bus 12",
+      "name": "Fader: Aux In 4 to MixBus 12",
       "variableId": "fader_auxin_04_to_bus_12",
     },
     {
-      "name": "Fader: Aux In 4 to Bus 13",
+      "name": "Fader: Aux In 4 to MixBus 13",
       "variableId": "fader_auxin_04_to_bus_13",
     },
     {
-      "name": "Fader: Aux In 4 to Bus 14",
+      "name": "Fader: Aux In 4 to MixBus 14",
       "variableId": "fader_auxin_04_to_bus_14",
     },
     {
-      "name": "Fader: Aux In 4 to Bus 15",
+      "name": "Fader: Aux In 4 to MixBus 15",
       "variableId": "fader_auxin_04_to_bus_15",
     },
     {
-      "name": "Fader: Aux In 4 to Bus 16",
+      "name": "Fader: Aux In 4 to MixBus 16",
       "variableId": "fader_auxin_04_to_bus_16",
     },
     {
-      "name": "Fader: Aux In 5 to Bus 1",
+      "name": "Fader: Aux In 5 to MixBus 1",
       "variableId": "fader_auxin_05_to_bus_01",
     },
     {
-      "name": "Fader: Aux In 5 to Bus 2",
+      "name": "Fader: Aux In 5 to MixBus 2",
       "variableId": "fader_auxin_05_to_bus_02",
     },
     {
-      "name": "Fader: Aux In 5 to Bus 3",
+      "name": "Fader: Aux In 5 to MixBus 3",
       "variableId": "fader_auxin_05_to_bus_03",
     },
     {
-      "name": "Fader: Aux In 5 to Bus 4",
+      "name": "Fader: Aux In 5 to MixBus 4",
       "variableId": "fader_auxin_05_to_bus_04",
     },
     {
-      "name": "Fader: Aux In 5 to Bus 5",
+      "name": "Fader: Aux In 5 to MixBus 5",
       "variableId": "fader_auxin_05_to_bus_05",
     },
     {
-      "name": "Fader: Aux In 5 to Bus 6",
+      "name": "Fader: Aux In 5 to MixBus 6",
       "variableId": "fader_auxin_05_to_bus_06",
     },
     {
-      "name": "Fader: Aux In 5 to Bus 7",
+      "name": "Fader: Aux In 5 to MixBus 7",
       "variableId": "fader_auxin_05_to_bus_07",
     },
     {
-      "name": "Fader: Aux In 5 to Bus 8",
+      "name": "Fader: Aux In 5 to MixBus 8",
       "variableId": "fader_auxin_05_to_bus_08",
     },
     {
-      "name": "Fader: Aux In 5 to Bus 9",
+      "name": "Fader: Aux In 5 to MixBus 9",
       "variableId": "fader_auxin_05_to_bus_09",
     },
     {
-      "name": "Fader: Aux In 5 to Bus 10",
+      "name": "Fader: Aux In 5 to MixBus 10",
       "variableId": "fader_auxin_05_to_bus_10",
     },
     {
-      "name": "Fader: Aux In 5 to Bus 11",
+      "name": "Fader: Aux In 5 to MixBus 11",
       "variableId": "fader_auxin_05_to_bus_11",
     },
     {
-      "name": "Fader: Aux In 5 to Bus 12",
+      "name": "Fader: Aux In 5 to MixBus 12",
       "variableId": "fader_auxin_05_to_bus_12",
     },
     {
-      "name": "Fader: Aux In 5 to Bus 13",
+      "name": "Fader: Aux In 5 to MixBus 13",
       "variableId": "fader_auxin_05_to_bus_13",
     },
     {
-      "name": "Fader: Aux In 5 to Bus 14",
+      "name": "Fader: Aux In 5 to MixBus 14",
       "variableId": "fader_auxin_05_to_bus_14",
     },
     {
-      "name": "Fader: Aux In 5 to Bus 15",
+      "name": "Fader: Aux In 5 to MixBus 15",
       "variableId": "fader_auxin_05_to_bus_15",
     },
     {
-      "name": "Fader: Aux In 5 to Bus 16",
+      "name": "Fader: Aux In 5 to MixBus 16",
       "variableId": "fader_auxin_05_to_bus_16",
     },
     {
-      "name": "Fader: Aux In 6 to Bus 1",
+      "name": "Fader: Aux In 6 to MixBus 1",
       "variableId": "fader_auxin_06_to_bus_01",
     },
     {
-      "name": "Fader: Aux In 6 to Bus 2",
+      "name": "Fader: Aux In 6 to MixBus 2",
       "variableId": "fader_auxin_06_to_bus_02",
     },
     {
-      "name": "Fader: Aux In 6 to Bus 3",
+      "name": "Fader: Aux In 6 to MixBus 3",
       "variableId": "fader_auxin_06_to_bus_03",
     },
     {
-      "name": "Fader: Aux In 6 to Bus 4",
+      "name": "Fader: Aux In 6 to MixBus 4",
       "variableId": "fader_auxin_06_to_bus_04",
     },
     {
-      "name": "Fader: Aux In 6 to Bus 5",
+      "name": "Fader: Aux In 6 to MixBus 5",
       "variableId": "fader_auxin_06_to_bus_05",
     },
     {
-      "name": "Fader: Aux In 6 to Bus 6",
+      "name": "Fader: Aux In 6 to MixBus 6",
       "variableId": "fader_auxin_06_to_bus_06",
     },
     {
-      "name": "Fader: Aux In 6 to Bus 7",
+      "name": "Fader: Aux In 6 to MixBus 7",
       "variableId": "fader_auxin_06_to_bus_07",
     },
     {
-      "name": "Fader: Aux In 6 to Bus 8",
+      "name": "Fader: Aux In 6 to MixBus 8",
       "variableId": "fader_auxin_06_to_bus_08",
     },
     {
-      "name": "Fader: Aux In 6 to Bus 9",
+      "name": "Fader: Aux In 6 to MixBus 9",
       "variableId": "fader_auxin_06_to_bus_09",
     },
     {
-      "name": "Fader: Aux In 6 to Bus 10",
+      "name": "Fader: Aux In 6 to MixBus 10",
       "variableId": "fader_auxin_06_to_bus_10",
     },
     {
-      "name": "Fader: Aux In 6 to Bus 11",
+      "name": "Fader: Aux In 6 to MixBus 11",
       "variableId": "fader_auxin_06_to_bus_11",
     },
     {
-      "name": "Fader: Aux In 6 to Bus 12",
+      "name": "Fader: Aux In 6 to MixBus 12",
       "variableId": "fader_auxin_06_to_bus_12",
     },
     {
-      "name": "Fader: Aux In 6 to Bus 13",
+      "name": "Fader: Aux In 6 to MixBus 13",
       "variableId": "fader_auxin_06_to_bus_13",
     },
     {
-      "name": "Fader: Aux In 6 to Bus 14",
+      "name": "Fader: Aux In 6 to MixBus 14",
       "variableId": "fader_auxin_06_to_bus_14",
     },
     {
-      "name": "Fader: Aux In 6 to Bus 15",
+      "name": "Fader: Aux In 6 to MixBus 15",
       "variableId": "fader_auxin_06_to_bus_15",
     },
     {
-      "name": "Fader: Aux In 6 to Bus 16",
+      "name": "Fader: Aux In 6 to MixBus 16",
       "variableId": "fader_auxin_06_to_bus_16",
     },
     {
-      "name": "Fader: Aux In 7 to Bus 1",
+      "name": "Fader: Aux In 7 to MixBus 1",
       "variableId": "fader_auxin_07_to_bus_01",
     },
     {
-      "name": "Fader: Aux In 7 to Bus 2",
+      "name": "Fader: Aux In 7 to MixBus 2",
       "variableId": "fader_auxin_07_to_bus_02",
     },
     {
-      "name": "Fader: Aux In 7 to Bus 3",
+      "name": "Fader: Aux In 7 to MixBus 3",
       "variableId": "fader_auxin_07_to_bus_03",
     },
     {
-      "name": "Fader: Aux In 7 to Bus 4",
+      "name": "Fader: Aux In 7 to MixBus 4",
       "variableId": "fader_auxin_07_to_bus_04",
     },
     {
-      "name": "Fader: Aux In 7 to Bus 5",
+      "name": "Fader: Aux In 7 to MixBus 5",
       "variableId": "fader_auxin_07_to_bus_05",
     },
     {
-      "name": "Fader: Aux In 7 to Bus 6",
+      "name": "Fader: Aux In 7 to MixBus 6",
       "variableId": "fader_auxin_07_to_bus_06",
     },
     {
-      "name": "Fader: Aux In 7 to Bus 7",
+      "name": "Fader: Aux In 7 to MixBus 7",
       "variableId": "fader_auxin_07_to_bus_07",
     },
     {
-      "name": "Fader: Aux In 7 to Bus 8",
+      "name": "Fader: Aux In 7 to MixBus 8",
       "variableId": "fader_auxin_07_to_bus_08",
     },
     {
-      "name": "Fader: Aux In 7 to Bus 9",
+      "name": "Fader: Aux In 7 to MixBus 9",
       "variableId": "fader_auxin_07_to_bus_09",
     },
     {
-      "name": "Fader: Aux In 7 to Bus 10",
+      "name": "Fader: Aux In 7 to MixBus 10",
       "variableId": "fader_auxin_07_to_bus_10",
     },
     {
-      "name": "Fader: Aux In 7 to Bus 11",
+      "name": "Fader: Aux In 7 to MixBus 11",
       "variableId": "fader_auxin_07_to_bus_11",
     },
     {
-      "name": "Fader: Aux In 7 to Bus 12",
+      "name": "Fader: Aux In 7 to MixBus 12",
       "variableId": "fader_auxin_07_to_bus_12",
     },
     {
-      "name": "Fader: Aux In 7 to Bus 13",
+      "name": "Fader: Aux In 7 to MixBus 13",
       "variableId": "fader_auxin_07_to_bus_13",
     },
     {
-      "name": "Fader: Aux In 7 to Bus 14",
+      "name": "Fader: Aux In 7 to MixBus 14",
       "variableId": "fader_auxin_07_to_bus_14",
     },
     {
-      "name": "Fader: Aux In 7 to Bus 15",
+      "name": "Fader: Aux In 7 to MixBus 15",
       "variableId": "fader_auxin_07_to_bus_15",
     },
     {
-      "name": "Fader: Aux In 7 to Bus 16",
+      "name": "Fader: Aux In 7 to MixBus 16",
       "variableId": "fader_auxin_07_to_bus_16",
     },
     {
-      "name": "Fader: Aux In 8 to Bus 1",
+      "name": "Fader: Aux In 8 to MixBus 1",
       "variableId": "fader_auxin_08_to_bus_01",
     },
     {
-      "name": "Fader: Aux In 8 to Bus 2",
+      "name": "Fader: Aux In 8 to MixBus 2",
       "variableId": "fader_auxin_08_to_bus_02",
     },
     {
-      "name": "Fader: Aux In 8 to Bus 3",
+      "name": "Fader: Aux In 8 to MixBus 3",
       "variableId": "fader_auxin_08_to_bus_03",
     },
     {
-      "name": "Fader: Aux In 8 to Bus 4",
+      "name": "Fader: Aux In 8 to MixBus 4",
       "variableId": "fader_auxin_08_to_bus_04",
     },
     {
-      "name": "Fader: Aux In 8 to Bus 5",
+      "name": "Fader: Aux In 8 to MixBus 5",
       "variableId": "fader_auxin_08_to_bus_05",
     },
     {
-      "name": "Fader: Aux In 8 to Bus 6",
+      "name": "Fader: Aux In 8 to MixBus 6",
       "variableId": "fader_auxin_08_to_bus_06",
     },
     {
-      "name": "Fader: Aux In 8 to Bus 7",
+      "name": "Fader: Aux In 8 to MixBus 7",
       "variableId": "fader_auxin_08_to_bus_07",
     },
     {
-      "name": "Fader: Aux In 8 to Bus 8",
+      "name": "Fader: Aux In 8 to MixBus 8",
       "variableId": "fader_auxin_08_to_bus_08",
     },
     {
-      "name": "Fader: Aux In 8 to Bus 9",
+      "name": "Fader: Aux In 8 to MixBus 9",
       "variableId": "fader_auxin_08_to_bus_09",
     },
     {
-      "name": "Fader: Aux In 8 to Bus 10",
+      "name": "Fader: Aux In 8 to MixBus 10",
       "variableId": "fader_auxin_08_to_bus_10",
     },
     {
-      "name": "Fader: Aux In 8 to Bus 11",
+      "name": "Fader: Aux In 8 to MixBus 11",
       "variableId": "fader_auxin_08_to_bus_11",
     },
     {
-      "name": "Fader: Aux In 8 to Bus 12",
+      "name": "Fader: Aux In 8 to MixBus 12",
       "variableId": "fader_auxin_08_to_bus_12",
     },
     {
-      "name": "Fader: Aux In 8 to Bus 13",
+      "name": "Fader: Aux In 8 to MixBus 13",
       "variableId": "fader_auxin_08_to_bus_13",
     },
     {
-      "name": "Fader: Aux In 8 to Bus 14",
+      "name": "Fader: Aux In 8 to MixBus 14",
       "variableId": "fader_auxin_08_to_bus_14",
     },
     {
-      "name": "Fader: Aux In 8 to Bus 15",
+      "name": "Fader: Aux In 8 to MixBus 15",
       "variableId": "fader_auxin_08_to_bus_15",
     },
     {
-      "name": "Fader: Aux In 8 to Bus 16",
+      "name": "Fader: Aux In 8 to MixBus 16",
       "variableId": "fader_auxin_08_to_bus_16",
     },
     {
-      "name": "Fader: FX Return 1 L to Bus 1",
+      "name": "Fader: FX Return 1 L to MixBus 1",
       "variableId": "fader_fxrtn_01_to_bus_01",
     },
     {
-      "name": "Fader: FX Return 1 L to Bus 2",
+      "name": "Fader: FX Return 1 L to MixBus 2",
       "variableId": "fader_fxrtn_01_to_bus_02",
     },
     {
-      "name": "Fader: FX Return 1 L to Bus 3",
+      "name": "Fader: FX Return 1 L to MixBus 3",
       "variableId": "fader_fxrtn_01_to_bus_03",
     },
     {
-      "name": "Fader: FX Return 1 L to Bus 4",
+      "name": "Fader: FX Return 1 L to MixBus 4",
       "variableId": "fader_fxrtn_01_to_bus_04",
     },
     {
-      "name": "Fader: FX Return 1 L to Bus 5",
+      "name": "Fader: FX Return 1 L to MixBus 5",
       "variableId": "fader_fxrtn_01_to_bus_05",
     },
     {
-      "name": "Fader: FX Return 1 L to Bus 6",
+      "name": "Fader: FX Return 1 L to MixBus 6",
       "variableId": "fader_fxrtn_01_to_bus_06",
     },
     {
-      "name": "Fader: FX Return 1 L to Bus 7",
+      "name": "Fader: FX Return 1 L to MixBus 7",
       "variableId": "fader_fxrtn_01_to_bus_07",
     },
     {
-      "name": "Fader: FX Return 1 L to Bus 8",
+      "name": "Fader: FX Return 1 L to MixBus 8",
       "variableId": "fader_fxrtn_01_to_bus_08",
     },
     {
-      "name": "Fader: FX Return 1 L to Bus 9",
+      "name": "Fader: FX Return 1 L to MixBus 9",
       "variableId": "fader_fxrtn_01_to_bus_09",
     },
     {
-      "name": "Fader: FX Return 1 L to Bus 10",
+      "name": "Fader: FX Return 1 L to MixBus 10",
       "variableId": "fader_fxrtn_01_to_bus_10",
     },
     {
-      "name": "Fader: FX Return 1 L to Bus 11",
+      "name": "Fader: FX Return 1 L to MixBus 11",
       "variableId": "fader_fxrtn_01_to_bus_11",
     },
     {
-      "name": "Fader: FX Return 1 L to Bus 12",
+      "name": "Fader: FX Return 1 L to MixBus 12",
       "variableId": "fader_fxrtn_01_to_bus_12",
     },
     {
-      "name": "Fader: FX Return 1 L to Bus 13",
+      "name": "Fader: FX Return 1 L to MixBus 13",
       "variableId": "fader_fxrtn_01_to_bus_13",
     },
     {
-      "name": "Fader: FX Return 1 L to Bus 14",
+      "name": "Fader: FX Return 1 L to MixBus 14",
       "variableId": "fader_fxrtn_01_to_bus_14",
     },
     {
-      "name": "Fader: FX Return 1 L to Bus 15",
+      "name": "Fader: FX Return 1 L to MixBus 15",
       "variableId": "fader_fxrtn_01_to_bus_15",
     },
     {
-      "name": "Fader: FX Return 1 L to Bus 16",
+      "name": "Fader: FX Return 1 L to MixBus 16",
       "variableId": "fader_fxrtn_01_to_bus_16",
     },
     {
-      "name": "Fader: FX Return 1 R to Bus 1",
+      "name": "Fader: FX Return 1 R to MixBus 1",
       "variableId": "fader_fxrtn_02_to_bus_01",
     },
     {
-      "name": "Fader: FX Return 1 R to Bus 2",
+      "name": "Fader: FX Return 1 R to MixBus 2",
       "variableId": "fader_fxrtn_02_to_bus_02",
     },
     {
-      "name": "Fader: FX Return 1 R to Bus 3",
+      "name": "Fader: FX Return 1 R to MixBus 3",
       "variableId": "fader_fxrtn_02_to_bus_03",
     },
     {
-      "name": "Fader: FX Return 1 R to Bus 4",
+      "name": "Fader: FX Return 1 R to MixBus 4",
       "variableId": "fader_fxrtn_02_to_bus_04",
     },
     {
-      "name": "Fader: FX Return 1 R to Bus 5",
+      "name": "Fader: FX Return 1 R to MixBus 5",
       "variableId": "fader_fxrtn_02_to_bus_05",
     },
     {
-      "name": "Fader: FX Return 1 R to Bus 6",
+      "name": "Fader: FX Return 1 R to MixBus 6",
       "variableId": "fader_fxrtn_02_to_bus_06",
     },
     {
-      "name": "Fader: FX Return 1 R to Bus 7",
+      "name": "Fader: FX Return 1 R to MixBus 7",
       "variableId": "fader_fxrtn_02_to_bus_07",
     },
     {
-      "name": "Fader: FX Return 1 R to Bus 8",
+      "name": "Fader: FX Return 1 R to MixBus 8",
       "variableId": "fader_fxrtn_02_to_bus_08",
     },
     {
-      "name": "Fader: FX Return 1 R to Bus 9",
+      "name": "Fader: FX Return 1 R to MixBus 9",
       "variableId": "fader_fxrtn_02_to_bus_09",
     },
     {
-      "name": "Fader: FX Return 1 R to Bus 10",
+      "name": "Fader: FX Return 1 R to MixBus 10",
       "variableId": "fader_fxrtn_02_to_bus_10",
     },
     {
-      "name": "Fader: FX Return 1 R to Bus 11",
+      "name": "Fader: FX Return 1 R to MixBus 11",
       "variableId": "fader_fxrtn_02_to_bus_11",
     },
     {
-      "name": "Fader: FX Return 1 R to Bus 12",
+      "name": "Fader: FX Return 1 R to MixBus 12",
       "variableId": "fader_fxrtn_02_to_bus_12",
     },
     {
-      "name": "Fader: FX Return 1 R to Bus 13",
+      "name": "Fader: FX Return 1 R to MixBus 13",
       "variableId": "fader_fxrtn_02_to_bus_13",
     },
     {
-      "name": "Fader: FX Return 1 R to Bus 14",
+      "name": "Fader: FX Return 1 R to MixBus 14",
       "variableId": "fader_fxrtn_02_to_bus_14",
     },
     {
-      "name": "Fader: FX Return 1 R to Bus 15",
+      "name": "Fader: FX Return 1 R to MixBus 15",
       "variableId": "fader_fxrtn_02_to_bus_15",
     },
     {
-      "name": "Fader: FX Return 1 R to Bus 16",
+      "name": "Fader: FX Return 1 R to MixBus 16",
       "variableId": "fader_fxrtn_02_to_bus_16",
     },
     {
-      "name": "Fader: FX Return 2 L to Bus 1",
+      "name": "Fader: FX Return 2 L to MixBus 1",
       "variableId": "fader_fxrtn_03_to_bus_01",
     },
     {
-      "name": "Fader: FX Return 2 L to Bus 2",
+      "name": "Fader: FX Return 2 L to MixBus 2",
       "variableId": "fader_fxrtn_03_to_bus_02",
     },
     {
-      "name": "Fader: FX Return 2 L to Bus 3",
+      "name": "Fader: FX Return 2 L to MixBus 3",
       "variableId": "fader_fxrtn_03_to_bus_03",
     },
     {
-      "name": "Fader: FX Return 2 L to Bus 4",
+      "name": "Fader: FX Return 2 L to MixBus 4",
       "variableId": "fader_fxrtn_03_to_bus_04",
     },
     {
-      "name": "Fader: FX Return 2 L to Bus 5",
+      "name": "Fader: FX Return 2 L to MixBus 5",
       "variableId": "fader_fxrtn_03_to_bus_05",
     },
     {
-      "name": "Fader: FX Return 2 L to Bus 6",
+      "name": "Fader: FX Return 2 L to MixBus 6",
       "variableId": "fader_fxrtn_03_to_bus_06",
     },
     {
-      "name": "Fader: FX Return 2 L to Bus 7",
+      "name": "Fader: FX Return 2 L to MixBus 7",
       "variableId": "fader_fxrtn_03_to_bus_07",
     },
     {
-      "name": "Fader: FX Return 2 L to Bus 8",
+      "name": "Fader: FX Return 2 L to MixBus 8",
       "variableId": "fader_fxrtn_03_to_bus_08",
     },
     {
-      "name": "Fader: FX Return 2 L to Bus 9",
+      "name": "Fader: FX Return 2 L to MixBus 9",
       "variableId": "fader_fxrtn_03_to_bus_09",
     },
     {
-      "name": "Fader: FX Return 2 L to Bus 10",
+      "name": "Fader: FX Return 2 L to MixBus 10",
       "variableId": "fader_fxrtn_03_to_bus_10",
     },
     {
-      "name": "Fader: FX Return 2 L to Bus 11",
+      "name": "Fader: FX Return 2 L to MixBus 11",
       "variableId": "fader_fxrtn_03_to_bus_11",
     },
     {
-      "name": "Fader: FX Return 2 L to Bus 12",
+      "name": "Fader: FX Return 2 L to MixBus 12",
       "variableId": "fader_fxrtn_03_to_bus_12",
     },
     {
-      "name": "Fader: FX Return 2 L to Bus 13",
+      "name": "Fader: FX Return 2 L to MixBus 13",
       "variableId": "fader_fxrtn_03_to_bus_13",
     },
     {
-      "name": "Fader: FX Return 2 L to Bus 14",
+      "name": "Fader: FX Return 2 L to MixBus 14",
       "variableId": "fader_fxrtn_03_to_bus_14",
     },
     {
-      "name": "Fader: FX Return 2 L to Bus 15",
+      "name": "Fader: FX Return 2 L to MixBus 15",
       "variableId": "fader_fxrtn_03_to_bus_15",
     },
     {
-      "name": "Fader: FX Return 2 L to Bus 16",
+      "name": "Fader: FX Return 2 L to MixBus 16",
       "variableId": "fader_fxrtn_03_to_bus_16",
     },
     {
-      "name": "Fader: FX Return 2 R to Bus 1",
+      "name": "Fader: FX Return 2 R to MixBus 1",
       "variableId": "fader_fxrtn_04_to_bus_01",
     },
     {
-      "name": "Fader: FX Return 2 R to Bus 2",
+      "name": "Fader: FX Return 2 R to MixBus 2",
       "variableId": "fader_fxrtn_04_to_bus_02",
     },
     {
-      "name": "Fader: FX Return 2 R to Bus 3",
+      "name": "Fader: FX Return 2 R to MixBus 3",
       "variableId": "fader_fxrtn_04_to_bus_03",
     },
     {
-      "name": "Fader: FX Return 2 R to Bus 4",
+      "name": "Fader: FX Return 2 R to MixBus 4",
       "variableId": "fader_fxrtn_04_to_bus_04",
     },
     {
-      "name": "Fader: FX Return 2 R to Bus 5",
+      "name": "Fader: FX Return 2 R to MixBus 5",
       "variableId": "fader_fxrtn_04_to_bus_05",
     },
     {
-      "name": "Fader: FX Return 2 R to Bus 6",
+      "name": "Fader: FX Return 2 R to MixBus 6",
       "variableId": "fader_fxrtn_04_to_bus_06",
     },
     {
-      "name": "Fader: FX Return 2 R to Bus 7",
+      "name": "Fader: FX Return 2 R to MixBus 7",
       "variableId": "fader_fxrtn_04_to_bus_07",
     },
     {
-      "name": "Fader: FX Return 2 R to Bus 8",
+      "name": "Fader: FX Return 2 R to MixBus 8",
       "variableId": "fader_fxrtn_04_to_bus_08",
     },
     {
-      "name": "Fader: FX Return 2 R to Bus 9",
+      "name": "Fader: FX Return 2 R to MixBus 9",
       "variableId": "fader_fxrtn_04_to_bus_09",
     },
     {
-      "name": "Fader: FX Return 2 R to Bus 10",
+      "name": "Fader: FX Return 2 R to MixBus 10",
       "variableId": "fader_fxrtn_04_to_bus_10",
     },
     {
-      "name": "Fader: FX Return 2 R to Bus 11",
+      "name": "Fader: FX Return 2 R to MixBus 11",
       "variableId": "fader_fxrtn_04_to_bus_11",
     },
     {
-      "name": "Fader: FX Return 2 R to Bus 12",
+      "name": "Fader: FX Return 2 R to MixBus 12",
       "variableId": "fader_fxrtn_04_to_bus_12",
     },
     {
-      "name": "Fader: FX Return 2 R to Bus 13",
+      "name": "Fader: FX Return 2 R to MixBus 13",
       "variableId": "fader_fxrtn_04_to_bus_13",
     },
     {
-      "name": "Fader: FX Return 2 R to Bus 14",
+      "name": "Fader: FX Return 2 R to MixBus 14",
       "variableId": "fader_fxrtn_04_to_bus_14",
     },
     {
-      "name": "Fader: FX Return 2 R to Bus 15",
+      "name": "Fader: FX Return 2 R to MixBus 15",
       "variableId": "fader_fxrtn_04_to_bus_15",
     },
     {
-      "name": "Fader: FX Return 2 R to Bus 16",
+      "name": "Fader: FX Return 2 R to MixBus 16",
       "variableId": "fader_fxrtn_04_to_bus_16",
     },
     {
-      "name": "Fader: FX Return 3 L to Bus 1",
+      "name": "Fader: FX Return 3 L to MixBus 1",
       "variableId": "fader_fxrtn_05_to_bus_01",
     },
     {
-      "name": "Fader: FX Return 3 L to Bus 2",
+      "name": "Fader: FX Return 3 L to MixBus 2",
       "variableId": "fader_fxrtn_05_to_bus_02",
     },
     {
-      "name": "Fader: FX Return 3 L to Bus 3",
+      "name": "Fader: FX Return 3 L to MixBus 3",
       "variableId": "fader_fxrtn_05_to_bus_03",
     },
     {
-      "name": "Fader: FX Return 3 L to Bus 4",
+      "name": "Fader: FX Return 3 L to MixBus 4",
       "variableId": "fader_fxrtn_05_to_bus_04",
     },
     {
-      "name": "Fader: FX Return 3 L to Bus 5",
+      "name": "Fader: FX Return 3 L to MixBus 5",
       "variableId": "fader_fxrtn_05_to_bus_05",
     },
     {
-      "name": "Fader: FX Return 3 L to Bus 6",
+      "name": "Fader: FX Return 3 L to MixBus 6",
       "variableId": "fader_fxrtn_05_to_bus_06",
     },
     {
-      "name": "Fader: FX Return 3 L to Bus 7",
+      "name": "Fader: FX Return 3 L to MixBus 7",
       "variableId": "fader_fxrtn_05_to_bus_07",
     },
     {
-      "name": "Fader: FX Return 3 L to Bus 8",
+      "name": "Fader: FX Return 3 L to MixBus 8",
       "variableId": "fader_fxrtn_05_to_bus_08",
     },
     {
-      "name": "Fader: FX Return 3 L to Bus 9",
+      "name": "Fader: FX Return 3 L to MixBus 9",
       "variableId": "fader_fxrtn_05_to_bus_09",
     },
     {
-      "name": "Fader: FX Return 3 L to Bus 10",
+      "name": "Fader: FX Return 3 L to MixBus 10",
       "variableId": "fader_fxrtn_05_to_bus_10",
     },
     {
-      "name": "Fader: FX Return 3 L to Bus 11",
+      "name": "Fader: FX Return 3 L to MixBus 11",
       "variableId": "fader_fxrtn_05_to_bus_11",
     },
     {
-      "name": "Fader: FX Return 3 L to Bus 12",
+      "name": "Fader: FX Return 3 L to MixBus 12",
       "variableId": "fader_fxrtn_05_to_bus_12",
     },
     {
-      "name": "Fader: FX Return 3 L to Bus 13",
+      "name": "Fader: FX Return 3 L to MixBus 13",
       "variableId": "fader_fxrtn_05_to_bus_13",
     },
     {
-      "name": "Fader: FX Return 3 L to Bus 14",
+      "name": "Fader: FX Return 3 L to MixBus 14",
       "variableId": "fader_fxrtn_05_to_bus_14",
     },
     {
-      "name": "Fader: FX Return 3 L to Bus 15",
+      "name": "Fader: FX Return 3 L to MixBus 15",
       "variableId": "fader_fxrtn_05_to_bus_15",
     },
     {
-      "name": "Fader: FX Return 3 L to Bus 16",
+      "name": "Fader: FX Return 3 L to MixBus 16",
       "variableId": "fader_fxrtn_05_to_bus_16",
     },
     {
-      "name": "Fader: FX Return 3 R to Bus 1",
+      "name": "Fader: FX Return 3 R to MixBus 1",
       "variableId": "fader_fxrtn_06_to_bus_01",
     },
     {
-      "name": "Fader: FX Return 3 R to Bus 2",
+      "name": "Fader: FX Return 3 R to MixBus 2",
       "variableId": "fader_fxrtn_06_to_bus_02",
     },
     {
-      "name": "Fader: FX Return 3 R to Bus 3",
+      "name": "Fader: FX Return 3 R to MixBus 3",
       "variableId": "fader_fxrtn_06_to_bus_03",
     },
     {
-      "name": "Fader: FX Return 3 R to Bus 4",
+      "name": "Fader: FX Return 3 R to MixBus 4",
       "variableId": "fader_fxrtn_06_to_bus_04",
     },
     {
-      "name": "Fader: FX Return 3 R to Bus 5",
+      "name": "Fader: FX Return 3 R to MixBus 5",
       "variableId": "fader_fxrtn_06_to_bus_05",
     },
     {
-      "name": "Fader: FX Return 3 R to Bus 6",
+      "name": "Fader: FX Return 3 R to MixBus 6",
       "variableId": "fader_fxrtn_06_to_bus_06",
     },
     {
-      "name": "Fader: FX Return 3 R to Bus 7",
+      "name": "Fader: FX Return 3 R to MixBus 7",
       "variableId": "fader_fxrtn_06_to_bus_07",
     },
     {
-      "name": "Fader: FX Return 3 R to Bus 8",
+      "name": "Fader: FX Return 3 R to MixBus 8",
       "variableId": "fader_fxrtn_06_to_bus_08",
     },
     {
-      "name": "Fader: FX Return 3 R to Bus 9",
+      "name": "Fader: FX Return 3 R to MixBus 9",
       "variableId": "fader_fxrtn_06_to_bus_09",
     },
     {
-      "name": "Fader: FX Return 3 R to Bus 10",
+      "name": "Fader: FX Return 3 R to MixBus 10",
       "variableId": "fader_fxrtn_06_to_bus_10",
     },
     {
-      "name": "Fader: FX Return 3 R to Bus 11",
+      "name": "Fader: FX Return 3 R to MixBus 11",
       "variableId": "fader_fxrtn_06_to_bus_11",
     },
     {
-      "name": "Fader: FX Return 3 R to Bus 12",
+      "name": "Fader: FX Return 3 R to MixBus 12",
       "variableId": "fader_fxrtn_06_to_bus_12",
     },
     {
-      "name": "Fader: FX Return 3 R to Bus 13",
+      "name": "Fader: FX Return 3 R to MixBus 13",
       "variableId": "fader_fxrtn_06_to_bus_13",
     },
     {
-      "name": "Fader: FX Return 3 R to Bus 14",
+      "name": "Fader: FX Return 3 R to MixBus 14",
       "variableId": "fader_fxrtn_06_to_bus_14",
     },
     {
-      "name": "Fader: FX Return 3 R to Bus 15",
+      "name": "Fader: FX Return 3 R to MixBus 15",
       "variableId": "fader_fxrtn_06_to_bus_15",
     },
     {
-      "name": "Fader: FX Return 3 R to Bus 16",
+      "name": "Fader: FX Return 3 R to MixBus 16",
       "variableId": "fader_fxrtn_06_to_bus_16",
     },
     {
-      "name": "Fader: FX Return 4 L to Bus 1",
+      "name": "Fader: FX Return 4 L to MixBus 1",
       "variableId": "fader_fxrtn_07_to_bus_01",
     },
     {
-      "name": "Fader: FX Return 4 L to Bus 2",
+      "name": "Fader: FX Return 4 L to MixBus 2",
       "variableId": "fader_fxrtn_07_to_bus_02",
     },
     {
-      "name": "Fader: FX Return 4 L to Bus 3",
+      "name": "Fader: FX Return 4 L to MixBus 3",
       "variableId": "fader_fxrtn_07_to_bus_03",
     },
     {
-      "name": "Fader: FX Return 4 L to Bus 4",
+      "name": "Fader: FX Return 4 L to MixBus 4",
       "variableId": "fader_fxrtn_07_to_bus_04",
     },
     {
-      "name": "Fader: FX Return 4 L to Bus 5",
+      "name": "Fader: FX Return 4 L to MixBus 5",
       "variableId": "fader_fxrtn_07_to_bus_05",
     },
     {
-      "name": "Fader: FX Return 4 L to Bus 6",
+      "name": "Fader: FX Return 4 L to MixBus 6",
       "variableId": "fader_fxrtn_07_to_bus_06",
     },
     {
-      "name": "Fader: FX Return 4 L to Bus 7",
+      "name": "Fader: FX Return 4 L to MixBus 7",
       "variableId": "fader_fxrtn_07_to_bus_07",
     },
     {
-      "name": "Fader: FX Return 4 L to Bus 8",
+      "name": "Fader: FX Return 4 L to MixBus 8",
       "variableId": "fader_fxrtn_07_to_bus_08",
     },
     {
-      "name": "Fader: FX Return 4 L to Bus 9",
+      "name": "Fader: FX Return 4 L to MixBus 9",
       "variableId": "fader_fxrtn_07_to_bus_09",
     },
     {
-      "name": "Fader: FX Return 4 L to Bus 10",
+      "name": "Fader: FX Return 4 L to MixBus 10",
       "variableId": "fader_fxrtn_07_to_bus_10",
     },
     {
-      "name": "Fader: FX Return 4 L to Bus 11",
+      "name": "Fader: FX Return 4 L to MixBus 11",
       "variableId": "fader_fxrtn_07_to_bus_11",
     },
     {
-      "name": "Fader: FX Return 4 L to Bus 12",
+      "name": "Fader: FX Return 4 L to MixBus 12",
       "variableId": "fader_fxrtn_07_to_bus_12",
     },
     {
-      "name": "Fader: FX Return 4 L to Bus 13",
+      "name": "Fader: FX Return 4 L to MixBus 13",
       "variableId": "fader_fxrtn_07_to_bus_13",
     },
     {
-      "name": "Fader: FX Return 4 L to Bus 14",
+      "name": "Fader: FX Return 4 L to MixBus 14",
       "variableId": "fader_fxrtn_07_to_bus_14",
     },
     {
-      "name": "Fader: FX Return 4 L to Bus 15",
+      "name": "Fader: FX Return 4 L to MixBus 15",
       "variableId": "fader_fxrtn_07_to_bus_15",
     },
     {
-      "name": "Fader: FX Return 4 L to Bus 16",
+      "name": "Fader: FX Return 4 L to MixBus 16",
       "variableId": "fader_fxrtn_07_to_bus_16",
     },
     {
-      "name": "Fader: FX Return 4 R to Bus 1",
+      "name": "Fader: FX Return 4 R to MixBus 1",
       "variableId": "fader_fxrtn_08_to_bus_01",
     },
     {
-      "name": "Fader: FX Return 4 R to Bus 2",
+      "name": "Fader: FX Return 4 R to MixBus 2",
       "variableId": "fader_fxrtn_08_to_bus_02",
     },
     {
-      "name": "Fader: FX Return 4 R to Bus 3",
+      "name": "Fader: FX Return 4 R to MixBus 3",
       "variableId": "fader_fxrtn_08_to_bus_03",
     },
     {
-      "name": "Fader: FX Return 4 R to Bus 4",
+      "name": "Fader: FX Return 4 R to MixBus 4",
       "variableId": "fader_fxrtn_08_to_bus_04",
     },
     {
-      "name": "Fader: FX Return 4 R to Bus 5",
+      "name": "Fader: FX Return 4 R to MixBus 5",
       "variableId": "fader_fxrtn_08_to_bus_05",
     },
     {
-      "name": "Fader: FX Return 4 R to Bus 6",
+      "name": "Fader: FX Return 4 R to MixBus 6",
       "variableId": "fader_fxrtn_08_to_bus_06",
     },
     {
-      "name": "Fader: FX Return 4 R to Bus 7",
+      "name": "Fader: FX Return 4 R to MixBus 7",
       "variableId": "fader_fxrtn_08_to_bus_07",
     },
     {
-      "name": "Fader: FX Return 4 R to Bus 8",
+      "name": "Fader: FX Return 4 R to MixBus 8",
       "variableId": "fader_fxrtn_08_to_bus_08",
     },
     {
-      "name": "Fader: FX Return 4 R to Bus 9",
+      "name": "Fader: FX Return 4 R to MixBus 9",
       "variableId": "fader_fxrtn_08_to_bus_09",
     },
     {
-      "name": "Fader: FX Return 4 R to Bus 10",
+      "name": "Fader: FX Return 4 R to MixBus 10",
       "variableId": "fader_fxrtn_08_to_bus_10",
     },
     {
-      "name": "Fader: FX Return 4 R to Bus 11",
+      "name": "Fader: FX Return 4 R to MixBus 11",
       "variableId": "fader_fxrtn_08_to_bus_11",
     },
     {
-      "name": "Fader: FX Return 4 R to Bus 12",
+      "name": "Fader: FX Return 4 R to MixBus 12",
       "variableId": "fader_fxrtn_08_to_bus_12",
     },
     {
-      "name": "Fader: FX Return 4 R to Bus 13",
+      "name": "Fader: FX Return 4 R to MixBus 13",
       "variableId": "fader_fxrtn_08_to_bus_13",
     },
     {
-      "name": "Fader: FX Return 4 R to Bus 14",
+      "name": "Fader: FX Return 4 R to MixBus 14",
       "variableId": "fader_fxrtn_08_to_bus_14",
     },
     {
-      "name": "Fader: FX Return 4 R to Bus 15",
+      "name": "Fader: FX Return 4 R to MixBus 15",
       "variableId": "fader_fxrtn_08_to_bus_15",
     },
     {
-      "name": "Fader: FX Return 4 R to Bus 16",
+      "name": "Fader: FX Return 4 R to MixBus 16",
       "variableId": "fader_fxrtn_08_to_bus_16",
     },
     {

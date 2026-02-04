@@ -29,6 +29,7 @@ export interface SourcePaths {
 	defaultRef: string
 	defaultName: string
 	namePath: string | null
+	variablesPrefix: string | null
 
 	/** If this can be stereo linked, and would be the right channel */
 	isStereoRight?: boolean
@@ -158,6 +159,7 @@ export const MainStereoPaths: SourcePaths = {
 	defaultName: `Main Stereo`,
 	defaultRef: `stereo`,
 	namePath: `/main/st/config/name`,
+	variablesPrefix: 'main_st',
 
 	muteOrOn: {
 		path: `/main/st/mix/on`,
@@ -196,6 +198,7 @@ export const MainMonoPaths: SourcePaths = {
 	defaultName: `Main Mono`,
 	defaultRef: `mono`,
 	namePath: `/main/m/config/name`,
+	variablesPrefix: 'main_m',
 
 	muteOrOn: {
 		path: `/main/m/mix/on`,
@@ -231,6 +234,7 @@ export const MainLeftPaths: SourcePaths = {
 	defaultName: `Main Left`,
 	defaultRef: `left`,
 	namePath: null,
+	variablesPrefix: null,
 
 	oscillatorDestValue: 16,
 }
@@ -238,6 +242,7 @@ export const MainRightPaths: SourcePaths = {
 	defaultName: `Main Right`,
 	defaultRef: `right`,
 	namePath: null,
+	variablesPrefix: null,
 
 	oscillatorDestValue: 17,
 }
@@ -251,6 +256,7 @@ export function getChannelPaths(channelNumber: number): SourcePaths | null {
 		defaultName: `Channel ${channelNumber}`,
 		defaultRef: `channel${channelNumber}`,
 		namePath: `${basePath}/config/name`,
+		variablesPrefix: `ch_${String(channelNumber).padStart(2, '0')}`,
 
 		isStereoRight: channelNumber % 2 === 0,
 
@@ -294,6 +300,7 @@ export function getAuxPaths(auxNumber: number): SourcePaths | null {
 		defaultName: `Aux In ${auxNumber}`,
 		defaultRef: `aux${auxNumber}`,
 		namePath: `${basePath}/config/name`,
+		variablesPrefix: `auxin_${String(auxNumber).padStart(2, '0')}`,
 
 		isStereoRight: auxNumber % 2 === 0,
 
@@ -332,6 +339,7 @@ export function getFxPaths(fxNumber: number): SourcePaths | null {
 		defaultName: `FX Return ${Math.floor((fxNumber + 1) / 2)} ${fxNumber % 2 === 1 ? 'L' : 'R'}`,
 		defaultRef: `fx${fxNumber}`,
 		namePath: `${basePath}/config/name`,
+		variablesPrefix: `fxrtn_${String(fxNumber).padStart(2, '0')}`,
 
 		isStereoRight: fxNumber % 2 === 0,
 
@@ -367,6 +375,7 @@ export function getBusPaths(busNumber: number): SourcePaths | null {
 		defaultName: `MixBus ${busNumber}`,
 		defaultRef: `bus${busNumber}`,
 		namePath: `${basePath}/config/name`,
+		variablesPrefix: `bus_${String(busNumber).padStart(2, '0')}`,
 
 		isStereoRight: busNumber % 2 === 0,
 
@@ -414,6 +423,7 @@ export function getMatrixPaths(matrixNumber: number): SourcePaths | null {
 		defaultName: `Matrix ${matrixNumber}`,
 		defaultRef: `matrix${matrixNumber}`,
 		namePath: `${basePath}/config/name`,
+		variablesPrefix: `mtx_${String(matrixNumber).padStart(2, '0')}`,
 
 		isStereoRight: matrixNumber % 2 === 0,
 
@@ -453,6 +463,7 @@ export function getDcaPaths(dcaNumber: number): SourcePaths | null {
 		defaultName: `DCA ${dcaNumber}`,
 		defaultRef: `dca${dcaNumber}`,
 		namePath: `${basePath}/config/name`,
+		variablesPrefix: `dca_${String(dcaNumber).padStart(2, '0')}`,
 
 		isStereoRight: dcaNumber % 2 === 0,
 

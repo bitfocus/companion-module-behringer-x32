@@ -384,32 +384,14 @@ export function GetPanningChoiceConfigs(state: X32State): {
 	}
 }
 
-export function GetTargetChoicesNew(
-	state: X32State,
+export function GetTargetPaths(
 	options: ParseRefOptions,
 	extraOpts?: {
 		defaultNames?: boolean
 		filter?: (sourcePaths: SourcePaths) => boolean
 	},
-): DropdownChoice[] {
-	const res: DropdownChoice[] = []
-
-	const getNameFromState = (paths: SourcePaths): string | undefined => {
-		if (extraOpts?.defaultNames || !paths.namePath) {
-			return undefined
-		}
-
-		const val = state.get(paths.namePath)
-		return val && val[0]?.type === 's' ? val[0].value : undefined
-	}
-
-	const appendTarget = (paths: SourcePaths): void => {
-		const realname = getNameFromState(paths)
-		res.push({
-			id: paths.defaultRef,
-			label: realname && realname !== paths.defaultName ? `${realname} (${paths.defaultName})` : paths.defaultName,
-		})
-	}
+): SourcePaths[] {
+	const res: SourcePaths[] = []
 
 	const repeatSource = (count: number, getPaths: (i: number) => SourcePaths | null) => {
 		for (let i = 1; i <= count; i++) {
@@ -419,7 +401,7 @@ export function GetTargetChoicesNew(
 			// Allow external filter
 			if (extraOpts?.filter && !extraOpts.filter(paths)) continue
 
-			appendTarget(paths)
+			res.push(paths)
 		}
 	}
 
@@ -429,16 +411,40 @@ export function GetTargetChoicesNew(
 	if (options.allowBus) repeatSource(16, getBusPaths)
 	if (options.allowMatrix) repeatSource(6, getMatrixPaths)
 
-	if (options.allowStereo) appendTarget(MainStereoPaths)
-	if (options.allowMono) appendTarget(MainMonoPaths)
+	if (options.allowStereo) res.push(MainStereoPaths)
+	if (options.allowMono) res.push(MainMonoPaths)
 	if (options.allowLR) {
-		appendTarget(MainLeftPaths)
-		appendTarget(MainRightPaths)
+		res.push(MainLeftPaths)
+		res.push(MainRightPaths)
 	}
 
 	if (options.allowDca) repeatSource(8, getDcaPaths)
 
 	return res
+}
+
+export function GetNameFromState(state: X32State, paths: SourcePaths): string | undefined {
+	if (!paths.namePath) return undefined
+
+	const val = state.get(paths.namePath)
+	return val && val[0]?.type === 's' ? val[0].value : undefined
+}
+
+export function GetTargetChoicesNew(
+	state: X32State,
+	options: ParseRefOptions,
+	extraOpts?: {
+		defaultNames?: boolean
+		filter?: (sourcePaths: SourcePaths) => boolean
+	},
+): DropdownChoice[] {
+	return GetTargetPaths(options, extraOpts).map((paths) => {
+		const realname = extraOpts?.defaultNames ? undefined : GetNameFromState(state, paths)
+		return {
+			id: paths.defaultRef,
+			label: realname && realname !== paths.defaultName ? `${realname} (${paths.defaultName})` : paths.defaultName,
+		}
+	})
 }
 
 /** @deprecated */
@@ -520,39 +526,6 @@ export const GetChannelSendParseOptions: ParseRefOptions = {
 	allowStereo: true,
 }
 
-/** @deprecated */
-export function GetChannelSendChoices(state: X32State, type: 'on' | 'level' | 'pan'): DropdownChoice[] {
-	const res: DropdownChoice[] = []
-
-	const appendTarget = (statePath: string, refName: string, defaultName: string): void => {
-		const val = state.get(`${statePath}/config/name`)
-		const realname = val && val[0]?.type === 's' ? val[0].value : undefined
-		res.push({
-			id: refName,
-			label: realname && realname !== defaultName ? `${realname} (${defaultName})` : defaultName,
-		})
-	}
-	const increment = type == 'pan' ? 2 : 1
-	for (let i = 1; i <= 16; i += increment) {
-		appendTarget(`/bus/${padNumber(i)}`, `bus${i}`, `MixBus ${i}`)
-	}
-
-	if (type === 'on') {
-		appendTarget(`/main/st`, 'stereo', `Main Stereo`)
-	}
-
-	switch (type) {
-		case 'on':
-			appendTarget(`/main/m`, 'mono', `Main Mono`)
-			break
-		case 'level':
-			appendTarget(`/main/m`, 'mono', `Main Mono`)
-			break
-	}
-
-	return res
-}
-
 export function GetMuteGroupChoices(_state: X32State): DropdownChoice[] {
 	const res: DropdownChoice[] = []
 
@@ -565,10 +538,6 @@ export function GetMuteGroupChoices(_state: X32State): DropdownChoice[] {
 
 	return res
 }
-
-// export const MuteGroupParseOptions: ParseRefOptions = {
-// 	allowMuteGroup: true,
-// }
 
 export function GetHeadampChoices(): DropdownChoice[] {
 	const res: DropdownChoice[] = []

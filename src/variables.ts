@@ -1,7 +1,7 @@
 import { X32Config } from './config.js'
 import { X32State } from './state.js'
 import osc from 'osc'
-import { GetTargetChoices, getColorChoiceFromId } from './choices.js'
+import { GetTargetChoices, GetTargetPaths, getColorChoiceFromId } from './choices.js'
 import { MainPath } from './paths.js'
 import { formatDb, floatToDB, InstanceBaseExt } from './util.js'
 import { CompanionVariableDefinition, CompanionVariableValues } from '@companion-module/base'
@@ -70,40 +70,61 @@ export function InitVariables(instance: InstanceBaseExt<X32Config>, state: X32St
 		},
 	]
 
-	const targets = GetTargetChoices(state, { includeMain: true, defaultNames: true })
+	const targets = GetTargetPaths({
+		allowStereo: true,
+		allowMono: true,
+		allowChannel: true,
+		allowAuxIn: true,
+		allowFx: true,
+		allowBus: true,
+		allowMatrix: true,
+		allowDca: true,
+	})
 	for (const target of targets) {
+		if (!target.variablesPrefix) continue
+
 		variables.push({
-			name: `variableId: ${target.label}`,
-			variableId: `name${sanitiseName(target.id as string)}`,
+			name: `variableId: ${target.defaultName}`,
+			variableId: `name_${target.variablesPrefix}`,
 		})
 		variables.push({
-			name: `Color: ${target.label}`,
-			variableId: `color${sanitiseName(target.id as string)}`,
+			name: `Color: ${target.defaultName}`,
+			variableId: `color_${target.variablesPrefix}`,
 		})
 		variables.push({
-			name: `Fader: ${target.label}`,
-			variableId: `fader${sanitiseName(target.id as string)}`,
+			name: `Fader: ${target.defaultName}`,
+			variableId: `fader_${target.variablesPrefix}`,
 		})
 	}
 
-	const sendSources = GetTargetChoices(state, { defaultNames: true, skipBus: true, skipDca: true, skipMatrix: true })
-	for (const target of sendSources) {
-		for (let b = 1; b <= 16; b++) {
-			const padded = `${b}`.padStart(2, '0')
+	const busSources = GetTargetPaths({ allowBus: true })
+	const matrixSources = GetTargetPaths({ allowMatrix: true })
+
+	const sendSources = GetTargetPaths({
+		allowChannel: true,
+		allowAuxIn: true,
+		allowFx: true,
+	})
+	for (const source of sendSources) {
+		if (!source.variablesPrefix || !source.sendTo) continue
+		for (const dest of busSources) {
+			if (!dest.variablesPrefix || !dest.sendToSink) continue
+
 			variables.push({
-				name: `Fader: ${target.label} to Bus ${b}`,
-				variableId: `fader${sanitiseName(target.id as string)}_to_bus_${padded}`,
+				name: `Fader: ${source.defaultName} to ${dest.defaultName}`,
+				variableId: `fader_${source.variablesPrefix}_to_${dest.variablesPrefix}`,
 			})
 		}
 	}
 
-	const busSources = GetTargetChoices(state, { defaultNames: true, skipInputs: true, skipDca: true, skipMatrix: true })
-	for (const target of busSources) {
-		for (let m = 1; m <= 6; m++) {
-			const padded = `${m}`.padStart(2, '0')
+	for (const source of busSources) {
+		if (!source.variablesPrefix || !source.sendTo) continue
+		for (const dest of matrixSources) {
+			if (!dest.variablesPrefix || !dest.sendToSink) continue
+
 			variables.push({
-				name: `Fader: ${target.label} to Matrix ${m}`,
-				variableId: `fader${sanitiseName(target.id as string)}_to_matrix_${padded}`,
+				name: `Fader: ${source.defaultName} to ${dest.defaultName}`,
+				variableId: `fader_${source.variablesPrefix}_to_${dest.variablesPrefix.replace('mtx', 'matrix')}`, // HACK: backwards compatibility
 			})
 		}
 	}

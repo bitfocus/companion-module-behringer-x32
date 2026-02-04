@@ -1,7 +1,6 @@
 import { X32State, X32Subscriptions } from './state.js'
 import {
 	GetMuteGroupChoices,
-	GetChannelSendChoices,
 	convertChoices,
 	GetOscillatorDestinations,
 	FaderLevelChoice,
@@ -320,7 +319,7 @@ export function GetFeedbacksList(
 					type: 'dropdown',
 					label: 'Target',
 					id: 'target',
-					...convertChoices(GetChannelSendChoices(state, 'on')),
+					...convertChoices(GetTargetChoicesNew(state, GetChannelSendParseOptions)),
 					allowInvalidValues: true,
 				},
 			],
