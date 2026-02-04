@@ -25,6 +25,7 @@ import {
 	GetTalkbackDestinations,
 	GetChannelSendParseOptions,
 	OscillatorDestinationsParseOptions,
+	TalkbackDestinationsParseOptions,
 } from './choices.js'
 import { compareNumber, floatToDB, InstanceBaseExt, padNumber, stringifyValueAlways } from './util.js'
 import { UserRouteInPath, UserRouteOutPath, parseRefToPaths, ParseRefOptions } from './paths.js'
@@ -328,7 +329,7 @@ export function GetFeedbacksList(
 					type: 'dropdown',
 					label: 'Target',
 					id: 'target',
-					...convertChoices(GetChannelSendChoices(state, 'on', true)),
+					...convertChoices(GetChannelSendChoices(state, 'on')),
 					allowInvalidValues: true,
 				},
 			],
@@ -681,8 +682,8 @@ export function GetFeedbacksList(
 					type: 'dropdown',
 					label: 'Destinations',
 					id: 'dest',
-					default: 0,
-					choices: GetTalkbackDestinations(state),
+					...convertChoices(GetTalkbackDestinations(state)),
+					allowInvalidValues: true,
 				},
 			],
 			defaultStyle: {
@@ -692,9 +693,11 @@ export function GetFeedbacksList(
 			...feedbackSubscriptionWrapper({
 				getPath: (options) => `/config/talk/${stringifyValueAlways(options.channel)}/destmap`,
 				getValue: (evt, data) => {
+					const destRef = parseRefToPaths(evt.options.dest, TalkbackDestinationsParseOptions)
+					if (!destRef?.talkbackDestMask) return false
+
 					const bitmap = getDataNumber(data, 0) ?? 0
-					const mask = Math.pow(2, evt.options.dest as number)
-					return (bitmap & mask) > 0
+					return (bitmap & destRef.talkbackDestMask) > 0
 				},
 			}),
 		},
@@ -721,7 +724,7 @@ export function GetFeedbacksList(
 					type: 'dropdown',
 					label: 'destination',
 					id: 'destination',
-					...convertChoices(GetOscillatorDestinations(state, true)),
+					...convertChoices(GetOscillatorDestinations(state)),
 					allowInvalidValues: true,
 				},
 			],

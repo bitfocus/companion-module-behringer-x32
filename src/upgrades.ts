@@ -240,6 +240,8 @@ export const upgradeChannelOrFaderValuesFromOscPaths: CompanionStaticUpgradeScri
 			fixupNumericOption(feedback.options, 'select', soloOrSelectChoicesLookup)
 		} else if (feedback.feedbackId === FeedbackId.OscillatorDestination) {
 			fixupNumericOption(feedback.options, 'destination', oscillatorDestinationChoicesLookup)
+		} else if (feedback.feedbackId === FeedbackId.TalkbackConfigSingleSource) {
+			fixupNumericOption(feedback.options, 'dest', talkbackTargetChoicesLookup)
 		}
 
 		const propsToUpgrade = feedbacksToUpgrade[feedback.feedbackId]
