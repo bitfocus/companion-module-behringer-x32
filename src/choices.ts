@@ -636,23 +636,37 @@ export function GetHeadampChoices(): DropdownChoice[] {
 	return res
 }
 
-export function GetOscillatorDestinations(state: X32State): DropdownChoice[] {
-	return [
-		...GetTargetChoices(state, { skipDca: true, skipInputs: true, skipMatrix: true }),
+export function GetOscillatorDestinations(state: X32State, refNaming?: boolean): DropdownChoice[] {
+	const raw: DropdownChoice[] = [
+		...GetTargetChoices(state, { skipDca: true, skipInputs: true, skipMatrix: true }, true),
 		{
 			label: 'Main L',
+			id: 'left',
 		},
 		{
 			label: 'Main R',
+			id: 'right',
 		},
 		{
 			label: 'Main L+R',
+			id: 'stereo',
 		},
 		{
 			label: 'Main M/C',
+			id: 'mono',
 		},
-		...GetTargetChoices(state, { skipDca: true, skipInputs: true, skipBus: true }),
-	].map((dst, i) => ({ id: i, label: dst.label }))
+		...GetTargetChoices(state, { skipDca: true, skipInputs: true, skipBus: true }, true),
+	]
+
+	if (refNaming) return raw
+	return raw.map((dst, i) => ({ id: i, label: dst.label }))
+}
+export const OscillatorDestinationsParseOptions: ParseRefOptions = {
+	allowStereo: true,
+	allowMono: true,
+	allowLR: true,
+	allowBus: true,
+	allowMatrix: true,
 }
 
 export function GetUserInTargets(): DropdownChoice[] {

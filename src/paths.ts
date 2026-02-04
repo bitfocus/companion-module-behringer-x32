@@ -47,6 +47,7 @@ export function UserRouteOutPath(channel: JsonValue | undefined): string {
 export interface ParseRefOptions {
 	allowStereo?: boolean
 	allowMono?: boolean
+	allowLR?: boolean
 	allowChannel?: boolean
 	allowAuxIn?: boolean
 	allowFx?: boolean
@@ -79,7 +80,7 @@ export function parseRefToPaths(
 	trim?: {
 		path: string
 	}
-	config: {
+	config?: {
 		name: string
 		color: string
 	}
@@ -87,6 +88,11 @@ export function parseRefToPaths(
 		path: string
 		isOn: boolean
 	} | null // TODO
+	insertSource?: {
+		onPath: string
+		posPath: string
+		selPath: string
+	}
 	/** Something can be 'sendTo' this, with this as a path suffix */
 	sendToSink?: {
 		on: string
@@ -96,6 +102,7 @@ export function parseRefToPaths(
 	selectNumber?: number
 	soloNumber?: number
 	talkbackDestMask?: number
+	oscillatorDestValue?: number
 } | null {
 	if (!ref) return null
 	ref = String(ref).toLowerCase().trim()
@@ -104,7 +111,7 @@ export function parseRefToPaths(
 	ref = ref.replace(/[^a-z0-9]/g, '')
 
 	// Special cases
-	if (ref === 'stereo' || ref === 'st') {
+	if (ref === 'stereo' || ref === 'st' || ref === 'mainlr') {
 		if (!options.allowStereo) return null
 
 		return {
@@ -131,11 +138,17 @@ export function parseRefToPaths(
 				level: null,
 				pan: null,
 			},
+			insertSource: {
+				onPath: `/main/st/insert/on`,
+				posPath: `/main/st/insert/pos`,
+				selPath: `/main/st/insert/sel`,
+			},
 			selectNumber: 70,
 			soloNumber: 71,
 			talkbackDestMask: 1 << 16,
+			oscillatorDestValue: 18,
 		}
-	} else if (ref === 'mono' || ref === 'mo' || ref === 'mon') {
+	} else if (ref === 'mono' || ref === 'mo' || ref === 'mon' || ref === 'mainmc') {
 		if (!options.allowMono) return null
 
 		return {
@@ -159,9 +172,27 @@ export function parseRefToPaths(
 				level: 'mlevel',
 				pan: null, // No pan for mono
 			},
+			insertSource: {
+				onPath: `/main/m/insert/on`,
+				posPath: `/main/m/insert/pos`,
+				selPath: `/main/m/insert/sel`,
+			},
 			selectNumber: 71,
 			soloNumber: 72,
 			talkbackDestMask: 1 << 17,
+			oscillatorDestValue: 19,
+		}
+	} else if (ref === 'left' || ref === 'l' || ref === 'mainl') {
+		if (!options.allowLR) return null
+
+		return {
+			oscillatorDestValue: 16,
+		}
+	} else if (ref === 'right' || ref === 'r' || ref === 'mainr') {
+		if (!options.allowLR) return null
+
+		return {
+			oscillatorDestValue: 17,
 		}
 	}
 
@@ -203,6 +234,11 @@ export function parseRefToPaths(
 				sendTo: {
 					path: `/ch/${String(refNumber).padStart(2, '0')}/mix`,
 					isOn: true,
+				},
+				insertSource: {
+					onPath: `/ch/${String(refNumber).padStart(2, '0')}/insert/on`,
+					posPath: `/ch/${String(refNumber).padStart(2, '0')}/insert/pos`,
+					selPath: `/ch/${String(refNumber).padStart(2, '0')}/insert/sel`,
 				},
 				selectNumber: refNumber - 1,
 				soloNumber: refNumber,
@@ -301,9 +337,15 @@ export function parseRefToPaths(
 					level: `${padNumber(refNumber)}/level`,
 					pan: refNumber % 2 == 1 ? `${padNumber(refNumber)}/pan` : null,
 				},
+				insertSource: {
+					onPath: `/bus/${String(refNumber).padStart(2, '0')}/insert/on`,
+					posPath: `/bus/${String(refNumber).padStart(2, '0')}/insert/pos`,
+					selPath: `/bus/${String(refNumber).padStart(2, '0')}/insert/sel`,
+				},
 				selectNumber: refNumber - 1 + 48,
 				soloNumber: refNumber + 48,
 				talkbackDestMask: 1 << (refNumber - 1),
+				oscillatorDestValue: refNumber - 1,
 			}
 		}
 		case 'm':
@@ -331,8 +373,14 @@ export function parseRefToPaths(
 					level: `${padNumber(refNumber)}/level`,
 					pan: refNumber % 2 == 1 ? `${padNumber(refNumber)}/pan` : null,
 				},
+				insertSource: {
+					onPath: `/mtx/${String(refNumber).padStart(2, '0')}/insert/on`,
+					posPath: `/mtx/${String(refNumber).padStart(2, '0')}/insert/pos`,
+					selPath: `/mtx/${String(refNumber).padStart(2, '0')}/insert/sel`,
+				},
 				selectNumber: refNumber - 1 + 64,
 				soloNumber: refNumber + 64,
+				oscillatorDestValue: refNumber + 19,
 			}
 		}
 		case 'd':

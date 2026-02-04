@@ -39,6 +39,7 @@ import {
 	TalkbackDestinationsParseOptions,
 	CHOICES_COLOR,
 	parseColorNameToValue,
+	OscillatorDestinationsParseOptions,
 } from './choices.js'
 import { ParseRefOptions, UserRouteInPath, UserRouteOutPath, parseHeadampRef, parseRefToPaths } from './paths.js'
 import type { SetRequired } from 'type-fest'
@@ -195,12 +196,23 @@ export function GetActionsList(
 		allowMatrix: true,
 		allowDca: true,
 	}
-	const insertSourceChoices = GetTargetChoices(state, {
-		includeMain: true,
-		skipAuxIn: true,
-		skipFxRtn: true,
-		skipDca: true,
-	})
+	const insertSourceChoices = GetTargetChoices(
+		state,
+		{
+			includeMain: true,
+			skipAuxIn: true,
+			skipFxRtn: true,
+			skipDca: true,
+		},
+		true,
+	)
+	const insertSourceParseOptions: ParseRefOptions = {
+		allowStereo: true,
+		allowMono: true,
+		allowChannel: true,
+		allowBus: true,
+		allowMatrix: true,
+	}
 
 	const sendOsc = (cmd: string, args: OSCSomeArguments): void => {
 		// HACK: We send commands on a different port than we run /xremote on, so that we get change events for what we send.
@@ -1518,6 +1530,7 @@ export function GetActionsList(
 					label: 'Target',
 					id: 'target',
 					...convertChoices(levelsChoices.channelsNew),
+					allowInvalidValues: true,
 				},
 				{
 					type: 'textinput',
@@ -1546,6 +1559,7 @@ export function GetActionsList(
 					label: 'Target',
 					id: 'target',
 					...convertChoices(levelsChoices.channelsNew),
+					allowInvalidValues: true,
 				},
 				{
 					type: 'dropdown',
@@ -1634,6 +1648,7 @@ export function GetActionsList(
 					label: 'Target',
 					id: 'select',
 					...convertChoices(selectChoicesNew),
+					allowInvalidValues: true,
 				},
 			],
 			callback: async (action): Promise<void> => {
@@ -1654,6 +1669,7 @@ export function GetActionsList(
 					label: 'Target',
 					id: 'solo',
 					...convertChoices(soloChoices),
+					allowInvalidValues: true,
 				},
 				{
 					type: 'dropdown',
@@ -1779,6 +1795,7 @@ export function GetActionsList(
 					id: 'dest',
 					default: [],
 					choices: GetTalkbackDestinations(state, true),
+					allowInvalidValues: true,
 				},
 			],
 			callback: (action): void => {
@@ -1825,8 +1842,8 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'Destinations',
 					id: 'dest',
-					default: 0,
-					choices: GetTalkbackDestinations(state, true),
+					...convertChoices(GetTalkbackDestinations(state, true)),
+					allowInvalidValues: true,
 				},
 				{
 					type: 'dropdown',
@@ -1963,14 +1980,17 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'destination',
 					id: 'destination',
-					// nocommit
-					...convertChoices(GetOscillatorDestinations(state)),
+					...convertChoices(GetOscillatorDestinations(state, true)),
+					allowInvalidValues: true,
 				},
 			],
 			callback: async (action): Promise<void> => {
+				const destRef = parseRefToPaths(action.options.destination, OscillatorDestinationsParseOptions)
+				if (!destRef?.oscillatorDestValue) return
+
 				sendOsc(`/config/osc/dest`, {
 					type: 'i',
-					value: getOptNumber(action, 'destination'),
+					value: destRef.oscillatorDestValue,
 				})
 			},
 		},
@@ -3603,8 +3623,8 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'Source',
 					id: 'src',
-					// nocommit
 					...convertChoices(insertSourceChoices),
+					allowInvalidValues: true,
 				},
 				{
 					type: 'dropdown',
@@ -3615,13 +3635,18 @@ export function GetActionsList(
 				},
 			],
 			callback: (action): void => {
-				const cmd = `${action.options.src as string}/insert/on`
-				const onState = getResolveOnOffMute(action, cmd, true, 'on')
-				sendOsc(cmd, { type: 'i', value: onState })
+				const srcRef = parseRefToPaths(action.options.src, insertSourceParseOptions)
+				if (!srcRef?.insertSource) return
+
+				const onState = getResolveOnOffMute(action, srcRef.insertSource.onPath, true, 'on')
+				sendOsc(srcRef.insertSource.onPath, { type: 'i', value: onState })
 			},
 			subscribe: (evt): void => {
 				if (evt.options.on === MUTE_TOGGLE) {
-					ensureLoaded(`${evt.options.src as string}/insert/on`)
+					const srcRef = parseRefToPaths(evt.options.src, insertSourceParseOptions)
+					if (!srcRef?.insertSource) return
+
+					ensureLoaded(srcRef.insertSource.onPath)
 				}
 			},
 		},
@@ -3633,8 +3658,8 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'Source',
 					id: 'src',
-					// nocommit
 					...convertChoices(insertSourceChoices),
+					allowInvalidValues: true,
 				},
 				{
 					type: 'dropdown',
@@ -3648,8 +3673,10 @@ export function GetActionsList(
 				},
 			],
 			callback: (action): void => {
-				const cmd = `${action.options.src as string}/insert/pos`
-				sendOsc(cmd, { type: 'i', value: convertAnyToNumber(action.options.pos) })
+				const srcRef = parseRefToPaths(action.options.src, insertSourceParseOptions)
+				if (!srcRef?.insertSource) return
+
+				sendOsc(srcRef.insertSource.posPath, { type: 'i', value: convertAnyToNumber(action.options.pos) })
 			},
 		},
 		[ActionId.InsertSelect]: {
@@ -3660,8 +3687,8 @@ export function GetActionsList(
 					type: 'dropdown',
 					label: 'Source',
 					id: 'src',
-					// nocommit
 					...convertChoices(insertSourceChoices),
+					allowInvalidValues: true,
 				},
 				{
 					type: 'dropdown',
@@ -3672,8 +3699,10 @@ export function GetActionsList(
 				},
 			],
 			callback: (action): void => {
-				const cmd = `${action.options.src as string}/insert/sel`
-				sendOsc(cmd, { type: 'i', value: convertAnyToNumber(action.options.dest) })
+				const srcRef = parseRefToPaths(action.options.src, insertSourceParseOptions)
+				if (!srcRef?.insertSource) return
+
+				sendOsc(srcRef.insertSource.selPath, { type: 'i', value: convertAnyToNumber(action.options.dest) })
 			},
 		},
 		[ActionId.LoadChannelPreset]: {
@@ -3687,6 +3716,7 @@ export function GetActionsList(
 					id: 'preset',
 					// nocommit
 					...convertChoices(GetPresetsChoices('ch', state)),
+					allowInvalidValues: true,
 				},
 				{
 					type: 'dropdown',
@@ -3701,6 +3731,7 @@ export function GetActionsList(
 						// nocommit
 						...selectChoices,
 					],
+					allowInvalidValues: true,
 				},
 				{
 					id: 'ha',
@@ -3780,6 +3811,7 @@ export function GetActionsList(
 					id: 'preset',
 					// nocommit
 					...convertChoices(GetPresetsChoices('fx', state)),
+					allowInvalidValues: true,
 				},
 				{
 					type: 'dropdown',
@@ -3917,6 +3949,7 @@ export function GetActionsList(
 					id: 'preset',
 					// nocommit
 					...convertChoices(GetPresetsChoices('mon', state)),
+					allowInvalidValues: true,
 				},
 			],
 			callback: (action): void => {

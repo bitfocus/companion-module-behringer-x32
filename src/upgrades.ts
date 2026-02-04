@@ -3,6 +3,7 @@ import type {
 	CompanionStaticUpgradeResult,
 	CompanionStaticUpgradeScript,
 	ExpressionOptionsObject,
+	JsonValue,
 } from '@companion-module/base'
 import { FeedbackId } from './feedback.js'
 import { padNumber } from './util.js'
@@ -152,6 +153,9 @@ const actionsToUpgrade: Record<string, string[] | undefined> = {
 	[ActionId.Color]: ['target'],
 	[ActionId.Select]: ['select'],
 	[ActionId.HeadampGain]: ['headamp'],
+	[ActionId.InsertOn]: ['src'],
+	[ActionId.InsertPos]: ['src'],
+	[ActionId.InsertSelect]: ['src'],
 }
 const feedbacksToUpgrade: Record<string, string[] | undefined> = {
 	// [ActionId.Mute]: ['target'],
@@ -180,13 +184,28 @@ export const upgradeChannelOrFaderValuesFromOscPaths: CompanionStaticUpgradeScri
 	for (const action of props.actions) {
 		// A couple of cases that need manual handling due to unclear & overlapping values
 		if (action.actionId === ActionId.Solo) {
-			// nocommit - manual because of numeric and overlapping :(
+			if (action.options.solo) {
+				action.options.solo.value =
+					soloOrSelectChoicesLookup[Number(action.options.solo.value)] || action.options.solo.value
+			}
 		} else if (action.actionId === ActionId.Select) {
-			// nocommit - manual because of numeric and overlapping :(
+			if (action.options.select) {
+				// This uses a few less than solo, but no harm in mapping the extra ones
+				action.options.select.value =
+					soloOrSelectChoicesLookup[Number(action.options.select.value)] || action.options.select.value
+			}
 		} else if (action.actionId === ActionId.TalkbackConfigSingleSource) {
-			// nocommit - manual because of numeric and overlapping :(
+			if (action.options.dest) {
+				action.options.dest.value =
+					talkbackTargetChoicesLookup[Number(action.options.dest.value)] || action.options.dest.value
+			}
 		} else if (action.actionId === ActionId.TalkbackConfig) {
-			// nocommit - manual because of numeric and overlapping :(
+			if (action.options.dest) {
+				const destArr = Array.isArray(action.options.dest.value)
+					? action.options.dest.value
+					: [action.options.dest.value]
+				action.options.dest.value = destArr.map((v) => talkbackTargetChoicesLookup[Number(v)] || v) as JsonValue
+			}
 		} else if (action.actionId === ActionId.Color) {
 			// Merge the split color fields
 			if (action.options.useVariable !== undefined) {
@@ -200,6 +219,12 @@ export const upgradeChannelOrFaderValuesFromOscPaths: CompanionStaticUpgradeScri
 								isExpression: false,
 								value: getColorChoiceFromId(action.options.col?.value)?.id ?? action.options.col?.value,
 							}
+			}
+		} else if (action.actionId === ActionId.OscillatorDestination) {
+			if (action.options.destination) {
+				action.options.destination.value =
+					oscillatorDestinationChoicesLookup[Number(action.options.destination.value)] ||
+					action.options.destination.value
 			}
 		}
 
@@ -219,3 +244,136 @@ export const upgradeChannelOrFaderValuesFromOscPaths: CompanionStaticUpgradeScri
 
 	return result
 }
+
+const soloOrSelectChoicesLookup = [
+	'channel1',
+	'channel2',
+	'channel3',
+	'channel4',
+	'channel5',
+	'channel6',
+	'channel7',
+	'channel8',
+	'channel9',
+	'channel10',
+	'channel11',
+	'channel12',
+	'channel13',
+	'channel14',
+	'channel15',
+	'channel16',
+	'channel17',
+	'channel18',
+	'channel19',
+	'channel20',
+	'channel21',
+	'channel22',
+	'channel23',
+	'channel24',
+	'channel25',
+	'channel26',
+	'channel27',
+	'channel28',
+	'channel29',
+	'channel30',
+	'channel31',
+	'channel32',
+	'aux1',
+	'aux2',
+	'aux3',
+	'aux4',
+	'aux5',
+	'aux6',
+	'aux7',
+	'aux8',
+	'fx1',
+	'fx2',
+	'fx3',
+	'fx4',
+	'fx5',
+	'fx6',
+	'fx7',
+	'fx8',
+	'bus1',
+	'bus2',
+	'bus3',
+	'bus4',
+	'bus5',
+	'bus6',
+	'bus7',
+	'bus8',
+	'bus9',
+	'bus10',
+	'bus11',
+	'bus12',
+	'bus13',
+	'bus14',
+	'bus15',
+	'bus16',
+	'matrix1',
+	'matrix2',
+	'matrix3',
+	'matrix4',
+	'matrix5',
+	'matrix6',
+	'stereo',
+	'mono',
+	'dca1',
+	'dca2',
+	'dca3',
+	'dca4',
+	'dca5',
+	'dca6',
+	'dca7',
+	'dca8',
+]
+
+const talkbackTargetChoicesLookup = [
+	'bus1',
+	'bus2',
+	'bus3',
+	'bus4',
+	'bus5',
+	'bus6',
+	'bus7',
+	'bus8',
+	'bus9',
+	'bus10',
+	'bus11',
+	'bus12',
+	'bus13',
+	'bus14',
+	'bus15',
+	'bus16',
+	'stereo',
+	'mono',
+]
+
+const oscillatorDestinationChoicesLookup = [
+	'bus1',
+	'bus2',
+	'bus3',
+	'bus4',
+	'bus5',
+	'bus6',
+	'bus7',
+	'bus8',
+	'bus9',
+	'bus10',
+	'bus11',
+	'bus12',
+	'bus13',
+	'bus14',
+	'bus15',
+	'bus16',
+	'left',
+	'right',
+	'stereo',
+	'mono',
+	'matrix1',
+	'matrix2',
+	'matrix3',
+	'matrix4',
+	'matrix5',
+	'matrix6',
+]
