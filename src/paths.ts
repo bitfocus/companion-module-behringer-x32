@@ -1,18 +1,16 @@
 import type { JsonValue } from '@companion-module/base'
-import { padNumber } from './util.js'
+import { padNumber, stringifyValueAlways } from './util.js'
 
 export function MainPath(prefix: string): string {
 	return prefix.indexOf('dca/') !== -1 ? `${prefix}` : `${prefix}/mix`
 }
 
-export function UserRouteInPath(channel: JsonValue | undefined): string {
-	const paddedChannel = `${channel}`.padStart(2, '0')
-	return `/config/userrout/in/${paddedChannel}`
+export function UserRouteInPath(channel: number): string {
+	return `/config/userrout/in/${padNumber(channel)}`
 }
 
-export function UserRouteOutPath(channel: JsonValue | undefined): string {
-	const paddedChannel = `${channel}`.padStart(2, '0')
-	return `/config/userrout/out/${paddedChannel}`
+export function UserRouteOutPath(channel: number): string {
+	return `/config/userrout/out/${padNumber(channel)}`
 }
 
 export interface ParseRefOptions {
@@ -76,7 +74,7 @@ export function parseRefToPaths(
 	oscillatorDestValue?: number
 } | null {
 	if (!ref) return null
-	ref = String(ref).toLowerCase().trim()
+	ref = stringifyValueAlways(ref).toLowerCase().trim()
 
 	// sanitise to <ascii><number>
 	ref = ref.replace(/[^a-z0-9]/g, '')
@@ -377,7 +375,7 @@ export function parseRefToPaths(
 
 export function parseHeadampRef(ref: JsonValue | undefined): string | null {
 	if (!ref) return null
-	ref = String(ref).toLowerCase().trim()
+	ref = stringifyValueAlways(ref).toLowerCase().trim()
 
 	// sanitise to <ascii><number>
 	ref = ref.replace(/[^a-z0-9]/g, '')

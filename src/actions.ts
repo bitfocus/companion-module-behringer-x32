@@ -1,6 +1,6 @@
 import { X32State } from './state.js'
 import { X32Config } from './config.js'
-import { trimToFloat, headampGainToFloat, floatToDB, InstanceBaseExt, padNumber } from './util.js'
+import { trimToFloat, headampGainToFloat, floatToDB, InstanceBaseExt, padNumber, stringifyValueAlways } from './util.js'
 import {
 	CHOICES_TAPE_FUNC,
 	GetTargetChoices,
@@ -1545,7 +1545,7 @@ export function GetActionsList(
 
 				sendOsc(targetRef.config.name, {
 					type: 's',
-					value: `${action.options.lab}`,
+					value: stringifyValueAlways(action.options.lab),
 				})
 			},
 		},
@@ -1755,7 +1755,7 @@ export function GetActionsList(
 				},
 			],
 			callback: async (action): Promise<void> => {
-				const cmd = `/-stat/talk/${action.options.channel}`
+				const cmd = `/-stat/talk/${stringifyValueAlways(action.options.channel)}`
 				const onState = getResolveOnOffMute(action, cmd, true, 'on')
 
 				sendOsc(cmd, {
@@ -1765,7 +1765,7 @@ export function GetActionsList(
 			},
 			subscribe: (evt): void => {
 				if (evt.options.on === MUTE_TOGGLE) {
-					ensureLoaded(`/-stat/talk/${evt.options.channel}`)
+					ensureLoaded(`/-stat/talk/${stringifyValueAlways(evt.options.channel)}`)
 				}
 			},
 		},
@@ -1810,7 +1810,7 @@ export function GetActionsList(
 					}
 				}
 
-				const cmd = `/config/talk/${action.options.function}/destmap`
+				const cmd = `/config/talk/${stringifyValueAlways(action.options.function)}/destmap`
 				sendOsc(cmd, {
 					type: 'i',
 					value: bitmap,
@@ -1856,7 +1856,7 @@ export function GetActionsList(
 				const destRef = parseRefToPaths(action.options.dest, TalkbackDestinationsParseOptions)
 				if (!destRef?.talkbackDestMask) return
 
-				const cmd = `/config/talk/${action.options.function}/destmap`
+				const cmd = `/config/talk/${stringifyValueAlways(action.options.function)}/destmap`
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'i' ? currentState[0]?.value : 0
 				let bitmap: number
@@ -1876,7 +1876,7 @@ export function GetActionsList(
 				})
 			},
 			subscribe: (evt): void => {
-				ensureLoaded(`/config/talk/${evt.options.function}/destmap`)
+				ensureLoaded(`/config/talk/${stringifyValueAlways(evt.options.function)}/destmap`)
 			},
 		},
 		[ActionId.TalkbackConfigStore]: {
@@ -1900,7 +1900,7 @@ export function GetActionsList(
 				},
 			],
 			callback: (action): void => {
-				const cmd = `/config/talk/${action.options.function}/destmap`
+				const cmd = `/config/talk/${stringifyValueAlways(action.options.function)}/destmap`
 				const currentState = state.get(cmd)
 				const currentVal = currentState && currentState[0]?.type === 'i' ? currentState[0]?.value : undefined
 				if (currentVal !== undefined) {
@@ -1908,7 +1908,7 @@ export function GetActionsList(
 				}
 			},
 			subscribe: (evt): void => {
-				ensureLoaded(`/config/talk/${evt.options.function}/destmap`)
+				ensureLoaded(`/config/talk/${stringifyValueAlways(evt.options.function)}/destmap`)
 			},
 		},
 		[ActionId.TalkbackConfigRestore]: {
@@ -1932,7 +1932,7 @@ export function GetActionsList(
 				},
 			],
 			callback: (action): void => {
-				const cmd = `/config/talk/${action.options.function}/destmap`
+				const cmd = `/config/talk/${stringifyValueAlways(action.options.function)}/destmap`
 				const storedVal = state.popPressValue(`${action.controlId}-${cmd}`)
 				if (storedVal !== undefined) {
 					sendOsc(cmd, {
@@ -1942,7 +1942,7 @@ export function GetActionsList(
 				}
 			},
 			subscribe: (evt): void => {
-				ensureLoaded(`/config/talk/${evt.options.function}/destmap`)
+				ensureLoaded(`/config/talk/${stringifyValueAlways(evt.options.function)}/destmap`)
 			},
 		},
 
@@ -3183,7 +3183,7 @@ export function GetActionsList(
 				const mode = action.options.mode
 				const block = action.options.block
 				const routing = getOptNumber(action, 'routing', 0)
-				const cmd = `/config/routing/${mode}/${block}`
+				const cmd = `/config/routing/${stringifyValueAlways(mode)}/${stringifyValueAlways(block)}`
 				sendOsc(cmd, { type: 'i', value: routing })
 			},
 		},
@@ -3213,7 +3213,7 @@ export function GetActionsList(
 			callback: (action): void => {
 				const mode = action.options.mode
 				const routing = getOptNumber(action, 'routing', 0)
-				const cmd = `/config/routing/${mode}/AUX`
+				const cmd = `/config/routing/${stringifyValueAlways(mode)}/AUX`
 				sendOsc(cmd, { type: 'i', value: routing })
 			},
 		},
@@ -3252,7 +3252,7 @@ export function GetActionsList(
 				const mode = action.options.mode
 				const block = action.options.block
 				const routing = getOptNumber(action, 'routing', 0)
-				const cmd = `/config/routing/AES50${mode}/${block}`
+				const cmd = `/config/routing/AES50${stringifyValueAlways(mode)}/${stringifyValueAlways(block)}`
 				sendOsc(cmd, { type: 'i', value: routing })
 			},
 		},
@@ -3279,7 +3279,7 @@ export function GetActionsList(
 			callback: (action): void => {
 				const block = action.options.block
 				const routing = getOptNumber(action, 'routing', 0)
-				const cmd = `/config/routing/CARD/${block}`
+				const cmd = `/config/routing/CARD/${stringifyValueAlways(block)}`
 				sendOsc(cmd, { type: 'i', value: routing })
 			},
 		},
@@ -3309,7 +3309,7 @@ export function GetActionsList(
 			callback: (action): void => {
 				const block = action.options.block
 				const routing = getOptNumber(action, 'routing', 0)
-				const cmd = `/config/routing/OUT/${block}`
+				const cmd = `/config/routing/OUT/${stringifyValueAlways(block)}`
 				sendOsc(cmd, { type: 'i', value: routing })
 			},
 		},
@@ -3339,7 +3339,7 @@ export function GetActionsList(
 			callback: (action): void => {
 				const block = action.options.block
 				const routing = getOptNumber(action, 'routing', 0)
-				const cmd = `/config/routing/OUT/${block}`
+				const cmd = `/config/routing/OUT/${stringifyValueAlways(block)}`
 				sendOsc(cmd, { type: 'i', value: routing })
 			},
 		},

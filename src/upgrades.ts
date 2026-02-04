@@ -7,7 +7,7 @@ import type {
 	JsonValue,
 } from '@companion-module/base'
 import { FeedbackId } from './feedback.js'
-import { padNumber } from './util.js'
+import { padNumber, stringifyValueAlways } from './util.js'
 import { ActionId } from './actions.js'
 import { exprVal } from './upgradeUtil.js'
 import { getColorChoiceFromId } from './choices.js'
@@ -213,7 +213,7 @@ export const upgradeChannelOrFaderValuesFromOscPaths: CompanionStaticUpgradeScri
 					action.options.useVariable.value && action.options.varCol
 						? {
 								isExpression: true,
-								value: `parseVariables('${action.options.varCol.value}')`,
+								value: `parseVariables('${stringifyValueAlways(action.options.varCol.value)}')`,
 							}
 						: {
 								isExpression: false,

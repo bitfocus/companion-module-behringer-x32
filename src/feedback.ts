@@ -26,7 +26,7 @@ import {
 	GetChannelSendParseOptions,
 	OscillatorDestinationsParseOptions,
 } from './choices.js'
-import { compareNumber, floatToDB, InstanceBaseExt, padNumber } from './util.js'
+import { compareNumber, floatToDB, InstanceBaseExt, padNumber, stringifyValueAlways } from './util.js'
 import { UserRouteInPath, UserRouteOutPath, parseRefToPaths, ParseRefOptions } from './paths.js'
 import osc from 'osc'
 import { X32Config } from './config.js'
@@ -652,7 +652,7 @@ export function GetFeedbacksList(
 				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
-				getPath: (options) => `/-stat/talk/${options.channel}`,
+				getPath: (options) => `/-stat/talk/${stringifyValueAlways(options.channel)}`,
 				getValue: (_evt, data) => getDataNumber(data, 0) === 1,
 			}),
 		},
@@ -690,7 +690,7 @@ export function GetFeedbacksList(
 				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
-				getPath: (options) => `/config/talk/${options.channel}/destmap`,
+				getPath: (options) => `/config/talk/${stringifyValueAlways(options.channel)}/destmap`,
 				getValue: (evt, data) => {
 					const bitmap = getDataNumber(data, 0) ?? 0
 					const mask = Math.pow(2, evt.options.dest as number)
@@ -1952,7 +1952,8 @@ export function GetFeedbacksList(
 				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
-				getPath: (options) => `/config/routing/${options.mode}/${options.block}`,
+				getPath: (options) =>
+					`/config/routing/${stringifyValueAlways(options.mode)}/${stringifyValueAlways(options.block)}`,
 				getValue: (evt, data) => {
 					const routing = evt.options.routing as number
 					return getDataNumber(data, 0) === routing
@@ -1987,7 +1988,7 @@ export function GetFeedbacksList(
 				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
-				getPath: (options) => `/config/routing/${options.mode}/AUX`,
+				getPath: (options) => `/config/routing/${stringifyValueAlways(options.mode)}/AUX`,
 				getValue: (evt, data) => {
 					const routing = evt.options.routing as number
 					return getDataNumber(data, 0) === routing
@@ -2029,7 +2030,8 @@ export function GetFeedbacksList(
 				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
-				getPath: (options) => `/config/routing/AES${options.mode}/${options.block}`,
+				getPath: (options) =>
+					`/config/routing/AES${stringifyValueAlways(options.mode)}/${stringifyValueAlways(options.block)}`,
 				getValue: (evt, data) => {
 					const routing = evt.options.routing as number
 					return getDataNumber(data, 0) === routing
@@ -2061,7 +2063,7 @@ export function GetFeedbacksList(
 				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
-				getPath: (options) => `/config/routing/CARD/${options.block}`,
+				getPath: (options) => `/config/routing/CARD/${stringifyValueAlways(options.block)}`,
 				getValue: (evt, data) => {
 					const routing = evt.options.routing as number
 					return getDataNumber(data, 0) === routing
@@ -2096,7 +2098,7 @@ export function GetFeedbacksList(
 				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
-				getPath: (options) => `/config/routing/OUT/${options.block}`,
+				getPath: (options) => `/config/routing/OUT/${stringifyValueAlways(options.block)}`,
 				getValue: (evt, data) => {
 					const routing = evt.options.routing as number
 					return getDataNumber(data, 0) === routing
@@ -2131,7 +2133,7 @@ export function GetFeedbacksList(
 				color: 0x000000,
 			},
 			...feedbackSubscriptionWrapper({
-				getPath: (options) => `/config/routing/OUT/${options.block}`,
+				getPath: (options) => `/config/routing/OUT/${stringifyValueAlways(options.block)}`,
 				getValue: (evt, data) => {
 					const routing = evt.options.routing as number
 					return getDataNumber(data, 0) === routing

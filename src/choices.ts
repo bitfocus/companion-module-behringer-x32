@@ -7,7 +7,7 @@ import {
 	SomeCompanionActionInputField,
 } from '@companion-module/base'
 import { X32State } from './state.js'
-import { padNumber } from './util.js'
+import { padNumber, stringifyValueAlways } from './util.js'
 import { ParseRefOptions } from './paths.js'
 
 export const MUTE_TOGGLE = 2
@@ -48,7 +48,7 @@ export const CHOICES_COLOR: DropdownChoice[] = [
 
 export function parseColorNameToValue(ref: JsonValue | undefined): number | null {
 	if (!ref) return null
-	ref = String(ref).toLowerCase().trim()
+	ref = stringifyValueAlways(ref).toLowerCase().trim()
 
 	// sanitise to <ascii>
 	ref = ref.replace(/[^a-z]/g, '')

@@ -10,6 +10,21 @@ export function padNumber(i: number, len = 2): string {
 	return String(i).padStart(len, '0')
 }
 
+export function stringifyValue(value: JsonValue | undefined): string | null | undefined {
+	if (value === undefined || value === null) {
+		return value
+	} else if (typeof value === 'string') {
+		return value
+	} else if (typeof value === 'number' || typeof value === 'boolean') {
+		return value.toString()
+	} else {
+		return JSON.stringify(value)
+	}
+}
+export function stringifyValueAlways(value: JsonValue | undefined): string {
+	return stringifyValue(value) ?? ''
+}
+
 export function floatToDB(f: number): number {
 	if (f >= 0.5) {
 		return f * 40 - 30 // max dB value: +10.
