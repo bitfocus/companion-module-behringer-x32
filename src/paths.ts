@@ -1,10 +1,6 @@
 import type { JsonValue } from '@companion-module/base'
 import { padNumber, stringifyValueAlways } from './util.js'
 
-export function MainPath(prefix: string): string {
-	return prefix.indexOf('dca/') !== -1 ? `${prefix}` : `${prefix}/mix`
-}
-
 export function UserRouteInPath(channel: number): string {
 	return `/config/userrout/in/${padNumber(channel)}`
 }

@@ -5612,8 +5612,8 @@ exports[`Variables test > updateSelectedVariables 1`] = `undefined`;
 exports[`Variables test > updateSelectedVariables 2`] = `
 [
   {
-    "selected_channel": "CH 01",
-    "selected_name": "",
+    "selected_channel": "channel1",
+    "selected_name": "Channel 1",
   },
 ]
 `;

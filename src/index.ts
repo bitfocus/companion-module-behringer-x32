@@ -15,13 +15,12 @@ import {
 } from './variables.js'
 import { IStoredChannelObserver, X32State, X32Subscriptions } from './state.js'
 import osc from 'osc'
-import { MainPath } from './paths.js'
 import {
 	BooleanFeedbackUpgradeMap,
 	upgradeChannelOrFaderValuesFromOscPaths,
 	upgradeToBuiltinFeedbackInverted,
 } from './upgrades.js'
-import { GetTargetChoices } from './choices.js'
+import { GetTargetPaths } from './choices.js'
 import debounceFn from 'debounce-fn'
 import PQueue from 'p-queue'
 import { X32Transitions } from './transitions.js'
@@ -418,36 +417,49 @@ export default class X32Instance
 	}
 
 	private loadVariablesData(): void {
-		const targets = GetTargetChoices(this.x32State, { includeMain: true, defaultNames: true })
-		for (const target of targets) {
-			this.queueEnsureLoaded(`${target.id}/config/name`)
-			this.queueEnsureLoaded(`${target.id}/config/color`)
-			this.queueEnsureLoaded(`${MainPath(target.id as string)}/fader`)
+		// nocommit - this is pretty repetetive with the variables logic, can it be deduplicated?
+		const allSources = GetTargetPaths({
+			allowStereo: true,
+			allowMono: true,
+			allowChannel: true,
+			allowAuxIn: true,
+			allowFx: true,
+			allowBus: true,
+			allowMatrix: true,
+			allowDca: true,
+		})
+		const busSources = GetTargetPaths({ allowBus: true })
+		const matrixSources = GetTargetPaths({ allowMatrix: true })
+
+		const sendToBusSources = GetTargetPaths({
+			allowChannel: true,
+			allowAuxIn: true,
+			allowFx: true,
+		})
+
+		for (const target of allSources) {
+			if (!target.variablesPrefix) continue
+
+			this.queueEnsureLoaded(target.config?.name)
+			this.queueEnsureLoaded(target.config?.color)
+			this.queueEnsureLoaded(target.level?.path)
 		}
 
-		const sendSources = GetTargetChoices(this.x32State, {
-			defaultNames: true,
-			skipBus: true,
-			skipDca: true,
-			skipMatrix: true,
-		})
-		for (const target of sendSources) {
-			for (let b = 1; b <= 16; b++) {
-				const padded = `${b}`.padStart(2, '0')
-				this.queueEnsureLoaded(`${target.id}/mix/${padded}/level`)
+		for (const source of sendToBusSources) {
+			if (!source.variablesPrefix || !source.sendTo) continue
+			for (const dest of busSources) {
+				if (!dest.variablesPrefix || !dest.sendToSink) continue
+
+				this.queueEnsureLoaded(`${source.sendTo.path}/${dest.sendToSink.on}`)
 			}
 		}
 
-		const busSources = GetTargetChoices(this.x32State, {
-			defaultNames: true,
-			skipInputs: true,
-			skipDca: true,
-			skipMatrix: true,
-		})
-		for (const target of busSources) {
-			for (let m = 1; m <= 6; m++) {
-				const padded = `${m}`.padStart(2, '0')
-				this.queueEnsureLoaded(`${target.id}/mix/${padded}/level`)
+		for (const source of busSources) {
+			if (!source.variablesPrefix || !source.sendTo) continue
+			for (const dest of matrixSources) {
+				if (!dest.variablesPrefix || !dest.sendToSink) continue
+
+				this.queueEnsureLoaded(`${source.sendTo.path}/${dest.sendToSink.on}`)
 			}
 		}
 
@@ -516,6 +528,7 @@ export default class X32Instance
 			msg.address.match('/-undo/time') ||
 			msg.address.match('/mix/../level')
 		) {
+			// nocommit - woah! this is waaaaaay too noisy
 			this.debounceUpdateCompanionBits()
 		}
 	}

@@ -1,14 +1,28 @@
 import { X32Config } from './config.js'
 import { X32State } from './state.js'
 import osc from 'osc'
-import { GetTargetChoices, GetTargetPaths, getColorChoiceFromId } from './choices.js'
-import { MainPath } from './paths.js'
+import { GetNameFromState, GetTargetPaths, getColorChoiceFromId } from './choices.js'
 import { formatDb, floatToDB, InstanceBaseExt } from './util.js'
 import { CompanionVariableDefinition, CompanionVariableValues } from '@companion-module/base'
 
-function sanitiseName(name: string): string {
-	return name.replace(/\//g, '_')
-}
+const allSources = GetTargetPaths({
+	allowStereo: true,
+	allowMono: true,
+	allowChannel: true,
+	allowAuxIn: true,
+	allowFx: true,
+	allowBus: true,
+	allowMatrix: true,
+	allowDca: true,
+})
+const busSources = GetTargetPaths({ allowBus: true })
+const matrixSources = GetTargetPaths({ allowMatrix: true })
+
+const sendToBusSources = GetTargetPaths({
+	allowChannel: true,
+	allowAuxIn: true,
+	allowFx: true,
+})
 
 export function InitVariables(instance: InstanceBaseExt<X32Config>, state: X32State): void {
 	const variables: CompanionVariableDefinition[] = [
@@ -70,17 +84,7 @@ export function InitVariables(instance: InstanceBaseExt<X32Config>, state: X32St
 		},
 	]
 
-	const targets = GetTargetPaths({
-		allowStereo: true,
-		allowMono: true,
-		allowChannel: true,
-		allowAuxIn: true,
-		allowFx: true,
-		allowBus: true,
-		allowMatrix: true,
-		allowDca: true,
-	})
-	for (const target of targets) {
+	for (const target of allSources) {
 		if (!target.variablesPrefix) continue
 
 		variables.push({
@@ -97,15 +101,7 @@ export function InitVariables(instance: InstanceBaseExt<X32Config>, state: X32St
 		})
 	}
 
-	const busSources = GetTargetPaths({ allowBus: true })
-	const matrixSources = GetTargetPaths({ allowMatrix: true })
-
-	const sendSources = GetTargetPaths({
-		allowChannel: true,
-		allowAuxIn: true,
-		allowFx: true,
-	})
-	for (const source of sendSources) {
+	for (const source of sendToBusSources) {
 		if (!source.variablesPrefix || !source.sendTo) continue
 		for (const dest of busSources) {
 			if (!dest.variablesPrefix || !dest.sendToSink) continue
@@ -196,40 +192,46 @@ export function updateURecrTime(instance: InstanceBaseExt<X32Config>, state: X32
 
 export function updateNameVariables(instance: InstanceBaseExt<X32Config>, state: X32State): void {
 	const variables: CompanionVariableValues = {}
-	const targets = GetTargetChoices(state, { includeMain: true, defaultNames: true })
-	for (const target of targets) {
-		const nameVal = state.get(`${target.id}/config/name`)
-		const nameStr = nameVal && nameVal[0]?.type === 's' ? nameVal[0].value : ''
-		variables[`name${sanitiseName(target.id as string)}`] = nameStr || target.label
 
-		const colorVal = state.get(`${target.id}/config/color`)
-		const colorStr = getColorChoiceFromId(colorVal && colorVal[0]?.type === 'i' ? colorVal[0].value : '')?.label
-		variables[`color${sanitiseName(target.id as string)}`] = colorStr || 'unknown'
+	for (const target of allSources) {
+		if (!target.variablesPrefix) continue
 
-		const faderVal = state.get(`${MainPath(target.id as string)}/fader`)
-		const faderNum = faderVal && faderVal[0]?.type === 'f' ? faderVal[0].value : NaN
-		variables[`fader${sanitiseName(target.id as string)}`] = isNaN(faderNum) ? '-' : formatDb(floatToDB(faderNum))
+		variables[`name_${target.variablesPrefix}`] = GetNameFromState(state, target) || target.defaultName
+
+		if (target.config?.color) {
+			const colorVal = state.get(target.config.color)
+			const colorStr = getColorChoiceFromId(colorVal && colorVal[0]?.type === 'i' ? colorVal[0].value : '')?.label
+			variables[`color_${target.variablesPrefix}`] = colorStr || 'unknown'
+		}
+
+		if (target.level) {
+			const faderVal = state.get(target.level.path)
+			const faderNum = faderVal && faderVal[0]?.type === 'f' ? faderVal[0].value : NaN
+			variables[`fader_${target.variablesPrefix}`] = isNaN(faderNum) ? '-' : formatDb(floatToDB(faderNum))
+		}
 	}
 
-	const sendSources = GetTargetChoices(state, { defaultNames: true, skipBus: true, skipDca: true, skipMatrix: true })
-	for (const target of sendSources) {
-		for (let b = 1; b <= 16; b++) {
-			const padded = `${b}`.padStart(2, '0')
-			const faderVal = state.get(`${target.id}/mix/${padded}/level`)
+	for (const source of sendToBusSources) {
+		if (!source.variablesPrefix || !source.sendTo) continue
+		for (const dest of busSources) {
+			if (!dest.variablesPrefix || !dest.sendToSink) continue
+
+			const faderVal = state.get(`${source.sendTo.path}/${dest.sendToSink.on}`)
 			const faderNum = faderVal && faderVal[0]?.type === 'f' ? faderVal[0].value : NaN
-			variables[`fader${sanitiseName(target.id as string)}_to_bus_${padded}`] = isNaN(faderNum)
+			variables[`fader_${source.variablesPrefix}_to_${dest.variablesPrefix}`] = isNaN(faderNum)
 				? '-'
 				: formatDb(floatToDB(faderNum))
 		}
 	}
 
-	const busSources = GetTargetChoices(state, { defaultNames: true, skipInputs: true, skipDca: true, skipMatrix: true })
-	for (const target of busSources) {
-		for (let m = 1; m <= 6; m++) {
-			const padded = `${m}`.padStart(2, '0')
-			const faderVal = state.get(`${target.id}/mix/${padded}/level`)
+	for (const source of busSources) {
+		if (!source.variablesPrefix || !source.sendTo) continue
+		for (const dest of matrixSources) {
+			if (!dest.variablesPrefix || !dest.sendToSink) continue
+
+			const faderVal = state.get(`${source.sendTo.path}/${dest.sendToSink.on}`)
 			const faderNum = faderVal && faderVal[0]?.type === 'f' ? faderVal[0].value : NaN
-			variables[`fader${sanitiseName(target.id as string)}_to_matrix_${padded}`] = isNaN(faderNum)
+			variables[`fader_${source.variablesPrefix}_to_${dest.variablesPrefix.replace('mtx', 'matrix')}`] = isNaN(faderNum) // HACK: naming backwards compatibility
 				? '-'
 				: formatDb(floatToDB(faderNum))
 		}
@@ -247,16 +249,13 @@ export function updateSelectedVariables(instance: InstanceBaseExt<X32Config>, st
 	const selidx = state.get('/-stat/selidx')
 	const index = selidx && selidx[0]?.type === 'i' ? selidx[0].value : 0
 
-	const targets = GetTargetChoices(state, { includeMain: true, defaultNames: true })
-	const target = targets[index]
-
-	const nameVal = state.get(`${target.id}/config/name`)
-	const nameStr = nameVal && nameVal[0]?.type === 's' ? nameVal[0].value : ''
-	const selectedChannel = (target.id ? (target.id as string).replace(/\//g, ' ').trim() : 'ch 1').toUpperCase()
+	const selectedChannel = allSources.find((s) => s.selectNumber === index)
 
 	instance.setVariableValues({
-		selected_channel: selectedChannel,
-		selected_name: nameStr,
+		selected_channel: selectedChannel?.defaultRef ?? allSources[0].defaultRef,
+		selected_name: selectedChannel
+			? (GetNameFromState(state, selectedChannel) ?? selectedChannel.defaultName)
+			: allSources[0].defaultName,
 	})
 }
 
