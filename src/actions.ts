@@ -53,149 +53,40 @@ import {
 } from '@companion-module/base'
 import { Easing } from './easings.js'
 
-export enum ActionId {
-	AddMarker = 'add_marker',
-	Mute = 'mute',
-	MuteGroup = 'mute_grp',
-	MuteChannelSend = 'mute_channel_send',
-	MuteBusSend = 'mute_bus_send',
-	FaderLevel = 'fad',
-	FaderLevelStore = 'fader_store',
-	FaderLevelRestore = 'fader_restore',
-	FaderLevelDelta = 'fader_delta',
-	Panning = 'panning',
-	PanningDelta = 'panning-delta',
-	PanningStore = 'panning-store',
-	PanningRestore = 'panning-restore',
-	ChannelSendLevel = 'level_channel_send',
-	ChannelSendLevelDelta = 'level_channel_send_delta',
-	ChannelSendLevelStore = 'level_channel_store',
-	ChannelSendLevelRestore = 'level_channel_restore',
-	ChannelSendPanning = 'channel-send-panning',
-	ChannelSendPanningDelta = 'channel-send-panning-delta',
-	ChannelSendPanningStore = 'channel-send-panning-store',
-	ChannelSendPanningRestore = 'channel-send-panning-restore',
-	BusSendLevel = 'level_bus_send',
-	BusSendLevelDelta = 'level_bus_send_delta',
-	BusSendLevelStore = 'level_bus_store',
-	BusSendLevelRestore = 'level_bus_restore',
-	BusSendPanning = 'bus-send-panning',
-	BusSendPanningDelta = 'bus-send-panning-delta',
-	BusSendPanningStore = 'bus-send-panning-store',
-	BusSendPanningRestore = 'bus-send-panning-restore',
-	InputTrim = 'input_trim',
-	// InputGain = 'input_gain',
-	HeadampGain = 'headamp_gain',
-	Label = 'label',
-	Color = 'color',
-	GoCue = 'go_cue',
-	GoScene = 'go_scene',
-	GoSnip = 'go_snip',
-	Select = 'select',
-	Solo = 'solo',
-	ClearSolo = 'clear-solo',
-	Tape = 'tape',
-	TalkbackTalk = 'talkback_talk',
-	TalkbackConfig = 'talkback_config',
-	TalkbackConfigSingleSource = 'talkback_config_single_src',
-	TalkbackConfigStore = 'talkback_config_store',
-	TalkbackConfigRestore = 'talkback_restore',
-	OscillatorEnable = 'oscillator-enable',
-	OscillatorDestination = 'oscillator-destination',
-	SyncClock = 'sync_clock',
-	SoloMono = 'solo-mono',
-	SoloDim = 'solo_dim',
-	SoloDimAttenuation = 'solo_dim_attenuation',
-	MonitorLevel = 'monitor-level',
-	SendsOnFader = 'sends-on-fader',
-	ChannelBank = 'channel-bank-full',
-	GroupBank = 'group-bank-full',
-	ChannelBankCompact = 'channel-bank-compact',
-	GroupBankCompact = 'group-bank-compact',
-	BusSendBank = 'bus-send-bank',
-	UserBank = 'user-bank',
-	Screens = 'screens',
-	MuteGroupScreen = 'mute-group-screen',
-	UtilityScreen = 'utility-screen',
-	ChannelPage = 'channel-page',
-	MeterPage = 'meter-page',
-	RoutePage = 'route-page',
-	SetupPage = 'setup-page',
-	LibPage = 'library-page',
-	FxPage = 'effects-page',
-	MonPage = 'monitor-page',
-	USBPage = 'usb-page',
-	ScenePage = 'scene-page',
-	AssignPage = 'assign-page',
-	NextPrevPage = 'next-previous-page',
-	StoreChannel = 'store_channel',
-	Record = 'record',
-	RouteUserIn = 'route-user-in',
-	RouteUserOut = 'route-user-out',
-	RouteInputBlockMode = 'route-input-block-mode',
-	RouteInputBlocks = 'route-input-blocks',
-	RouteAuxBlocks = 'route-aux-blocks',
-	RouteAES50Blocks = 'route-aes50-blocks',
-	RouteCardBlocks = 'route-card-blocks',
-	RouteXLRLeftOutputs = 'route-xlr-left-outputs',
-	RouteXLRRightOutputs = 'route-xlr-right-outputs',
-	LockAndShutdown = 'lock-and-shutdown',
-	SaveScene = 'save-scene',
-	SelectActiveSDCard = 'select-active-sdcard',
-	RecordedTracks = 'recorded-tracks',
-	SelectPlaybackDevice = 'select-playback-device',
-	FormatSDCard = 'format-sdcard',
-	XLiveRouting = 'x-live-routing',
-	XLivePosition = 'x-live-position',
-	XLiveClearAlert = 'x-live-clear-alert',
-	GoCommand = 'goCommmand',
-	NextCommand = 'nextCommmand',
-	PrevCommand = 'prevCommmand',
-	InsertOn = 'insert-on',
-	InsertPos = 'insert-pos',
-	InsertSelect = 'insert-select',
-	LoadChannelPreset = 'load-channel-preset',
-	LoadFXPreset = 'load-fx-preset',
-	// LoadRoutingPreset = 'load-route-preset',
-	LoadAESPreset = 'load-aes-preset',
-	DoUndo = 'do-undo',
-	SetUndoCheckpoint = 'set-undo-checkpoint',
-}
-
 export type ActionsSchema = {
-	[ActionId.Record]: {
+	record: {
 		options: {
 			state: number
 		}
 	}
-	[ActionId.AddMarker]: { options: Record<string, never> }
-	[ActionId.Mute]: {
+	add_marker: { options: Record<string, never> }
+	mute: {
 		options: {
 			target: string
 			mute: number // 0=off, 1=on, 2=toggle
 		}
 	}
-	[ActionId.MuteGroup]: {
+	mute_grp: {
 		options: {
 			target: string
 			mute: number // 0=off, 1=on, 2=toggle
 		}
 	}
-	[ActionId.MuteChannelSend]: {
-		options: {
-			source: string
-			target: string
-			mute: number // 0=off, 1=on, 2=toggle
-		}
-	}
-	[ActionId.MuteBusSend]: {
+	mute_channel_send: {
 		options: {
 			source: string
 			target: string
 			mute: number // 0=off, 1=on, 2=toggle
 		}
 	}
-	[ActionId.FaderLevel]: {
+	mute_bus_send: {
+		options: {
+			source: string
+			target: string
+			mute: number // 0=off, 1=on, 2=toggle
+		}
+	}
+	fad: {
 		options: {
 			target: string
 			fad: number
@@ -204,12 +95,12 @@ export type ActionsSchema = {
 			fadeType: string
 		}
 	}
-	[ActionId.FaderLevelStore]: {
+	fader_store: {
 		options: {
 			target: string
 		}
 	}
-	[ActionId.FaderLevelRestore]: {
+	fader_restore: {
 		options: {
 			target: string
 			fadeDuration: number
@@ -217,7 +108,7 @@ export type ActionsSchema = {
 			fadeType: string
 		}
 	}
-	[ActionId.FaderLevelDelta]: {
+	fader_delta: {
 		options: {
 			target: string
 			delta: number
@@ -226,7 +117,7 @@ export type ActionsSchema = {
 			fadeType: string
 		}
 	}
-	[ActionId.Panning]: {
+	panning: {
 		options: {
 			target: string
 			pan: number
@@ -235,7 +126,7 @@ export type ActionsSchema = {
 			fadeType: string
 		}
 	}
-	[ActionId.PanningDelta]: {
+	'panning-delta': {
 		options: {
 			target: string
 			delta: number
@@ -244,12 +135,12 @@ export type ActionsSchema = {
 			fadeType: string
 		}
 	}
-	[ActionId.PanningStore]: {
+	'panning-store': {
 		options: {
 			target: string
 		}
 	}
-	[ActionId.PanningRestore]: {
+	'panning-restore': {
 		options: {
 			target: string
 			fadeDuration: number
@@ -257,77 +148,7 @@ export type ActionsSchema = {
 			fadeType: string
 		}
 	}
-	[ActionId.ChannelSendLevel]: {
-		options: {
-			source: string
-			target: string
-			fad: number
-			fadeDuration: number
-			fadeAlgorithm: string
-			fadeType: string
-		}
-	}
-	[ActionId.ChannelSendLevelDelta]: {
-		options: {
-			source: string
-			target: string
-			delta: number
-			fadeDuration: number
-			fadeAlgorithm: string
-			fadeType: string
-		}
-	}
-	[ActionId.ChannelSendLevelStore]: {
-		options: {
-			source: string
-			target: string
-		}
-	}
-	[ActionId.ChannelSendLevelRestore]: {
-		options: {
-			source: string
-			target: string
-			fadeDuration: number
-			fadeAlgorithm: string
-			fadeType: string
-		}
-	}
-	[ActionId.ChannelSendPanning]: {
-		options: {
-			source: string
-			target: string
-			pan: number
-			fadeDuration: number
-			fadeAlgorithm: string
-			fadeType: string
-		}
-	}
-	[ActionId.ChannelSendPanningDelta]: {
-		options: {
-			source: string
-			target: string
-			delta: number
-			fadeDuration: number
-			fadeAlgorithm: string
-			fadeType: string
-		}
-	}
-	[ActionId.ChannelSendPanningStore]: {
-		options: {
-			source: string
-			target: string
-		}
-	}
-	[ActionId.ChannelSendPanningRestore]: {
-		options: {
-			source: string
-			target: string
-			fadeDuration: number
-			fadeAlgorithm: string
-			fadeType: string
-		}
-	}
-	[ActionId.BusSendLevel]: {
+	level_channel_send: {
 		options: {
 			source: string
 			target: string
@@ -337,7 +158,7 @@ export type ActionsSchema = {
 			fadeType: string
 		}
 	}
-	[ActionId.BusSendLevelDelta]: {
+	level_channel_send_delta: {
 		options: {
 			source: string
 			target: string
@@ -347,13 +168,13 @@ export type ActionsSchema = {
 			fadeType: string
 		}
 	}
-	[ActionId.BusSendLevelStore]: {
+	level_channel_store: {
 		options: {
 			source: string
 			target: string
 		}
 	}
-	[ActionId.BusSendLevelRestore]: {
+	level_channel_restore: {
 		options: {
 			source: string
 			target: string
@@ -362,7 +183,7 @@ export type ActionsSchema = {
 			fadeType: string
 		}
 	}
-	[ActionId.BusSendPanning]: {
+	'channel-send-panning': {
 		options: {
 			source: string
 			target: string
@@ -372,7 +193,7 @@ export type ActionsSchema = {
 			fadeType: string
 		}
 	}
-	[ActionId.BusSendPanningDelta]: {
+	'channel-send-panning-delta': {
 		options: {
 			source: string
 			target: string
@@ -382,13 +203,13 @@ export type ActionsSchema = {
 			fadeType: string
 		}
 	}
-	[ActionId.BusSendPanningStore]: {
+	'channel-send-panning-store': {
 		options: {
 			source: string
 			target: string
 		}
 	}
-	[ActionId.BusSendPanningRestore]: {
+	'channel-send-panning-restore': {
 		options: {
 			source: string
 			target: string
@@ -397,117 +218,187 @@ export type ActionsSchema = {
 			fadeType: string
 		}
 	}
-	[ActionId.InputTrim]: {
+	level_bus_send: {
+		options: {
+			source: string
+			target: string
+			fad: number
+			fadeDuration: number
+			fadeAlgorithm: string
+			fadeType: string
+		}
+	}
+	level_bus_send_delta: {
+		options: {
+			source: string
+			target: string
+			delta: number
+			fadeDuration: number
+			fadeAlgorithm: string
+			fadeType: string
+		}
+	}
+	level_bus_store: {
+		options: {
+			source: string
+			target: string
+		}
+	}
+	level_bus_restore: {
+		options: {
+			source: string
+			target: string
+			fadeDuration: number
+			fadeAlgorithm: string
+			fadeType: string
+		}
+	}
+	'bus-send-panning': {
+		options: {
+			source: string
+			target: string
+			pan: number
+			fadeDuration: number
+			fadeAlgorithm: string
+			fadeType: string
+		}
+	}
+	'bus-send-panning-delta': {
+		options: {
+			source: string
+			target: string
+			delta: number
+			fadeDuration: number
+			fadeAlgorithm: string
+			fadeType: string
+		}
+	}
+	'bus-send-panning-store': {
+		options: {
+			source: string
+			target: string
+		}
+	}
+	'bus-send-panning-restore': {
+		options: {
+			source: string
+			target: string
+			fadeDuration: number
+			fadeAlgorithm: string
+			fadeType: string
+		}
+	}
+	input_trim: {
 		options: {
 			input: string
 			trim: number
 		}
 	}
-	[ActionId.HeadampGain]: {
+	headamp_gain: {
 		options: {
 			headamp: string
 			gain: number
 		}
 	}
-	[ActionId.Label]: {
+	label: {
 		options: {
 			target: string
 			lab: string
 		}
 	}
-	[ActionId.Color]: {
+	color: {
 		options: {
 			target: string
 			col: string
 		}
 	}
-	[ActionId.GoCue]: {
+	go_cue: {
 		options: {
 			cue: number
 		}
 	}
-	[ActionId.GoScene]: {
+	go_scene: {
 		options: {
 			scene: number
 		}
 	}
-	[ActionId.GoSnip]: {
+	go_snip: {
 		options: {
 			snip: number
 		}
 	}
-	[ActionId.Select]: {
+	select: {
 		options: {
 			select: string
 		}
 	}
-	[ActionId.Solo]: {
+	solo: {
 		options: {
 			solo: string
 			on: number
 		}
 	}
-	[ActionId.ClearSolo]: { options: Record<string, never> }
-	[ActionId.Tape]: {
+	'clear-solo': { options: Record<string, never> }
+	tape: {
 		options: {
 			tFunc: number
 		}
 	}
-	[ActionId.TalkbackTalk]: {
+	talkback_talk: {
 		options: {
 			channel: 'A' | 'B'
 			on: number
 		}
 	}
-	[ActionId.TalkbackConfig]: {
+	talkback_config: {
 		options: {
 			function: number
 			dest: string
 		}
 	}
-	[ActionId.TalkbackConfigSingleSource]: {
+	talkback_config_single_src: {
 		options: {
 			function: number
 			dest: string
 			on: number
 		}
 	}
-	[ActionId.TalkbackConfigStore]: {
+	talkback_config_store: {
 		options: {
 			function: number
 		}
 	}
-	[ActionId.TalkbackConfigRestore]: {
+	talkback_restore: {
 		options: {
 			function: number
 		}
 	}
-	[ActionId.OscillatorEnable]: {
+	'oscillator-enable': {
 		options: {
 			on: number
 		}
 	}
-	[ActionId.OscillatorDestination]: {
+	'oscillator-destination': {
 		options: {
 			destination: string
 		}
 	}
-	[ActionId.SoloMono]: {
+	'solo-mono': {
 		options: {
 			on: number
 		}
 	}
-	[ActionId.SoloDim]: {
+	solo_dim: {
 		options: {
 			on: number
 		}
 	}
-	[ActionId.SoloDimAttenuation]: {
+	solo_dim_attenuation: {
 		options: {
 			dimAtt: number
 		}
 	}
-	[ActionId.MonitorLevel]: {
+	'monitor-level': {
 		options: {
 			fad: number
 			fadeDuration: number
@@ -515,241 +406,241 @@ export type ActionsSchema = {
 			fadeType: string
 		}
 	}
-	[ActionId.SyncClock]: { options: Record<string, never> }
-	[ActionId.ChannelBank]: {
+	sync_clock: { options: Record<string, never> }
+	'channel-bank-full': {
 		options: {
 			bank: number
 		}
 	}
-	[ActionId.GroupBank]: {
+	'group-bank-full': {
 		options: {
 			bank: number
 		}
 	}
-	[ActionId.ChannelBankCompact]: {
+	'channel-bank-compact': {
 		options: {
 			bank: number
 		}
 	}
-	[ActionId.GroupBankCompact]: {
+	'group-bank-compact': {
 		options: {
 			bank: number
 		}
 	}
-	[ActionId.SendsOnFader]: {
+	'sends-on-fader': {
 		options: {
 			on: number
 		}
 	}
-	[ActionId.BusSendBank]: {
+	'bus-send-bank': {
 		options: {
 			bank: number
 		}
 	}
-	[ActionId.UserBank]: {
+	'user-bank': {
 		options: {
 			bank: number
 		}
 	}
-	[ActionId.Screens]: {
+	screens: {
 		options: {
 			screen: number
 		}
 	}
-	[ActionId.MuteGroupScreen]: {
+	'mute-group-screen': {
 		options: {
 			on: number
 		}
 	}
-	[ActionId.UtilityScreen]: {
+	'utility-screen': {
 		options: {
 			on: number
 		}
 	}
-	[ActionId.ChannelPage]: {
+	'channel-page': {
 		options: {
 			page: number
 		}
 	}
-	[ActionId.MeterPage]: {
+	'meter-page': {
 		options: {
 			page: number
 		}
 	}
-	[ActionId.RoutePage]: {
+	'route-page': {
 		options: {
 			page: number
 		}
 	}
-	[ActionId.SetupPage]: {
+	'setup-page': {
 		options: {
 			page: number
 		}
 	}
-	[ActionId.LibPage]: {
+	'library-page': {
 		options: {
 			page: number
 		}
 	}
-	[ActionId.FxPage]: {
+	'effects-page': {
 		options: {
 			page: number
 		}
 	}
-	[ActionId.MonPage]: {
+	'monitor-page': {
 		options: {
 			page: number
 		}
 	}
-	[ActionId.USBPage]: {
+	'usb-page': {
 		options: {
 			page: number
 		}
 	}
-	[ActionId.ScenePage]: {
+	'scene-page': {
 		options: {
 			page: number
 		}
 	}
-	[ActionId.AssignPage]: {
+	'assign-page': {
 		options: {
 			page: number
 		}
 	}
-	[ActionId.NextPrevPage]: {
+	'next-previous-page': {
 		options: {
 			goto: number
 		}
 	}
-	[ActionId.RouteUserIn]: {
+	'route-user-in': {
 		options: {
 			source: number
 			channel: number
 		}
 	}
-	[ActionId.RouteUserOut]: {
+	'route-user-out': {
 		options: {
 			source: number
 			channel: number
 		}
 	}
-	[ActionId.StoreChannel]: {
+	store_channel: {
 		options: {
 			channel: number
 		}
 	}
-	[ActionId.RouteInputBlockMode]: {
+	'route-input-block-mode': {
 		options: {
 			mode: number
 		}
 	}
-	[ActionId.RouteInputBlocks]: {
-		options: {
-			mode: number
-			block: number
-			routing: number
-		}
-	}
-	[ActionId.RouteAuxBlocks]: {
-		options: {
-			mode: number
-			routing: number
-		}
-	}
-	[ActionId.RouteAES50Blocks]: {
+	'route-input-blocks': {
 		options: {
 			mode: number
 			block: number
 			routing: number
 		}
 	}
-	[ActionId.RouteCardBlocks]: {
+	'route-aux-blocks': {
+		options: {
+			mode: number
+			routing: number
+		}
+	}
+	'route-aes50-blocks': {
+		options: {
+			mode: number
+			block: number
+			routing: number
+		}
+	}
+	'route-card-blocks': {
 		options: {
 			block: number
 			routing: number
 		}
 	}
-	[ActionId.RouteXLRLeftOutputs]: {
+	'route-xlr-left-outputs': {
 		options: {
 			block: number
 			routing: number
 		}
 	}
-	[ActionId.RouteXLRRightOutputs]: {
+	'route-xlr-right-outputs': {
 		options: {
 			block: number
 			routing: number
 		}
 	}
-	[ActionId.LockAndShutdown]: {
+	'lock-and-shutdown': {
 		options: {
 			newState: number
 		}
 	}
-	[ActionId.SaveScene]: {
+	'save-scene': {
 		options: {
 			sceneIndex: number
 			sceneName: string
 			sceneNote: string
 		}
 	}
-	[ActionId.SelectActiveSDCard]: {
+	'select-active-sdcard': {
 		options: {
 			card: number
 		}
 	}
-	[ActionId.RecordedTracks]: {
+	'recorded-tracks': {
 		options: {
 			tracks: number
 		}
 	}
-	[ActionId.SelectPlaybackDevice]: {
+	'select-playback-device': {
 		options: {
 			device: number
 		}
 	}
-	[ActionId.FormatSDCard]: {
+	'format-sdcard': {
 		options: {
 			card: number
 		}
 	}
-	[ActionId.XLiveRouting]: {
+	'x-live-routing': {
 		options: {
 			route: number
 		}
 	}
-	[ActionId.XLiveClearAlert]: {
+	'x-live-clear-alert': {
 		options: {
 			alert: number
 		}
 	}
-	[ActionId.XLivePosition]: {
+	'x-live-position': {
 		options: {
 			position: number
 		}
 	}
-	[ActionId.GoCommand]: { options: Record<string, never> }
-	[ActionId.NextCommand]: { options: Record<string, never> }
-	[ActionId.PrevCommand]: { options: Record<string, never> }
-	[ActionId.InsertOn]: {
+	goCommmand: { options: Record<string, never> }
+	nextCommmand: { options: Record<string, never> }
+	prevCommmand: { options: Record<string, never> }
+	'insert-on': {
 		options: {
 			src: string
 			on: number
 		}
 	}
-	[ActionId.InsertPos]: {
+	'insert-pos': {
 		options: {
 			src: string
 			pos: number
 		}
 	}
-	[ActionId.InsertSelect]: {
+	'insert-select': {
 		options: {
 			src: string
 			dest: number
 		}
 	}
-	[ActionId.LoadChannelPreset]: {
+	'load-channel-preset': {
 		options: {
 			preset: string
 			channel: string
@@ -761,19 +652,19 @@ export type ActionsSchema = {
 			sends: boolean
 		}
 	}
-	[ActionId.LoadFXPreset]: {
+	'load-fx-preset': {
 		options: {
 			preset: string
 			channel: number
 		}
 	}
-	[ActionId.LoadAESPreset]: {
+	'load-aes-preset': {
 		options: {
 			preset: string
 		}
 	}
-	[ActionId.DoUndo]: { options: Record<string, never> }
-	[ActionId.SetUndoCheckpoint]: { options: Record<string, never> }
+	'do-undo': { options: Record<string, never> }
+	'set-undo-checkpoint': { options: Record<string, never> }
 }
 
 export function GetActionsList(
@@ -940,7 +831,7 @@ export function GetActionsList(
 	}
 
 	const actions: CompanionActionDefinitions<ActionsSchema> = {
-		[ActionId.Record]: {
+		record: {
 			name: 'Set X-live State',
 			options: [
 				{
@@ -967,7 +858,7 @@ export function GetActionsList(
 				optionsToMonitorForSubscribe: [],
 			}),
 		},
-		[ActionId.AddMarker]: {
+		add_marker: {
 			name: 'Add marker in recording',
 			options: [],
 			...actionSubscriptionWrapper({
@@ -980,7 +871,7 @@ export function GetActionsList(
 				optionsToMonitorForSubscribe: [],
 			}),
 		},
-		[ActionId.Mute]: {
+		mute: {
 			name: 'Set mute',
 			options: [
 				{
@@ -1012,7 +903,7 @@ export function GetActionsList(
 				optionsToMonitorForSubscribe: ['target', 'mute'],
 			}),
 		},
-		[ActionId.MuteGroup]: {
+		mute_grp: {
 			name: 'Mute Group ON/OFF',
 			options: [
 				{
@@ -1045,7 +936,7 @@ export function GetActionsList(
 				optionsToMonitorForSubscribe: ['target', 'mute'],
 			}),
 		},
-		[ActionId.MuteChannelSend]: {
+		mute_channel_send: {
 			name: 'Set mute for channel to bus send',
 			options: [
 				{
@@ -1085,7 +976,7 @@ export function GetActionsList(
 				}
 			},
 		},
-		[ActionId.MuteBusSend]: {
+		mute_bus_send: {
 			name: 'Set mute for bus to matrix send',
 			options: [
 				{
@@ -1125,7 +1016,7 @@ export function GetActionsList(
 				}
 			},
 		},
-		[ActionId.FaderLevel]: {
+		fad: {
 			name: 'Set fader level',
 			options: [
 				{
@@ -1161,7 +1052,7 @@ export function GetActionsList(
 				ensureLoaded(refPaths.level.path)
 			},
 		},
-		[ActionId.FaderLevelStore]: {
+		fader_store: {
 			name: 'Store fader level',
 			options: [
 				{
@@ -1189,7 +1080,7 @@ export function GetActionsList(
 				ensureLoaded(refPaths.level.path)
 			},
 		},
-		[ActionId.FaderLevelRestore]: {
+		fader_restore: {
 			name: 'Restore fader level',
 			options: [
 				{
@@ -1216,7 +1107,7 @@ export function GetActionsList(
 				}
 			},
 		},
-		[ActionId.FaderLevelDelta]: {
+		fader_delta: {
 			name: 'Adjust fader level',
 			options: [
 				{
@@ -1253,7 +1144,7 @@ export function GetActionsList(
 				ensureLoaded(refPaths.level.path)
 			},
 		},
-		[ActionId.Panning]: {
+		panning: {
 			name: 'Set panning',
 			options: [
 				{
@@ -1288,7 +1179,7 @@ export function GetActionsList(
 				ensureLoaded(refPaths.pan.path)
 			},
 		},
-		[ActionId.PanningDelta]: {
+		'panning-delta': {
 			name: 'Adjust panning',
 			options: [
 				{
@@ -1329,7 +1220,7 @@ export function GetActionsList(
 				ensureLoaded(refPaths.pan.path)
 			},
 		},
-		[ActionId.PanningStore]: {
+		'panning-store': {
 			name: 'Store panning',
 			options: [
 				{
@@ -1357,7 +1248,7 @@ export function GetActionsList(
 				ensureLoaded(refPaths.pan.path)
 			},
 		},
-		[ActionId.PanningRestore]: {
+		'panning-restore': {
 			name: 'Restore panning',
 			options: [
 				{
@@ -1396,7 +1287,7 @@ export function GetActionsList(
 				ensureLoaded(refPaths.pan.path)
 			},
 		},
-		[ActionId.ChannelSendLevel]: {
+		level_channel_send: {
 			name: 'Set level of channel to bus send',
 			options: [
 				{
@@ -1442,7 +1333,7 @@ export function GetActionsList(
 				ensureLoaded(`${sourceRef.sendTo.path}/${targetRef.sendToSink.level}`)
 			},
 		},
-		[ActionId.ChannelSendLevelDelta]: {
+		level_channel_send_delta: {
 			name: 'Adjust level of channel to bus send',
 			options: [
 				{
@@ -1488,7 +1379,7 @@ export function GetActionsList(
 				ensureLoaded(`${sourceRef.sendTo.path}/${targetRef.sendToSink.level}`)
 			},
 		},
-		[ActionId.ChannelSendLevelStore]: {
+		level_channel_store: {
 			name: 'Store level of channel to bus send',
 			options: [
 				{
@@ -1527,7 +1418,7 @@ export function GetActionsList(
 				ensureLoaded(`${sourceRef.sendTo.path}/${targetRef.sendToSink.level}`)
 			},
 		},
-		[ActionId.ChannelSendLevelRestore]: {
+		level_channel_restore: {
 			name: 'Restore level of channel to bus send',
 			options: [
 				{
@@ -1570,7 +1461,7 @@ export function GetActionsList(
 				}
 			},
 		},
-		[ActionId.ChannelSendPanning]: {
+		'channel-send-panning': {
 			name: 'Set panning on channel to bus send',
 			options: [
 				{
@@ -1615,7 +1506,7 @@ export function GetActionsList(
 				ensureLoaded(`${sourceRef.sendTo.path}/${targetRef.sendToSink.pan}`)
 			},
 		},
-		[ActionId.ChannelSendPanningDelta]: {
+		'channel-send-panning-delta': {
 			name: 'Adjust panning on channel to bus send',
 			options: [
 				{
@@ -1666,7 +1557,7 @@ export function GetActionsList(
 				ensureLoaded(`${sourceRef.sendTo.path}/${targetRef.sendToSink.pan}`)
 			},
 		},
-		[ActionId.ChannelSendPanningStore]: {
+		'channel-send-panning-store': {
 			name: 'Store panning on channel to bus send',
 			options: [
 				{
@@ -1704,7 +1595,7 @@ export function GetActionsList(
 				ensureLoaded(`${sourceRef.sendTo.path}/${targetRef.sendToSink.pan}`)
 			},
 		},
-		[ActionId.ChannelSendPanningRestore]: {
+		'channel-send-panning-restore': {
 			name: 'Restore panning on channel to bus send',
 			options: [
 				{
@@ -1753,7 +1644,7 @@ export function GetActionsList(
 				ensureLoaded(`${sourceRef.sendTo.path}/${targetRef.sendToSink.pan}`)
 			},
 		},
-		[ActionId.BusSendLevel]: {
+		level_bus_send: {
 			name: 'Set level of bus to matrix send',
 			options: [
 				{
@@ -1792,7 +1683,7 @@ export function GetActionsList(
 				ensureLoaded(`${sourceRef.sendTo.path}/${targetRef.sendToSink.level}`)
 			},
 		},
-		[ActionId.BusSendLevelDelta]: {
+		level_bus_send_delta: {
 			name: 'Adjust level of bus to matrix send',
 			options: [
 				{
@@ -1838,7 +1729,7 @@ export function GetActionsList(
 				ensureLoaded(`${sourceRef.sendTo.path}/${targetRef.sendToSink.level}`)
 			},
 		},
-		[ActionId.BusSendLevelStore]: {
+		level_bus_store: {
 			name: 'Store level of bus to matrix send',
 			options: [
 				{
@@ -1877,7 +1768,7 @@ export function GetActionsList(
 				ensureLoaded(`${sourceRef.sendTo.path}/${targetRef.sendToSink.level}`)
 			},
 		},
-		[ActionId.BusSendLevelRestore]: {
+		level_bus_restore: {
 			name: 'Restore level of bus to matrix send',
 			options: [
 				{
@@ -1920,7 +1811,7 @@ export function GetActionsList(
 				}
 			},
 		},
-		[ActionId.BusSendPanning]: {
+		'bus-send-panning': {
 			name: 'Set panning on bus to matrix send',
 			options: [
 				{
@@ -1966,7 +1857,7 @@ export function GetActionsList(
 				ensureLoaded(`${sourceRef.sendTo.path}/${targetRef.sendToSink.pan}`)
 			},
 		},
-		[ActionId.BusSendPanningDelta]: {
+		'bus-send-panning-delta': {
 			name: 'Adjust panning on bus to matrix bus send',
 			options: [
 				{
@@ -2018,7 +1909,7 @@ export function GetActionsList(
 				ensureLoaded(`${sourceRef.sendTo.path}/${targetRef.sendToSink.pan}`)
 			},
 		},
-		[ActionId.BusSendPanningStore]: {
+		'bus-send-panning-store': {
 			name: 'Store panning on bus to matrix send',
 			options: [
 				{
@@ -2057,7 +1948,7 @@ export function GetActionsList(
 				ensureLoaded(`${sourceRef.sendTo.path}/${targetRef.sendToSink.pan}`)
 			},
 		},
-		[ActionId.BusSendPanningRestore]: {
+		'bus-send-panning-restore': {
 			name: 'Restore panning on bus to matrix send',
 			options: [
 				{
@@ -2107,7 +1998,7 @@ export function GetActionsList(
 				ensureLoaded(`${sourceRef.sendTo.path}/${targetRef.sendToSink.pan}`)
 			},
 		},
-		[ActionId.InputTrim]: {
+		input_trim: {
 			name: 'Set input trim',
 			options: [
 				{
@@ -2138,7 +2029,7 @@ export function GetActionsList(
 				})
 			},
 		},
-		[ActionId.HeadampGain]: {
+		headamp_gain: {
 			name: 'Set Headamp gain',
 			options: [
 				{
@@ -2160,7 +2051,7 @@ export function GetActionsList(
 				})
 			},
 		},
-		[ActionId.Label]: {
+		label: {
 			name: 'Set label',
 			options: [
 				{
@@ -2189,7 +2080,7 @@ export function GetActionsList(
 			},
 		},
 
-		[ActionId.Color]: {
+		color: {
 			name: 'Set color',
 			options: [
 				{
@@ -2221,7 +2112,7 @@ export function GetActionsList(
 			},
 		},
 
-		[ActionId.GoCue]: {
+		go_cue: {
 			name: 'Load Console Cue',
 			options: [
 				{
@@ -2240,7 +2131,7 @@ export function GetActionsList(
 				})
 			},
 		},
-		[ActionId.GoScene]: {
+		go_scene: {
 			name: 'Load Console Scene',
 			options: [
 				{
@@ -2259,7 +2150,7 @@ export function GetActionsList(
 				})
 			},
 		},
-		[ActionId.GoSnip]: {
+		go_snip: {
 			name: 'Load Console snippet',
 			options: [
 				{
@@ -2278,7 +2169,7 @@ export function GetActionsList(
 				})
 			},
 		},
-		[ActionId.Select]: {
+		select: {
 			name: 'Select',
 			options: [
 				{
@@ -2299,7 +2190,7 @@ export function GetActionsList(
 				})
 			},
 		},
-		[ActionId.Solo]: {
+		solo: {
 			name: 'Solo On/Off',
 			options: [
 				{
@@ -2338,7 +2229,7 @@ export function GetActionsList(
 				}
 			},
 		},
-		[ActionId.ClearSolo]: {
+		'clear-solo': {
 			name: 'Clear Solo',
 			options: [],
 			callback: async (): Promise<void> => {
@@ -2348,7 +2239,7 @@ export function GetActionsList(
 				})
 			},
 		},
-		[ActionId.Tape]: {
+		tape: {
 			name: 'Tape Operation',
 			options: [
 				{
@@ -2366,7 +2257,7 @@ export function GetActionsList(
 				})
 			},
 		},
-		[ActionId.TalkbackTalk]: {
+		talkback_talk: {
 			name: 'Talkback Talk',
 			options: [
 				{
@@ -2408,7 +2299,7 @@ export function GetActionsList(
 				}
 			},
 		},
-		[ActionId.TalkbackConfig]: {
+		talkback_config: {
 			name: 'Talkback Config',
 			options: [
 				{
@@ -2456,7 +2347,7 @@ export function GetActionsList(
 				})
 			},
 		},
-		[ActionId.TalkbackConfigSingleSource]: {
+		talkback_config_single_src: {
 			name: 'Talkback Config - Single Source',
 			description: 'Modify the config of a single source without changeing the other sources',
 			options: [
@@ -2518,7 +2409,7 @@ export function GetActionsList(
 				ensureLoaded(`/config/talk/${stringifyValueAlways(evt.options.function)}/destmap`)
 			},
 		},
-		[ActionId.TalkbackConfigStore]: {
+		talkback_config_store: {
 			name: 'Talkback Store Config',
 			options: [
 				{
@@ -2550,7 +2441,7 @@ export function GetActionsList(
 				ensureLoaded(`/config/talk/${stringifyValueAlways(evt.options.function)}/destmap`)
 			},
 		},
-		[ActionId.TalkbackConfigRestore]: {
+		talkback_restore: {
 			name: 'Talkback Restore Config',
 			options: [
 				{
@@ -2585,7 +2476,7 @@ export function GetActionsList(
 			},
 		},
 
-		[ActionId.OscillatorEnable]: {
+		'oscillator-enable': {
 			name: 'Oscillator Enable',
 			options: [
 				{
@@ -2611,7 +2502,7 @@ export function GetActionsList(
 				}
 			},
 		},
-		[ActionId.OscillatorDestination]: {
+		'oscillator-destination': {
 			name: 'Oscillator Destination',
 			options: [
 				{
@@ -2632,7 +2523,7 @@ export function GetActionsList(
 				})
 			},
 		},
-		[ActionId.SoloMono]: {
+		'solo-mono': {
 			name: 'Solo Mono',
 			options: [
 				{
@@ -2658,7 +2549,7 @@ export function GetActionsList(
 				}
 			},
 		},
-		[ActionId.SoloDim]: {
+		solo_dim: {
 			name: 'Solo Dim',
 			options: [
 				{
@@ -2684,7 +2575,7 @@ export function GetActionsList(
 				}
 			},
 		},
-		[ActionId.SoloDimAttenuation]: {
+		solo_dim_attenuation: {
 			name: 'Set Dim Attenuation',
 			options: [
 				{
@@ -2705,7 +2596,7 @@ export function GetActionsList(
 				})
 			},
 		},
-		[ActionId.MonitorLevel]: {
+		'monitor-level': {
 			name: 'Set monitor level',
 			options: [FaderLevelChoice, ...FadeDurationChoice],
 			callback: async (action): Promise<void> => {
@@ -2718,7 +2609,7 @@ export function GetActionsList(
 				ensureLoaded(`/config/solo/level`)
 			},
 		},
-		[ActionId.SyncClock]: {
+		sync_clock: {
 			name: 'Sync console time',
 			options: [],
 			callback: async (): Promise<void> => {
@@ -2728,7 +2619,7 @@ export function GetActionsList(
 				})
 			},
 		},
-		[ActionId.ChannelBank]: {
+		'channel-bank-full': {
 			name: 'Select active channel bank (X32/M32)',
 			description:
 				'Select a channel bank for the left hand side of your console. Please note this action is for the X32 and M32. For X32 Compact/X32 Producer/M32R please use the X32 Compact/X32 Producer/M32R action',
@@ -2765,7 +2656,7 @@ export function GetActionsList(
 				})
 			},
 		},
-		[ActionId.GroupBank]: {
+		'group-bank-full': {
 			name: 'Select active group bank (X32/M32)',
 			description:
 				'Select a group bank for the right hand side of your console. Please note this action is for the X32 and M32. For X32 Compact/X32 Producer/M32R please use the X32 Compact/X32 Producer/M32R action',
@@ -2802,7 +2693,7 @@ export function GetActionsList(
 				})
 			},
 		},
-		[ActionId.ChannelBankCompact]: {
+		'channel-bank-compact': {
 			name: 'Select active channel bank (X32 Compact/X32 Producer/M32R)',
 			description:
 				'Select a channel bank for the left hand side of your console. Please note this action is for X32 Compact/X32 Producer/M32R. For X32 or M32 please use the X32/M32 action',
@@ -2855,7 +2746,7 @@ export function GetActionsList(
 				})
 			},
 		},
-		[ActionId.GroupBankCompact]: {
+		'group-bank-compact': {
 			name: 'Select active group bank (X32 Compact/X32 Producer/M32R)',
 			description:
 				'Select a group bank for the right hand side of your console. Please note this actions is for X32 Compact/X32 Producer/M32R. For X32 or M32 please use the X32/M32 action',
@@ -2916,7 +2807,7 @@ export function GetActionsList(
 				})
 			},
 		},
-		[ActionId.SendsOnFader]: {
+		'sends-on-fader': {
 			name: 'Sends on Fader/Fader Flip',
 			options: [
 				{
@@ -2942,7 +2833,7 @@ export function GetActionsList(
 				}
 			},
 		},
-		[ActionId.BusSendBank]: {
+		'bus-send-bank': {
 			name: 'Bus send bank',
 			options: [
 				{
@@ -2978,7 +2869,7 @@ export function GetActionsList(
 				})
 			},
 		},
-		[ActionId.UserBank]: {
+		'user-bank': {
 			name: 'User Assign Bank',
 			options: [
 				{
@@ -3010,7 +2901,7 @@ export function GetActionsList(
 				})
 			},
 		},
-		[ActionId.Screens]: {
+		screens: {
 			name: 'Select active screen on console',
 			options: [
 				{
@@ -3070,7 +2961,7 @@ export function GetActionsList(
 				})
 			},
 		},
-		[ActionId.MuteGroupScreen]: {
+		'mute-group-screen': {
 			name: 'Mute Group Screen',
 			options: [
 				{
@@ -3096,7 +2987,7 @@ export function GetActionsList(
 				}
 			},
 		},
-		[ActionId.UtilityScreen]: {
+		'utility-screen': {
 			name: 'Utilities Screen',
 			options: [
 				{
@@ -3122,7 +3013,7 @@ export function GetActionsList(
 				}
 			},
 		},
-		[ActionId.ChannelPage]: {
+		'channel-page': {
 			name: 'Navigate to page on channel screen',
 			options: [
 				{
@@ -3171,7 +3062,7 @@ export function GetActionsList(
 				sendOsc('/-stat/screen/screen', { type: 'i', value: 0 })
 			},
 		},
-		[ActionId.MeterPage]: {
+		'meter-page': {
 			name: 'Navigate to page on meters screen',
 			options: [
 				{
@@ -3216,7 +3107,7 @@ export function GetActionsList(
 				sendOsc('/-stat/screen/screen', { type: 'i', value: 1 })
 			},
 		},
-		[ActionId.RoutePage]: {
+		'route-page': {
 			name: 'Navigate to page on route screen',
 			options: [
 				{
@@ -3273,7 +3164,7 @@ export function GetActionsList(
 				sendOsc('/-stat/screen/screen', { type: 'i', value: 2 })
 			},
 		},
-		[ActionId.SetupPage]: {
+		'setup-page': {
 			name: 'Navigate to page on setup screen',
 			options: [
 				{
@@ -3322,7 +3213,7 @@ export function GetActionsList(
 				sendOsc('/-stat/screen/screen', { type: 'i', value: 3 })
 			},
 		},
-		[ActionId.LibPage]: {
+		'library-page': {
 			name: 'Navigate to page on library screen',
 			options: [
 				{
@@ -3359,7 +3250,7 @@ export function GetActionsList(
 				sendOsc('/-stat/screen/screen', { type: 'i', value: 4 })
 			},
 		},
-		[ActionId.FxPage]: {
+		'effects-page': {
 			name: 'Navigate to page on effects screen',
 			options: [
 				{
@@ -3416,7 +3307,7 @@ export function GetActionsList(
 				sendOsc('/-stat/screen/screen', { type: 'i', value: 5 })
 			},
 		},
-		[ActionId.MonPage]: {
+		'monitor-page': {
 			name: 'Navigate to page on monitor screen',
 			options: [
 				{
@@ -3453,7 +3344,7 @@ export function GetActionsList(
 				sendOsc('/-stat/screen/screen', { type: 'i', value: 6 })
 			},
 		},
-		[ActionId.USBPage]: {
+		'usb-page': {
 			name: 'Navigate to page on USB screen',
 			options: [
 				{
@@ -3482,7 +3373,7 @@ export function GetActionsList(
 				sendOsc('/-stat/screen/screen', { type: 'i', value: 7 })
 			},
 		},
-		[ActionId.ScenePage]: {
+		'scene-page': {
 			name: 'Navigate to page on scene screen',
 			options: [
 				{
@@ -3527,7 +3418,7 @@ export function GetActionsList(
 				sendOsc('/-stat/screen/screen', { type: 'i', value: 8 })
 			},
 		},
-		[ActionId.AssignPage]: {
+		'assign-page': {
 			name: 'Navigate to page on assign screen',
 			options: [
 				{
@@ -3564,7 +3455,7 @@ export function GetActionsList(
 				sendOsc('/-stat/screen/screen', { type: 'i', value: 9 })
 			},
 		},
-		[ActionId.NextPrevPage]: {
+		'next-previous-page': {
 			name: 'Navigate to the next or previous page',
 			options: [
 				{
@@ -3658,7 +3549,7 @@ export function GetActionsList(
 				ensureLoaded('/-stat/screen/ASSIGN/page')
 			},
 		},
-		[ActionId.RouteUserIn]: {
+		'route-user-in': {
 			name: 'Route User Input',
 			description:
 				"Use at own risk. (Maybe don't accidently press during a show?) Please make sure your settings are correct when setting up. Protip: You can use `Store channel for routing` with and then select `STORED CHNANNEL` to chain screens",
@@ -3697,7 +3588,7 @@ export function GetActionsList(
 				})
 			},
 		},
-		[ActionId.RouteUserOut]: {
+		'route-user-out': {
 			name: 'Route User Output ',
 			description:
 				"Use at own risk. (Maybe don't accidently press during a show?) Please make sure your settings are correct when setting up. Protip: You can use `Store channel for routing` with and then select `STORED CHANNEL` to chain screens",
@@ -3736,7 +3627,7 @@ export function GetActionsList(
 				})
 			},
 		},
-		[ActionId.StoreChannel]: {
+		store_channel: {
 			name: 'Store channel for routing',
 			description:
 				"Store channel for use with `User Input Routing`and `User Output Routing`. Use at own riskv. (Maybe don't accidently press during a show?) Please make sure your settings are correct when setting up.",
@@ -3754,7 +3645,7 @@ export function GetActionsList(
 				state.setStoredChannel(action.options.channel)
 			},
 		},
-		[ActionId.RouteInputBlockMode]: {
+		'route-input-block-mode': {
 			name: 'Route Input Block Mode',
 			description:
 				"Setup which routing block set to use. Use at own risk. (Maybe don't accidently press during a show?)",
@@ -3787,7 +3678,7 @@ export function GetActionsList(
 				ensureLoaded(`/config/routing/routswitch`)
 			},
 		},
-		[ActionId.RouteInputBlocks]: {
+		'route-input-blocks': {
 			name: 'Route Input Blocks',
 			description:
 				"Setup input routing blocks. Use at own risk. (Maybe don't accidently press during a show?) Please make sure your settings are correct when setting up.",
@@ -3826,7 +3717,7 @@ export function GetActionsList(
 				sendOsc(cmd, { type: 'i', value: routing })
 			},
 		},
-		[ActionId.RouteAuxBlocks]: {
+		'route-aux-blocks': {
 			name: 'Route Aux Blocks',
 			description:
 				"Setup aux input routing blocks. Use at own risk. (Maybe don't accidently press during a show?) Please make sure your settings are correct when setting up.",
@@ -3856,7 +3747,7 @@ export function GetActionsList(
 				sendOsc(cmd, { type: 'i', value: routing })
 			},
 		},
-		[ActionId.RouteAES50Blocks]: {
+		'route-aes50-blocks': {
 			name: 'Route AES50 Blocks',
 			description:
 				"Setup aes50 routing blocks. Use at own risk. (Maybe don't accidently press during a show?) Please make sure your settings are correct when setting up.",
@@ -3895,7 +3786,7 @@ export function GetActionsList(
 				sendOsc(cmd, { type: 'i', value: routing })
 			},
 		},
-		[ActionId.RouteCardBlocks]: {
+		'route-card-blocks': {
 			name: 'Route Card Blocks',
 			description:
 				"Setup card routing blocks. Use at own risk. (Maybe don't accidently press during a show?) Please make sure your settings are correct when setting up.",
@@ -3922,7 +3813,7 @@ export function GetActionsList(
 				sendOsc(cmd, { type: 'i', value: routing })
 			},
 		},
-		[ActionId.RouteXLRLeftOutputs]: {
+		'route-xlr-left-outputs': {
 			name: 'Route Left XLR Output Blocks',
 			description:
 				"Setup left (1-4 and 9-12) XLR Out routing blocks. (for 5-8 and 13-16 use `Route Right XLR Output Blocks`) Use at own risk. (Maybe don't accidently press during a show?) Please make sure your settings are correct when setting up.",
@@ -3952,7 +3843,7 @@ export function GetActionsList(
 				sendOsc(cmd, { type: 'i', value: routing })
 			},
 		},
-		[ActionId.RouteXLRRightOutputs]: {
+		'route-xlr-right-outputs': {
 			name: 'Route Right XLR Output Blocks',
 			description:
 				"Setup right (5-8 and 13-16) XLR Out routing blocks. (for 1-4 and 9-12 use `Route Left XLR Output Blocks`) Use at own risk. (Maybe don't accidently press during a show?) Please make sure your settings are correct when setting up.",
@@ -3982,7 +3873,7 @@ export function GetActionsList(
 				sendOsc(cmd, { type: 'i', value: routing })
 			},
 		},
-		[ActionId.LockAndShutdown]: {
+		'lock-and-shutdown': {
 			name: 'Lock/Shutdown',
 			description: 'Lock the X32 or shut it down',
 			options: [
@@ -4026,7 +3917,7 @@ export function GetActionsList(
 				ensureLoaded(`/-stat/lock`)
 			},
 		},
-		[ActionId.SaveScene]: {
+		'save-scene': {
 			name: 'Save scene',
 			description:
 				'Use at own risk. This will over write whatever scene is saved in that index. Please make sure your settings are correct when setting up.',
@@ -4060,7 +3951,7 @@ export function GetActionsList(
 				])
 			},
 		},
-		[ActionId.SelectActiveSDCard]: {
+		'select-active-sdcard': {
 			name: 'Select Active SD Card',
 			description: 'Select Active SD Card',
 			options: [
@@ -4080,7 +3971,7 @@ export function GetActionsList(
 				sendOsc(path, { type: 'i', value: convertAnyToNumber(action.options.card) })
 			},
 		},
-		[ActionId.RecordedTracks]: {
+		'recorded-tracks': {
 			name: 'Select number of recorded tracks',
 			description: 'Select number of recorded tracks',
 			options: [
@@ -4101,7 +3992,7 @@ export function GetActionsList(
 				sendOsc(path, { type: 'i', value: convertAnyToNumber(action.options.tracks) })
 			},
 		},
-		[ActionId.SelectPlaybackDevice]: {
+		'select-playback-device': {
 			name: 'Select playback device',
 			description: 'Select playback device',
 			options: [
@@ -4121,7 +4012,7 @@ export function GetActionsList(
 				sendOsc(path, { type: 'i', value: convertAnyToNumber(action.options.device) })
 			},
 		},
-		[ActionId.FormatSDCard]: {
+		'format-sdcard': {
 			name: 'Format SD Card',
 			description: 'Format SD Card',
 			options: [
@@ -4142,7 +4033,7 @@ export function GetActionsList(
 			},
 		},
 
-		[ActionId.XLiveRouting]: {
+		'x-live-routing': {
 			name: 'X-Live routing',
 			description: 'X-Live routing',
 			options: [
@@ -4163,7 +4054,7 @@ export function GetActionsList(
 				sendOsc(path, { type: 'i', value: convertAnyToNumber(action.options.route) })
 			},
 		},
-		[ActionId.XLiveClearAlert]: {
+		'x-live-clear-alert': {
 			name: 'X-Live Clear Alert',
 			description: 'X-Live Clear Alert',
 			options: [
@@ -4183,7 +4074,7 @@ export function GetActionsList(
 				sendOsc(path, { type: 'i', value: convertAnyToNumber(action.options.alert) })
 			},
 		},
-		[ActionId.XLivePosition]: {
+		'x-live-position': {
 			name: 'X-Live Position',
 			description: 'X-Live Position',
 			options: [
@@ -4202,7 +4093,7 @@ export function GetActionsList(
 				sendOsc(path, { type: 'i', value: convertAnyToNumber(action.options.position) })
 			},
 		},
-		[ActionId.GoCommand]: {
+		goCommmand: {
 			name: 'Go Command',
 			description: 'Load the highlighted cue/scene/snipped (based on show control)',
 			options: [],
@@ -4221,7 +4112,7 @@ export function GetActionsList(
 				ensureLoaded('/-show/prepos/current')
 			},
 		},
-		[ActionId.NextCommand]: {
+		nextCommmand: {
 			name: 'Next Command',
 			description:
 				'Move the highlighted marker to the cue/scene/snipped (based on show control). Warning pressing this too many times could result in going to a cue/scene/snippet without data.',
@@ -4236,7 +4127,7 @@ export function GetActionsList(
 				ensureLoaded('/-show/prepos/current')
 			},
 		},
-		[ActionId.PrevCommand]: {
+		prevCommmand: {
 			name: 'Previous Command',
 			description: 'Move the highlighted marker to the cue/scene/snipped (based on show control).',
 			options: [],
@@ -4253,7 +4144,7 @@ export function GetActionsList(
 				ensureLoaded('/-show/prepos/current')
 			},
 		},
-		[ActionId.InsertOn]: {
+		'insert-on': {
 			name: 'Insert Status',
 			description: 'Switch Insert no or off for a specific source',
 			options: [
@@ -4288,7 +4179,7 @@ export function GetActionsList(
 				}
 			},
 		},
-		[ActionId.InsertPos]: {
+		'insert-pos': {
 			name: 'Insert Position',
 			description: 'Set whether insert is PRE or POST for specific source',
 			options: [
@@ -4317,7 +4208,7 @@ export function GetActionsList(
 				sendOsc(srcRef.insertSource.posPath, { type: 'i', value: convertAnyToNumber(action.options.pos) })
 			},
 		},
-		[ActionId.InsertSelect]: {
+		'insert-select': {
 			name: 'Insert Destination',
 			description: 'Set the destination of the insert for a specific source',
 			options: [
@@ -4343,7 +4234,7 @@ export function GetActionsList(
 				sendOsc(srcRef.insertSource.selPath, { type: 'i', value: convertAnyToNumber(action.options.dest) })
 			},
 		},
-		[ActionId.LoadChannelPreset]: {
+		'load-channel-preset': {
 			name: 'Load channel preset',
 			description:
 				"Load channel preset either into specified channel or into selected channel. Use at own risk. (Maybe don't accidently press during a show?)",
@@ -4442,7 +4333,7 @@ export function GetActionsList(
 				])
 			},
 		},
-		[ActionId.LoadFXPreset]: {
+		'load-fx-preset': {
 			name: 'Load effects preset',
 			description:
 				"Load effects preset either into specified channel. Use at own risk. (Maybe don't accidently press during a show?)",
@@ -4494,7 +4385,7 @@ export function GetActionsList(
 		// I also tried to see how X32edit loads presets and it doesn't even use the load command, instead it uses eight separate
 		//`/config/routing` commands to set each config (for interest loading a channel preset kicks of 24 commands and sets
 		// each property of the channel manually) so that exercise didn't help. This feature is missing on Mixing Station too
-		// [ActionId.LoadRoutingPreset]: {
+		// 'load-route-preset': {
 		// 	name: 'Load routing preset',
 		// 	description: "Load routing preset. Use at own risk. (Maybe don't accidently press during a show?)",
 		// 	options: [
@@ -4580,7 +4471,7 @@ export function GetActionsList(
 		// 		])
 		// 	},
 		// },
-		[ActionId.LoadAESPreset]: {
+		'load-aes-preset': {
 			name: 'Load AES/DP48 preset',
 			description: "Load AES/DP48 preset. Use at own risk. (Maybe don't accidently press during a show?)",
 			options: [
@@ -4607,7 +4498,7 @@ export function GetActionsList(
 				])
 			},
 		},
-		[ActionId.DoUndo]: {
+		'do-undo': {
 			name: 'Do Undo',
 			description: 'If possible, undo to last checkpoint (NOTE: There is only one undo step in X32)',
 			options: [],
@@ -4622,7 +4513,7 @@ export function GetActionsList(
 				sendOsc('/-action/doundo', { type: 'i', value: 1 })
 			},
 		},
-		[ActionId.SetUndoCheckpoint]: {
+		'set-undo-checkpoint': {
 			name: 'Set Undo Checkpoint',
 			description:
 				'Creates checkpoint to get back to upon issuing an undo command. The time will replace any value previously saved checkpoint',

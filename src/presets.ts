@@ -2,7 +2,6 @@ import { FeedbackId } from './feedback.js'
 import { X32State } from './state.js'
 import { CompanionPresetDefinitions } from '@companion-module/base'
 import { InstanceBaseExt, X32Types } from './util.js'
-import { ActionId } from './actions.js'
 import { GetLevelsChoiceConfigs, MUTE_TOGGLE } from './choices.js'
 
 export function GetPresetsList(_instance: InstanceBaseExt, state: X32State): CompanionPresetDefinitions<X32Types> {
@@ -33,7 +32,7 @@ export function GetPresetsList(_instance: InstanceBaseExt, state: X32State): Com
 			{
 				down: [
 					{
-						actionId: ActionId.Record,
+						actionId: 'record',
 						options: {
 							state: 3,
 						},
@@ -44,7 +43,7 @@ export function GetPresetsList(_instance: InstanceBaseExt, state: X32State): Com
 			{
 				down: [
 					{
-						actionId: ActionId.Record,
+						actionId: 'record',
 						options: {
 							state: 0,
 						},
@@ -80,7 +79,7 @@ export function GetPresetsList(_instance: InstanceBaseExt, state: X32State): Com
 			{
 				down: [
 					{
-						actionId: ActionId.AddMarker,
+						actionId: 'add_marker',
 						options: {},
 					},
 				],
@@ -104,7 +103,7 @@ export function GetPresetsList(_instance: InstanceBaseExt, state: X32State): Com
 			{
 				down: [
 					{
-						actionId: ActionId.TalkbackTalk,
+						actionId: 'talkback_talk',
 						options: {
 							channel: 'A',
 							on: 1,
@@ -113,7 +112,7 @@ export function GetPresetsList(_instance: InstanceBaseExt, state: X32State): Com
 				],
 				up: [
 					{
-						actionId: ActionId.TalkbackTalk,
+						actionId: 'talkback_talk',
 						options: {
 							channel: 'A',
 							on: 0,
@@ -150,7 +149,7 @@ export function GetPresetsList(_instance: InstanceBaseExt, state: X32State): Com
 			{
 				down: [
 					{
-						actionId: ActionId.TalkbackTalk,
+						actionId: 'talkback_talk',
 						options: {
 							channel: 'A',
 							on: MUTE_TOGGLE,
@@ -188,7 +187,7 @@ export function GetPresetsList(_instance: InstanceBaseExt, state: X32State): Com
 			{
 				down: [
 					{
-						actionId: ActionId.TalkbackTalk,
+						actionId: 'talkback_talk',
 						options: {
 							channel: 'B',
 							on: 1,
@@ -197,7 +196,7 @@ export function GetPresetsList(_instance: InstanceBaseExt, state: X32State): Com
 				],
 				up: [
 					{
-						actionId: ActionId.TalkbackTalk,
+						actionId: 'talkback_talk',
 						options: {
 							channel: 'B',
 							on: 0,
@@ -234,7 +233,7 @@ export function GetPresetsList(_instance: InstanceBaseExt, state: X32State): Com
 			{
 				down: [
 					{
-						actionId: ActionId.TalkbackTalk,
+						actionId: 'talkback_talk',
 						options: {
 							channel: 'B',
 							on: MUTE_TOGGLE,
@@ -273,13 +272,13 @@ export function GetPresetsList(_instance: InstanceBaseExt, state: X32State): Com
 				{
 					down: [
 						{
-							actionId: ActionId.FaderLevelStore,
+							actionId: 'fader_store',
 							options: {
 								target: sampleChannel.id,
 							},
 						},
 						{
-							actionId: ActionId.FaderLevelDelta,
+							actionId: 'fader_delta',
 							options: {
 								target: sampleChannel.id,
 								delta: -10,
@@ -291,7 +290,7 @@ export function GetPresetsList(_instance: InstanceBaseExt, state: X32State): Com
 					],
 					up: [
 						{
-							actionId: ActionId.FaderLevelRestore,
+							actionId: 'fader_restore',
 							options: {
 								target: sampleChannel.id,
 								fadeDuration: 0,
@@ -321,14 +320,14 @@ export function GetPresetsList(_instance: InstanceBaseExt, state: X32State): Com
 				{
 					down: [
 						{
-							actionId: ActionId.ChannelSendLevelStore,
+							actionId: 'level_channel_store',
 							options: {
 								source: sampleInput.id,
 								target: sampleChannelSendTarget.id,
 							},
 						},
 						{
-							actionId: ActionId.ChannelSendLevelDelta,
+							actionId: 'level_channel_send_delta',
 							options: {
 								source: sampleInput.id,
 								target: sampleChannelSendTarget.id,
@@ -341,7 +340,7 @@ export function GetPresetsList(_instance: InstanceBaseExt, state: X32State): Com
 					],
 					up: [
 						{
-							actionId: ActionId.ChannelSendLevelRestore,
+							actionId: 'level_channel_restore',
 							options: {
 								source: sampleInput.id,
 								target: sampleChannelSendTarget.id,
@@ -372,14 +371,14 @@ export function GetPresetsList(_instance: InstanceBaseExt, state: X32State): Com
 				{
 					down: [
 						{
-							actionId: ActionId.BusSendLevelStore,
+							actionId: 'level_bus_store',
 							options: {
 								source: sampleBusSendSource.id,
 								target: sampleBusSendTarget.id,
 							},
 						},
 						{
-							actionId: ActionId.BusSendLevelDelta,
+							actionId: 'level_bus_send_delta',
 							options: {
 								source: sampleBusSendSource.id,
 								target: sampleBusSendTarget.id,
@@ -392,7 +391,7 @@ export function GetPresetsList(_instance: InstanceBaseExt, state: X32State): Com
 					],
 					up: [
 						{
-							actionId: ActionId.BusSendLevelRestore,
+							actionId: 'level_bus_restore',
 							options: {
 								source: sampleBusSendSource.id,
 								target: sampleBusSendTarget.id,

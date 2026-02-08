@@ -5,6 +5,7 @@ exports[`Actions test > Check Add marker in recording (add_marker) 1`] = `
   "callback": [Function],
   "name": "Add marker in recording",
   "options": [],
+  "subscribe": undefined,
 }
 `;
 
@@ -343,27 +344,12 @@ exports[`Actions test > Check Adjust fader level (fader_delta) 1`] = `
       "type": "dropdown",
     },
     {
-      "default": false,
-      "id": "useVariable",
-      "label": "Use a variable for Delta",
-      "type": "checkbox",
-    },
-    {
       "default": 1,
       "id": "delta",
-      "isVisibleExpression": "!$(options:useVariable)",
       "label": "Delta",
       "max": 100,
       "min": -100,
       "type": "number",
-    },
-    {
-      "description": "e.g. $(internal:custom_my_delta), NOTE: strings and out of range numbers will be ignored",
-      "id": "varDelta",
-      "isVisibleExpression": "!!$(options:useVariable)",
-      "label": "Variable Delta",
-      "type": "textinput",
-      "useVariables": true,
     },
     {
       "default": 0,
@@ -574,27 +560,12 @@ exports[`Actions test > Check Adjust level of bus to matrix send (level_bus_send
       "type": "dropdown",
     },
     {
-      "default": false,
-      "id": "useVariable",
-      "label": "Use a variable for Delta",
-      "type": "checkbox",
-    },
-    {
       "default": 1,
       "id": "delta",
-      "isVisibleExpression": "!$(options:useVariable)",
       "label": "Delta",
       "max": 100,
       "min": -100,
       "type": "number",
-    },
-    {
-      "description": "e.g. $(internal:custom_my_delta), NOTE: strings and out of range numbers will be ignored",
-      "id": "varDelta",
-      "isVisibleExpression": "!!$(options:useVariable)",
-      "label": "Variable Delta",
-      "type": "textinput",
-      "useVariables": true,
     },
     {
       "default": 0,
@@ -969,27 +940,12 @@ exports[`Actions test > Check Adjust level of channel to bus send (level_channel
       "type": "dropdown",
     },
     {
-      "default": false,
-      "id": "useVariable",
-      "label": "Use a variable for Delta",
-      "type": "checkbox",
-    },
-    {
       "default": 1,
       "id": "delta",
-      "isVisibleExpression": "!$(options:useVariable)",
       "label": "Delta",
       "max": 100,
       "min": -100,
       "type": "number",
-    },
-    {
-      "description": "e.g. $(internal:custom_my_delta), NOTE: strings and out of range numbers will be ignored",
-      "id": "varDelta",
-      "isVisibleExpression": "!!$(options:useVariable)",
-      "label": "Variable Delta",
-      "type": "textinput",
-      "useVariables": true,
     },
     {
       "default": 0,
@@ -1355,29 +1311,14 @@ exports[`Actions test > Check Adjust panning (panning-delta) 1`] = `
       "type": "dropdown",
     },
     {
-      "default": false,
-      "id": "useVariable",
-      "label": "Use a variable for Delta",
-      "type": "checkbox",
-    },
-    {
       "default": 0,
       "id": "delta",
-      "isVisibleExpression": "!$(options:useVariable)",
       "label": "Delta (-50 = hard left, 0 = center, 50 = hard right)",
       "max": 100,
       "min": -100,
       "range": true,
       "step": 1,
       "type": "number",
-    },
-    {
-      "description": "e.g. $(internal:custom_my_delta), NOTE: strings and out of range numbers will be ignored",
-      "id": "varDelta",
-      "isVisibleExpression": "!!$(options:useVariable)",
-      "label": "Variable Delta",
-      "type": "textinput",
-      "useVariables": true,
     },
     {
       "default": 0,
@@ -1572,29 +1513,14 @@ exports[`Actions test > Check Adjust panning on bus to matrix bus send (bus-send
       "type": "dropdown",
     },
     {
-      "default": false,
-      "id": "useVariable",
-      "label": "Use a variable for Delta",
-      "type": "checkbox",
-    },
-    {
       "default": 0,
       "id": "delta",
-      "isVisibleExpression": "!$(options:useVariable)",
       "label": "Delta (-50 = hard left, 0 = center, 50 = hard right)",
       "max": 100,
       "min": -100,
       "range": true,
       "step": 1,
       "type": "number",
-    },
-    {
-      "description": "e.g. $(internal:custom_my_delta), NOTE: strings and out of range numbers will be ignored",
-      "id": "varDelta",
-      "isVisibleExpression": "!!$(options:useVariable)",
-      "label": "Variable Delta",
-      "type": "textinput",
-      "useVariables": true,
     },
     {
       "default": 0,
@@ -2001,29 +1927,14 @@ exports[`Actions test > Check Adjust panning on channel to bus send (channel-sen
       "type": "dropdown",
     },
     {
-      "default": false,
-      "id": "useVariable",
-      "label": "Use a variable for Delta",
-      "type": "checkbox",
-    },
-    {
       "default": 0,
       "id": "delta",
-      "isVisibleExpression": "!$(options:useVariable)",
       "label": "Delta (-50 = hard left, 0 = center, 50 = hard right)",
       "max": 100,
       "min": -100,
       "range": true,
       "step": 1,
       "type": "number",
-    },
-    {
-      "description": "e.g. $(internal:custom_my_delta), NOTE: strings and out of range numbers will be ignored",
-      "id": "varDelta",
-      "isVisibleExpression": "!!$(options:useVariable)",
-      "label": "Variable Delta",
-      "type": "textinput",
-      "useVariables": true,
     },
     {
       "default": 0,
@@ -11963,6 +11874,7 @@ exports[`Actions test > Check Set X-live State (record) 1`] = `
       "type": "dropdown",
     },
   ],
+  "subscribe": undefined,
 }
 `;
 

@@ -9,7 +9,6 @@ import {
 } from '@companion-module/base'
 import { FeedbackId } from './feedback.js'
 import { padNumber, stringifyValueAlways } from './util.js'
-import { ActionId } from './actions.js'
 import { exprVal } from './upgradeUtil.js'
 import { getColorChoiceFromId } from './choices.js'
 
@@ -122,42 +121,42 @@ for (let i = 1; i <= 32; i++) pathReplacements[`/headamp/${padNumber(i - 1 + 32,
 for (let i = 1; i <= 32; i++) pathReplacements[`/headamp/${padNumber(i - 1 + 64, 3)}`] = `aes-b${i}`
 
 const actionsToUpgrade: Record<string, string[] | undefined> = {
-	[ActionId.Mute]: ['target'],
-	[ActionId.MuteGroup]: ['target'],
-	[ActionId.MuteChannelSend]: ['source', 'target'],
-	[ActionId.MuteBusSend]: ['source', 'target'],
-	[ActionId.FaderLevel]: ['target'],
-	[ActionId.FaderLevelStore]: ['target'],
-	[ActionId.FaderLevelRestore]: ['target'],
-	[ActionId.FaderLevelDelta]: ['target'],
-	[ActionId.Panning]: ['target'],
-	[ActionId.PanningDelta]: ['target'],
-	[ActionId.PanningStore]: ['target'],
-	[ActionId.PanningRestore]: ['target'],
-	[ActionId.ChannelSendLevel]: ['source', 'target'],
-	[ActionId.ChannelSendLevelDelta]: ['source', 'target'],
-	[ActionId.ChannelSendLevelStore]: ['source', 'target'],
-	[ActionId.ChannelSendLevelRestore]: ['source', 'target'],
-	[ActionId.ChannelSendPanning]: ['source', 'target'],
-	[ActionId.ChannelSendPanningDelta]: ['source', 'target'],
-	[ActionId.ChannelSendPanningStore]: ['source', 'target'],
-	[ActionId.ChannelSendPanningRestore]: ['source', 'target'],
-	[ActionId.BusSendLevel]: ['source', 'target'],
-	[ActionId.BusSendLevelDelta]: ['source', 'target'],
-	[ActionId.BusSendLevelStore]: ['source', 'target'],
-	[ActionId.BusSendLevelRestore]: ['source', 'target'],
-	[ActionId.BusSendPanning]: ['source', 'target'],
-	[ActionId.BusSendPanningDelta]: ['source', 'target'],
-	[ActionId.BusSendPanningStore]: ['source', 'target'],
-	[ActionId.BusSendPanningRestore]: ['source', 'target'],
-	[ActionId.InputTrim]: ['input'],
-	[ActionId.Label]: ['target'],
-	[ActionId.Color]: ['target'],
-	[ActionId.Select]: ['select'],
-	[ActionId.HeadampGain]: ['headamp'],
-	[ActionId.InsertOn]: ['src'],
-	[ActionId.InsertPos]: ['src'],
-	[ActionId.InsertSelect]: ['src'],
+	mute: ['target'],
+	mute_grp: ['target'],
+	mute_channel_send: ['source', 'target'],
+	mute_bus_send: ['source', 'target'],
+	fad: ['target'],
+	fader_store: ['target'],
+	fader_restore: ['target'],
+	fader_delta: ['target'],
+	panning: ['target'],
+	'panning-delta': ['target'],
+	'panning-store': ['target'],
+	'panning-restore': ['target'],
+	level_channel_send: ['source', 'target'],
+	level_channel_send_delta: ['source', 'target'],
+	level_channel_store: ['source', 'target'],
+	level_channel_restore: ['source', 'target'],
+	'channel-send-panning': ['source', 'target'],
+	'channel-send-panning-delta': ['source', 'target'],
+	'channel-send-panning-store': ['source', 'target'],
+	'channel-send-panning-restore': ['source', 'target'],
+	level_bus_send: ['source', 'target'],
+	level_bus_send_delta: ['source', 'target'],
+	level_bus_store: ['source', 'target'],
+	level_bus_restore: ['source', 'target'],
+	'bus-send-panning': ['source', 'target'],
+	'bus-send-panning-delta': ['source', 'target'],
+	'bus-send-panning-store': ['source', 'target'],
+	'bus-send-panning-restore': ['source', 'target'],
+	input_trim: ['input'],
+	label: ['target'],
+	color: ['target'],
+	select: ['select'],
+	headamp_gain: ['headamp'],
+	'insert-on': ['src'],
+	'insert-pos': ['src'],
+	'insert-select': ['src'],
 }
 const feedbacksToUpgrade: Record<string, string[] | undefined> = {
 	[FeedbackId.Mute]: ['target'],
@@ -198,16 +197,16 @@ export const upgradeChannelOrFaderValuesFromOscPaths: CompanionStaticUpgradeScri
 	}
 	for (const action of props.actions) {
 		// A couple of cases that need manual handling due to unclear & overlapping values
-		if (action.actionId === ActionId.Solo) {
+		if (action.actionId === 'solo') {
 			fixupNumericOption(action.options, 'solo', soloOrSelectChoicesLookup)
-		} else if (action.actionId === ActionId.Select) {
+		} else if (action.actionId === 'select') {
 			// This uses a few less than solo, but no harm in mapping the extra ones
 			fixupNumericOption(action.options, 'select', soloOrSelectChoicesLookup)
-		} else if (action.actionId === ActionId.TalkbackConfigSingleSource) {
+		} else if (action.actionId === 'talkback_config_single_src') {
 			fixupNumericOption(action.options, 'dest', talkbackTargetChoicesLookup)
-		} else if (action.actionId === ActionId.TalkbackConfig) {
+		} else if (action.actionId === 'talkback_config') {
 			fixupNumericOption(action.options, 'dest', talkbackTargetChoicesLookup, { asArray: true })
-		} else if (action.actionId === ActionId.Color) {
+		} else if (action.actionId === 'color') {
 			// Merge the split color fields
 			if (action.options.useVariable !== undefined) {
 				action.options.col =
@@ -221,9 +220,9 @@ export const upgradeChannelOrFaderValuesFromOscPaths: CompanionStaticUpgradeScri
 								value: getColorChoiceFromId(action.options.col?.value)?.id ?? action.options.col?.value,
 							}
 			}
-		} else if (action.actionId === ActionId.OscillatorDestination) {
+		} else if (action.actionId === 'oscillator-destination') {
 			fixupNumericOption(action.options, 'destination', oscillatorDestinationChoicesLookup)
-		} else if (action.actionId === ActionId.LoadChannelPreset) {
+		} else if (action.actionId === 'load-channel-preset') {
 			fixupNumericOption(action.options, 'channel', soloOrSelectChoicesLookup, { includeSelectedAsMinusOne: true })
 		}
 
@@ -424,12 +423,12 @@ export const upgradeToBuiltinVariableParsing: CompanionStaticUpgradeScript<any> 
 
 	for (const action of props.actions) {
 		if (
-			action.actionId === ActionId.PanningDelta ||
-			action.actionId === ActionId.BusSendPanningDelta ||
-			action.actionId === ActionId.ChannelSendPanningDelta ||
-			action.actionId === ActionId.FaderLevelDelta ||
-			action.actionId === ActionId.ChannelSendLevelDelta ||
-			action.actionId === ActionId.BusSendLevelDelta
+			action.actionId === 'panning-delta' ||
+			action.actionId === 'bus-send-panning-delta' ||
+			action.actionId === 'channel-send-panning-delta' ||
+			action.actionId === 'fader_delta' ||
+			action.actionId === 'level_channel_send_delta' ||
+			action.actionId === 'level_bus_send_delta'
 		) {
 			const oldValue = action.options.useVariable?.value ? action.options.varDelta : action.options.delta
 			delete action.options.useVariable
