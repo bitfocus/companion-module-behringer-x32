@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-enum-comparison */
 import {
 	FixupNumericOrVariablesValueToExpressions,
 	type CompanionMigrationOptionValues,
@@ -7,24 +6,22 @@ import {
 	type ExpressionOptionsObject,
 	type JsonValue,
 } from '@companion-module/base'
-import { FeedbackId } from './feedback.js'
+
 import { padNumber, stringifyValueAlways } from './util.js'
 import { exprVal } from './upgradeUtil.js'
 import { getColorChoiceFromId } from './choices.js'
 
-export const BooleanFeedbackUpgradeMap: {
-	[id in FeedbackId]?: true
-} = {
-	[FeedbackId.Mute]: true,
-	[FeedbackId.MuteGroup]: true,
-	[FeedbackId.MuteChannelSend]: true,
-	[FeedbackId.MuteBusSend]: true,
-	[FeedbackId.FaderLevel]: true,
-	[FeedbackId.ChannelSendLevel]: true,
-	[FeedbackId.BusSendLevel]: true,
-	[FeedbackId.TalkbackTalk]: true,
-	[FeedbackId.OscillatorEnable]: true,
-	[FeedbackId.OscillatorDestination]: true,
+export const BooleanFeedbackUpgradeMap: Record<string, true | undefined> = {
+	mute: true,
+	mute_grp: true,
+	mute_channel_send: true,
+	mute_bus_send: true,
+	fader_level: true,
+	level_channel_send: true,
+	level_bus_send: true,
+	talkback_talk: true,
+	'oscillator-enable': true,
+	'oscillator-destination': true,
 }
 
 export const upgradeToBuiltinFeedbackInverted: CompanionStaticUpgradeScript<any> = (_ctx, props) => {
@@ -36,50 +33,50 @@ export const upgradeToBuiltinFeedbackInverted: CompanionStaticUpgradeScript<any>
 	}
 
 	const feedbackIdsToUpgrade = new Set<string>([
-		FeedbackId.Mute,
-		FeedbackId.MuteGroup,
-		FeedbackId.MuteChannelSend,
-		FeedbackId.MuteBusSend,
-		FeedbackId.TalkbackTalk,
-		FeedbackId.TalkbackConfigSingleSource,
-		FeedbackId.OscillatorEnable,
-		FeedbackId.Solo,
-		FeedbackId.ClearSolo,
-		FeedbackId.SendsOnFader,
-		FeedbackId.SoloMono,
-		FeedbackId.SoloDim,
-		FeedbackId.ChannelBank,
-		FeedbackId.GroupBank,
-		FeedbackId.ChannelBankCompact,
-		FeedbackId.GroupBankCompact,
-		FeedbackId.BusSendBank,
-		FeedbackId.UserBank,
-		FeedbackId.Screens,
-		FeedbackId.MuteGroupScreen,
-		FeedbackId.UtilityScreen,
-		FeedbackId.ChannelPage,
-		FeedbackId.MeterPage,
-		FeedbackId.RoutePage,
-		FeedbackId.SetupPage,
-		FeedbackId.LibPage,
-		FeedbackId.FxPage,
-		FeedbackId.MonPage,
-		FeedbackId.USBPage,
-		FeedbackId.ScenePage,
-		FeedbackId.AssignPage,
-		FeedbackId.RouteUserIn,
-		FeedbackId.RouteUserOut,
-		FeedbackId.StoredChannel,
-		FeedbackId.RouteInputBlockMode,
-		FeedbackId.RouteInputBlocks,
-		FeedbackId.RouteAuxBlocks,
-		FeedbackId.RouteAES50Blocks,
-		FeedbackId.RouteCardBlocks,
-		FeedbackId.RouteXLRLeftOutputs,
-		FeedbackId.RouteXLRRightOutputs,
-		FeedbackId.LockAndShutdown,
-		FeedbackId.InsertOn,
-		FeedbackId.UndoAvailable,
+		'mute',
+		'mute_grp',
+		'mute_channel_send',
+		'mute_bus_send',
+		'talkback_talk',
+		'talkback_config_single_source',
+		'oscillator-enable',
+		'solo',
+		'clear',
+		'sends-on-fader',
+		'solo-mono',
+		'solo-dim',
+		'channel-bank',
+		'group-bank',
+		'channel-bank-compact',
+		'group-bank-compact',
+		'bus-send-bank',
+		'user-bank',
+		'screens',
+		'mute-group-screen',
+		'utility-screen',
+		'channel-page',
+		'meter-page',
+		'route-page',
+		'setup-page',
+		'library-page',
+		'effects-page',
+		'monitor-page',
+		'usb-page',
+		'scene-page',
+		'assign-page',
+		'route-user-in',
+		'route-user-out',
+		'stored-channel',
+		'route-input-block-mode',
+		'route-input-blocks',
+		'route-aux-blocks',
+		'route-aes50-blocks',
+		'route-card-blocks',
+		'route-xlr-left-outputs',
+		'route-xlr-right-outputs',
+		'lock-and-shutdown',
+		'insert-on',
+		'undo-available',
 	])
 	for (const feedback of props.feedbacks) {
 		if (!feedbackIdsToUpgrade.has(feedback.feedbackId)) continue
@@ -159,20 +156,20 @@ const actionsToUpgrade: Record<string, string[] | undefined> = {
 	'insert-select': ['src'],
 }
 const feedbacksToUpgrade: Record<string, string[] | undefined> = {
-	[FeedbackId.Mute]: ['target'],
-	[FeedbackId.MuteGroup]: ['mute_grp'],
-	[FeedbackId.MuteChannelSend]: ['source', 'target'],
-	[FeedbackId.MuteBusSend]: ['source', 'target'],
-	[FeedbackId.FaderLevel]: ['target'],
-	[FeedbackId.ChannelSendLevel]: ['source', 'target'],
-	[FeedbackId.BusSendLevel]: ['source', 'target'],
-	[FeedbackId.ChannelPanning]: ['target'],
-	[FeedbackId.ChannelSendPanning]: ['source', 'target'],
-	[FeedbackId.BusSendPanning]: ['source', 'target'],
-	[FeedbackId.OscillatorDestination]: ['destination'],
-	[FeedbackId.InsertOn]: ['src'],
-	[FeedbackId.InsertPos]: ['src'],
-	[FeedbackId.InsertSelect]: ['src'],
+	mute: ['target'],
+	mute_grp: ['mute_grp'],
+	mute_channel_send: ['source', 'target'],
+	mute_bus_send: ['source', 'target'],
+	fader_level: ['target'],
+	level_channel_send: ['source', 'target'],
+	level_bus_send: ['source', 'target'],
+	channel_panning: ['target'],
+	channel_send_panning: ['source', 'target'],
+	bus_send_panning: ['source', 'target'],
+	'oscillator-destination': ['destination'],
+	'insert-on': ['src'],
+	'insert-pos': ['src'],
+	'insert-select': ['src'],
 }
 
 export const upgradeChannelOrFaderValuesFromOscPaths: CompanionStaticUpgradeScript<any> = (_ctx, props) => {
@@ -233,14 +230,14 @@ export const upgradeChannelOrFaderValuesFromOscPaths: CompanionStaticUpgradeScri
 		result.updatedActions.push(action)
 	}
 	for (const feedback of props.feedbacks) {
-		if (feedback.feedbackId === FeedbackId.Solo) {
+		if (feedback.feedbackId === 'solo') {
 			fixupNumericOption(feedback.options, 'solo', soloOrSelectChoicesLookup)
-		} else if (feedback.feedbackId === FeedbackId.Select) {
+		} else if (feedback.feedbackId === 'select') {
 			// This uses a few less than solo, but no harm in mapping the extra ones
 			fixupNumericOption(feedback.options, 'select', soloOrSelectChoicesLookup)
-		} else if (feedback.feedbackId === FeedbackId.OscillatorDestination) {
+		} else if (feedback.feedbackId === 'oscillator-destination') {
 			fixupNumericOption(feedback.options, 'destination', oscillatorDestinationChoicesLookup)
-		} else if (feedback.feedbackId === FeedbackId.TalkbackConfigSingleSource) {
+		} else if (feedback.feedbackId === 'talkback_config_single_source') {
 			fixupNumericOption(feedback.options, 'dest', talkbackTargetChoicesLookup)
 		}
 

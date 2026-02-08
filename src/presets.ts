@@ -1,4 +1,3 @@
-import { FeedbackId } from './feedback.js'
 import { X32State } from './state.js'
 import { CompanionPresetDefinitions } from '@companion-module/base'
 import { InstanceBaseExt, X32Types } from './util.js'
@@ -54,7 +53,7 @@ export function GetPresetsList(_instance: InstanceBaseExt, state: X32State): Com
 		],
 		feedbacks: [
 			{
-				feedbackId: FeedbackId.Record,
+				feedbackId: 'record',
 				options: {
 					state: 3,
 				},
@@ -123,7 +122,7 @@ export function GetPresetsList(_instance: InstanceBaseExt, state: X32State): Com
 		],
 		feedbacks: [
 			{
-				feedbackId: FeedbackId.TalkbackTalk,
+				feedbackId: 'talkback_talk',
 				options: {
 					channel: 'A',
 				},
@@ -161,7 +160,7 @@ export function GetPresetsList(_instance: InstanceBaseExt, state: X32State): Com
 		],
 		feedbacks: [
 			{
-				feedbackId: FeedbackId.TalkbackTalk,
+				feedbackId: 'talkback_talk',
 				options: {
 					channel: 'A',
 				},
@@ -207,7 +206,7 @@ export function GetPresetsList(_instance: InstanceBaseExt, state: X32State): Com
 		],
 		feedbacks: [
 			{
-				feedbackId: FeedbackId.TalkbackTalk,
+				feedbackId: 'talkback_talk',
 				options: {
 					channel: 'B',
 				},
@@ -245,7 +244,7 @@ export function GetPresetsList(_instance: InstanceBaseExt, state: X32State): Com
 		],
 		feedbacks: [
 			{
-				feedbackId: FeedbackId.TalkbackTalk,
+				feedbackId: 'talkback_talk',
 				options: {
 					channel: 'B',
 				},

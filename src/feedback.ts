@@ -36,97 +36,41 @@ import {
 	CompanionFeedbackDefinitions,
 	CompanionFeedbackInfo,
 	CompanionOptionValues,
+	StringKeys,
 } from '@companion-module/base'
 
 type CompanionFeedbackWithCallback = SetRequired<CompanionBooleanFeedbackDefinition, 'callback' | 'unsubscribe'>
 
-export enum FeedbackId {
-	Mute = 'mute',
-	MuteGroup = 'mute_grp',
-	MuteChannelSend = 'mute_channel_send',
-	MuteBusSend = 'mute_bus_send',
-	FaderLevel = 'fader_level',
-	ChannelSendLevel = 'level_channel_send',
-	BusSendLevel = 'level_bus_send',
-	ChannelPanning = 'channel_panning',
-	ChannelSendPanning = 'channel_send_panning',
-	BusSendPanning = 'bus_send_panning',
-	TalkbackTalk = 'talkback_talk',
-	TalkbackConfigSingleSource = 'talkback_config_single_source',
-	OscillatorEnable = 'oscillator-enable',
-	OscillatorDestination = 'oscillator-destination',
-	SoloMono = 'solo-mono',
-	SoloDim = 'solo-dim',
-	Select = 'select',
-	Solo = 'solo',
-	ClearSolo = 'clear',
-	SendsOnFader = 'sends-on-fader',
-	Tape = 'tape',
-	ChannelBank = 'channel-bank',
-	GroupBank = 'group-bank',
-	ChannelBankCompact = 'channel-bank-compact',
-	GroupBankCompact = 'group-bank-compact',
-	BusSendBank = 'bus-send-bank',
-	UserBank = 'user-bank',
-	Screens = 'screens',
-	MuteGroupScreen = 'mute-group-screen',
-	UtilityScreen = 'utility-screen',
-	ChannelPage = 'channel-page',
-	MeterPage = 'meter-page',
-	RoutePage = 'route-page',
-	SetupPage = 'setup-page',
-	LibPage = 'library-page',
-	FxPage = 'effects-page',
-	MonPage = 'monitor-page',
-	USBPage = 'usb-page',
-	ScenePage = 'scene-page',
-	AssignPage = 'assign-page',
-	RouteUserIn = 'route-user-in',
-	RouteUserOut = 'route-user-out',
-	StoredChannel = 'stored-channel',
-	Record = 'record',
-	RouteInputBlockMode = 'route-input-block-mode',
-	RouteInputBlocks = 'route-input-blocks',
-	RouteAuxBlocks = 'route-aux-blocks',
-	RouteAES50Blocks = 'route-aes50-blocks',
-	RouteCardBlocks = 'route-card-blocks',
-	RouteXLRLeftOutputs = 'route-xlr-left-outputs',
-	RouteXLRRightOutputs = 'route-xlr-right-outputs',
-	LockAndShutdown = 'lock-and-shutdown',
-	InsertOn = 'insert-on',
-	InsertPos = 'insert-pos',
-	InsertSelect = 'insert-select',
-	UndoAvailable = 'undo-available',
-}
+export type FeedbackId = StringKeys<FeedbacksSchema>
 
 export type FeedbacksSchema = {
-	[FeedbackId.Mute]: {
+	mute: {
 		type: 'boolean'
 		options: {
 			target: string
 		}
 	}
-	[FeedbackId.MuteGroup]: {
+	mute_grp: {
 		type: 'boolean'
 		options: {
 			mute_grp: string
 		}
 	}
-	[FeedbackId.MuteChannelSend]: {
+	mute_channel_send: {
 		type: 'boolean'
 		options: {
 			source: string
 			target: string
 		}
 	}
-	[FeedbackId.MuteBusSend]: {
+	mute_bus_send: {
 		type: 'boolean'
 		options: {
 			source: string
 			target: string
 		}
 	}
-	[FeedbackId.FaderLevel]: {
+	fader_level: {
 		type: 'boolean'
 		options: {
 			target: string
@@ -134,16 +78,7 @@ export type FeedbacksSchema = {
 			fad: number
 		}
 	}
-	[FeedbackId.ChannelSendLevel]: {
-		type: 'boolean'
-		options: {
-			source: string
-			target: string
-			comparitor: string
-			fad: number
-		}
-	}
-	[FeedbackId.BusSendLevel]: {
+	level_channel_send: {
 		type: 'boolean'
 		options: {
 			source: string
@@ -152,7 +87,16 @@ export type FeedbacksSchema = {
 			fad: number
 		}
 	}
-	[FeedbackId.ChannelPanning]: {
+	level_bus_send: {
+		type: 'boolean'
+		options: {
+			source: string
+			target: string
+			comparitor: string
+			fad: number
+		}
+	}
+	channel_panning: {
 		type: 'boolean'
 		options: {
 			target: string
@@ -160,7 +104,7 @@ export type FeedbacksSchema = {
 			pan: number
 		}
 	}
-	[FeedbackId.ChannelSendPanning]: {
+	channel_send_panning: {
 		type: 'boolean'
 		options: {
 			source: string
@@ -169,7 +113,7 @@ export type FeedbacksSchema = {
 			pan: number
 		}
 	}
-	[FeedbackId.BusSendPanning]: {
+	bus_send_panning: {
 		type: 'boolean'
 		options: {
 			source: string
@@ -178,221 +122,206 @@ export type FeedbacksSchema = {
 			pan: number
 		}
 	}
-	[FeedbackId.TalkbackTalk]: {
+	talkback_talk: {
 		type: 'boolean'
 		options: {
 			channel: 'A' | 'B'
 		}
 	}
-	[FeedbackId.TalkbackConfigSingleSource]: {
+	talkback_config_single_source: {
 		type: 'boolean'
 		options: {
 			channel: 'A' | 'B'
 			dest: string
 		}
 	}
-	[FeedbackId.OscillatorEnable]: {
+	'oscillator-enable': {
 		type: 'boolean'
 		options: Record<string, never>
 	}
-	[FeedbackId.OscillatorDestination]: {
+	'oscillator-destination': {
 		type: 'boolean'
 		options: {
 			destination: string
 		}
 	}
-	[FeedbackId.SoloMono]: {
+	'solo-mono': {
 		type: 'boolean'
 		options: Record<string, never>
 	}
-	[FeedbackId.SoloDim]: {
+	'solo-dim': {
 		type: 'boolean'
 		options: Record<string, never>
 	}
-	[FeedbackId.Select]: {
+	select: {
 		type: 'boolean'
 		options: {
 			select: string
 		}
 	}
-	[FeedbackId.Solo]: {
+	solo: {
 		type: 'boolean'
 		options: {
 			solo: string
 		}
 	}
-	[FeedbackId.ClearSolo]: {
+	clear: {
 		type: 'boolean'
 		options: Record<string, never>
 	}
-	[FeedbackId.SendsOnFader]: {
+	'sends-on-fader': {
 		type: 'boolean'
 		options: Record<string, never>
 	}
-	[FeedbackId.Tape]: {
+	tape: {
 		type: 'boolean'
 		options: {
 			tapeFunc: number
 		}
 	}
-	[FeedbackId.ChannelBank]: {
+	'channel-bank': {
 		type: 'boolean'
 		options: {
 			bank: number
 		}
 	}
-	[FeedbackId.GroupBank]: {
+	'group-bank': {
 		type: 'boolean'
 		options: {
 			bank: number
 		}
 	}
-	[FeedbackId.ChannelBankCompact]: {
+	'channel-bank-compact': {
 		type: 'boolean'
 		options: {
 			bank: number
 		}
 	}
-	[FeedbackId.GroupBankCompact]: {
+	'group-bank-compact': {
 		type: 'boolean'
 		options: {
 			bank: number
 		}
 	}
-	[FeedbackId.BusSendBank]: {
+	'bus-send-bank': {
 		type: 'boolean'
 		options: {
 			bank: number
 		}
 	}
-	[FeedbackId.UserBank]: {
+	'user-bank': {
 		type: 'boolean'
 		options: {
 			bank: number
 		}
 	}
-	[FeedbackId.Screens]: {
+	screens: {
 		type: 'boolean'
 		options: {
 			screen: number
 		}
 	}
-	[FeedbackId.MuteGroupScreen]: {
+	'mute-group-screen': {
 		type: 'boolean'
 		options: Record<string, never>
 	}
-	[FeedbackId.UtilityScreen]: {
+	'utility-screen': {
 		type: 'boolean'
 		options: Record<string, never>
 	}
-	[FeedbackId.ChannelPage]: {
+	'channel-page': {
 		type: 'boolean'
 		options: {
 			page: number
 		}
 	}
-	[FeedbackId.MeterPage]: {
+	'meter-page': {
 		type: 'boolean'
 		options: {
 			page: number
 		}
 	}
-	[FeedbackId.RoutePage]: {
+	'route-page': {
 		type: 'boolean'
 		options: {
 			page: number
 		}
 	}
-	[FeedbackId.SetupPage]: {
+	'setup-page': {
 		type: 'boolean'
 		options: {
 			page: number
 		}
 	}
-	[FeedbackId.LibPage]: {
+	'library-page': {
 		type: 'boolean'
 		options: {
 			page: number
 		}
 	}
-	[FeedbackId.FxPage]: {
+	'effects-page': {
 		type: 'boolean'
 		options: {
 			page: number
 		}
 	}
-	[FeedbackId.MonPage]: {
+	'monitor-page': {
 		type: 'boolean'
 		options: {
 			page: number
 		}
 	}
-	[FeedbackId.USBPage]: {
+	'usb-page': {
 		type: 'boolean'
 		options: {
 			page: number
 		}
 	}
-	[FeedbackId.ScenePage]: {
+	'scene-page': {
 		type: 'boolean'
 		options: {
 			page: number
 		}
 	}
-	[FeedbackId.AssignPage]: {
+	'assign-page': {
 		type: 'boolean'
 		options: {
 			page: number
 		}
 	}
-	[FeedbackId.RouteUserIn]: {
+	'route-user-in': {
 		type: 'boolean'
 		options: {
 			source: number
 			channel: number
 		}
 	}
-	[FeedbackId.RouteUserOut]: {
+	'route-user-out': {
 		type: 'boolean'
 		options: {
 			source: number
 			channel: number
 		}
 	}
-	[FeedbackId.StoredChannel]: {
+	'stored-channel': {
 		type: 'boolean'
 		options: {
 			channel: number
 		}
 	}
-	[FeedbackId.Record]: {
+	record: {
 		type: 'boolean'
 		options: {
 			state: number
 		}
 	}
-	[FeedbackId.RouteInputBlockMode]: {
+	'route-input-block-mode': {
 		type: 'boolean'
 		options: {
 			mode: number
 		}
 	}
-	[FeedbackId.RouteInputBlocks]: {
-		type: 'boolean'
-		options: {
-			mode: number
-			block: number
-			routing: number
-		}
-	}
-	[FeedbackId.RouteAuxBlocks]: {
-		type: 'boolean'
-		options: {
-			mode: number
-			routing: number
-		}
-	}
-	[FeedbackId.RouteAES50Blocks]: {
+	'route-input-blocks': {
 		type: 'boolean'
 		options: {
 			mode: number
@@ -400,55 +329,70 @@ export type FeedbacksSchema = {
 			routing: number
 		}
 	}
-	[FeedbackId.RouteCardBlocks]: {
+	'route-aux-blocks': {
+		type: 'boolean'
+		options: {
+			mode: number
+			routing: number
+		}
+	}
+	'route-aes50-blocks': {
+		type: 'boolean'
+		options: {
+			mode: number
+			block: number
+			routing: number
+		}
+	}
+	'route-card-blocks': {
 		type: 'boolean'
 		options: {
 			block: number
 			routing: number
 		}
 	}
-	[FeedbackId.RouteXLRLeftOutputs]: {
+	'route-xlr-left-outputs': {
 		type: 'boolean'
 		options: {
 			block: number
 			routing: number
 		}
 	}
-	[FeedbackId.RouteXLRRightOutputs]: {
+	'route-xlr-right-outputs': {
 		type: 'boolean'
 		options: {
 			block: number
 			routing: number
 		}
 	}
-	[FeedbackId.LockAndShutdown]: {
+	'lock-and-shutdown': {
 		type: 'boolean'
 		options: {
 			lockState: number
 		}
 	}
-	[FeedbackId.InsertOn]: {
+	'insert-on': {
 		type: 'boolean'
 		options: {
 			src: string
 			on: number
 		}
 	}
-	[FeedbackId.InsertPos]: {
+	'insert-pos': {
 		type: 'boolean'
 		options: {
 			src: string
 			pos: number
 		}
 	}
-	[FeedbackId.InsertSelect]: {
+	'insert-select': {
 		type: 'boolean'
 		options: {
 			src: string
 			dest: number
 		}
 	}
-	[FeedbackId.UndoAvailable]: {
+	'undo-available': {
 		type: 'boolean'
 		options: Record<string, never>
 	}
@@ -572,7 +516,7 @@ export function GetFeedbacksList(
 	}
 
 	const feedbacks: CompanionFeedbackDefinitions<FeedbacksSchema> = {
-		[FeedbackId.Record]: {
+		record: {
 			type: 'boolean',
 			name: 'Change from X-Live state',
 			description: 'If the X-Live state has changed, change style of the bank',
@@ -603,7 +547,7 @@ export function GetFeedbacksList(
 				},
 			}),
 		},
-		[FeedbackId.Mute]: {
+		mute: {
 			type: 'boolean',
 			name: 'Change from mute state',
 			description: 'If the specified target is muted, change style of the bank',
@@ -630,7 +574,7 @@ export function GetFeedbacksList(
 				getValue: (_evt, data) => getDataNumber(data, 0) === 0,
 			}),
 		},
-		[FeedbackId.MuteGroup]: {
+		mute_grp: {
 			type: 'boolean',
 			name: 'Change from mute group state',
 			description: 'If the specified mute group is muted, change style of the bank',
@@ -657,7 +601,7 @@ export function GetFeedbacksList(
 				getValue: (_evt, data) => getDataNumber(data, 0) === 1,
 			}),
 		},
-		[FeedbackId.MuteChannelSend]: {
+		mute_channel_send: {
 			type: 'boolean',
 			name: 'Change from channel to bus send mute state',
 			description: 'If the specified channel send is muted, change style of the bank',
@@ -692,7 +636,7 @@ export function GetFeedbacksList(
 				getValue: (_evt, data) => getDataNumber(data, 0) === 0,
 			}),
 		},
-		[FeedbackId.MuteBusSend]: {
+		mute_bus_send: {
 			type: 'boolean',
 			name: 'Change from bus to matrix send mute state',
 			description: 'If the specified bus send is muted, change style of the bank',
@@ -727,7 +671,7 @@ export function GetFeedbacksList(
 				getValue: (_evt, data) => getDataNumber(data, 0) === 0,
 			}),
 		},
-		[FeedbackId.FaderLevel]: {
+		fader_level: {
 			type: 'boolean',
 			name: 'Change from fader level',
 			description: 'If the fader level has the specified gain, change style of the bank',
@@ -762,7 +706,7 @@ export function GetFeedbacksList(
 				},
 			}),
 		},
-		[FeedbackId.ChannelSendLevel]: {
+		level_channel_send: {
 			type: 'boolean',
 			name: 'Change from level of channel to bus send',
 			description: 'If the channel to bus send level has the specified gain, change style of the bank',
@@ -805,7 +749,7 @@ export function GetFeedbacksList(
 				},
 			}),
 		},
-		[FeedbackId.BusSendLevel]: {
+		level_bus_send: {
 			type: 'boolean',
 			name: 'Change from level of bus to matrix send',
 			description: 'If the bus to matrix send level has the specified gain, change style of the bank',
@@ -849,7 +793,7 @@ export function GetFeedbacksList(
 			}),
 		},
 
-		[FeedbackId.ChannelPanning]: {
+		channel_panning: {
 			type: 'boolean',
 			name: 'Change from channel panning',
 			description: 'If the channel panning has the specified value, change style of the bank',
@@ -884,7 +828,7 @@ export function GetFeedbacksList(
 				},
 			}),
 		},
-		[FeedbackId.ChannelSendPanning]: {
+		channel_send_panning: {
 			type: 'boolean',
 			name: 'Change from channel send panning',
 			description: 'If the channel send panning has the specified value, change style of the bank',
@@ -927,7 +871,7 @@ export function GetFeedbacksList(
 				},
 			}),
 		},
-		[FeedbackId.BusSendPanning]: {
+		bus_send_panning: {
 			type: 'boolean',
 			name: 'Change from bus send panning',
 			description: 'If the bus send has the specified value, change style of the bank',
@@ -970,7 +914,7 @@ export function GetFeedbacksList(
 				},
 			}),
 		},
-		[FeedbackId.TalkbackTalk]: {
+		talkback_talk: {
 			type: 'boolean',
 			name: 'Change from talkback talk state',
 			description: 'If the specified talkback is on, change style of the bank',
@@ -1001,7 +945,7 @@ export function GetFeedbacksList(
 				getValue: (_evt, data) => getDataNumber(data, 0) === 1,
 			}),
 		},
-		[FeedbackId.TalkbackConfigSingleSource]: {
+		talkback_config_single_source: {
 			type: 'boolean',
 			name: 'Change from talkback config of single source',
 			description: 'If the source is mapped to a talkback destination, change style of the bank',
@@ -1045,7 +989,7 @@ export function GetFeedbacksList(
 				},
 			}),
 		},
-		[FeedbackId.OscillatorEnable]: {
+		'oscillator-enable': {
 			type: 'boolean',
 			name: 'Change from oscillator enabled state',
 			description: 'If the oscillator is on, change style of the bank',
@@ -1059,7 +1003,7 @@ export function GetFeedbacksList(
 				getValue: (_evt, data) => getDataNumber(data, 0) !== 0,
 			}),
 		},
-		[FeedbackId.OscillatorDestination]: {
+		'oscillator-destination': {
 			type: 'boolean',
 			name: 'Change from oscillator destination state',
 			description: 'If the oscillator destination matches, change style of the bank',
@@ -1087,7 +1031,7 @@ export function GetFeedbacksList(
 				},
 			}),
 		},
-		[FeedbackId.Select]: {
+		select: {
 			type: 'boolean',
 			name: 'Change from select state',
 			description: 'If specified channel is selected, change style of the bank',
@@ -1115,7 +1059,7 @@ export function GetFeedbacksList(
 				},
 			}),
 		},
-		[FeedbackId.Solo]: {
+		solo: {
 			type: 'boolean',
 			name: 'Change from solo enabled state',
 			description: 'If the solo is on for specified channel, change style of the bank',
@@ -1141,7 +1085,7 @@ export function GetFeedbacksList(
 				getValue: (_evt, data) => getDataNumber(data, 0) !== 0,
 			}),
 		},
-		[FeedbackId.ClearSolo]: {
+		clear: {
 			type: 'boolean',
 			name: 'Change from clear solo state',
 			description: 'If atleast one solo is selected the clear solo button is on and will change style of the bank',
@@ -1155,7 +1099,7 @@ export function GetFeedbacksList(
 				getValue: (_evt, data) => getDataNumber(data, 0) !== 0,
 			}),
 		},
-		[FeedbackId.SendsOnFader]: {
+		'sends-on-fader': {
 			type: 'boolean',
 			name: 'Change from Sends on Fader/Fader Flip state',
 			description: 'If the Sends on Fader/Fader Flip is on, change style of the bank',
@@ -1169,7 +1113,7 @@ export function GetFeedbacksList(
 				getValue: (_evt, data) => getDataNumber(data, 0) !== 0,
 			}),
 		},
-		[FeedbackId.SoloMono]: {
+		'solo-mono': {
 			type: 'boolean',
 			name: 'Change from Solo Mono enabled state',
 			description: 'If the Solo Mono is on, change style of the bank',
@@ -1183,7 +1127,7 @@ export function GetFeedbacksList(
 				getValue: (_evt, data) => getDataNumber(data, 0) !== 0,
 			}),
 		},
-		[FeedbackId.SoloDim]: {
+		'solo-dim': {
 			type: 'boolean',
 			name: 'Change from Solo Dim enabled state',
 			description: 'If the Solo Dim is on, change style of the bank',
@@ -1197,7 +1141,7 @@ export function GetFeedbacksList(
 				getValue: (_evt, data) => getDataNumber(data, 0) !== 0,
 			}),
 		},
-		[FeedbackId.Tape]: {
+		tape: {
 			type: 'boolean',
 			name: 'Change from tape operation state',
 			description: 'If the tape state matches, change style of the bank',
@@ -1219,7 +1163,7 @@ export function GetFeedbacksList(
 				getValue: (evt, data) => getDataNumber(data, 0) == evt.options.tapeFunc,
 			}),
 		},
-		[FeedbackId.ChannelBank]: {
+		'channel-bank': {
 			type: 'boolean',
 			name: 'Change from selected channel bank (X32/M32)',
 			description:
@@ -1259,7 +1203,7 @@ export function GetFeedbacksList(
 				getValue: (evt, data) => getDataNumber(data, 0) == evt.options.bank,
 			}),
 		},
-		[FeedbackId.GroupBank]: {
+		'group-bank': {
 			type: 'boolean',
 			name: 'Change from selected group bank (X32/M32)',
 			description:
@@ -1299,7 +1243,7 @@ export function GetFeedbacksList(
 				getValue: (evt, data) => getDataNumber(data, 0) == evt.options.bank,
 			}),
 		},
-		[FeedbackId.ChannelBankCompact]: {
+		'channel-bank-compact': {
 			type: 'boolean',
 			name: 'Change from selected channel bank (X32 Compact/X32 Producer/M32R)',
 			description:
@@ -1355,7 +1299,7 @@ export function GetFeedbacksList(
 				getValue: (evt, data) => getDataNumber(data, 0) == evt.options.bank,
 			}),
 		},
-		[FeedbackId.GroupBankCompact]: {
+		'group-bank-compact': {
 			type: 'boolean',
 			name: 'Change from selected group bank (X32 Compact/X32 Producer/M32R)',
 			description:
@@ -1419,7 +1363,7 @@ export function GetFeedbacksList(
 				getValue: (evt, data) => getDataNumber(data, 0) == evt.options.bank,
 			}),
 		},
-		[FeedbackId.BusSendBank]: {
+		'bus-send-bank': {
 			type: 'boolean',
 			name: 'Change from selected Bus Send',
 			description: 'If the selected bus send bank is active,, change style of the bank',
@@ -1458,7 +1402,7 @@ export function GetFeedbacksList(
 				getValue: (evt, data) => getDataNumber(data, 0) == evt.options.bank,
 			}),
 		},
-		[FeedbackId.UserBank]: {
+		'user-bank': {
 			type: 'boolean',
 			name: 'Change from selected User Assign Bank',
 			description: 'If the selected assign bank is active, change style of the bank',
@@ -1493,7 +1437,7 @@ export function GetFeedbacksList(
 				getValue: (evt, data) => getDataNumber(data, 0) == evt.options.bank,
 			}),
 		},
-		[FeedbackId.Screens]: {
+		screens: {
 			type: 'boolean',
 			name: 'Change from screen state',
 			description: 'If the select screen is being shown, change style of the bank',
@@ -1556,7 +1500,7 @@ export function GetFeedbacksList(
 				getValue: (evt, data) => getDataNumber(data, 0) == evt.options.screen,
 			}),
 		},
-		[FeedbackId.MuteGroupScreen]: {
+		'mute-group-screen': {
 			type: 'boolean',
 			name: 'Change from mute groups screen enabled state',
 			description: 'If mute groups screen is on, change style of the bank',
@@ -1570,7 +1514,7 @@ export function GetFeedbacksList(
 				getValue: (_evt, data) => getDataNumber(data, 0) !== 0,
 			}),
 		},
-		[FeedbackId.UtilityScreen]: {
+		'utility-screen': {
 			type: 'boolean',
 			name: 'Change from Utility enabled state',
 			description: 'If utility screen is on, change style of the bank',
@@ -1584,7 +1528,7 @@ export function GetFeedbacksList(
 				getValue: (_evt, data) => getDataNumber(data, 0) !== 0,
 			}),
 		},
-		[FeedbackId.ChannelPage]: {
+		'channel-page': {
 			type: 'boolean',
 			name: 'Change from channel page selected state',
 			description: 'If channel screen is on and selected page is active, change style of the bank',
@@ -1635,7 +1579,7 @@ export function GetFeedbacksList(
 				getValue: (evt, screen, page) => getDataNumber(screen, 0) === 0 && getDataNumber(page, 0) == evt.options.page,
 			}),
 		},
-		[FeedbackId.MeterPage]: {
+		'meter-page': {
 			type: 'boolean',
 			name: 'Change from meter page selected state',
 			description: 'If meter screen is on and selected page is active, change style of the bank',
@@ -1682,7 +1626,7 @@ export function GetFeedbacksList(
 				getValue: (evt, screen, page) => getDataNumber(screen, 0) === 1 && getDataNumber(page, 0) == evt.options.page,
 			}),
 		},
-		[FeedbackId.RoutePage]: {
+		'route-page': {
 			type: 'boolean',
 			name: 'Change from route page selected state',
 			description: 'If route screen is on and selected page is active, change style of the bank',
@@ -1741,7 +1685,7 @@ export function GetFeedbacksList(
 				getValue: (evt, screen, page) => getDataNumber(screen, 0) === 2 && getDataNumber(page, 0) == evt.options.page,
 			}),
 		},
-		[FeedbackId.SetupPage]: {
+		'setup-page': {
 			type: 'boolean',
 			name: 'Change from setup page selected state',
 			description: 'If setup screen is on and selected page is active, change style of the bank',
@@ -1792,7 +1736,7 @@ export function GetFeedbacksList(
 				getValue: (evt, screen, page) => getDataNumber(screen, 0) === 3 && getDataNumber(page, 0) == evt.options.page,
 			}),
 		},
-		[FeedbackId.LibPage]: {
+		'library-page': {
 			type: 'boolean',
 			name: 'Change from library page selected state',
 			description: 'If library screen is on and selected page is active, change style of the bank',
@@ -1831,7 +1775,7 @@ export function GetFeedbacksList(
 				getValue: (evt, screen, page) => getDataNumber(screen, 0) === 4 && getDataNumber(page, 0) == evt.options.page,
 			}),
 		},
-		[FeedbackId.FxPage]: {
+		'effects-page': {
 			type: 'boolean',
 			name: 'Change from effects page selected state',
 			description: 'If effects screen is on and selected page is active, change style of the bank',
@@ -1890,7 +1834,7 @@ export function GetFeedbacksList(
 				getValue: (evt, screen, page) => getDataNumber(screen, 0) === 5 && getDataNumber(page, 0) == evt.options.page,
 			}),
 		},
-		[FeedbackId.MonPage]: {
+		'monitor-page': {
 			type: 'boolean',
 			name: 'Change from monitor page selected state',
 			description: 'If monitor screen is on and selected page is active, change style of the bank',
@@ -1929,7 +1873,7 @@ export function GetFeedbacksList(
 				getValue: (evt, screen, page) => getDataNumber(screen, 0) === 6 && getDataNumber(page, 0) == evt.options.page,
 			}),
 		},
-		[FeedbackId.USBPage]: {
+		'usb-page': {
 			type: 'boolean',
 			name: 'Change from USB page selected state',
 			description: 'If USB screen is on and selected page is active, change style of the bank',
@@ -1960,7 +1904,7 @@ export function GetFeedbacksList(
 				getValue: (evt, screen, page) => getDataNumber(screen, 0) === 7 && getDataNumber(page, 0) == evt.options.page,
 			}),
 		},
-		[FeedbackId.ScenePage]: {
+		'scene-page': {
 			type: 'boolean',
 			name: 'Change from scene page selected state',
 			description: 'If scene screen is on and selected page is active, change style of the bank',
@@ -2007,7 +1951,7 @@ export function GetFeedbacksList(
 				getValue: (evt, screen, page) => getDataNumber(screen, 0) === 8 && getDataNumber(page, 0) == evt.options.page,
 			}),
 		},
-		[FeedbackId.AssignPage]: {
+		'assign-page': {
 			type: 'boolean',
 			name: 'Change from assign page selected state',
 			description: 'If assign screen is on and selected page is active, change style of the bank',
@@ -2047,7 +1991,7 @@ export function GetFeedbacksList(
 			}),
 		},
 
-		[FeedbackId.RouteUserIn]: {
+		'route-user-in': {
 			type: 'boolean',
 			name: 'Change from user in routing state',
 			description:
@@ -2130,7 +2074,7 @@ export function GetFeedbacksList(
 				}
 			},
 		},
-		[FeedbackId.RouteUserOut]: {
+		'route-user-out': {
 			type: 'boolean',
 			name: 'Change from user out routing state',
 			description:
@@ -2213,7 +2157,7 @@ export function GetFeedbacksList(
 				}
 			},
 		},
-		[FeedbackId.StoredChannel]: {
+		'stored-channel': {
 			type: 'boolean',
 			name: 'Change based on Stored Channel',
 			description: 'If the specified channl is stored, change style of the bank.',
@@ -2236,7 +2180,7 @@ export function GetFeedbacksList(
 			},
 			unsubscribe: (): void => undefined,
 		},
-		[FeedbackId.RouteInputBlockMode]: {
+		'route-input-block-mode': {
 			type: 'boolean',
 			name: 'Input block routing mode',
 			description: 'If the specified mode is active, change style of the bank.',
@@ -2264,7 +2208,7 @@ export function GetFeedbacksList(
 				},
 			}),
 		},
-		[FeedbackId.RouteInputBlocks]: {
+		'route-input-blocks': {
 			type: 'boolean',
 			name: 'Input block routing state',
 			description: 'If the specified block is routed to the specified destination, change style of the bank.',
@@ -2307,7 +2251,7 @@ export function GetFeedbacksList(
 				},
 			}),
 		},
-		[FeedbackId.RouteAuxBlocks]: {
+		'route-aux-blocks': {
 			type: 'boolean',
 			name: 'Aux block routing state',
 			description: 'If the specified block is routed to the specified destination, change style of the bank.',
@@ -2342,7 +2286,7 @@ export function GetFeedbacksList(
 				},
 			}),
 		},
-		[FeedbackId.RouteAES50Blocks]: {
+		'route-aes50-blocks': {
 			type: 'boolean',
 			name: 'AES50 block routing state',
 			description: 'If the specified block is routed to the specified destination, change style of the bank.',
@@ -2385,7 +2329,7 @@ export function GetFeedbacksList(
 				},
 			}),
 		},
-		[FeedbackId.RouteCardBlocks]: {
+		'route-card-blocks': {
 			type: 'boolean',
 			name: 'Card block routing state',
 			description: 'If the specified block is routed to the specified destination, change style of the bank.',
@@ -2417,7 +2361,7 @@ export function GetFeedbacksList(
 				},
 			}),
 		},
-		[FeedbackId.RouteXLRLeftOutputs]: {
+		'route-xlr-left-outputs': {
 			type: 'boolean',
 			name: 'XRL left block routing state',
 			description: 'If the specified block is routed to the specified destination, change style of the bank.',
@@ -2452,7 +2396,7 @@ export function GetFeedbacksList(
 				},
 			}),
 		},
-		[FeedbackId.RouteXLRRightOutputs]: {
+		'route-xlr-right-outputs': {
 			type: 'boolean',
 			name: 'XRL right block routing state',
 			description: 'If the specified block is routed to the specified destination, change style of the bank.',
@@ -2488,7 +2432,7 @@ export function GetFeedbacksList(
 			}),
 		},
 
-		[FeedbackId.LockAndShutdown]: {
+		'lock-and-shutdown': {
 			type: 'boolean',
 			name: 'Lock/Shutdown',
 			description: 'If the specified state is active, change style of the bank.',
@@ -2515,7 +2459,7 @@ export function GetFeedbacksList(
 			}),
 		},
 
-		[FeedbackId.InsertOn]: {
+		'insert-on': {
 			type: 'boolean',
 			name: 'Insert Status',
 			description: 'If the insert status of specified source matches the specified state, change style of the bank.',
@@ -2540,7 +2484,7 @@ export function GetFeedbacksList(
 				getValue: (_evt, data) => getDataNumber(data, 0) === 1,
 			}),
 		},
-		[FeedbackId.InsertPos]: {
+		'insert-pos': {
 			type: 'boolean',
 			name: 'Insert Position',
 			description: 'If the insert position of specified source matches the specified state, change style of the bank.',
@@ -2575,7 +2519,7 @@ export function GetFeedbacksList(
 				getValue: (evt, data) => getDataNumber(data, 0) === evt.options.pos,
 			}),
 		},
-		[FeedbackId.InsertSelect]: {
+		'insert-select': {
 			type: 'boolean',
 			name: 'Insert Destination',
 			description:
@@ -2608,7 +2552,7 @@ export function GetFeedbacksList(
 				getValue: (evt, data) => getDataNumber(data, 0) === evt.options.dest,
 			}),
 		},
-		[FeedbackId.UndoAvailable]: {
+		'undo-available': {
 			type: 'boolean',
 			name: 'Undo available',
 			description: 'If undo is available, change the style of the bank',

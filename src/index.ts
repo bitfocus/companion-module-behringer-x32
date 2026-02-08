@@ -113,7 +113,7 @@ export default class X32Instance extends InstanceBase<X32Types> implements Insta
 	// IStoredChannelObserver
 	storedChannelChanged(): void {
 		updateStoredChannelVariable(this, this.x32State)
-		const list = [FeedbackId.StoredChannel, FeedbackId.RouteUserIn, FeedbackId.RouteUserOut]
+		const list = ['stored-channel', 'route-user-in', 'route-user-out'] as const
 		list.forEach((f) => this.messageFeedbacks.add(f))
 		this.debounceMessageFeedbacks()
 	}
