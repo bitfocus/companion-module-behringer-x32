@@ -1,7 +1,7 @@
 import type { CompanionActionDefinitions } from '@companion-module/base'
 import type { ActionsProps } from './main.js'
 import { actionSubscriptionWrapper, getResolveOnOffMute } from './util.js'
-import { CHOICES_ON_OFF, convertChoices, GetTargetChoicesNew, MUTE_TOGGLE } from '../choices.js'
+import { CHOICES_ON_OFF, convertChoices, GetTargetChoices, MUTE_TOGGLE } from '../choices.js'
 import { ParseRefOptions, parseRefToPaths } from '../paths.js'
 import { padNumber } from '../util.js'
 
@@ -41,7 +41,7 @@ export function getSoloActions(props: ActionsProps): CompanionActionDefinitions<
 		allowMatrix: true,
 		allowDca: true,
 	}
-	const soloChoices = GetTargetChoicesNew(props.state, soloChoicesParseOptions)
+	const soloChoices = GetTargetChoices(props.state, soloChoicesParseOptions)
 
 	return {
 		solo: {

@@ -20,6 +20,11 @@ import { getRoutingActions, RoutingActionsSchema } from './routing.js'
 import { getScreenActions, ScreenActionsSchema } from './screen.js'
 import { getInsertActions, InsertActionsSchema } from './insert.js'
 import { getMonitorActions, MonitorActionsSchema } from './monitor.js'
+import { getSystemActions, SystemActionsSchema } from './system.js'
+import { getUndoActions, UndoActionsSchema } from './undo.js'
+import { FaderBankActionsSchema, getFaderBankActions } from './fader-bank.js'
+import { getHeadAmpActions, HeadAmpActionsSchema } from './headamp.js'
+import { getMiscActions, MiscActionsSchema } from './misc.js'
 
 export type ActionsSchema = XLiveActionsSchema &
 	MarkerActionsSchema &
@@ -39,7 +44,12 @@ export type ActionsSchema = XLiveActionsSchema &
 	RoutingActionsSchema &
 	ScreenActionsSchema &
 	InsertActionsSchema &
-	MonitorActionsSchema
+	MonitorActionsSchema &
+	SystemActionsSchema &
+	UndoActionsSchema &
+	FaderBankActionsSchema &
+	HeadAmpActionsSchema &
+	MiscActionsSchema
 
 export interface ActionsProps {
 	readonly transitions: X32Transitions
@@ -69,5 +79,10 @@ export function GetActionsList(props: ActionsProps): CompanionActionDefinitions<
 		...getScreenActions(props),
 		...getInsertActions(props),
 		...getMonitorActions(props),
+		...getSystemActions(props),
+		...getUndoActions(props),
+		...getFaderBankActions(props),
+		...getHeadAmpActions(props),
+		...getMiscActions(props),
 	}
 }

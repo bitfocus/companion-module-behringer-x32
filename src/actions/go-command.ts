@@ -1,8 +1,17 @@
 import type { CompanionActionDefinitions } from '@companion-module/base'
 import type { ActionsProps } from './main.js'
 import { actionSubscriptionWrapper } from './util.js'
+import { convertChoices } from '../choices.js'
 
 export type GoCommandActionsSchema = {
+	'save-scene': {
+		options: {
+			sceneIndex: number
+			sceneName: string
+			sceneNote: string
+		}
+	}
+
 	go_cue: {
 		options: {
 			cue: number
@@ -42,6 +51,38 @@ export function getGoCommandActions(props: ActionsProps): CompanionActionDefinit
 	}
 
 	return {
+		'save-scene': {
+			name: 'Save scene',
+			description:
+				'Use at own risk. This will over write whatever scene is saved in that index. Please make sure your settings are correct when setting up.',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'scene number (0-99)',
+					id: 'sceneIndex',
+					...convertChoices([...Array(100).keys()].map((x) => ({ id: x, label: `${x}`.padStart(2, '0') }))),
+				},
+				{
+					type: 'textinput',
+					label: 'Scene name',
+					id: 'sceneName',
+				},
+				{
+					type: 'textinput',
+					label: 'Scene note',
+					id: 'sceneNote',
+				},
+			],
+			callback: (action): void => {
+				props.sendOsc('/save', [
+					{ type: 's', value: 'scene' },
+					{ type: 'i', value: action.options.sceneIndex },
+					{ type: 's', value: action.options.sceneName || '' },
+					{ type: 's', value: action.options.sceneNote || '' },
+				])
+			},
+		},
+
 		go_cue: {
 			name: 'Load Console Cue',
 			options: [

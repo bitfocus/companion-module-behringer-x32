@@ -292,15 +292,15 @@ export function GetLevelsChoiceConfigs(state: X32State): {
 	}
 
 	return {
-		channels: GetTargetChoicesNew(state, channelsParseOptions),
+		channels: GetTargetChoices(state, channelsParseOptions),
 		channelsParseOptions,
-		allSources: GetTargetChoicesNew(state, allSourcesParseOptions),
+		allSources: GetTargetChoices(state, allSourcesParseOptions),
 		allSourcesParseOptions,
-		channelSendTargets: GetTargetChoicesNew(state, channelSendTargetsParseOptions),
+		channelSendTargets: GetTargetChoices(state, channelSendTargetsParseOptions),
 		channelSendTargetsParseOptions,
-		busSendSources: GetTargetChoicesNew(state, busSendSourcesParseOptions),
+		busSendSources: GetTargetChoices(state, busSendSourcesParseOptions),
 		busSendSourcesParseOptions,
-		busSendTargets: GetTargetChoicesNew(state, busSendTargetsParseOptions),
+		busSendTargets: GetTargetChoices(state, busSendTargetsParseOptions),
 		busSendTargetsParseOptions,
 	}
 }
@@ -336,15 +336,15 @@ export function GetPanningChoiceConfigs(state: X32State): {
 	const leftOnly = (statePath: SourcePaths) => !statePath.isStereoRight
 
 	return {
-		allSources: GetTargetChoicesNew(state, allSourcesParseOptions),
+		allSources: GetTargetChoices(state, allSourcesParseOptions),
 		allSourcesParseOptions,
-		channelSendTargets: GetTargetChoicesNew(state, channelSendTargetsParseOptions, {
+		channelSendTargets: GetTargetChoices(state, channelSendTargetsParseOptions, {
 			filter: leftOnly,
 		}),
 		channelSendTargetsParseOptions,
-		busSendSource: GetTargetChoicesNew(state, busSendSourceParseOptions),
+		busSendSource: GetTargetChoices(state, busSendSourceParseOptions),
 		busSendSourceParseOptions,
-		busSendTarget: GetTargetChoicesNew(state, busSendTargetParseOptions, {
+		busSendTarget: GetTargetChoices(state, busSendTargetParseOptions, {
 			filter: leftOnly,
 		}),
 		busSendTargetParseOptions,
@@ -397,7 +397,7 @@ export function GetNameFromState(state: X32State, paths: SourcePaths): string | 
 	return val && val[0]?.type === 's' ? val[0].value : undefined
 }
 
-export function GetTargetChoicesNew(
+export function GetTargetChoices(
 	state: X32State,
 	options: ParseRefOptions,
 	extraOpts?: {
@@ -461,7 +461,7 @@ export function GetHeadampChoices(): DropdownChoice<string>[] {
 }
 
 export function GetOscillatorDestinations(state: X32State): DropdownChoice[] {
-	return GetTargetChoicesNew(state, OscillatorDestinationsParseOptions)
+	return GetTargetChoices(state, OscillatorDestinationsParseOptions)
 }
 export const OscillatorDestinationsParseOptions: ParseRefOptions = {
 	allowStereo: true,
@@ -711,7 +711,7 @@ export function GetRightOutputBlockRoutes(): DropdownChoice<number>[] {
 }
 
 export function GetTalkbackDestinations(state: X32State): DropdownChoice<string>[] {
-	return GetTargetChoicesNew(state, TalkbackDestinationsParseOptions)
+	return GetTargetChoices(state, TalkbackDestinationsParseOptions)
 }
 export const TalkbackDestinationsParseOptions: ParseRefOptions = {
 	allowStereo: true,

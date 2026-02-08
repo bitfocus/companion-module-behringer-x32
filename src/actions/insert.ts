@@ -6,7 +6,7 @@ import {
 	convertChoices,
 	MUTE_TOGGLE,
 	GetInsertDestinationChoices,
-	GetTargetChoicesNew,
+	GetTargetChoices,
 } from '../choices.js'
 import { ParseRefOptions, parseRefToPaths } from '../paths.js'
 
@@ -39,7 +39,7 @@ export function getInsertActions(props: ActionsProps): CompanionActionDefinition
 		allowBus: true,
 		allowMatrix: true,
 	}
-	const insertSourceChoices = GetTargetChoicesNew(props.state, insertSourceParseOptions)
+	const insertSourceChoices = GetTargetChoices(props.state, insertSourceParseOptions)
 
 	return {
 		'insert-on': {

@@ -24,7 +24,7 @@ import {
 	GetChannelSendParseOptions,
 	OscillatorDestinationsParseOptions,
 	TalkbackDestinationsParseOptions,
-	GetTargetChoicesNew,
+	GetTargetChoices,
 } from './choices.js'
 import { compareNumber, floatToDB, InstanceBaseExt, padNumber, stringifyValueAlways } from './util.js'
 import { UserRouteInPath, UserRouteOutPath, parseRefToPaths, ParseRefOptions } from './paths.js'
@@ -441,7 +441,7 @@ export function GetFeedbacksList(
 		allowBus: true,
 		allowMatrix: true,
 	}
-	const selectChoices = GetTargetChoicesNew(state, selectChoicesParseOptions)
+	const selectChoices = GetTargetChoices(state, selectChoicesParseOptions)
 	const soloChoicesParseOptions: ParseRefOptions = {
 		allowStereo: true,
 		allowMono: true,
@@ -452,7 +452,7 @@ export function GetFeedbacksList(
 		allowMatrix: true,
 		allowDca: true,
 	}
-	const soloChoices = GetTargetChoicesNew(state, soloChoicesParseOptions)
+	const soloChoices = GetTargetChoices(state, soloChoicesParseOptions)
 	const insertSourceParseOptions: ParseRefOptions = {
 		allowStereo: true,
 		allowMono: true,
@@ -460,7 +460,7 @@ export function GetFeedbacksList(
 		allowBus: true,
 		allowMatrix: true,
 	}
-	const insertSourceChoices = GetTargetChoicesNew(state, insertSourceParseOptions)
+	const insertSourceChoices = GetTargetChoices(state, insertSourceParseOptions)
 
 	const feedbackSubscriptionWrapper = (input: {
 		getPath: (options: CompanionOptionValues) => string | null
@@ -617,7 +617,7 @@ export function GetFeedbacksList(
 					type: 'dropdown',
 					label: 'Target',
 					id: 'target',
-					...convertChoices(GetTargetChoicesNew(state, GetChannelSendParseOptions)),
+					...convertChoices(GetTargetChoices(state, GetChannelSendParseOptions)),
 					allowInvalidValues: true,
 				},
 			],

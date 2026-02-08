@@ -1,6 +1,6 @@
 import type { CompanionActionDefinitions } from '@companion-module/base'
 import type { ActionsProps } from './main.js'
-import { convertChoices, GetPresetsChoices, GetTargetChoicesNew } from '../choices.js'
+import { convertChoices, GetPresetsChoices, GetTargetChoices } from '../choices.js'
 import { ParseRefOptions, parseRefToPaths } from '../paths.js'
 import { padNumber } from '../util.js'
 
@@ -40,7 +40,7 @@ export function getPresetsActions(props: ActionsProps): CompanionActionDefinitio
 		allowBus: true,
 		allowMatrix: true,
 	}
-	const selectChoices = GetTargetChoicesNew(props.state, selectChoicesParseOptions)
+	const selectChoices = GetTargetChoices(props.state, selectChoicesParseOptions)
 
 	return {
 		'load-channel-preset': {

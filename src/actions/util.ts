@@ -63,14 +63,3 @@ export function getResolveOnOffMute(
 		return value
 	}
 }
-
-/** @deprecated */
-export const getOptNumber = (action: CompanionActionInfo, key: string, defVal?: number): number => {
-	const rawVal = action.options[key]
-	if (defVal !== undefined && rawVal === undefined) return defVal
-	const val = Number(rawVal)
-	if (isNaN(val)) {
-		throw new Error(`Invalid option '${key}'`)
-	}
-	return val
-}

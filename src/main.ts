@@ -1,4 +1,4 @@
-import { GetActionsList } from './actions.js'
+import { GetActionsList } from './actions/main.js'
 import { X32Config, GetConfigFields } from './config.js'
 import { FeedbackId, GetFeedbacksList } from './feedback.js'
 import { GetPresetsList } from './presets.js'
@@ -33,6 +33,7 @@ import {
 	CreateConvertToBooleanFeedbackUpgradeScript,
 	EmptyUpgradeScript,
 	InstanceStatus,
+	OSCSomeArguments,
 } from '@companion-module/base'
 import type { InstanceBaseExt, X32Types } from './util.js'
 
@@ -215,7 +216,22 @@ export default class X32Instance extends InstanceBase<X32Types> implements Insta
 		// this.setFeedbackDefinitions(feedbacks)
 
 		this.setFeedbackDefinitions(GetFeedbacksList(this, this.x32State, this.x32Subscriptions, this.queueEnsureLoaded))
-		this.setActionDefinitions(GetActionsList(this, this.transitions, this.x32State, this.queueEnsureLoaded))
+		this.setActionDefinitions(
+			GetActionsList({
+				transitions: this.transitions,
+				state: this.x32State,
+				ensureLoaded: this.queueEnsureLoaded,
+				sendOsc: (cmd: string, args: OSCSomeArguments): void => {
+					// HACK: We send commands on a different port than we run /xremote on, so that we get change events for what we send.
+					// Otherwise we can have no confirmation that a command was accepted
+					// console.log(`osc command: ${cmd} ${JSON.stringify(args)}`)
+
+					if (this.config.host) {
+						this.oscSend(this.config.host, 10023, cmd, args)
+					}
+				},
+			}),
+		)
 		this.checkFeedbacks()
 		updateNameVariables(this, this.x32State)
 		updateSelectedVariables(this, this.x32State)

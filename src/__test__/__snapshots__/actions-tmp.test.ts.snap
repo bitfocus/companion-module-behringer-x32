@@ -3398,6 +3398,7 @@ exports[`Actions test > Check Load AES/DP48 preset (load-aes-preset) 1`] = `
       "type": "dropdown",
     },
   ],
+  "subscribe": [Function],
 }
 `;
 
@@ -4205,6 +4206,7 @@ exports[`Actions test > Check Load channel preset (load-channel-preset) 1`] = `
       "type": "checkbox",
     },
   ],
+  "subscribe": [Function],
 }
 `;
 
@@ -4664,6 +4666,7 @@ exports[`Actions test > Check Load effects preset (load-fx-preset) 1`] = `
       "type": "dropdown",
     },
   ],
+  "subscribe": [Function],
 }
 `;
 
@@ -5366,6 +5369,7 @@ exports[`Actions test > Check Oscillator Destination (oscillator-destination) 1`
       "type": "dropdown",
     },
   ],
+  "subscribe": undefined,
 }
 `;
 
@@ -5829,6 +5833,7 @@ exports[`Actions test > Check Restore fader level (fader_restore) 1`] = `
       "type": "dropdown",
     },
   ],
+  "subscribe": [Function],
 }
 `;
 
@@ -6036,6 +6041,7 @@ exports[`Actions test > Check Restore level of bus to matrix send (level_bus_res
       "type": "dropdown",
     },
   ],
+  "subscribe": [Function],
 }
 `;
 
@@ -6407,6 +6413,7 @@ exports[`Actions test > Check Restore level of channel to bus send (level_channe
       "type": "dropdown",
     },
   ],
+  "subscribe": [Function],
 }
 `;
 
@@ -11419,6 +11426,7 @@ exports[`Actions test > Check Set Dim Attenuation (solo_dim_attenuation) 1`] = `
       "type": "number",
     },
   ],
+  "subscribe": undefined,
 }
 `;
 
@@ -11874,7 +11882,6 @@ exports[`Actions test > Check Set X-live State (record) 1`] = `
       "type": "dropdown",
     },
   ],
-  "subscribe": undefined,
 }
 `;
 
@@ -18001,6 +18008,7 @@ exports[`Actions test > Check Talkback Config (talkback_config) 1`] = `
       "type": "multidropdown",
     },
   ],
+  "subscribe": undefined,
 }
 `;
 
@@ -18378,7 +18386,6 @@ exports[`Actions test > Check X-Live Position (x-live-position) 1`] = `
   "options": [
     {
       "default": 0,
-      "disableAutoExpression": true,
       "id": "position",
       "label": "X-Live Position on sdcard",
       "max": 86399999,
