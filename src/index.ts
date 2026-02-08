@@ -33,7 +33,7 @@ import {
 	EmptyUpgradeScript,
 	InstanceStatus,
 } from '@companion-module/base'
-import type { InstanceBaseExt, X32Manifest } from './util.js'
+import type { InstanceBaseExt, X32Types } from './util.js'
 
 export const UpgradeScripts: CompanionStaticUpgradeScript<X32Config>[] = [
 	EmptyUpgradeScript, // Previous version had a script
@@ -46,7 +46,7 @@ export const UpgradeScripts: CompanionStaticUpgradeScript<X32Config>[] = [
 /**
  * Companion instance class for the Behringer X32 Mixers.
  */
-export default class X32Instance extends InstanceBase<X32Manifest> implements InstanceBaseExt, IStoredChannelObserver {
+export default class X32Instance extends InstanceBase<X32Types> implements InstanceBaseExt, IStoredChannelObserver {
 	private osc: osc.UDPPort
 	private x32State: X32State
 	private x32Subscriptions: X32Subscriptions

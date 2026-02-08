@@ -388,7 +388,7 @@ export type ActionsSchema = {
 		tFunc: number
 	}
 	[ActionId.TalkbackTalk]: {
-		channel: number
+		channel: 'A' | 'B'
 		on: number
 	}
 	[ActionId.TalkbackConfig]: {

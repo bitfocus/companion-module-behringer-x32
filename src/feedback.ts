@@ -149,11 +149,10 @@ export type FeedbacksSchema = {
 		pan: number
 	}
 	[FeedbackId.TalkbackTalk]: {
-		channel: number
-		on: number
+		channel: 'A' | 'B'
 	}
 	[FeedbackId.TalkbackConfigSingleSource]: {
-		channel: string
+		channel: 'A' | 'B'
 		dest: string
 	}
 	[FeedbackId.OscillatorEnable]: Record<string, never>

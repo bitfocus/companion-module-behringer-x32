@@ -1,12 +1,15 @@
-import { FeedbackId } from './feedback.js'
+import { FeedbackId, FeedbacksSchema } from './feedback.js'
 import { X32State } from './state.js'
 import type { SetRequired } from 'type-fest'
 import {
 	CompanionPresetDefinitions,
 	CompanionPresetFeedback,
 	CompanionButtonPresetDefinition,
+	CompanionPresetDefinition,
 } from '@companion-module/base'
-import { InstanceBaseExt } from './util.js'
+import { InstanceBaseExt, X32Types } from './util.js'
+import { ActionsSchema, ActionId } from './actions.js'
+import { MUTE_TOGGLE } from './choices.js'
 
 interface CompanionPresetExt extends CompanionButtonPresetDefinition {
 	feedbacks: Array<
@@ -26,12 +29,9 @@ interface CompanionPresetExt extends CompanionButtonPresetDefinition {
 	// >
 }
 
-export function GetPresetsList(_instance: InstanceBaseExt, _state: X32State): CompanionPresetDefinitions {
-	const presets: {
-		[id: string]: CompanionPresetExt | undefined
-	} = {}
+export function GetPresetsList(_instance: InstanceBaseExt, _state: X32State): CompanionPresetDefinitions<X32Types> {
+	const presets: CompanionPresetDefinitions<X32Types> = {}
 
-	/*
 	const levelsChoices = GetLevelsChoiceConfigs(state)
 
 	const sampleChannel = levelsChoices.channels[0]
@@ -151,7 +151,6 @@ export function GetPresetsList(_instance: InstanceBaseExt, _state: X32State): Co
 				feedbackId: FeedbackId.TalkbackTalk,
 				options: {
 					channel: 'A',
-					state: true,
 				},
 				style: {
 					bgcolor: 0xff7f00,
@@ -178,7 +177,7 @@ export function GetPresetsList(_instance: InstanceBaseExt, _state: X32State): Co
 						actionId: ActionId.TalkbackTalk,
 						options: {
 							channel: 'A',
-							on: 2,
+							on: MUTE_TOGGLE,
 						},
 					},
 				],
@@ -190,7 +189,6 @@ export function GetPresetsList(_instance: InstanceBaseExt, _state: X32State): Co
 				feedbackId: FeedbackId.TalkbackTalk,
 				options: {
 					channel: 'A',
-					state: true,
 				},
 				style: {
 					bgcolor: 0xff7f00,
@@ -237,7 +235,6 @@ export function GetPresetsList(_instance: InstanceBaseExt, _state: X32State): Co
 				feedbackId: FeedbackId.TalkbackTalk,
 				options: {
 					channel: 'B',
-					state: true,
 				},
 				style: {
 					bgcolor: 0xff7f00,
@@ -264,7 +261,7 @@ export function GetPresetsList(_instance: InstanceBaseExt, _state: X32State): Co
 						actionId: ActionId.TalkbackTalk,
 						options: {
 							channel: 'B',
-							on: 2,
+							on: MUTE_TOGGLE,
 						},
 					},
 				],
@@ -276,7 +273,6 @@ export function GetPresetsList(_instance: InstanceBaseExt, _state: X32State): Co
 				feedbackId: FeedbackId.TalkbackTalk,
 				options: {
 					channel: 'B',
-					state: true,
 				},
 				style: {
 					bgcolor: 0xff7f00,
@@ -423,7 +419,6 @@ export function GetPresetsList(_instance: InstanceBaseExt, _state: X32State): Co
 			feedbacks: [],
 		}
 	}
-	*/
 
 	return presets
 }

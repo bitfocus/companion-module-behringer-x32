@@ -1,4 +1,4 @@
-import type { JsonValue, InstanceBase, InstanceManifest } from '@companion-module/base'
+import type { JsonValue, InstanceBase } from '@companion-module/base'
 import type { X32Config } from './config.js'
 import type { ActionsSchema } from './actions.js'
 import type { FeedbacksSchema } from './feedback.js'
@@ -129,12 +129,13 @@ export function compareNumber(
 	}
 }
 
-export interface X32Manifest extends InstanceManifest {
+export interface X32Types {
 	config: X32Config
+	secrets: undefined
 	actions: ActionsSchema
 	feedbacks: FeedbacksSchema
 }
 
-export interface InstanceBaseExt extends InstanceBase<X32Manifest> {
-	config: X32Manifest['config']
+export interface InstanceBaseExt extends InstanceBase<X32Types> {
+	config: X32Types['config']
 }
