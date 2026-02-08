@@ -1,7 +1,7 @@
-import debug0 from 'debug'
+import { createModuleLogger } from '@companion-module/base'
 import osc from 'osc'
 
-const debug = debug0('behringer-x32/device-detector')
+const logger = createModuleLogger('device-detector')
 
 export interface DeviceInfo {
 	deviceName: string
@@ -58,14 +58,14 @@ class X32DeviceDetectorImpl implements X32DeviceDetector {
 		})
 
 		this.osc.on('error', (err: Error): void => {
-			debug(`osc error: ${err}`)
+			logger.debug(`osc error: ${err}`)
 
 			// restart the listener
 			this.stopListening()
 			this.startListening()
 		})
 		this.osc.on('ready', () => {
-			debug('osc ready')
+			logger.debug('osc ready')
 
 			if (!this.queryTimer) {
 				this.queryTimer = setInterval(() => this.sendQuery(), 30000)
@@ -75,7 +75,7 @@ class X32DeviceDetectorImpl implements X32DeviceDetector {
 		})
 
 		this.osc.on('close' as any, () => {
-			debug('osc closed')
+			logger.debug('osc closed')
 
 			// cleanup the listener
 			this.stopListening()
@@ -100,14 +100,14 @@ class X32DeviceDetectorImpl implements X32DeviceDetector {
 				lastSeen: Date.now(),
 			}
 
-			debug(`Heard from ${info.address} (${info.deviceName})`)
+			logger.info(`Heard from ${info.address} (${info.deviceName})`)
 			this.knownDevices.set(info.address, info)
 
 			// Prune out any not seen for over a minute
 			for (const [id, data] of Array.from(this.knownDevices.entries())) {
 				if (data.lastSeen < Date.now() - 60000) {
 					this.knownDevices.delete(id)
-					debug(`Lost ${data.address} (${data.deviceName})`)
+					logger.info(`Lost ${data.address} (${data.deviceName})`)
 				}
 			}
 		})

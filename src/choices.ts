@@ -2,83 +2,119 @@ import {
 	CompanionInputFieldDropdown,
 	CompanionInputFieldNumber,
 	DropdownChoice,
-	DropdownChoiceId,
+	JsonValue,
 	SomeCompanionActionInputField,
 } from '@companion-module/base'
 import { X32State } from './state.js'
-import { padNumber } from './util.js'
+import { padNumber, stringifyValueAlways } from './util.js'
+import {
+	getAuxPaths,
+	getBusPaths,
+	getChannelPaths,
+	getDcaPaths,
+	getFxPaths,
+	getMatrixPaths,
+	MainLeftPaths,
+	MainMonoPaths,
+	MainRightPaths,
+	MainStereoPaths,
+	ParseRefOptions,
+	SourcePaths,
+} from './paths.js'
 
 export const MUTE_TOGGLE = 2
-export const CHOICES_MUTE: DropdownChoice[] = [
+export const CHOICES_MUTE: DropdownChoice<number>[] = [
 	{ id: MUTE_TOGGLE, label: 'Toggle' },
 	{ id: 0, label: 'Mute' },
 	{ id: 1, label: 'Unmute' },
 ]
-export const CHOICES_MUTE_GROUP: DropdownChoice[] = [
+export const CHOICES_MUTE_GROUP: DropdownChoice<number>[] = [
 	{ id: MUTE_TOGGLE, label: 'Toggle' },
 	{ id: 1, label: 'Mute' },
 	{ id: 0, label: 'Unmute' },
 ]
-export const CHOICES_ON_OFF: DropdownChoice[] = [
+export const CHOICES_ON_OFF: DropdownChoice<number>[] = [
 	{ id: MUTE_TOGGLE, label: 'Toggle' },
 	{ id: 1, label: 'On' },
 	{ id: 0, label: 'Off' },
 ]
 
-export const CHOICES_COLOR: DropdownChoice[] = [
-	{ label: 'Off', id: '0' },
-	{ label: 'Red', id: '1' },
-	{ label: 'Green', id: '2' },
-	{ label: 'Yellow', id: '3' },
-	{ label: 'Blue', id: '4' },
-	{ label: 'Magenta', id: '5' },
-	{ label: 'Cyan', id: '6' },
-	{ label: 'White', id: '7' },
-	{ label: 'Off Inverted', id: '8' },
-	{ label: 'Red Inverted', id: '9' },
-	{ label: 'Green Inverted', id: '10' },
-	{ label: 'Yellow Inverted', id: '11' },
-	{ label: 'Blue Inverted', id: '12' },
-	{ label: 'Magenta Inverted', id: '13' },
-	{ label: 'Cyan Inverted', id: '14' },
-	{ label: 'White Inverted', id: '15' },
+export const CHOICES_COLOR: DropdownChoice<string>[] = [
+	{ label: 'Off', id: 'off' },
+	{ label: 'Red', id: 'red' },
+	{ label: 'Green', id: 'green' },
+	{ label: 'Yellow', id: 'yellow' },
+	{ label: 'Blue', id: 'blue' },
+	{ label: 'Magenta', id: 'magenta' },
+	{ label: 'Cyan', id: 'cyan' },
+	{ label: 'White', id: 'white' },
+	{ label: 'Off Inverted', id: 'offinverted' },
+	{ label: 'Red Inverted', id: 'redinverted' },
+	{ label: 'Green Inverted', id: 'greeninverted' },
+	{ label: 'Yellow Inverted', id: 'yellowinverted' },
+	{ label: 'Blue Inverted', id: 'blueinverted' },
+	{ label: 'Magenta Inverted', id: 'magentainverted' },
+	{ label: 'Cyan Inverted', id: 'cyaninverted' },
+	{ label: 'White Inverted', id: 'whiteinverted' },
 ]
 
-export const ColorChoicesWithVariable: SomeCompanionActionInputField[] = [
-	{
-		type: 'checkbox',
-		label: 'Use a variable for Color',
-		default: false,
-		id: 'useVariable',
-	},
-	{
-		type: 'dropdown',
-		label: 'Color',
-		id: 'col',
-		...convertChoices(CHOICES_COLOR),
-		isVisibleExpression: `!$(options:useVariable)`,
-	},
-	{
-		type: 'textinput',
-		label: 'Variable Color',
-		description: 'e.g. $(x32:color_ch_01), NOTE: unknown strings will be ignored',
-		id: 'varCol',
-		useVariables: true,
-		isVisibleExpression: `!!$(options:useVariable)`,
-	},
-]
+export function parseColorNameToValue(ref: JsonValue | undefined): number | null {
+	if (!ref) return null
+	ref = stringifyValueAlways(ref).toLowerCase().trim()
 
-export function getColorLabelFromId(id: DropdownChoiceId): string | undefined {
-	const choice = CHOICES_COLOR.find((item) => item.id == id)
-	return choice ? choice.label : undefined
+	// sanitise to <ascii>
+	ref = ref.replace(/[^a-z]/g, '')
+
+	switch (ref) {
+		case 'off':
+			return 0
+		case 'red':
+			return 1
+		case 'green':
+			return 2
+		case 'yellow':
+			return 3
+		case 'blue':
+			return 4
+		case 'magenta':
+			return 5
+		case 'cyan':
+			return 6
+		case 'white':
+			return 7
+		case 'offinverted':
+			return 8
+		case 'redinverted':
+			return 9
+		case 'greeninverted':
+			return 10
+		case 'yellowinverted':
+			return 11
+		case 'blueinverted':
+			return 12
+		case 'magentainverted':
+			return 13
+		case 'cyaninverted':
+			return 14
+		case 'whiteinverted':
+			return 15
+		default:
+			return null
+	}
 }
 
-export function getColorIdFromLabel(label: string): DropdownChoiceId | undefined {
-	const choice = CHOICES_COLOR.find((item) => item.label === label)
-	return choice ? choice.id : undefined
+export function getColorChoiceFromId(id: JsonValue | undefined): DropdownChoice<string> | undefined {
+	id = Number(id)
+
+	// This is not efficient, but is easy
+	for (const choice of CHOICES_COLOR) {
+		const number = parseColorNameToValue(choice.id)
+		if (number === id) return choice
+	}
+	return undefined
 }
 
-export const CHOICES_TAPE_FUNC: DropdownChoice[] = [
+export const CHOICES_TAPE_FUNC: DropdownChoice<string>[] = [
 	{ label: 'STOP', id: '0' },
 	{ label: 'PLAY PAUSE', id: '1' },
 	{ label: 'PLAY', id: '2' },
@@ -102,101 +138,66 @@ export interface ChannelChoicesOptions {
 	// TODO - more skipXXX
 }
 
-export const FaderLevelChoice: CompanionInputFieldNumber = {
+export const FaderLevelChoice: CompanionInputFieldNumber<'fad'> = {
 	type: 'number',
 	label: 'Fader Level (-90 = -inf)',
 	id: 'fad',
 	range: true,
-	required: true,
 	default: 0,
 	step: 0.1,
 	min: -90,
 	max: 10,
 }
 
-export const FaderLevelDeltaChoice: SomeCompanionActionInputField[] = [
-	{
-		type: 'checkbox',
-		label: 'Use a variable for Delta',
-		default: false,
-		id: 'useVariable',
-	},
-	{
-		type: 'number',
-		label: 'Delta',
-		id: 'delta',
-		default: 1,
-		max: 100,
-		min: -100,
-		isVisibleExpression: `!$(options:useVariable)`,
-	},
-	{
-		type: 'textinput',
-		label: 'Variable Delta (e.g. $(internal:custom_my_delta), NOTE: strings and out of range numbers will be ignored)',
-		id: 'varDelta',
-		useVariables: true,
-		isVisibleExpression: `!!$(options:useVariable)`,
-	},
-]
+export const FaderLevelDeltaChoice: CompanionInputFieldNumber<'delta'> = {
+	type: 'number',
+	label: 'Delta',
+	id: 'delta',
+	default: 1,
+	max: 100,
+	min: -100,
+}
 
-export const PanningChoice: CompanionInputFieldNumber = {
+export const PanningChoice: CompanionInputFieldNumber<'pan'> = {
 	type: 'number',
 	label: 'Panning (-50 = hard left, 0 = center, 50 = hard right)',
 	id: 'pan',
 	range: true,
-	required: true,
 	default: 0,
 	step: 1,
 	min: -50,
 	max: 50,
 }
 
-export const PanningDelta: SomeCompanionActionInputField[] = [
-	{
-		type: 'checkbox',
-		label: 'Use a variable for Delta',
-		default: false,
-		id: 'useVariable',
-	},
-	{
-		type: 'number',
-		label: 'Delta (-50 = hard left, 0 = center, 50 = hard right)',
-		id: 'delta',
-		range: true,
-		required: true,
-		default: 0,
-		step: 1,
-		min: -100,
-		max: 100,
-		isVisibleExpression: `!$(options:useVariable)`,
-	},
-	{
-		type: 'textinput',
-		label: 'Variable Delta (e.g. $(internal:custom_my_delta), NOTE: strings and out of range numbers will be ignored)',
-		id: 'varDelta',
-		useVariables: true,
-		isVisibleExpression: `!!$(options:useVariable)`,
-	},
-]
+export const PanningDelta: CompanionInputFieldNumber<'delta'> = {
+	type: 'number',
+	label: 'Delta (-50 = hard left, 0 = center, 50 = hard right)',
+	id: 'delta',
+	range: true,
+	default: 0,
+	step: 1,
+	min: -100,
+	max: 100,
+}
 
-export const HeadampGainChoice: CompanionInputFieldNumber = {
+export const HeadampGainChoice: CompanionInputFieldNumber<'gain'> = {
 	type: 'number',
 	label: 'Gain',
 	id: 'gain',
 	range: true,
-	required: true,
 	default: 0,
 	step: 0.1,
 	min: -12,
 	max: 60,
 }
-export const MuteChoice: CompanionInputFieldDropdown = {
+export const MuteChoice: CompanionInputFieldDropdown<'mute'> = {
 	type: 'dropdown',
 	label: 'Mute / Unmute',
 	id: 'mute',
 	...convertChoices(CHOICES_MUTE),
+	disableAutoExpression: true, // Not sure if this should support expressions
 }
-export const FadeDurationChoice: SomeCompanionActionInputField[] = [
+export const FadeDurationChoice: SomeCompanionActionInputField<'fadeDuration' | 'fadeAlgorithm' | 'fadeType'>[] = [
 	{
 		type: 'number',
 		label: 'Fade Duration (ms)',
@@ -208,7 +209,7 @@ export const FadeDurationChoice: SomeCompanionActionInputField[] = [
 	},
 	{
 		type: 'dropdown',
-		label: 'Algorithm',
+		label: 'Fade Curve',
 		id: 'fadeAlgorithm',
 		default: 'linear',
 		choices: [
@@ -224,7 +225,7 @@ export const FadeDurationChoice: SomeCompanionActionInputField[] = [
 			{ id: 'back', label: 'Back' },
 			{ id: 'bounce', label: 'Bounce' },
 		],
-		isVisibleExpression: `$(options:fadeDuration) > 0`,
+		disableAutoExpression: true, // This will be tedious for users, and not beneficial
 	},
 	{
 		type: 'dropdown',
@@ -236,203 +237,195 @@ export const FadeDurationChoice: SomeCompanionActionInputField[] = [
 			{ id: 'ease-out', label: 'Ease-out' },
 			{ id: 'ease-in-out', label: 'Ease-in-out' },
 		],
-		isVisibleExpression: `$(options:fadeDuration) > 0 && $(options:fadeAlgorithm) != 'linear'`,
+		isVisibleExpression: `$(options:fadeAlgorithm) != 'linear'`,
+		disableAutoExpression: true, // This will be tedious for users, and not beneficial
 	},
 ]
 
-export function convertChoices(choices: DropdownChoice[]): { choices: DropdownChoice[]; default: DropdownChoiceId } {
+export function convertChoices<TId extends JsonValue>(
+	choices: DropdownChoice<TId>[],
+): { choices: DropdownChoice<TId>[]; default: TId } {
 	return {
 		choices,
-		default: choices[0].id,
+		default: choices[0]?.id,
 	}
 }
 
 export function GetLevelsChoiceConfigs(state: X32State): {
-	channels: DropdownChoice[]
-	allSources: DropdownChoice[]
-	channelSendTargets: DropdownChoice[]
-	busSendSources: DropdownChoice[]
-	busSendTargets: DropdownChoice[]
+	channels: DropdownChoice<string>[]
+	channelsParseOptions: ParseRefOptions
+	allSources: DropdownChoice<string>[]
+	allSourcesParseOptions: ParseRefOptions
+	channelSendTargets: DropdownChoice<string>[]
+	channelSendTargetsParseOptions: ParseRefOptions
+	busSendSources: DropdownChoice<string>[]
+	busSendSourcesParseOptions: ParseRefOptions
+	busSendTargets: DropdownChoice<string>[]
+	busSendTargetsParseOptions: ParseRefOptions
 } {
+	const channelsParseOptions: ParseRefOptions = {
+		allowStereo: true,
+		allowMono: true,
+		allowChannel: true,
+		allowAuxIn: true,
+		allowFx: true,
+		allowBus: true,
+		allowMatrix: true,
+		allowDca: true,
+	}
+	const allSourcesParseOptions: ParseRefOptions = {
+		allowChannel: true,
+		allowAuxIn: true,
+		allowFx: true,
+	}
+	const channelSendTargetsParseOptions: ParseRefOptions = {
+		allowBus: true,
+		allowMono: true,
+	}
+	const busSendSourcesParseOptions: ParseRefOptions = {
+		allowStereo: true,
+		allowMono: true,
+		allowBus: true,
+	}
+	const busSendTargetsParseOptions: ParseRefOptions = {
+		allowMatrix: true,
+	}
+
 	return {
-		channels: GetTargetChoices(state, { includeMain: true }),
-		allSources: GetTargetChoices(state, {
-			includeMain: false,
-			skipDca: true,
-			skipBus: true,
-			skipMatrix: true,
-		}),
-		channelSendTargets: GetChannelSendChoices(state, 'level'),
-		busSendSources: GetTargetChoices(state, {
-			skipInputs: true,
-			includeMain: true,
-			skipDca: true,
-			skipBus: false,
-			skipMatrix: true,
-		}),
-		busSendTargets: GetBusSendChoices(state),
+		channels: GetTargetChoices(state, channelsParseOptions),
+		channelsParseOptions,
+		allSources: GetTargetChoices(state, allSourcesParseOptions),
+		allSourcesParseOptions,
+		channelSendTargets: GetTargetChoices(state, channelSendTargetsParseOptions),
+		channelSendTargetsParseOptions,
+		busSendSources: GetTargetChoices(state, busSendSourcesParseOptions),
+		busSendSourcesParseOptions,
+		busSendTargets: GetTargetChoices(state, busSendTargetsParseOptions),
+		busSendTargetsParseOptions,
 	}
 }
 
 export function GetPanningChoiceConfigs(state: X32State): {
-	allSources: DropdownChoice[]
-	channelSendTargets: DropdownChoice[]
-	busSendSource: DropdownChoice[]
-	busSendTarget: DropdownChoice[]
+	allSources: DropdownChoice<string>[]
+	allSourcesParseOptions: ParseRefOptions
+	channelSendTargets: DropdownChoice<string>[]
+	channelSendTargetsParseOptions: ParseRefOptions
+	busSendSource: DropdownChoice<string>[]
+	busSendSourceParseOptions: ParseRefOptions
+	busSendTarget: DropdownChoice<string>[]
+	busSendTargetParseOptions: ParseRefOptions
 } {
+	const allSourcesParseOptions: ParseRefOptions = {
+		allowStereo: true,
+		allowChannel: true,
+		allowAuxIn: true,
+		allowFx: true,
+		allowBus: true,
+	}
+	const channelSendTargetsParseOptions: ParseRefOptions = {
+		allowBus: true,
+	}
+	const busSendSourceParseOptions: ParseRefOptions = {
+		allowStereo: true,
+		allowBus: true,
+	}
+	const busSendTargetParseOptions: ParseRefOptions = {
+		allowMatrix: true,
+	}
+
+	const leftOnly = (statePath: SourcePaths) => !statePath.isStereoRight
+
 	return {
-		allSources: GetTargetChoices(state, { skipDca: true, skipMatrix: true, includeST: true }),
-		channelSendTargets: GetChannelSendChoices(state, 'pan'),
-		busSendSource: GetTargetChoices(state, { skipInputs: true, includeST: true, skipDca: true, skipMatrix: true }),
-		busSendTarget: GetBusSendChoices(state, 'pan'),
+		allSources: GetTargetChoices(state, allSourcesParseOptions),
+		allSourcesParseOptions,
+		channelSendTargets: GetTargetChoices(state, channelSendTargetsParseOptions, {
+			filter: leftOnly,
+		}),
+		channelSendTargetsParseOptions,
+		busSendSource: GetTargetChoices(state, busSendSourceParseOptions),
+		busSendSourceParseOptions,
+		busSendTarget: GetTargetChoices(state, busSendTargetParseOptions, {
+			filter: leftOnly,
+		}),
+		busSendTargetParseOptions,
 	}
 }
 
-export function GetTargetChoices(state: X32State, options?: ChannelChoicesOptions): DropdownChoice[] {
-	const res: DropdownChoice[] = []
+export function GetTargetPaths(
+	options: ParseRefOptions,
+	extraOpts?: {
+		defaultNames?: boolean
+		filter?: (sourcePaths: SourcePaths) => boolean
+	},
+): SourcePaths[] {
+	const res: SourcePaths[] = []
 
-	const getNameFromState = (id: string): string | undefined => {
-		if (options?.defaultNames) {
-			return undefined
-		}
-		const val = state.get(`${id}/config/name`)
-		return val && val[0]?.type === 's' ? val[0].value : undefined
-	}
+	const repeatSource = (count: number, getPaths: (i: number) => SourcePaths | null) => {
+		for (let i = 1; i <= count; i++) {
+			const paths = getPaths(i)
+			if (!paths) continue
 
-	let o = 0
-	const appendTarget = (id: string, defaultName: string): void => {
-		const realname = getNameFromState(id)
-		res.push({
-			id: options?.numericIndex ? o++ : id,
-			label: realname && realname !== defaultName ? `${realname} (${defaultName})` : defaultName,
-		})
-	}
+			// Allow external filter
+			if (extraOpts?.filter && !extraOpts.filter(paths)) continue
 
-	if (!options?.skipInputs) {
-		for (let i = 1; i <= 32; i++) {
-			appendTarget(`/ch/${padNumber(i)}`, `Channel ${i}`)
-		}
-
-		if (!options?.skipAuxIn) {
-			for (let i = 1; i <= 8; i++) {
-				appendTarget(`/auxin/${padNumber(i)}`, `Aux In ${i}`)
-			}
-		}
-
-		if (!options?.skipAuxIn) {
-			for (let i = 1; i <= 4; i++) {
-				const o = (i - 1) * 2 + 1
-				appendTarget(`/fxrtn/${padNumber(o)}`, `FX Return ${i} L`)
-				appendTarget(`/fxrtn/${padNumber(o + 1)}`, `FX Return ${i} R`)
-			}
+			res.push(paths)
 		}
 	}
 
-	if (!options?.skipBus) {
-		for (let i = 1; i <= 16; i++) {
-			appendTarget(`/bus/${padNumber(i)}`, `MixBus ${i}`)
-		}
+	if (options.allowChannel) repeatSource(32, getChannelPaths)
+	if (options.allowAuxIn) repeatSource(8, getAuxPaths)
+	if (options.allowAuxIn) repeatSource(8, getFxPaths)
+	if (options.allowBus) repeatSource(16, getBusPaths)
+	if (options.allowMatrix) repeatSource(6, getMatrixPaths)
+
+	if (options.allowStereo) res.push(MainStereoPaths)
+	if (options.allowMono) res.push(MainMonoPaths)
+	if (options.allowLR) {
+		res.push(MainLeftPaths)
+		res.push(MainRightPaths)
 	}
 
-	if (!options?.skipMatrix) {
-		for (let i = 1; i <= 6; i++) {
-			appendTarget(`/mtx/${padNumber(i)}`, `Matrix ${i}`)
-		}
-	}
-
-	if (options?.includeMain) {
-		appendTarget(`/main/st`, `Main Stereo`)
-		appendTarget(`/main/m`, `Main Mono`)
-	}
-
-	if (options?.includeST) {
-		appendTarget(`/main/st`, `Main Stereo`)
-	}
-
-	if (!options?.skipDca) {
-		for (let i = 1; i <= 8; i++) {
-			appendTarget(`/dca/${i}`, `DCA ${i}`)
-		}
-	}
+	if (options.allowDca) repeatSource(8, getDcaPaths)
 
 	return res
 }
 
-// export function GetMixBusChoices(state: X32State): DropdownChoice[] {
-//   const res: DropdownChoice[] = []
+export function GetNameFromState(state: X32State, paths: SourcePaths): string | undefined {
+	if (!paths.namePath) return undefined
 
-//   const appendTarget = (id: string, defaultName: string): void => {
-//     const val = state.get(`/bus/${id}/config/name`)
-//     const realname = val && val[0]?.type === 's' ? val[0].value : undefined
-//     res.push({
-//       id: id,
-//       label: realname && realname !== defaultName ? `${realname} (${defaultName})` : defaultName
-//     })
-//   }
-
-//   for (let i = 1; i <= 16; i++) {
-//     appendTarget(`${padNumber(i)}`, `MixBus ${i}`)
-//   }
-
-//   return res
-// }
-
-export function GetChannelSendChoices(state: X32State, type: 'on' | 'level' | 'pan'): DropdownChoice[] {
-	const res: DropdownChoice[] = []
-
-	const appendTarget = (statePath: string, mixId: string, defaultName: string): void => {
-		const val = state.get(`${statePath}/config/name`)
-		const realname = val && val[0]?.type === 's' ? val[0].value : undefined
-		res.push({
-			id: mixId,
-			label: realname && realname !== defaultName ? `${realname} (${defaultName})` : defaultName,
-		})
-	}
-	const increment = type == 'pan' ? 2 : 1
-	for (let i = 1; i <= 16; i += increment) {
-		appendTarget(`/bus/${padNumber(i)}`, `${padNumber(i)}/${type}`, `MixBus ${i}`)
-	}
-
-	if (type === 'on') {
-		appendTarget(`/main/st`, 'st', `Main Stereo`)
-	}
-
-	switch (type) {
-		case 'on':
-			appendTarget(`/main/m`, `mono`, `Main Mono`)
-			break
-		case 'level':
-			appendTarget(`/main/m`, `m${type}`, `Main Mono`)
-			break
-	}
-
-	return res
+	const val = state.get(paths.namePath)
+	return val && val[0]?.type === 's' ? val[0].value : undefined
 }
 
-export function GetBusSendChoices(state: X32State, type: 'pan' | 'other' = 'other'): DropdownChoice[] {
-	const res: DropdownChoice[] = []
-
-	const appendTarget = (statePath: string, mixId: string, defaultName: string): void => {
-		const val = state.get(`${statePath}/config/name`)
-		const realname = val && val[0]?.type === 's' ? val[0].value : undefined
-		res.push({
-			id: mixId,
-			label: realname && realname !== defaultName ? `${realname} (${defaultName})` : defaultName,
-		})
-	}
-	const increment = type == 'pan' ? 2 : 1
-	for (let i = 1; i <= 6; i += increment) {
-		appendTarget(`/mtx/${padNumber(i)}`, padNumber(i), `Matrix ${i}`)
-	}
-	return res
+export function GetTargetChoices(
+	state: X32State,
+	options: ParseRefOptions,
+	extraOpts?: {
+		defaultNames?: boolean
+		filter?: (sourcePaths: SourcePaths) => boolean
+	},
+): DropdownChoice<string>[] {
+	return GetTargetPaths(options, extraOpts).map((paths) => {
+		const realname = extraOpts?.defaultNames ? undefined : GetNameFromState(state, paths)
+		return {
+			id: paths.defaultRef,
+			label: realname && realname !== paths.defaultName ? `${realname} (${paths.defaultName})` : paths.defaultName,
+		}
+	})
 }
 
-export function GetMuteGroupChoices(_state: X32State): DropdownChoice[] {
-	const res: DropdownChoice[] = []
+export const GetChannelSendParseOptions: ParseRefOptions = {
+	allowBus: true,
+	allowMono: true,
+	allowStereo: true,
+}
+
+export function GetMuteGroupChoices(_state: X32State): DropdownChoice<number>[] {
+	const res: DropdownChoice<number>[] = []
 
 	for (let i = 1; i <= 6; i++) {
 		res.push({
-			id: `/config/mute/${i}`,
+			id: i,
 			label: `Mute group ${i}`,
 		})
 	}
@@ -440,26 +433,26 @@ export function GetMuteGroupChoices(_state: X32State): DropdownChoice[] {
 	return res
 }
 
-export function GetHeadampChoices(): DropdownChoice[] {
-	const res: DropdownChoice[] = []
+export function GetHeadampChoices(): DropdownChoice<string>[] {
+	const res: DropdownChoice<string>[] = []
 
 	for (let i = 1; i <= 32; i++) {
 		res.push({
-			id: `/headamp/${padNumber(res.length, 3)}`,
+			id: `local${i}`,
 			label: `Local XLR ${i}`,
 		})
 	}
 
 	for (let i = 1; i <= 32; i++) {
 		res.push({
-			id: `/headamp/${padNumber(res.length, 3)}`,
+			id: `aes-a${i}`,
 			label: `AES50-A ${i}`,
 		})
 	}
 
 	for (let i = 1; i <= 32; i++) {
 		res.push({
-			id: `/headamp/${padNumber(res.length, 3)}`,
+			id: `aes-b${i}`,
 			label: `AES50-B ${i}`,
 		})
 	}
@@ -468,29 +461,21 @@ export function GetHeadampChoices(): DropdownChoice[] {
 }
 
 export function GetOscillatorDestinations(state: X32State): DropdownChoice[] {
-	return [
-		...GetTargetChoices(state, { skipDca: true, skipInputs: true, skipMatrix: true }),
-		{
-			label: 'Main L',
-		},
-		{
-			label: 'Main R',
-		},
-		{
-			label: 'Main L+R',
-		},
-		{
-			label: 'Main M/C',
-		},
-		...GetTargetChoices(state, { skipDca: true, skipInputs: true, skipBus: true }),
-	].map((dst, i) => ({ id: i, label: dst.label }))
+	return GetTargetChoices(state, OscillatorDestinationsParseOptions)
+}
+export const OscillatorDestinationsParseOptions: ParseRefOptions = {
+	allowStereo: true,
+	allowMono: true,
+	allowLR: true,
+	allowBus: true,
+	allowMatrix: true,
 }
 
-export function GetUserInTargets(): DropdownChoice[] {
+export function GetUserInTargets(): DropdownChoice<number>[] {
 	return [...Array(32).keys()].map((x) => ({ id: x + 1, label: `CH ${x + 1}` }))
 }
 
-export function GetUserOutTargets(showInLabels = false): DropdownChoice[] {
+export function GetUserOutTargets(showInLabels = false): DropdownChoice<number>[] {
 	if (showInLabels) {
 		return [...Array(48).keys()].map((x) => ({ id: x + 1, label: `${x < 32 ? 'IN/OUT' : 'OUT'} ${x + 1}` }))
 	} else {
@@ -498,7 +483,7 @@ export function GetUserOutTargets(showInLabels = false): DropdownChoice[] {
 	}
 }
 
-export function GetUserInSources(): DropdownChoice[] {
+export function GetUserInSources(): DropdownChoice<number>[] {
 	const localIn = [...Array(32).keys()].map((x) => ({ label: `Local In ${x + 1}` }))
 	const aes50A = [...Array(48).keys()].map((x) => ({ label: `AES50-A ${x + 1}` }))
 	const aes50B = [...Array(48).keys()].map((x) => ({ label: `AES50-B ${x + 1}` }))
@@ -517,7 +502,7 @@ export function GetUserInSources(): DropdownChoice[] {
 	].map((src, i) => ({ id: i, label: src.label }))
 }
 
-export function GetUserOutSources(): DropdownChoice[] {
+export function GetUserOutSources(): DropdownChoice<number>[] {
 	const localIn = [...Array(32).keys()].map((x) => ({ label: `Local In ${x + 1}` }))
 	const aes50A = [...Array(48).keys()].map((x) => ({ label: `AES50-A ${x + 1}` }))
 	const aes50B = [...Array(48).keys()].map((x) => ({ label: `AES50-B ${x + 1}` }))
@@ -544,11 +529,11 @@ export function GetUserOutSources(): DropdownChoice[] {
 	].map((src, i) => ({ id: i, label: src.label }))
 }
 
-export function GetInputBlocks(): DropdownChoice[] {
+export function GetInputBlocks(): DropdownChoice<string>[] {
 	return ['1-8', '9-16', '17-24', '25-32'].map((src) => ({ id: src, label: src }))
 }
 
-export function GetInputBlockRoutes(): DropdownChoice[] {
+export function GetInputBlockRoutes(): DropdownChoice<number>[] {
 	return [
 		'Local 1-8',
 		'Local 9-16',
@@ -577,7 +562,7 @@ export function GetInputBlockRoutes(): DropdownChoice[] {
 	].map((src, i) => ({ id: i, label: src }))
 }
 
-export function GetAuxBlockRoutes(): DropdownChoice[] {
+export function GetAuxBlockRoutes(): DropdownChoice<number>[] {
 	return [
 		'AUX1-6',
 		'Local 1-2',
@@ -598,11 +583,11 @@ export function GetAuxBlockRoutes(): DropdownChoice[] {
 	].map((src, i) => ({ id: i, label: src }))
 }
 
-export function GetAesBlocks(): DropdownChoice[] {
+export function GetAesBlocks(): DropdownChoice<string>[] {
 	return ['1-8', '9-16', '17-24', '25-32', '33-40', '41-48'].map((src) => ({ id: src, label: src }))
 }
 
-export function GetAesCardRouteBlocks(): DropdownChoice[] {
+export function GetAesCardRouteBlocks(): DropdownChoice<number>[] {
 	return [
 		'Local 1-8',
 		'Local 9-16',
@@ -643,7 +628,7 @@ export function GetAesCardRouteBlocks(): DropdownChoice[] {
 	].map((src, i) => ({ id: i, label: src }))
 }
 
-export function GetLeftOutputBlockRoutes(): DropdownChoice[] {
+export function GetLeftOutputBlockRoutes(): DropdownChoice<number>[] {
 	return [
 		'Local 1-4',
 		'Local 9-12',
@@ -684,7 +669,7 @@ export function GetLeftOutputBlockRoutes(): DropdownChoice[] {
 	].map((src, i) => ({ id: i, label: src }))
 }
 
-export function GetRightOutputBlockRoutes(): DropdownChoice[] {
+export function GetRightOutputBlockRoutes(): DropdownChoice<number>[] {
 	return [
 		'Local 5-8',
 		'Local 13-16',
@@ -725,19 +710,16 @@ export function GetRightOutputBlockRoutes(): DropdownChoice[] {
 	].map((src, i) => ({ id: i, label: src }))
 }
 
-export function GetTalkbackDestinations(state: X32State): DropdownChoice[] {
-	return GetTargetChoices(state, {
-		numericIndex: true,
-		includeMain: true,
-		skipDca: true,
-		skipMatrix: true,
-		skipInputs: true,
-		skipAuxIn: true,
-		skipFxRtn: true,
-	})
+export function GetTalkbackDestinations(state: X32State): DropdownChoice<string>[] {
+	return GetTargetChoices(state, TalkbackDestinationsParseOptions)
+}
+export const TalkbackDestinationsParseOptions: ParseRefOptions = {
+	allowStereo: true,
+	allowMono: true,
+	allowBus: true,
 }
 
-export function GetInsertDestinationChoices(): DropdownChoice[] {
+export function GetInsertDestinationChoices(): DropdownChoice<number>[] {
 	return [
 		'OFF',
 		'FX1L',
@@ -765,25 +747,28 @@ export function GetInsertDestinationChoices(): DropdownChoice[] {
 	].map((src, i) => ({ id: i, label: src }))
 }
 
-export function GetPresetsChoices(lib: 'ch' | 'fx' | 'r' | 'mon', state: X32State): DropdownChoice[] {
-	const options = [...Array(100).keys()].map((x) => `${x + 1}`.padStart(3, '0'))
-	const choices: DropdownChoice[] = []
-	options.forEach((option) => {
+export function GetPresetsChoices(lib: 'ch' | 'fx' | 'r' | 'mon', state: X32State): DropdownChoice<number>[] {
+	const options = [...Array(100).keys()]
+	return options.map((i) => {
+		const option = i + 1
+
 		const hasDataState = state.get(`/-libs/${lib}/${option}/hasdata`)
 		const hasDataValue = hasDataState && hasDataState[0]?.type === 'i' && hasDataState[0].value === 1
 		if (hasDataValue) {
 			const nameState = state.get(`/-libs/${lib}/${option}/name`)
 			const nameValue = nameState && nameState[0]?.type === 's' ? nameState[0].value : undefined
-			choices.push({
+			return {
 				id: option,
-				label: nameValue && nameValue.trim().length > 0 ? `${option} (${nameValue})` : `${option}`,
-			})
+				label:
+					nameValue && nameValue.trim().length > 0
+						? `${padNumber(option, 3)} (${nameValue})`
+						: `${padNumber(option, 3)}`,
+			}
 		} else {
-			choices.push({
+			return {
 				id: option,
-				label: `${option} (No data)`,
-			})
+				label: `${padNumber(option, 3)} (No data)`,
+			}
 		}
 	})
-	return choices
 }

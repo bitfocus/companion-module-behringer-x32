@@ -1,4 +1,8 @@
-import { InputValue, InstanceBase } from '@companion-module/base'
+import type { JsonValue, InstanceBase } from '@companion-module/base'
+import type { X32Config } from './config.js'
+import type { ActionsSchema } from './actions/main.js'
+import type { FeedbacksSchema } from './feedback.js'
+import type { VariablesSchema } from './variables/schema.js'
 
 export const MEDIA_PLAYER_SOURCE_CLIP_OFFSET = 1000
 
@@ -7,7 +11,22 @@ export function assertUnreachable(_never: never): void {
 }
 
 export function padNumber(i: number, len = 2): string {
-	return ('000000' + i).substr(-len)
+	return String(i).padStart(len, '0')
+}
+
+export function stringifyValue(value: JsonValue | undefined): string | null | undefined {
+	if (value === undefined || value === null) {
+		return value
+	} else if (typeof value === 'string') {
+		return value
+	} else if (typeof value === 'number' || typeof value === 'boolean') {
+		return value.toString()
+	} else {
+		return JSON.stringify(value)
+	}
+}
+export function stringifyValueAlways(value: JsonValue | undefined): string {
+	return stringifyValue(value) ?? ''
 }
 
 export function floatToDB(f: number): number {
@@ -45,18 +64,6 @@ export function offsetFloatByDb(f: number, delta: number): number {
 	return dbToFloat(floatToDB(f) + delta)
 }
 
-export function formatDb(d: number): string {
-	// Round to 1dp
-	d = Math.round(d * 10) / 10
-
-	if (d <= -90) {
-		return '-inf'
-	} else if (d > 0) {
-		return `+${d}dB`
-	} else {
-		return `${d}dB`
-	}
-}
 export function trimToFloat(d: number): number {
 	return clamp((d + 18) / 36)
 }
@@ -86,8 +93,8 @@ export enum NumberComparitor {
 }
 
 export function compareNumber(
-	target: InputValue | undefined,
-	comparitor: InputValue | undefined,
+	target: JsonValue | undefined,
+	comparitor: JsonValue | undefined,
 	currentValue: number,
 ): boolean {
 	const targetValue = Number(target)
@@ -111,6 +118,14 @@ export function compareNumber(
 	}
 }
 
-export interface InstanceBaseExt<TConfig> extends InstanceBase<TConfig> {
-	config: TConfig
+export interface X32Types {
+	config: X32Config
+	secrets: undefined
+	actions: ActionsSchema
+	feedbacks: FeedbacksSchema
+	variables: VariablesSchema
+}
+
+export interface InstanceBaseExt extends InstanceBase<X32Types> {
+	config: X32Types['config']
 }

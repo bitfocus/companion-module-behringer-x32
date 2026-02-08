@@ -1,23 +1,15 @@
-import { GetActionsList } from './actions.js'
+import { GetActionsList } from './actions/main.js'
 import { X32Config, GetConfigFields } from './config.js'
 import { FeedbackId, GetFeedbacksList } from './feedback.js'
 import { GetPresetsList } from './presets.js'
-import {
-	InitVariables,
-	updateDeviceInfoVariables,
-	updateNameVariables,
-	updateSelectedVariables,
-	updateStoredChannelVariable,
-	updateTapeTime,
-	updateUReceTime,
-	updateURecrTime,
-	updateUndoTime,
-} from './variables.js'
 import { IStoredChannelObserver, X32State, X32Subscriptions } from './state.js'
 import osc from 'osc'
-import { MainPath } from './paths.js'
-import { BooleanFeedbackUpgradeMap, upgradeV2x0x0 } from './upgrades.js'
-import { GetTargetChoices } from './choices.js'
+import {
+	BooleanFeedbackUpgradeMap,
+	upgradeChannelOrFaderValuesFromOscPaths,
+	upgradeToBuiltinFeedbackInverted,
+	upgradeToBuiltinVariableParsing,
+} from './upgrades.js'
 import debounceFn from 'debounce-fn'
 import PQueue from 'p-queue'
 import { X32Transitions } from './transitions.js'
@@ -26,23 +18,28 @@ import {
 	CompanionStaticUpgradeScript,
 	InstanceBase,
 	SomeCompanionConfigField,
-	runEntrypoint,
 	CreateConvertToBooleanFeedbackUpgradeScript,
 	EmptyUpgradeScript,
 	InstanceStatus,
+	OSCSomeArguments,
 } from '@companion-module/base'
-import { InstanceBaseExt } from './util.js'
+import type { InstanceBaseExt, X32Types } from './util.js'
+import { STORED_CHANNEL_ID, VariableDefinitions } from './variables/main.js'
+import { GetCompanionVariableDefinitions, GetCompanionVariableValues } from './variables/init.js'
 
-const UpgradeScripts: CompanionStaticUpgradeScript<X32Config>[] = [
+export const UpgradeScripts: CompanionStaticUpgradeScript<X32Config>[] = [
 	EmptyUpgradeScript, // Previous version had a script
-	upgradeV2x0x0,
+	EmptyUpgradeScript, // This script was for Companion 2.x to 3.0, and was not worth the effort to fixup for the newer api
 	CreateConvertToBooleanFeedbackUpgradeScript(BooleanFeedbackUpgradeMap),
+	upgradeToBuiltinFeedbackInverted,
+	upgradeChannelOrFaderValuesFromOscPaths,
+	upgradeToBuiltinVariableParsing,
 ]
 
 /**
  * Companion instance class for the Behringer X32 Mixers.
  */
-class X32Instance extends InstanceBase<X32Config> implements InstanceBaseExt<X32Config>, IStoredChannelObserver {
+export default class X32Instance extends InstanceBase<X32Types> implements InstanceBaseExt, IStoredChannelObserver {
 	private osc: osc.UDPPort
 	private x32State: X32State
 	private x32Subscriptions: X32Subscriptions
@@ -68,6 +65,10 @@ class X32Instance extends InstanceBase<X32Config> implements InstanceBaseExt<X32
 
 	private readonly messageFeedbacks = new Set<FeedbackId>()
 	private readonly debounceMessageFeedbacks: () => void
+
+	private readonly invalidatedVariables = new Set<string>()
+	private readonly debounceUpdateVariables: () => void
+	private readonly variableInvalidationMap = new Map<string, string[]>()
 
 	/**
 	 * Create an instance of an X32 module.
@@ -102,19 +103,48 @@ class X32Instance extends InstanceBase<X32Config> implements InstanceBaseExt<X32
 				after: true,
 			},
 		)
+		this.debounceUpdateVariables = debounceFn(
+			() => {
+				console.log('fire variables')
+				const variables = new Set(this.invalidatedVariables.values())
+				this.invalidatedVariables.clear()
+
+				this.setVariableValues(GetCompanionVariableValues(this.x32State, variables))
+			},
+			{
+				wait: 100,
+				maxWait: 500,
+				before: true,
+				after: true,
+			},
+		)
+
+		// Build a map of osc paths to variableIds, so we can easily invalidate variables when we get an update for an osc path
+		for (const variableDef of VariableDefinitions) {
+			if (variableDef.oscPath) {
+				const existing = this.variableInvalidationMap.get(variableDef.oscPath) ?? []
+				existing.push(variableDef.variableId)
+				this.variableInvalidationMap.set(variableDef.oscPath, existing)
+			}
+			if (variableDef.additionalPaths) {
+				for (const additionalPath of variableDef.additionalPaths) {
+					const existing = this.variableInvalidationMap.get(additionalPath) ?? []
+					existing.push(variableDef.variableId)
+					this.variableInvalidationMap.set(additionalPath, existing)
+				}
+			}
+		}
 	}
 
 	// IStoredChannelObserver
 	storedChannelChanged(): void {
-		updateStoredChannelVariable(this, this.x32State)
-		const list = [FeedbackId.StoredChannel, FeedbackId.RouteUserIn, FeedbackId.RouteUserOut]
-		list.forEach((f) => this.messageFeedbacks.add(f))
-		this.debounceMessageFeedbacks()
-	}
+		this.invalidatedVariables.add(STORED_CHANNEL_ID)
+		this.debounceUpdateVariables()
 
-	// Override base types to make types stricter
-	public checkFeedbacks(...feedbackTypes: FeedbackId[]): void {
-		return super.checkFeedbacks(...feedbackTypes)
+		this.messageFeedbacks.add('stored-channel')
+		this.messageFeedbacks.add('route-user-in')
+		this.messageFeedbacks.add('route-user-out')
+		this.debounceMessageFeedbacks()
 	}
 
 	/**
@@ -200,18 +230,33 @@ class X32Instance extends InstanceBase<X32Config> implements InstanceBaseExt<X32
 	}
 
 	private updateCompanionBits(): void {
-		InitVariables(this, this.x32State)
-		this.setPresetDefinitions(GetPresetsList(this, this.x32State))
+		this.setVariableDefinitions(GetCompanionVariableDefinitions())
+		this.setVariableValues(GetCompanionVariableValues(this.x32State))
+
 		this.setFeedbackDefinitions(GetFeedbacksList(this, this.x32State, this.x32Subscriptions, this.queueEnsureLoaded))
-		this.setActionDefinitions(GetActionsList(this, this.transitions, this.x32State, this.queueEnsureLoaded))
+		this.setActionDefinitions(
+			GetActionsList({
+				transitions: this.transitions,
+				state: this.x32State,
+				ensureLoaded: this.queueEnsureLoaded,
+				sendOsc: (cmd: string, args: OSCSomeArguments): void => {
+					// HACK: We send commands on a different port than we run /xremote on, so that we get change events for what we send.
+					// Otherwise we can have no confirmation that a command was accepted
+					// console.log(`osc command: ${cmd} ${JSON.stringify(args)}`)
+
+					if (this.config.host) {
+						this.oscSend(this.config.host, 10023, cmd, args)
+					}
+				},
+			}),
+		)
+
+		this.setPresetDefinitions(GetPresetsList(this, this.x32State))
+
 		this.checkFeedbacks()
-		updateNameVariables(this, this.x32State)
-		updateSelectedVariables(this, this.x32State)
-		updateUndoTime(this, this.x32State)
 
 		// Ensure all feedbacks & actions have an initial value, if we are connected
 		if (this.heartbeat) {
-			this.subscribeFeedbacks()
 			this.subscribeActions()
 		}
 	}
@@ -351,9 +396,7 @@ class X32Instance extends InstanceBase<X32Config> implements InstanceBaseExt<X32
 				delete this.inFlightRequests[message.address]
 			}
 
-			// setImmediate(() => {
-			this.checkFeedbackChanges(message)
-			// })
+			this.triggerInvalidationsFromOsc(message)
 
 			switch (message.address) {
 				case '/xinfo':
@@ -372,20 +415,8 @@ class X32Instance extends InstanceBase<X32Config> implements InstanceBaseExt<X32
 
 						// Load the initial data
 						this.loadVariablesData()
-						updateDeviceInfoVariables(this, args)
 						this.loadPresetData()
 					}
-					break
-				case '/-stat/tape/etime':
-					updateTapeTime(this, this.x32State)
-					break
-
-				case '/-stat/urec/etime':
-					updateUReceTime(this, this.x32State)
-					break
-
-				case '/-stat/urec/rtime':
-					updateURecrTime(this, this.x32State)
 					break
 			}
 		})
@@ -411,44 +442,16 @@ class X32Instance extends InstanceBase<X32Config> implements InstanceBaseExt<X32
 	}
 
 	private loadVariablesData(): void {
-		const targets = GetTargetChoices(this.x32State, { includeMain: true, defaultNames: true })
-		for (const target of targets) {
-			this.queueEnsureLoaded(`${target.id}/config/name`)
-			this.queueEnsureLoaded(`${target.id}/config/color`)
-			this.queueEnsureLoaded(`${MainPath(target.id as string)}/fader`)
-		}
-
-		const sendSources = GetTargetChoices(this.x32State, {
-			defaultNames: true,
-			skipBus: true,
-			skipDca: true,
-			skipMatrix: true,
-		})
-		for (const target of sendSources) {
-			for (let b = 1; b <= 16; b++) {
-				const padded = `${b}`.padStart(2, '0')
-				this.queueEnsureLoaded(`${target.id}/mix/${padded}/level`)
+		for (const definition of VariableDefinitions) {
+			if (definition.oscPath) this.queueEnsureLoaded(definition.oscPath)
+			if (definition.additionalPaths) {
+				definition.additionalPaths.forEach(this.queueEnsureLoaded)
 			}
 		}
-
-		const busSources = GetTargetChoices(this.x32State, {
-			defaultNames: true,
-			skipInputs: true,
-			skipDca: true,
-			skipMatrix: true,
-		})
-		for (const target of busSources) {
-			for (let m = 1; m <= 6; m++) {
-				const padded = `${m}`.padStart(2, '0')
-				this.queueEnsureLoaded(`${target.id}/mix/${padded}/level`)
-			}
-		}
-
-		this.queueEnsureLoaded('/-stat/selidx')
-		this.queueEnsureLoaded('/-undo/time')
 	}
 
 	private loadPresetData(): void {
+		// TODO: Is this still needed?
 		const options = [...Array(100).keys()].map((x) => `${x + 1}`.padStart(3, '0'))
 		options.forEach((option) => {
 			;['ch', 'fx', 'r', 'mon'].forEach((lib) => {
@@ -458,7 +461,9 @@ class X32Instance extends InstanceBase<X32Config> implements InstanceBaseExt<X32
 		})
 	}
 
-	private queueEnsureLoaded = (path: string): void => {
+	private queueEnsureLoaded = (path: string | undefined): void => {
+		if (!path) return
+
 		this.requestQueue
 			.add(async () => {
 				if (this.inFlightRequests[path]) {
@@ -492,24 +497,24 @@ class X32Instance extends InstanceBase<X32Config> implements InstanceBaseExt<X32
 			})
 	}
 
-	private checkFeedbackChanges(msg: osc.OscMessage): void {
+	private triggerInvalidationsFromOsc(msg: osc.OscMessage): void {
+		// Check for any feedbacks to invalidate
 		const toUpdate = this.x32Subscriptions.getFeedbacks(msg.address)
 		if (toUpdate.length > 0) {
 			toUpdate.forEach((f) => this.messageFeedbacks.add(f))
 			this.debounceMessageFeedbacks()
 		}
-		if (
-			msg.address.match('/config/name$') ||
-			msg.address.match('/config/color$') ||
-			msg.address.match('/fader$') ||
-			msg.address.match('/-stat/selidx') ||
-			msg.address.match('/-libs/') ||
-			msg.address.match('/-undo/time') ||
-			msg.address.match('/mix/../level')
-		) {
+
+		// Check for any variables to invalidate
+		const variableIds = this.variableInvalidationMap.get(msg.address)
+		if (variableIds) {
+			variableIds.forEach((id) => this.invalidatedVariables.add(id))
+			this.debounceUpdateVariables()
+		}
+
+		// Name changes mean the actions&feedbacks need to be regenerated
+		if (msg.address.match('/config/name$')) {
 			this.debounceUpdateCompanionBits()
 		}
 	}
 }
-
-runEntrypoint(X32Instance, UpgradeScripts)

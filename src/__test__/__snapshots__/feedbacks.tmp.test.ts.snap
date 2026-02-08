@@ -1,0 +1,8664 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Feedbacks test > Check AES50 block routing state (route-aes50-blocks) 1`] = `
+{
+  "callback": [Function],
+  "defaultStyle": {
+    "bgcolor": 16711680,
+    "color": 0,
+  },
+  "description": "If the specified block is routed to the specified destination",
+  "name": "AES50 block routing state",
+  "options": [
+    {
+      "choices": [
+        {
+          "id": "A",
+          "label": "AES50 A",
+        },
+        {
+          "id": "B",
+          "label": "AES50 B",
+        },
+      ],
+      "default": "A",
+      "disableAutoExpression": true,
+      "id": "mode",
+      "label": "Input mode",
+      "type": "dropdown",
+    },
+    {
+      "choices": [
+        {
+          "id": "1-8",
+          "label": "1-8",
+        },
+        {
+          "id": "9-16",
+          "label": "9-16",
+        },
+        {
+          "id": "17-24",
+          "label": "17-24",
+        },
+        {
+          "id": "25-32",
+          "label": "25-32",
+        },
+        {
+          "id": "33-40",
+          "label": "33-40",
+        },
+        {
+          "id": "41-48",
+          "label": "41-48",
+        },
+      ],
+      "default": "1-8",
+      "disableAutoExpression": true,
+      "id": "block",
+      "label": "AES50 block",
+      "type": "dropdown",
+    },
+    {
+      "choices": [
+        {
+          "id": 0,
+          "label": "Local 1-8",
+        },
+        {
+          "id": 1,
+          "label": "Local 9-16",
+        },
+        {
+          "id": 2,
+          "label": "Local 17-24",
+        },
+        {
+          "id": 3,
+          "label": "Local 25-32",
+        },
+        {
+          "id": 4,
+          "label": "A 1-8",
+        },
+        {
+          "id": 5,
+          "label": "A 9-16",
+        },
+        {
+          "id": 6,
+          "label": "A 17-24",
+        },
+        {
+          "id": 7,
+          "label": "A 25-32",
+        },
+        {
+          "id": 8,
+          "label": "A 33-40",
+        },
+        {
+          "id": 9,
+          "label": "A 41-48",
+        },
+        {
+          "id": 10,
+          "label": "B 1-8",
+        },
+        {
+          "id": 11,
+          "label": "B 9-16",
+        },
+        {
+          "id": 12,
+          "label": "B 17-24",
+        },
+        {
+          "id": 13,
+          "label": "B 25-32",
+        },
+        {
+          "id": 14,
+          "label": "B 33-40",
+        },
+        {
+          "id": 15,
+          "label": "B 41-48",
+        },
+        {
+          "id": 16,
+          "label": "Card 1-8",
+        },
+        {
+          "id": 17,
+          "label": "Card 9-16",
+        },
+        {
+          "id": 18,
+          "label": "Card 17-24",
+        },
+        {
+          "id": 19,
+          "label": "Card 25-32",
+        },
+        {
+          "id": 20,
+          "label": "Out 1-8",
+        },
+        {
+          "id": 21,
+          "label": "Out 9-16",
+        },
+        {
+          "id": 22,
+          "label": "Ultranet 1-8",
+        },
+        {
+          "id": 23,
+          "label": "Ultranet 9-16",
+        },
+        {
+          "id": 24,
+          "label": "Aux Out 1-6/Mon",
+        },
+        {
+          "id": 25,
+          "label": "Aux In 1-6/TB",
+        },
+        {
+          "id": 26,
+          "label": "User Out 1-8",
+        },
+        {
+          "id": 27,
+          "label": "User Out 9-16",
+        },
+        {
+          "id": 28,
+          "label": "User Out 17-24",
+        },
+        {
+          "id": 29,
+          "label": "User Out 25-32",
+        },
+        {
+          "id": 30,
+          "label": "User Out 33-40",
+        },
+        {
+          "id": 31,
+          "label": "User Out 41-48",
+        },
+        {
+          "id": 32,
+          "label": "User In 1-8",
+        },
+        {
+          "id": 33,
+          "label": "User In 9-16",
+        },
+        {
+          "id": 34,
+          "label": "User In 17-24",
+        },
+        {
+          "id": 35,
+          "label": "User In 25-32",
+        },
+      ],
+      "default": 0,
+      "disableAutoExpression": true,
+      "id": "routing",
+      "label": "Routing source block",
+      "type": "dropdown",
+    },
+  ],
+  "type": "boolean",
+  "unsubscribe": [Function],
+}
+`;
+
+exports[`Feedbacks test > Check Aux block routing state (route-aux-blocks) 1`] = `
+{
+  "callback": [Function],
+  "defaultStyle": {
+    "bgcolor": 16711680,
+    "color": 0,
+  },
+  "description": "If the specified block is routed to the specified destination",
+  "name": "Aux block routing state",
+  "options": [
+    {
+      "choices": [
+        {
+          "id": "IN",
+          "label": "RECORD",
+        },
+        {
+          "id": "PLAY",
+          "label": "PLAY",
+        },
+      ],
+      "default": "IN",
+      "disableAutoExpression": true,
+      "id": "mode",
+      "label": "Input mode",
+      "type": "dropdown",
+    },
+    {
+      "allowInvalidValues": true,
+      "choices": [
+        {
+          "id": 0,
+          "label": "AUX1-6",
+        },
+        {
+          "id": 1,
+          "label": "Local 1-2",
+        },
+        {
+          "id": 2,
+          "label": "Local 1-4",
+        },
+        {
+          "id": 3,
+          "label": "Local 1-6",
+        },
+        {
+          "id": 4,
+          "label": "A 1-2",
+        },
+        {
+          "id": 5,
+          "label": "A 1-4",
+        },
+        {
+          "id": 6,
+          "label": "A 1-6",
+        },
+        {
+          "id": 7,
+          "label": "B 1-2",
+        },
+        {
+          "id": 8,
+          "label": "B 1-4",
+        },
+        {
+          "id": 9,
+          "label": "B 1-6",
+        },
+        {
+          "id": 10,
+          "label": "Card 1-2",
+        },
+        {
+          "id": 11,
+          "label": "Card 1-4",
+        },
+        {
+          "id": 12,
+          "label": "Card 1-6",
+        },
+        {
+          "id": 13,
+          "label": "User In 1-2",
+        },
+        {
+          "id": 14,
+          "label": "User In 1-4",
+        },
+        {
+          "id": 15,
+          "label": "User In 1-6",
+        },
+      ],
+      "default": 0,
+      "id": "routing",
+      "label": "Routing source block",
+      "type": "dropdown",
+    },
+  ],
+  "type": "boolean",
+  "unsubscribe": [Function],
+}
+`;
+
+exports[`Feedbacks test > Check Card block routing state (route-card-blocks) 1`] = `
+{
+  "callback": [Function],
+  "defaultStyle": {
+    "bgcolor": 16711680,
+    "color": 0,
+  },
+  "description": "If the specified block is routed to the specified destination",
+  "name": "Card block routing state",
+  "options": [
+    {
+      "choices": [
+        {
+          "id": "1-8",
+          "label": "1-8",
+        },
+        {
+          "id": "9-16",
+          "label": "9-16",
+        },
+        {
+          "id": "17-24",
+          "label": "17-24",
+        },
+        {
+          "id": "25-32",
+          "label": "25-32",
+        },
+      ],
+      "default": "1-8",
+      "disableAutoExpression": true,
+      "id": "block",
+      "label": "Card block",
+      "type": "dropdown",
+    },
+    {
+      "choices": [
+        {
+          "id": 0,
+          "label": "Local 1-8",
+        },
+        {
+          "id": 1,
+          "label": "Local 9-16",
+        },
+        {
+          "id": 2,
+          "label": "Local 17-24",
+        },
+        {
+          "id": 3,
+          "label": "Local 25-32",
+        },
+        {
+          "id": 4,
+          "label": "A 1-8",
+        },
+        {
+          "id": 5,
+          "label": "A 9-16",
+        },
+        {
+          "id": 6,
+          "label": "A 17-24",
+        },
+        {
+          "id": 7,
+          "label": "A 25-32",
+        },
+        {
+          "id": 8,
+          "label": "A 33-40",
+        },
+        {
+          "id": 9,
+          "label": "A 41-48",
+        },
+        {
+          "id": 10,
+          "label": "B 1-8",
+        },
+        {
+          "id": 11,
+          "label": "B 9-16",
+        },
+        {
+          "id": 12,
+          "label": "B 17-24",
+        },
+        {
+          "id": 13,
+          "label": "B 25-32",
+        },
+        {
+          "id": 14,
+          "label": "B 33-40",
+        },
+        {
+          "id": 15,
+          "label": "B 41-48",
+        },
+        {
+          "id": 16,
+          "label": "Card 1-8",
+        },
+        {
+          "id": 17,
+          "label": "Card 9-16",
+        },
+        {
+          "id": 18,
+          "label": "Card 17-24",
+        },
+        {
+          "id": 19,
+          "label": "Card 25-32",
+        },
+        {
+          "id": 20,
+          "label": "Out 1-8",
+        },
+        {
+          "id": 21,
+          "label": "Out 9-16",
+        },
+        {
+          "id": 22,
+          "label": "Ultranet 1-8",
+        },
+        {
+          "id": 23,
+          "label": "Ultranet 9-16",
+        },
+        {
+          "id": 24,
+          "label": "Aux Out 1-6/Mon",
+        },
+        {
+          "id": 25,
+          "label": "Aux In 1-6/TB",
+        },
+        {
+          "id": 26,
+          "label": "User Out 1-8",
+        },
+        {
+          "id": 27,
+          "label": "User Out 9-16",
+        },
+        {
+          "id": 28,
+          "label": "User Out 17-24",
+        },
+        {
+          "id": 29,
+          "label": "User Out 25-32",
+        },
+        {
+          "id": 30,
+          "label": "User Out 33-40",
+        },
+        {
+          "id": 31,
+          "label": "User Out 41-48",
+        },
+        {
+          "id": 32,
+          "label": "User In 1-8",
+        },
+        {
+          "id": 33,
+          "label": "User In 9-16",
+        },
+        {
+          "id": 34,
+          "label": "User In 17-24",
+        },
+        {
+          "id": 35,
+          "label": "User In 25-32",
+        },
+      ],
+      "default": 0,
+      "disableAutoExpression": true,
+      "id": "routing",
+      "label": "Routing source block",
+      "type": "dropdown",
+    },
+  ],
+  "type": "boolean",
+  "unsubscribe": [Function],
+}
+`;
+
+exports[`Feedbacks test > Check Change based on Stored Channel (stored-channel) 1`] = `
+{
+  "callback": [Function],
+  "defaultStyle": {
+    "bgcolor": 65407,
+    "color": 0,
+  },
+  "description": "If the specified channel is stored",
+  "name": "Change based on Stored Channel",
+  "options": [
+    {
+      "allowInvalidValues": true,
+      "choices": [
+        {
+          "id": 1,
+          "label": "IN/OUT 1",
+        },
+        {
+          "id": 2,
+          "label": "IN/OUT 2",
+        },
+        {
+          "id": 3,
+          "label": "IN/OUT 3",
+        },
+        {
+          "id": 4,
+          "label": "IN/OUT 4",
+        },
+        {
+          "id": 5,
+          "label": "IN/OUT 5",
+        },
+        {
+          "id": 6,
+          "label": "IN/OUT 6",
+        },
+        {
+          "id": 7,
+          "label": "IN/OUT 7",
+        },
+        {
+          "id": 8,
+          "label": "IN/OUT 8",
+        },
+        {
+          "id": 9,
+          "label": "IN/OUT 9",
+        },
+        {
+          "id": 10,
+          "label": "IN/OUT 10",
+        },
+        {
+          "id": 11,
+          "label": "IN/OUT 11",
+        },
+        {
+          "id": 12,
+          "label": "IN/OUT 12",
+        },
+        {
+          "id": 13,
+          "label": "IN/OUT 13",
+        },
+        {
+          "id": 14,
+          "label": "IN/OUT 14",
+        },
+        {
+          "id": 15,
+          "label": "IN/OUT 15",
+        },
+        {
+          "id": 16,
+          "label": "IN/OUT 16",
+        },
+        {
+          "id": 17,
+          "label": "IN/OUT 17",
+        },
+        {
+          "id": 18,
+          "label": "IN/OUT 18",
+        },
+        {
+          "id": 19,
+          "label": "IN/OUT 19",
+        },
+        {
+          "id": 20,
+          "label": "IN/OUT 20",
+        },
+        {
+          "id": 21,
+          "label": "IN/OUT 21",
+        },
+        {
+          "id": 22,
+          "label": "IN/OUT 22",
+        },
+        {
+          "id": 23,
+          "label": "IN/OUT 23",
+        },
+        {
+          "id": 24,
+          "label": "IN/OUT 24",
+        },
+        {
+          "id": 25,
+          "label": "IN/OUT 25",
+        },
+        {
+          "id": 26,
+          "label": "IN/OUT 26",
+        },
+        {
+          "id": 27,
+          "label": "IN/OUT 27",
+        },
+        {
+          "id": 28,
+          "label": "IN/OUT 28",
+        },
+        {
+          "id": 29,
+          "label": "IN/OUT 29",
+        },
+        {
+          "id": 30,
+          "label": "IN/OUT 30",
+        },
+        {
+          "id": 31,
+          "label": "IN/OUT 31",
+        },
+        {
+          "id": 32,
+          "label": "IN/OUT 32",
+        },
+        {
+          "id": 33,
+          "label": "OUT 33",
+        },
+        {
+          "id": 34,
+          "label": "OUT 34",
+        },
+        {
+          "id": 35,
+          "label": "OUT 35",
+        },
+        {
+          "id": 36,
+          "label": "OUT 36",
+        },
+        {
+          "id": 37,
+          "label": "OUT 37",
+        },
+        {
+          "id": 38,
+          "label": "OUT 38",
+        },
+        {
+          "id": 39,
+          "label": "OUT 39",
+        },
+        {
+          "id": 40,
+          "label": "OUT 40",
+        },
+        {
+          "id": 41,
+          "label": "OUT 41",
+        },
+        {
+          "id": 42,
+          "label": "OUT 42",
+        },
+        {
+          "id": 43,
+          "label": "OUT 43",
+        },
+        {
+          "id": 44,
+          "label": "OUT 44",
+        },
+        {
+          "id": 45,
+          "label": "OUT 45",
+        },
+        {
+          "id": 46,
+          "label": "OUT 46",
+        },
+        {
+          "id": 47,
+          "label": "OUT 47",
+        },
+        {
+          "id": 48,
+          "label": "OUT 48",
+        },
+      ],
+      "default": 1,
+      "id": "channel",
+      "label": "destination output",
+      "type": "dropdown",
+    },
+  ],
+  "type": "boolean",
+  "unsubscribe": [Function],
+}
+`;
+
+exports[`Feedbacks test > Check Change from Sends on Fader/Fader Flip state (sends-on-fader) 1`] = `
+{
+  "callback": [Function],
+  "defaultStyle": {
+    "bgcolor": 16744192,
+    "color": 0,
+  },
+  "description": "If the Sends on Fader/Fader Flip is on",
+  "name": "Change from Sends on Fader/Fader Flip state",
+  "options": [],
+  "type": "boolean",
+  "unsubscribe": [Function],
+}
+`;
+
+exports[`Feedbacks test > Check Change from Solo Dim enabled state (solo-dim) 1`] = `
+{
+  "callback": [Function],
+  "defaultStyle": {
+    "bgcolor": 16744192,
+    "color": 0,
+  },
+  "description": "If the Solo Dim is on",
+  "name": "Change from Solo Dim enabled state",
+  "options": [],
+  "type": "boolean",
+  "unsubscribe": [Function],
+}
+`;
+
+exports[`Feedbacks test > Check Change from Solo Mono enabled state (solo-mono) 1`] = `
+{
+  "callback": [Function],
+  "defaultStyle": {
+    "bgcolor": 16744192,
+    "color": 0,
+  },
+  "description": "If the Solo Mono is on",
+  "name": "Change from Solo Mono enabled state",
+  "options": [],
+  "type": "boolean",
+  "unsubscribe": [Function],
+}
+`;
+
+exports[`Feedbacks test > Check Change from USB page selected state (usb-page) 1`] = `
+{
+  "callback": [Function],
+  "defaultStyle": {
+    "bgcolor": 65407,
+    "color": 0,
+  },
+  "description": "If USB screen is on and selected page is active",
+  "name": "Change from USB page selected state",
+  "options": [
+    {
+      "choices": [
+        {
+          "id": "0",
+          "label": "HOME",
+        },
+        {
+          "id": "1",
+          "label": "CONFIG",
+        },
+      ],
+      "default": "0",
+      "disableAutoExpression": true,
+      "id": "page",
+      "label": "page",
+      "type": "dropdown",
+    },
+  ],
+  "type": "boolean",
+  "unsubscribe": [Function],
+}
+`;
+
+exports[`Feedbacks test > Check Change from Utility enabled state (utility-screen) 1`] = `
+{
+  "callback": [Function],
+  "defaultStyle": {
+    "bgcolor": 65407,
+    "color": 0,
+  },
+  "description": "If utility screen is on",
+  "name": "Change from Utility enabled state",
+  "options": [],
+  "type": "boolean",
+  "unsubscribe": [Function],
+}
+`;
+
+exports[`Feedbacks test > Check Change from X-Live state (record) 1`] = `
+{
+  "callback": [Function],
+  "defaultStyle": {
+    "bgcolor": 16711680,
+    "color": 0,
+  },
+  "name": "Change from X-Live state",
+  "options": [
+    {
+      "choices": [
+        {
+          "id": 3,
+          "label": "Record",
+        },
+        {
+          "id": 2,
+          "label": "Play",
+        },
+        {
+          "id": 1,
+          "label": "Pause",
+        },
+        {
+          "id": 0,
+          "label": "Stop",
+        },
+      ],
+      "default": 3,
+      "disableAutoExpression": true,
+      "id": "state",
+      "label": "State",
+      "type": "dropdown",
+    },
+  ],
+  "type": "boolean",
+  "unsubscribe": [Function],
+}
+`;
+
+exports[`Feedbacks test > Check Change from assign page selected state (assign-page) 1`] = `
+{
+  "callback": [Function],
+  "defaultStyle": {
+    "bgcolor": 65407,
+    "color": 0,
+  },
+  "description": "If assign screen is on and selected page is active",
+  "name": "Change from assign page selected state",
+  "options": [
+    {
+      "choices": [
+        {
+          "id": "0",
+          "label": "Home",
+        },
+        {
+          "id": "1",
+          "label": "SET A",
+        },
+        {
+          "id": "2",
+          "label": "SET B",
+        },
+        {
+          "id": "3",
+          "label": "SET C",
+        },
+      ],
+      "default": "0",
+      "disableAutoExpression": true,
+      "id": "page",
+      "label": "page",
+      "type": "dropdown",
+    },
+  ],
+  "type": "boolean",
+  "unsubscribe": [Function],
+}
+`;
+
+exports[`Feedbacks test > Check Change from bus send panning (bus_send_panning) 1`] = `
+{
+  "callback": [Function],
+  "defaultStyle": {
+    "bgcolor": 65280,
+    "color": 0,
+  },
+  "description": "If the bus send has the specified value",
+  "name": "Change from bus send panning",
+  "options": [
+    {
+      "allowInvalidValues": true,
+      "choices": [
+        {
+          "id": "bus1",
+          "label": "MixBus 1",
+        },
+        {
+          "id": "bus2",
+          "label": "MixBus 2",
+        },
+        {
+          "id": "bus3",
+          "label": "MixBus 3",
+        },
+        {
+          "id": "bus4",
+          "label": "MixBus 4",
+        },
+        {
+          "id": "bus5",
+          "label": "MixBus 5",
+        },
+        {
+          "id": "bus6",
+          "label": "MixBus 6",
+        },
+        {
+          "id": "bus7",
+          "label": "MixBus 7",
+        },
+        {
+          "id": "bus8",
+          "label": "MixBus 8",
+        },
+        {
+          "id": "bus9",
+          "label": "MixBus 9",
+        },
+        {
+          "id": "bus10",
+          "label": "MixBus 10",
+        },
+        {
+          "id": "bus11",
+          "label": "MixBus 11",
+        },
+        {
+          "id": "bus12",
+          "label": "MixBus 12",
+        },
+        {
+          "id": "bus13",
+          "label": "MixBus 13",
+        },
+        {
+          "id": "bus14",
+          "label": "MixBus 14",
+        },
+        {
+          "id": "bus15",
+          "label": "MixBus 15",
+        },
+        {
+          "id": "bus16",
+          "label": "MixBus 16",
+        },
+        {
+          "id": "stereo",
+          "label": "Main Stereo",
+        },
+      ],
+      "default": "bus1",
+      "id": "source",
+      "label": "Source",
+      "type": "dropdown",
+    },
+    {
+      "allowInvalidValues": true,
+      "choices": [
+        {
+          "id": "matrix1",
+          "label": "Matrix 1",
+        },
+        {
+          "id": "matrix3",
+          "label": "Matrix 3",
+        },
+        {
+          "id": "matrix5",
+          "label": "Matrix 5",
+        },
+      ],
+      "default": "matrix1",
+      "id": "target",
+      "label": "Target",
+      "type": "dropdown",
+    },
+    {
+      "choices": [
+        {
+          "id": "eq",
+          "label": "Equal",
+        },
+        {
+          "id": "ne",
+          "label": "Not Equal",
+        },
+        {
+          "id": "gt",
+          "label": "Greater than",
+        },
+        {
+          "id": "gte",
+          "label": "Greater than or equal",
+        },
+        {
+          "id": "lt",
+          "label": "Less than",
+        },
+        {
+          "id": "lte",
+          "label": "Less than or equal",
+        },
+      ],
+      "default": "eq",
+      "disableAutoExpression": true,
+      "id": "comparitor",
+      "label": "Comparitor",
+      "type": "dropdown",
+    },
+    {
+      "default": 0,
+      "id": "pan",
+      "label": "Panning (-50 = hard left, 0 = center, 50 = hard right)",
+      "max": 50,
+      "min": -50,
+      "range": true,
+      "step": 1,
+      "type": "number",
+    },
+  ],
+  "type": "boolean",
+  "unsubscribe": [Function],
+}
+`;
+
+exports[`Feedbacks test > Check Change from bus to matrix send mute state (mute_bus_send) 1`] = `
+{
+  "callback": [Function],
+  "defaultStyle": {
+    "bgcolor": 16711680,
+    "color": 0,
+  },
+  "description": "If the specified bus send is muted",
+  "name": "Change from bus to matrix send mute state",
+  "options": [
+    {
+      "allowInvalidValues": true,
+      "choices": [
+        {
+          "id": "bus1",
+          "label": "MixBus 1",
+        },
+        {
+          "id": "bus2",
+          "label": "MixBus 2",
+        },
+        {
+          "id": "bus3",
+          "label": "MixBus 3",
+        },
+        {
+          "id": "bus4",
+          "label": "MixBus 4",
+        },
+        {
+          "id": "bus5",
+          "label": "MixBus 5",
+        },
+        {
+          "id": "bus6",
+          "label": "MixBus 6",
+        },
+        {
+          "id": "bus7",
+          "label": "MixBus 7",
+        },
+        {
+          "id": "bus8",
+          "label": "MixBus 8",
+        },
+        {
+          "id": "bus9",
+          "label": "MixBus 9",
+        },
+        {
+          "id": "bus10",
+          "label": "MixBus 10",
+        },
+        {
+          "id": "bus11",
+          "label": "MixBus 11",
+        },
+        {
+          "id": "bus12",
+          "label": "MixBus 12",
+        },
+        {
+          "id": "bus13",
+          "label": "MixBus 13",
+        },
+        {
+          "id": "bus14",
+          "label": "MixBus 14",
+        },
+        {
+          "id": "bus15",
+          "label": "MixBus 15",
+        },
+        {
+          "id": "bus16",
+          "label": "MixBus 16",
+        },
+        {
+          "id": "stereo",
+          "label": "Main Stereo",
+        },
+        {
+          "id": "mono",
+          "label": "Main Mono",
+        },
+      ],
+      "default": "bus1",
+      "id": "source",
+      "label": "Source",
+      "type": "dropdown",
+    },
+    {
+      "allowInvalidValues": true,
+      "choices": [
+        {
+          "id": "matrix1",
+          "label": "Matrix 1",
+        },
+        {
+          "id": "matrix2",
+          "label": "Matrix 2",
+        },
+        {
+          "id": "matrix3",
+          "label": "Matrix 3",
+        },
+        {
+          "id": "matrix4",
+          "label": "Matrix 4",
+        },
+        {
+          "id": "matrix5",
+          "label": "Matrix 5",
+        },
+        {
+          "id": "matrix6",
+          "label": "Matrix 6",
+        },
+      ],
+      "default": "matrix1",
+      "id": "target",
+      "label": "Target",
+      "type": "dropdown",
+    },
+  ],
+  "type": "boolean",
+  "unsubscribe": [Function],
+}
+`;
+
+exports[`Feedbacks test > Check Change from channel page selected state (channel-page) 1`] = `
+{
+  "callback": [Function],
+  "defaultStyle": {
+    "bgcolor": 65407,
+    "color": 0,
+  },
+  "description": "If channel screen is on and selected page is active",
+  "name": "Change from channel page selected state",
+  "options": [
+    {
+      "choices": [
+        {
+          "id": "0",
+          "label": "HOME",
+        },
+        {
+          "id": "1",
+          "label": "CONFIG",
+        },
+        {
+          "id": "2",
+          "label": "GATE",
+        },
+        {
+          "id": "3",
+          "label": "DYNAMICS",
+        },
+        {
+          "id": "4",
+          "label": "EQ",
+        },
+        {
+          "id": "5",
+          "label": "SENDS",
+        },
+        {
+          "id": "6",
+          "label": "MAIN",
+        },
+      ],
+      "default": "0",
+      "disableAutoExpression": true,
+      "id": "page",
+      "label": "page",
+      "type": "dropdown",
+    },
+  ],
+  "type": "boolean",
+  "unsubscribe": [Function],
+}
+`;
+
+exports[`Feedbacks test > Check Change from channel panning (channel_panning) 1`] = `
+{
+  "callback": [Function],
+  "defaultStyle": {
+    "bgcolor": 65280,
+    "color": 0,
+  },
+  "description": "If the channel panning has the specified value",
+  "name": "Change from channel panning",
+  "options": [
+    {
+      "allowInvalidValues": true,
+      "choices": [
+        {
+          "id": "channel1",
+          "label": "Channel 1",
+        },
+        {
+          "id": "channel2",
+          "label": "Channel 2",
+        },
+        {
+          "id": "channel3",
+          "label": "Channel 3",
+        },
+        {
+          "id": "channel4",
+          "label": "Channel 4",
+        },
+        {
+          "id": "channel5",
+          "label": "Channel 5",
+        },
+        {
+          "id": "channel6",
+          "label": "Channel 6",
+        },
+        {
+          "id": "channel7",
+          "label": "Channel 7",
+        },
+        {
+          "id": "channel8",
+          "label": "Channel 8",
+        },
+        {
+          "id": "channel9",
+          "label": "Channel 9",
+        },
+        {
+          "id": "channel10",
+          "label": "Channel 10",
+        },
+        {
+          "id": "channel11",
+          "label": "Channel 11",
+        },
+        {
+          "id": "channel12",
+          "label": "Channel 12",
+        },
+        {
+          "id": "channel13",
+          "label": "Channel 13",
+        },
+        {
+          "id": "channel14",
+          "label": "Channel 14",
+        },
+        {
+          "id": "channel15",
+          "label": "Channel 15",
+        },
+        {
+          "id": "channel16",
+          "label": "Channel 16",
+        },
+        {
+          "id": "channel17",
+          "label": "Channel 17",
+        },
+        {
+          "id": "channel18",
+          "label": "Channel 18",
+        },
+        {
+          "id": "channel19",
+          "label": "Channel 19",
+        },
+        {
+          "id": "channel20",
+          "label": "Channel 20",
+        },
+        {
+          "id": "channel21",
+          "label": "Channel 21",
+        },
+        {
+          "id": "channel22",
+          "label": "Channel 22",
+        },
+        {
+          "id": "channel23",
+          "label": "Channel 23",
+        },
+        {
+          "id": "channel24",
+          "label": "Channel 24",
+        },
+        {
+          "id": "channel25",
+          "label": "Channel 25",
+        },
+        {
+          "id": "channel26",
+          "label": "Channel 26",
+        },
+        {
+          "id": "channel27",
+          "label": "Channel 27",
+        },
+        {
+          "id": "channel28",
+          "label": "Channel 28",
+        },
+        {
+          "id": "channel29",
+          "label": "Channel 29",
+        },
+        {
+          "id": "channel30",
+          "label": "Channel 30",
+        },
+        {
+          "id": "channel31",
+          "label": "Channel 31",
+        },
+        {
+          "id": "channel32",
+          "label": "Channel 32",
+        },
+        {
+          "id": "aux1",
+          "label": "Aux In 1",
+        },
+        {
+          "id": "aux2",
+          "label": "Aux In 2",
+        },
+        {
+          "id": "aux3",
+          "label": "Aux In 3",
+        },
+        {
+          "id": "aux4",
+          "label": "Aux In 4",
+        },
+        {
+          "id": "aux5",
+          "label": "Aux In 5",
+        },
+        {
+          "id": "aux6",
+          "label": "Aux In 6",
+        },
+        {
+          "id": "aux7",
+          "label": "Aux In 7",
+        },
+        {
+          "id": "aux8",
+          "label": "Aux In 8",
+        },
+        {
+          "id": "fx1",
+          "label": "FX Return 1 L",
+        },
+        {
+          "id": "fx2",
+          "label": "FX Return 1 R",
+        },
+        {
+          "id": "fx3",
+          "label": "FX Return 2 L",
+        },
+        {
+          "id": "fx4",
+          "label": "FX Return 2 R",
+        },
+        {
+          "id": "fx5",
+          "label": "FX Return 3 L",
+        },
+        {
+          "id": "fx6",
+          "label": "FX Return 3 R",
+        },
+        {
+          "id": "fx7",
+          "label": "FX Return 4 L",
+        },
+        {
+          "id": "fx8",
+          "label": "FX Return 4 R",
+        },
+        {
+          "id": "bus1",
+          "label": "MixBus 1",
+        },
+        {
+          "id": "bus2",
+          "label": "MixBus 2",
+        },
+        {
+          "id": "bus3",
+          "label": "MixBus 3",
+        },
+        {
+          "id": "bus4",
+          "label": "MixBus 4",
+        },
+        {
+          "id": "bus5",
+          "label": "MixBus 5",
+        },
+        {
+          "id": "bus6",
+          "label": "MixBus 6",
+        },
+        {
+          "id": "bus7",
+          "label": "MixBus 7",
+        },
+        {
+          "id": "bus8",
+          "label": "MixBus 8",
+        },
+        {
+          "id": "bus9",
+          "label": "MixBus 9",
+        },
+        {
+          "id": "bus10",
+          "label": "MixBus 10",
+        },
+        {
+          "id": "bus11",
+          "label": "MixBus 11",
+        },
+        {
+          "id": "bus12",
+          "label": "MixBus 12",
+        },
+        {
+          "id": "bus13",
+          "label": "MixBus 13",
+        },
+        {
+          "id": "bus14",
+          "label": "MixBus 14",
+        },
+        {
+          "id": "bus15",
+          "label": "MixBus 15",
+        },
+        {
+          "id": "bus16",
+          "label": "MixBus 16",
+        },
+        {
+          "id": "stereo",
+          "label": "Main Stereo",
+        },
+      ],
+      "default": "channel1",
+      "id": "target",
+      "label": "Target",
+      "type": "dropdown",
+    },
+    {
+      "choices": [
+        {
+          "id": "eq",
+          "label": "Equal",
+        },
+        {
+          "id": "ne",
+          "label": "Not Equal",
+        },
+        {
+          "id": "gt",
+          "label": "Greater than",
+        },
+        {
+          "id": "gte",
+          "label": "Greater than or equal",
+        },
+        {
+          "id": "lt",
+          "label": "Less than",
+        },
+        {
+          "id": "lte",
+          "label": "Less than or equal",
+        },
+      ],
+      "default": "eq",
+      "disableAutoExpression": true,
+      "id": "comparitor",
+      "label": "Comparitor",
+      "type": "dropdown",
+    },
+    {
+      "default": 0,
+      "id": "pan",
+      "label": "Panning (-50 = hard left, 0 = center, 50 = hard right)",
+      "max": 50,
+      "min": -50,
+      "range": true,
+      "step": 1,
+      "type": "number",
+    },
+  ],
+  "type": "boolean",
+  "unsubscribe": [Function],
+}
+`;
+
+exports[`Feedbacks test > Check Change from channel send panning (channel_send_panning) 1`] = `
+{
+  "callback": [Function],
+  "defaultStyle": {
+    "bgcolor": 65280,
+    "color": 0,
+  },
+  "description": "If the channel send panning has the specified value",
+  "name": "Change from channel send panning",
+  "options": [
+    {
+      "allowInvalidValues": true,
+      "choices": [
+        {
+          "id": "channel1",
+          "label": "Channel 1",
+        },
+        {
+          "id": "channel2",
+          "label": "Channel 2",
+        },
+        {
+          "id": "channel3",
+          "label": "Channel 3",
+        },
+        {
+          "id": "channel4",
+          "label": "Channel 4",
+        },
+        {
+          "id": "channel5",
+          "label": "Channel 5",
+        },
+        {
+          "id": "channel6",
+          "label": "Channel 6",
+        },
+        {
+          "id": "channel7",
+          "label": "Channel 7",
+        },
+        {
+          "id": "channel8",
+          "label": "Channel 8",
+        },
+        {
+          "id": "channel9",
+          "label": "Channel 9",
+        },
+        {
+          "id": "channel10",
+          "label": "Channel 10",
+        },
+        {
+          "id": "channel11",
+          "label": "Channel 11",
+        },
+        {
+          "id": "channel12",
+          "label": "Channel 12",
+        },
+        {
+          "id": "channel13",
+          "label": "Channel 13",
+        },
+        {
+          "id": "channel14",
+          "label": "Channel 14",
+        },
+        {
+          "id": "channel15",
+          "label": "Channel 15",
+        },
+        {
+          "id": "channel16",
+          "label": "Channel 16",
+        },
+        {
+          "id": "channel17",
+          "label": "Channel 17",
+        },
+        {
+          "id": "channel18",
+          "label": "Channel 18",
+        },
+        {
+          "id": "channel19",
+          "label": "Channel 19",
+        },
+        {
+          "id": "channel20",
+          "label": "Channel 20",
+        },
+        {
+          "id": "channel21",
+          "label": "Channel 21",
+        },
+        {
+          "id": "channel22",
+          "label": "Channel 22",
+        },
+        {
+          "id": "channel23",
+          "label": "Channel 23",
+        },
+        {
+          "id": "channel24",
+          "label": "Channel 24",
+        },
+        {
+          "id": "channel25",
+          "label": "Channel 25",
+        },
+        {
+          "id": "channel26",
+          "label": "Channel 26",
+        },
+        {
+          "id": "channel27",
+          "label": "Channel 27",
+        },
+        {
+          "id": "channel28",
+          "label": "Channel 28",
+        },
+        {
+          "id": "channel29",
+          "label": "Channel 29",
+        },
+        {
+          "id": "channel30",
+          "label": "Channel 30",
+        },
+        {
+          "id": "channel31",
+          "label": "Channel 31",
+        },
+        {
+          "id": "channel32",
+          "label": "Channel 32",
+        },
+        {
+          "id": "aux1",
+          "label": "Aux In 1",
+        },
+        {
+          "id": "aux2",
+          "label": "Aux In 2",
+        },
+        {
+          "id": "aux3",
+          "label": "Aux In 3",
+        },
+        {
+          "id": "aux4",
+          "label": "Aux In 4",
+        },
+        {
+          "id": "aux5",
+          "label": "Aux In 5",
+        },
+        {
+          "id": "aux6",
+          "label": "Aux In 6",
+        },
+        {
+          "id": "aux7",
+          "label": "Aux In 7",
+        },
+        {
+          "id": "aux8",
+          "label": "Aux In 8",
+        },
+        {
+          "id": "fx1",
+          "label": "FX Return 1 L",
+        },
+        {
+          "id": "fx2",
+          "label": "FX Return 1 R",
+        },
+        {
+          "id": "fx3",
+          "label": "FX Return 2 L",
+        },
+        {
+          "id": "fx4",
+          "label": "FX Return 2 R",
+        },
+        {
+          "id": "fx5",
+          "label": "FX Return 3 L",
+        },
+        {
+          "id": "fx6",
+          "label": "FX Return 3 R",
+        },
+        {
+          "id": "fx7",
+          "label": "FX Return 4 L",
+        },
+        {
+          "id": "fx8",
+          "label": "FX Return 4 R",
+        },
+        {
+          "id": "bus1",
+          "label": "MixBus 1",
+        },
+        {
+          "id": "bus2",
+          "label": "MixBus 2",
+        },
+        {
+          "id": "bus3",
+          "label": "MixBus 3",
+        },
+        {
+          "id": "bus4",
+          "label": "MixBus 4",
+        },
+        {
+          "id": "bus5",
+          "label": "MixBus 5",
+        },
+        {
+          "id": "bus6",
+          "label": "MixBus 6",
+        },
+        {
+          "id": "bus7",
+          "label": "MixBus 7",
+        },
+        {
+          "id": "bus8",
+          "label": "MixBus 8",
+        },
+        {
+          "id": "bus9",
+          "label": "MixBus 9",
+        },
+        {
+          "id": "bus10",
+          "label": "MixBus 10",
+        },
+        {
+          "id": "bus11",
+          "label": "MixBus 11",
+        },
+        {
+          "id": "bus12",
+          "label": "MixBus 12",
+        },
+        {
+          "id": "bus13",
+          "label": "MixBus 13",
+        },
+        {
+          "id": "bus14",
+          "label": "MixBus 14",
+        },
+        {
+          "id": "bus15",
+          "label": "MixBus 15",
+        },
+        {
+          "id": "bus16",
+          "label": "MixBus 16",
+        },
+        {
+          "id": "stereo",
+          "label": "Main Stereo",
+        },
+      ],
+      "default": "channel1",
+      "id": "source",
+      "label": "Source",
+      "type": "dropdown",
+    },
+    {
+      "allowInvalidValues": true,
+      "choices": [
+        {
+          "id": "bus1",
+          "label": "MixBus 1",
+        },
+        {
+          "id": "bus3",
+          "label": "MixBus 3",
+        },
+        {
+          "id": "bus5",
+          "label": "MixBus 5",
+        },
+        {
+          "id": "bus7",
+          "label": "MixBus 7",
+        },
+        {
+          "id": "bus9",
+          "label": "MixBus 9",
+        },
+        {
+          "id": "bus11",
+          "label": "MixBus 11",
+        },
+        {
+          "id": "bus13",
+          "label": "MixBus 13",
+        },
+        {
+          "id": "bus15",
+          "label": "MixBus 15",
+        },
+      ],
+      "default": "bus1",
+      "id": "target",
+      "label": "Target",
+      "type": "dropdown",
+    },
+    {
+      "choices": [
+        {
+          "id": "eq",
+          "label": "Equal",
+        },
+        {
+          "id": "ne",
+          "label": "Not Equal",
+        },
+        {
+          "id": "gt",
+          "label": "Greater than",
+        },
+        {
+          "id": "gte",
+          "label": "Greater than or equal",
+        },
+        {
+          "id": "lt",
+          "label": "Less than",
+        },
+        {
+          "id": "lte",
+          "label": "Less than or equal",
+        },
+      ],
+      "default": "eq",
+      "disableAutoExpression": true,
+      "id": "comparitor",
+      "label": "Comparitor",
+      "type": "dropdown",
+    },
+    {
+      "default": 0,
+      "id": "pan",
+      "label": "Panning (-50 = hard left, 0 = center, 50 = hard right)",
+      "max": 50,
+      "min": -50,
+      "range": true,
+      "step": 1,
+      "type": "number",
+    },
+  ],
+  "type": "boolean",
+  "unsubscribe": [Function],
+}
+`;
+
+exports[`Feedbacks test > Check Change from channel to bus send mute state (mute_channel_send) 1`] = `
+{
+  "callback": [Function],
+  "defaultStyle": {
+    "bgcolor": 16711680,
+    "color": 0,
+  },
+  "description": "If the specified channel send is muted",
+  "name": "Change from channel to bus send mute state",
+  "options": [
+    {
+      "allowInvalidValues": true,
+      "choices": [
+        {
+          "id": "channel1",
+          "label": "Channel 1",
+        },
+        {
+          "id": "channel2",
+          "label": "Channel 2",
+        },
+        {
+          "id": "channel3",
+          "label": "Channel 3",
+        },
+        {
+          "id": "channel4",
+          "label": "Channel 4",
+        },
+        {
+          "id": "channel5",
+          "label": "Channel 5",
+        },
+        {
+          "id": "channel6",
+          "label": "Channel 6",
+        },
+        {
+          "id": "channel7",
+          "label": "Channel 7",
+        },
+        {
+          "id": "channel8",
+          "label": "Channel 8",
+        },
+        {
+          "id": "channel9",
+          "label": "Channel 9",
+        },
+        {
+          "id": "channel10",
+          "label": "Channel 10",
+        },
+        {
+          "id": "channel11",
+          "label": "Channel 11",
+        },
+        {
+          "id": "channel12",
+          "label": "Channel 12",
+        },
+        {
+          "id": "channel13",
+          "label": "Channel 13",
+        },
+        {
+          "id": "channel14",
+          "label": "Channel 14",
+        },
+        {
+          "id": "channel15",
+          "label": "Channel 15",
+        },
+        {
+          "id": "channel16",
+          "label": "Channel 16",
+        },
+        {
+          "id": "channel17",
+          "label": "Channel 17",
+        },
+        {
+          "id": "channel18",
+          "label": "Channel 18",
+        },
+        {
+          "id": "channel19",
+          "label": "Channel 19",
+        },
+        {
+          "id": "channel20",
+          "label": "Channel 20",
+        },
+        {
+          "id": "channel21",
+          "label": "Channel 21",
+        },
+        {
+          "id": "channel22",
+          "label": "Channel 22",
+        },
+        {
+          "id": "channel23",
+          "label": "Channel 23",
+        },
+        {
+          "id": "channel24",
+          "label": "Channel 24",
+        },
+        {
+          "id": "channel25",
+          "label": "Channel 25",
+        },
+        {
+          "id": "channel26",
+          "label": "Channel 26",
+        },
+        {
+          "id": "channel27",
+          "label": "Channel 27",
+        },
+        {
+          "id": "channel28",
+          "label": "Channel 28",
+        },
+        {
+          "id": "channel29",
+          "label": "Channel 29",
+        },
+        {
+          "id": "channel30",
+          "label": "Channel 30",
+        },
+        {
+          "id": "channel31",
+          "label": "Channel 31",
+        },
+        {
+          "id": "channel32",
+          "label": "Channel 32",
+        },
+        {
+          "id": "aux1",
+          "label": "Aux In 1",
+        },
+        {
+          "id": "aux2",
+          "label": "Aux In 2",
+        },
+        {
+          "id": "aux3",
+          "label": "Aux In 3",
+        },
+        {
+          "id": "aux4",
+          "label": "Aux In 4",
+        },
+        {
+          "id": "aux5",
+          "label": "Aux In 5",
+        },
+        {
+          "id": "aux6",
+          "label": "Aux In 6",
+        },
+        {
+          "id": "aux7",
+          "label": "Aux In 7",
+        },
+        {
+          "id": "aux8",
+          "label": "Aux In 8",
+        },
+        {
+          "id": "fx1",
+          "label": "FX Return 1 L",
+        },
+        {
+          "id": "fx2",
+          "label": "FX Return 1 R",
+        },
+        {
+          "id": "fx3",
+          "label": "FX Return 2 L",
+        },
+        {
+          "id": "fx4",
+          "label": "FX Return 2 R",
+        },
+        {
+          "id": "fx5",
+          "label": "FX Return 3 L",
+        },
+        {
+          "id": "fx6",
+          "label": "FX Return 3 R",
+        },
+        {
+          "id": "fx7",
+          "label": "FX Return 4 L",
+        },
+        {
+          "id": "fx8",
+          "label": "FX Return 4 R",
+        },
+      ],
+      "default": "channel1",
+      "id": "source",
+      "label": "Source",
+      "type": "dropdown",
+    },
+    {
+      "allowInvalidValues": true,
+      "choices": [
+        {
+          "id": "bus1",
+          "label": "MixBus 1",
+        },
+        {
+          "id": "bus2",
+          "label": "MixBus 2",
+        },
+        {
+          "id": "bus3",
+          "label": "MixBus 3",
+        },
+        {
+          "id": "bus4",
+          "label": "MixBus 4",
+        },
+        {
+          "id": "bus5",
+          "label": "MixBus 5",
+        },
+        {
+          "id": "bus6",
+          "label": "MixBus 6",
+        },
+        {
+          "id": "bus7",
+          "label": "MixBus 7",
+        },
+        {
+          "id": "bus8",
+          "label": "MixBus 8",
+        },
+        {
+          "id": "bus9",
+          "label": "MixBus 9",
+        },
+        {
+          "id": "bus10",
+          "label": "MixBus 10",
+        },
+        {
+          "id": "bus11",
+          "label": "MixBus 11",
+        },
+        {
+          "id": "bus12",
+          "label": "MixBus 12",
+        },
+        {
+          "id": "bus13",
+          "label": "MixBus 13",
+        },
+        {
+          "id": "bus14",
+          "label": "MixBus 14",
+        },
+        {
+          "id": "bus15",
+          "label": "MixBus 15",
+        },
+        {
+          "id": "bus16",
+          "label": "MixBus 16",
+        },
+        {
+          "id": "stereo",
+          "label": "Main Stereo",
+        },
+        {
+          "id": "mono",
+          "label": "Main Mono",
+        },
+      ],
+      "default": "bus1",
+      "id": "target",
+      "label": "Target",
+      "type": "dropdown",
+    },
+  ],
+  "type": "boolean",
+  "unsubscribe": [Function],
+}
+`;
+
+exports[`Feedbacks test > Check Change from clear solo state (clear) 1`] = `
+{
+  "callback": [Function],
+  "defaultStyle": {
+    "bgcolor": 16744192,
+    "color": 0,
+  },
+  "description": "If at least one solo is selected the clear solo button is on",
+  "name": "Change from clear solo state",
+  "options": [],
+  "type": "boolean",
+  "unsubscribe": [Function],
+}
+`;
+
+exports[`Feedbacks test > Check Change from effects page selected state (effects-page) 1`] = `
+{
+  "callback": [Function],
+  "defaultStyle": {
+    "bgcolor": 65407,
+    "color": 0,
+  },
+  "description": "If effects screen is on and selected page is active",
+  "name": "Change from effects page selected state",
+  "options": [
+    {
+      "choices": [
+        {
+          "id": "0",
+          "label": "HOME",
+        },
+        {
+          "id": "1",
+          "label": "FX1",
+        },
+        {
+          "id": "2",
+          "label": "FX2",
+        },
+        {
+          "id": "3",
+          "label": "FX3",
+        },
+        {
+          "id": "4",
+          "label": "FX4",
+        },
+        {
+          "id": "5",
+          "label": "FX5",
+        },
+        {
+          "id": "6",
+          "label": "FX6",
+        },
+        {
+          "id": "7",
+          "label": "FX7",
+        },
+        {
+          "id": "8",
+          "label": "FX8",
+        },
+      ],
+      "default": "0",
+      "disableAutoExpression": true,
+      "id": "page",
+      "label": "page",
+      "type": "dropdown",
+    },
+  ],
+  "type": "boolean",
+  "unsubscribe": [Function],
+}
+`;
+
+exports[`Feedbacks test > Check Change from fader level (fader_level) 1`] = `
+{
+  "callback": [Function],
+  "defaultStyle": {
+    "bgcolor": 65280,
+    "color": 0,
+  },
+  "description": "If the fader level has the specified gain",
+  "name": "Change from fader level",
+  "options": [
+    {
+      "allowInvalidValues": true,
+      "choices": [
+        {
+          "id": "channel1",
+          "label": "Channel 1",
+        },
+        {
+          "id": "channel2",
+          "label": "Channel 2",
+        },
+        {
+          "id": "channel3",
+          "label": "Channel 3",
+        },
+        {
+          "id": "channel4",
+          "label": "Channel 4",
+        },
+        {
+          "id": "channel5",
+          "label": "Channel 5",
+        },
+        {
+          "id": "channel6",
+          "label": "Channel 6",
+        },
+        {
+          "id": "channel7",
+          "label": "Channel 7",
+        },
+        {
+          "id": "channel8",
+          "label": "Channel 8",
+        },
+        {
+          "id": "channel9",
+          "label": "Channel 9",
+        },
+        {
+          "id": "channel10",
+          "label": "Channel 10",
+        },
+        {
+          "id": "channel11",
+          "label": "Channel 11",
+        },
+        {
+          "id": "channel12",
+          "label": "Channel 12",
+        },
+        {
+          "id": "channel13",
+          "label": "Channel 13",
+        },
+        {
+          "id": "channel14",
+          "label": "Channel 14",
+        },
+        {
+          "id": "channel15",
+          "label": "Channel 15",
+        },
+        {
+          "id": "channel16",
+          "label": "Channel 16",
+        },
+        {
+          "id": "channel17",
+          "label": "Channel 17",
+        },
+        {
+          "id": "channel18",
+          "label": "Channel 18",
+        },
+        {
+          "id": "channel19",
+          "label": "Channel 19",
+        },
+        {
+          "id": "channel20",
+          "label": "Channel 20",
+        },
+        {
+          "id": "channel21",
+          "label": "Channel 21",
+        },
+        {
+          "id": "channel22",
+          "label": "Channel 22",
+        },
+        {
+          "id": "channel23",
+          "label": "Channel 23",
+        },
+        {
+          "id": "channel24",
+          "label": "Channel 24",
+        },
+        {
+          "id": "channel25",
+          "label": "Channel 25",
+        },
+        {
+          "id": "channel26",
+          "label": "Channel 26",
+        },
+        {
+          "id": "channel27",
+          "label": "Channel 27",
+        },
+        {
+          "id": "channel28",
+          "label": "Channel 28",
+        },
+        {
+          "id": "channel29",
+          "label": "Channel 29",
+        },
+        {
+          "id": "channel30",
+          "label": "Channel 30",
+        },
+        {
+          "id": "channel31",
+          "label": "Channel 31",
+        },
+        {
+          "id": "channel32",
+          "label": "Channel 32",
+        },
+        {
+          "id": "aux1",
+          "label": "Aux In 1",
+        },
+        {
+          "id": "aux2",
+          "label": "Aux In 2",
+        },
+        {
+          "id": "aux3",
+          "label": "Aux In 3",
+        },
+        {
+          "id": "aux4",
+          "label": "Aux In 4",
+        },
+        {
+          "id": "aux5",
+          "label": "Aux In 5",
+        },
+        {
+          "id": "aux6",
+          "label": "Aux In 6",
+        },
+        {
+          "id": "aux7",
+          "label": "Aux In 7",
+        },
+        {
+          "id": "aux8",
+          "label": "Aux In 8",
+        },
+        {
+          "id": "fx1",
+          "label": "FX Return 1 L",
+        },
+        {
+          "id": "fx2",
+          "label": "FX Return 1 R",
+        },
+        {
+          "id": "fx3",
+          "label": "FX Return 2 L",
+        },
+        {
+          "id": "fx4",
+          "label": "FX Return 2 R",
+        },
+        {
+          "id": "fx5",
+          "label": "FX Return 3 L",
+        },
+        {
+          "id": "fx6",
+          "label": "FX Return 3 R",
+        },
+        {
+          "id": "fx7",
+          "label": "FX Return 4 L",
+        },
+        {
+          "id": "fx8",
+          "label": "FX Return 4 R",
+        },
+        {
+          "id": "bus1",
+          "label": "MixBus 1",
+        },
+        {
+          "id": "bus2",
+          "label": "MixBus 2",
+        },
+        {
+          "id": "bus3",
+          "label": "MixBus 3",
+        },
+        {
+          "id": "bus4",
+          "label": "MixBus 4",
+        },
+        {
+          "id": "bus5",
+          "label": "MixBus 5",
+        },
+        {
+          "id": "bus6",
+          "label": "MixBus 6",
+        },
+        {
+          "id": "bus7",
+          "label": "MixBus 7",
+        },
+        {
+          "id": "bus8",
+          "label": "MixBus 8",
+        },
+        {
+          "id": "bus9",
+          "label": "MixBus 9",
+        },
+        {
+          "id": "bus10",
+          "label": "MixBus 10",
+        },
+        {
+          "id": "bus11",
+          "label": "MixBus 11",
+        },
+        {
+          "id": "bus12",
+          "label": "MixBus 12",
+        },
+        {
+          "id": "bus13",
+          "label": "MixBus 13",
+        },
+        {
+          "id": "bus14",
+          "label": "MixBus 14",
+        },
+        {
+          "id": "bus15",
+          "label": "MixBus 15",
+        },
+        {
+          "id": "bus16",
+          "label": "MixBus 16",
+        },
+        {
+          "id": "matrix1",
+          "label": "Matrix 1",
+        },
+        {
+          "id": "matrix2",
+          "label": "Matrix 2",
+        },
+        {
+          "id": "matrix3",
+          "label": "Matrix 3",
+        },
+        {
+          "id": "matrix4",
+          "label": "Matrix 4",
+        },
+        {
+          "id": "matrix5",
+          "label": "Matrix 5",
+        },
+        {
+          "id": "matrix6",
+          "label": "Matrix 6",
+        },
+        {
+          "id": "stereo",
+          "label": "Main Stereo",
+        },
+        {
+          "id": "mono",
+          "label": "Main Mono",
+        },
+        {
+          "id": "dca1",
+          "label": "DCA 1",
+        },
+        {
+          "id": "dca2",
+          "label": "DCA 2",
+        },
+        {
+          "id": "dca3",
+          "label": "DCA 3",
+        },
+        {
+          "id": "dca4",
+          "label": "DCA 4",
+        },
+        {
+          "id": "dca5",
+          "label": "DCA 5",
+        },
+        {
+          "id": "dca6",
+          "label": "DCA 6",
+        },
+        {
+          "id": "dca7",
+          "label": "DCA 7",
+        },
+        {
+          "id": "dca8",
+          "label": "DCA 8",
+        },
+      ],
+      "default": "channel1",
+      "id": "target",
+      "label": "Target",
+      "type": "dropdown",
+    },
+    {
+      "choices": [
+        {
+          "id": "eq",
+          "label": "Equal",
+        },
+        {
+          "id": "ne",
+          "label": "Not Equal",
+        },
+        {
+          "id": "gt",
+          "label": "Greater than",
+        },
+        {
+          "id": "gte",
+          "label": "Greater than or equal",
+        },
+        {
+          "id": "lt",
+          "label": "Less than",
+        },
+        {
+          "id": "lte",
+          "label": "Less than or equal",
+        },
+      ],
+      "default": "eq",
+      "disableAutoExpression": true,
+      "id": "comparitor",
+      "label": "Comparitor",
+      "type": "dropdown",
+    },
+    {
+      "default": 0,
+      "id": "fad",
+      "label": "Fader Level (-90 = -inf)",
+      "max": 10,
+      "min": -90,
+      "range": true,
+      "step": 0.1,
+      "type": "number",
+    },
+  ],
+  "type": "boolean",
+  "unsubscribe": [Function],
+}
+`;
+
+exports[`Feedbacks test > Check Change from level of bus to matrix send (level_bus_send) 1`] = `
+{
+  "callback": [Function],
+  "defaultStyle": {
+    "bgcolor": 65280,
+    "color": 0,
+  },
+  "description": "If the bus to matrix send level has the specified gain",
+  "name": "Change from level of bus to matrix send",
+  "options": [
+    {
+      "allowInvalidValues": true,
+      "choices": [
+        {
+          "id": "bus1",
+          "label": "MixBus 1",
+        },
+        {
+          "id": "bus2",
+          "label": "MixBus 2",
+        },
+        {
+          "id": "bus3",
+          "label": "MixBus 3",
+        },
+        {
+          "id": "bus4",
+          "label": "MixBus 4",
+        },
+        {
+          "id": "bus5",
+          "label": "MixBus 5",
+        },
+        {
+          "id": "bus6",
+          "label": "MixBus 6",
+        },
+        {
+          "id": "bus7",
+          "label": "MixBus 7",
+        },
+        {
+          "id": "bus8",
+          "label": "MixBus 8",
+        },
+        {
+          "id": "bus9",
+          "label": "MixBus 9",
+        },
+        {
+          "id": "bus10",
+          "label": "MixBus 10",
+        },
+        {
+          "id": "bus11",
+          "label": "MixBus 11",
+        },
+        {
+          "id": "bus12",
+          "label": "MixBus 12",
+        },
+        {
+          "id": "bus13",
+          "label": "MixBus 13",
+        },
+        {
+          "id": "bus14",
+          "label": "MixBus 14",
+        },
+        {
+          "id": "bus15",
+          "label": "MixBus 15",
+        },
+        {
+          "id": "bus16",
+          "label": "MixBus 16",
+        },
+        {
+          "id": "stereo",
+          "label": "Main Stereo",
+        },
+        {
+          "id": "mono",
+          "label": "Main Mono",
+        },
+      ],
+      "default": "bus1",
+      "id": "source",
+      "label": "Source",
+      "type": "dropdown",
+    },
+    {
+      "allowInvalidValues": true,
+      "choices": [
+        {
+          "id": "matrix1",
+          "label": "Matrix 1",
+        },
+        {
+          "id": "matrix2",
+          "label": "Matrix 2",
+        },
+        {
+          "id": "matrix3",
+          "label": "Matrix 3",
+        },
+        {
+          "id": "matrix4",
+          "label": "Matrix 4",
+        },
+        {
+          "id": "matrix5",
+          "label": "Matrix 5",
+        },
+        {
+          "id": "matrix6",
+          "label": "Matrix 6",
+        },
+      ],
+      "default": "matrix1",
+      "id": "target",
+      "label": "Target",
+      "type": "dropdown",
+    },
+    {
+      "choices": [
+        {
+          "id": "eq",
+          "label": "Equal",
+        },
+        {
+          "id": "ne",
+          "label": "Not Equal",
+        },
+        {
+          "id": "gt",
+          "label": "Greater than",
+        },
+        {
+          "id": "gte",
+          "label": "Greater than or equal",
+        },
+        {
+          "id": "lt",
+          "label": "Less than",
+        },
+        {
+          "id": "lte",
+          "label": "Less than or equal",
+        },
+      ],
+      "default": "eq",
+      "disableAutoExpression": true,
+      "id": "comparitor",
+      "label": "Comparitor",
+      "type": "dropdown",
+    },
+    {
+      "default": 0,
+      "id": "fad",
+      "label": "Fader Level (-90 = -inf)",
+      "max": 10,
+      "min": -90,
+      "range": true,
+      "step": 0.1,
+      "type": "number",
+    },
+  ],
+  "type": "boolean",
+  "unsubscribe": [Function],
+}
+`;
+
+exports[`Feedbacks test > Check Change from level of channel to bus send (level_channel_send) 1`] = `
+{
+  "callback": [Function],
+  "defaultStyle": {
+    "bgcolor": 65280,
+    "color": 0,
+  },
+  "description": "If the channel to bus send level has the specified gain",
+  "name": "Change from level of channel to bus send",
+  "options": [
+    {
+      "allowInvalidValues": true,
+      "choices": [
+        {
+          "id": "channel1",
+          "label": "Channel 1",
+        },
+        {
+          "id": "channel2",
+          "label": "Channel 2",
+        },
+        {
+          "id": "channel3",
+          "label": "Channel 3",
+        },
+        {
+          "id": "channel4",
+          "label": "Channel 4",
+        },
+        {
+          "id": "channel5",
+          "label": "Channel 5",
+        },
+        {
+          "id": "channel6",
+          "label": "Channel 6",
+        },
+        {
+          "id": "channel7",
+          "label": "Channel 7",
+        },
+        {
+          "id": "channel8",
+          "label": "Channel 8",
+        },
+        {
+          "id": "channel9",
+          "label": "Channel 9",
+        },
+        {
+          "id": "channel10",
+          "label": "Channel 10",
+        },
+        {
+          "id": "channel11",
+          "label": "Channel 11",
+        },
+        {
+          "id": "channel12",
+          "label": "Channel 12",
+        },
+        {
+          "id": "channel13",
+          "label": "Channel 13",
+        },
+        {
+          "id": "channel14",
+          "label": "Channel 14",
+        },
+        {
+          "id": "channel15",
+          "label": "Channel 15",
+        },
+        {
+          "id": "channel16",
+          "label": "Channel 16",
+        },
+        {
+          "id": "channel17",
+          "label": "Channel 17",
+        },
+        {
+          "id": "channel18",
+          "label": "Channel 18",
+        },
+        {
+          "id": "channel19",
+          "label": "Channel 19",
+        },
+        {
+          "id": "channel20",
+          "label": "Channel 20",
+        },
+        {
+          "id": "channel21",
+          "label": "Channel 21",
+        },
+        {
+          "id": "channel22",
+          "label": "Channel 22",
+        },
+        {
+          "id": "channel23",
+          "label": "Channel 23",
+        },
+        {
+          "id": "channel24",
+          "label": "Channel 24",
+        },
+        {
+          "id": "channel25",
+          "label": "Channel 25",
+        },
+        {
+          "id": "channel26",
+          "label": "Channel 26",
+        },
+        {
+          "id": "channel27",
+          "label": "Channel 27",
+        },
+        {
+          "id": "channel28",
+          "label": "Channel 28",
+        },
+        {
+          "id": "channel29",
+          "label": "Channel 29",
+        },
+        {
+          "id": "channel30",
+          "label": "Channel 30",
+        },
+        {
+          "id": "channel31",
+          "label": "Channel 31",
+        },
+        {
+          "id": "channel32",
+          "label": "Channel 32",
+        },
+        {
+          "id": "aux1",
+          "label": "Aux In 1",
+        },
+        {
+          "id": "aux2",
+          "label": "Aux In 2",
+        },
+        {
+          "id": "aux3",
+          "label": "Aux In 3",
+        },
+        {
+          "id": "aux4",
+          "label": "Aux In 4",
+        },
+        {
+          "id": "aux5",
+          "label": "Aux In 5",
+        },
+        {
+          "id": "aux6",
+          "label": "Aux In 6",
+        },
+        {
+          "id": "aux7",
+          "label": "Aux In 7",
+        },
+        {
+          "id": "aux8",
+          "label": "Aux In 8",
+        },
+        {
+          "id": "fx1",
+          "label": "FX Return 1 L",
+        },
+        {
+          "id": "fx2",
+          "label": "FX Return 1 R",
+        },
+        {
+          "id": "fx3",
+          "label": "FX Return 2 L",
+        },
+        {
+          "id": "fx4",
+          "label": "FX Return 2 R",
+        },
+        {
+          "id": "fx5",
+          "label": "FX Return 3 L",
+        },
+        {
+          "id": "fx6",
+          "label": "FX Return 3 R",
+        },
+        {
+          "id": "fx7",
+          "label": "FX Return 4 L",
+        },
+        {
+          "id": "fx8",
+          "label": "FX Return 4 R",
+        },
+      ],
+      "default": "channel1",
+      "id": "source",
+      "label": "Source",
+      "type": "dropdown",
+    },
+    {
+      "allowInvalidValues": true,
+      "choices": [
+        {
+          "id": "bus1",
+          "label": "MixBus 1",
+        },
+        {
+          "id": "bus2",
+          "label": "MixBus 2",
+        },
+        {
+          "id": "bus3",
+          "label": "MixBus 3",
+        },
+        {
+          "id": "bus4",
+          "label": "MixBus 4",
+        },
+        {
+          "id": "bus5",
+          "label": "MixBus 5",
+        },
+        {
+          "id": "bus6",
+          "label": "MixBus 6",
+        },
+        {
+          "id": "bus7",
+          "label": "MixBus 7",
+        },
+        {
+          "id": "bus8",
+          "label": "MixBus 8",
+        },
+        {
+          "id": "bus9",
+          "label": "MixBus 9",
+        },
+        {
+          "id": "bus10",
+          "label": "MixBus 10",
+        },
+        {
+          "id": "bus11",
+          "label": "MixBus 11",
+        },
+        {
+          "id": "bus12",
+          "label": "MixBus 12",
+        },
+        {
+          "id": "bus13",
+          "label": "MixBus 13",
+        },
+        {
+          "id": "bus14",
+          "label": "MixBus 14",
+        },
+        {
+          "id": "bus15",
+          "label": "MixBus 15",
+        },
+        {
+          "id": "bus16",
+          "label": "MixBus 16",
+        },
+        {
+          "id": "mono",
+          "label": "Main Mono",
+        },
+      ],
+      "default": "bus1",
+      "id": "target",
+      "label": "Target",
+      "type": "dropdown",
+    },
+    {
+      "choices": [
+        {
+          "id": "eq",
+          "label": "Equal",
+        },
+        {
+          "id": "ne",
+          "label": "Not Equal",
+        },
+        {
+          "id": "gt",
+          "label": "Greater than",
+        },
+        {
+          "id": "gte",
+          "label": "Greater than or equal",
+        },
+        {
+          "id": "lt",
+          "label": "Less than",
+        },
+        {
+          "id": "lte",
+          "label": "Less than or equal",
+        },
+      ],
+      "default": "eq",
+      "disableAutoExpression": true,
+      "id": "comparitor",
+      "label": "Comparitor",
+      "type": "dropdown",
+    },
+    {
+      "default": 0,
+      "id": "fad",
+      "label": "Fader Level (-90 = -inf)",
+      "max": 10,
+      "min": -90,
+      "range": true,
+      "step": 0.1,
+      "type": "number",
+    },
+  ],
+  "type": "boolean",
+  "unsubscribe": [Function],
+}
+`;
+
+exports[`Feedbacks test > Check Change from library page selected state (library-page) 1`] = `
+{
+  "callback": [Function],
+  "defaultStyle": {
+    "bgcolor": 65407,
+    "color": 0,
+  },
+  "description": "If library screen is on and selected page is active",
+  "name": "Change from library page selected state",
+  "options": [
+    {
+      "choices": [
+        {
+          "id": "0",
+          "label": "CHANNEL",
+        },
+        {
+          "id": "1",
+          "label": "EFFECTS",
+        },
+        {
+          "id": "2",
+          "label": "ROUTING",
+        },
+        {
+          "id": "3",
+          "label": "MONITOR",
+        },
+      ],
+      "default": "0",
+      "disableAutoExpression": true,
+      "id": "page",
+      "label": "page",
+      "type": "dropdown",
+    },
+  ],
+  "type": "boolean",
+  "unsubscribe": [Function],
+}
+`;
+
+exports[`Feedbacks test > Check Change from meter page selected state (meter-page) 1`] = `
+{
+  "callback": [Function],
+  "defaultStyle": {
+    "bgcolor": 65407,
+    "color": 0,
+  },
+  "description": "If meter screen is on and selected page is active",
+  "name": "Change from meter page selected state",
+  "options": [
+    {
+      "choices": [
+        {
+          "id": "0",
+          "label": "CHANNEL",
+        },
+        {
+          "id": "1",
+          "label": "MIX BUS",
+        },
+        {
+          "id": "2",
+          "label": "AUX/FX",
+        },
+        {
+          "id": "3",
+          "label": "IN/OUT",
+        },
+        {
+          "id": "4",
+          "label": "RTA",
+        },
+        {
+          "id": "5",
+          "label": "AUTOMIX",
+        },
+      ],
+      "default": "0",
+      "disableAutoExpression": true,
+      "id": "page",
+      "label": "page",
+      "type": "dropdown",
+    },
+  ],
+  "type": "boolean",
+  "unsubscribe": [Function],
+}
+`;
+
+exports[`Feedbacks test > Check Change from monitor page selected state (monitor-page) 1`] = `
+{
+  "callback": [Function],
+  "defaultStyle": {
+    "bgcolor": 65407,
+    "color": 0,
+  },
+  "description": "If monitor screen is on and selected page is active",
+  "name": "Change from monitor page selected state",
+  "options": [
+    {
+      "choices": [
+        {
+          "id": "0",
+          "label": "MONITOR",
+        },
+        {
+          "id": "1",
+          "label": "TALK A",
+        },
+        {
+          "id": "2",
+          "label": "TALK B",
+        },
+        {
+          "id": "3",
+          "label": "OSCILLATOR",
+        },
+      ],
+      "default": "0",
+      "disableAutoExpression": true,
+      "id": "page",
+      "label": "page",
+      "type": "dropdown",
+    },
+  ],
+  "type": "boolean",
+  "unsubscribe": [Function],
+}
+`;
+
+exports[`Feedbacks test > Check Change from mute group state (mute_grp) 1`] = `
+{
+  "callback": [Function],
+  "defaultStyle": {
+    "bgcolor": 16711680,
+    "color": 0,
+  },
+  "description": "If the specified mute group is muted",
+  "name": "Change from mute group state",
+  "options": [
+    {
+      "allowInvalidValues": true,
+      "choices": [
+        {
+          "id": 1,
+          "label": "Mute group 1",
+        },
+        {
+          "id": 2,
+          "label": "Mute group 2",
+        },
+        {
+          "id": 3,
+          "label": "Mute group 3",
+        },
+        {
+          "id": 4,
+          "label": "Mute group 4",
+        },
+        {
+          "id": 5,
+          "label": "Mute group 5",
+        },
+        {
+          "id": 6,
+          "label": "Mute group 6",
+        },
+      ],
+      "default": 1,
+      "id": "mute_grp",
+      "label": "Target",
+      "type": "dropdown",
+    },
+  ],
+  "type": "boolean",
+  "unsubscribe": [Function],
+}
+`;
+
+exports[`Feedbacks test > Check Change from mute groups screen enabled state (mute-group-screen) 1`] = `
+{
+  "callback": [Function],
+  "defaultStyle": {
+    "bgcolor": 16711680,
+    "color": 0,
+  },
+  "description": "If mute groups screen is on",
+  "name": "Change from mute groups screen enabled state",
+  "options": [],
+  "type": "boolean",
+  "unsubscribe": [Function],
+}
+`;
+
+exports[`Feedbacks test > Check Change from mute state (mute) 1`] = `
+{
+  "callback": [Function],
+  "defaultStyle": {
+    "bgcolor": 16711680,
+    "color": 0,
+  },
+  "description": "If the specified target is muted",
+  "name": "Change from mute state",
+  "options": [
+    {
+      "allowInvalidValues": true,
+      "choices": [
+        {
+          "id": "channel1",
+          "label": "Channel 1",
+        },
+        {
+          "id": "channel2",
+          "label": "Channel 2",
+        },
+        {
+          "id": "channel3",
+          "label": "Channel 3",
+        },
+        {
+          "id": "channel4",
+          "label": "Channel 4",
+        },
+        {
+          "id": "channel5",
+          "label": "Channel 5",
+        },
+        {
+          "id": "channel6",
+          "label": "Channel 6",
+        },
+        {
+          "id": "channel7",
+          "label": "Channel 7",
+        },
+        {
+          "id": "channel8",
+          "label": "Channel 8",
+        },
+        {
+          "id": "channel9",
+          "label": "Channel 9",
+        },
+        {
+          "id": "channel10",
+          "label": "Channel 10",
+        },
+        {
+          "id": "channel11",
+          "label": "Channel 11",
+        },
+        {
+          "id": "channel12",
+          "label": "Channel 12",
+        },
+        {
+          "id": "channel13",
+          "label": "Channel 13",
+        },
+        {
+          "id": "channel14",
+          "label": "Channel 14",
+        },
+        {
+          "id": "channel15",
+          "label": "Channel 15",
+        },
+        {
+          "id": "channel16",
+          "label": "Channel 16",
+        },
+        {
+          "id": "channel17",
+          "label": "Channel 17",
+        },
+        {
+          "id": "channel18",
+          "label": "Channel 18",
+        },
+        {
+          "id": "channel19",
+          "label": "Channel 19",
+        },
+        {
+          "id": "channel20",
+          "label": "Channel 20",
+        },
+        {
+          "id": "channel21",
+          "label": "Channel 21",
+        },
+        {
+          "id": "channel22",
+          "label": "Channel 22",
+        },
+        {
+          "id": "channel23",
+          "label": "Channel 23",
+        },
+        {
+          "id": "channel24",
+          "label": "Channel 24",
+        },
+        {
+          "id": "channel25",
+          "label": "Channel 25",
+        },
+        {
+          "id": "channel26",
+          "label": "Channel 26",
+        },
+        {
+          "id": "channel27",
+          "label": "Channel 27",
+        },
+        {
+          "id": "channel28",
+          "label": "Channel 28",
+        },
+        {
+          "id": "channel29",
+          "label": "Channel 29",
+        },
+        {
+          "id": "channel30",
+          "label": "Channel 30",
+        },
+        {
+          "id": "channel31",
+          "label": "Channel 31",
+        },
+        {
+          "id": "channel32",
+          "label": "Channel 32",
+        },
+        {
+          "id": "aux1",
+          "label": "Aux In 1",
+        },
+        {
+          "id": "aux2",
+          "label": "Aux In 2",
+        },
+        {
+          "id": "aux3",
+          "label": "Aux In 3",
+        },
+        {
+          "id": "aux4",
+          "label": "Aux In 4",
+        },
+        {
+          "id": "aux5",
+          "label": "Aux In 5",
+        },
+        {
+          "id": "aux6",
+          "label": "Aux In 6",
+        },
+        {
+          "id": "aux7",
+          "label": "Aux In 7",
+        },
+        {
+          "id": "aux8",
+          "label": "Aux In 8",
+        },
+        {
+          "id": "fx1",
+          "label": "FX Return 1 L",
+        },
+        {
+          "id": "fx2",
+          "label": "FX Return 1 R",
+        },
+        {
+          "id": "fx3",
+          "label": "FX Return 2 L",
+        },
+        {
+          "id": "fx4",
+          "label": "FX Return 2 R",
+        },
+        {
+          "id": "fx5",
+          "label": "FX Return 3 L",
+        },
+        {
+          "id": "fx6",
+          "label": "FX Return 3 R",
+        },
+        {
+          "id": "fx7",
+          "label": "FX Return 4 L",
+        },
+        {
+          "id": "fx8",
+          "label": "FX Return 4 R",
+        },
+        {
+          "id": "bus1",
+          "label": "MixBus 1",
+        },
+        {
+          "id": "bus2",
+          "label": "MixBus 2",
+        },
+        {
+          "id": "bus3",
+          "label": "MixBus 3",
+        },
+        {
+          "id": "bus4",
+          "label": "MixBus 4",
+        },
+        {
+          "id": "bus5",
+          "label": "MixBus 5",
+        },
+        {
+          "id": "bus6",
+          "label": "MixBus 6",
+        },
+        {
+          "id": "bus7",
+          "label": "MixBus 7",
+        },
+        {
+          "id": "bus8",
+          "label": "MixBus 8",
+        },
+        {
+          "id": "bus9",
+          "label": "MixBus 9",
+        },
+        {
+          "id": "bus10",
+          "label": "MixBus 10",
+        },
+        {
+          "id": "bus11",
+          "label": "MixBus 11",
+        },
+        {
+          "id": "bus12",
+          "label": "MixBus 12",
+        },
+        {
+          "id": "bus13",
+          "label": "MixBus 13",
+        },
+        {
+          "id": "bus14",
+          "label": "MixBus 14",
+        },
+        {
+          "id": "bus15",
+          "label": "MixBus 15",
+        },
+        {
+          "id": "bus16",
+          "label": "MixBus 16",
+        },
+        {
+          "id": "matrix1",
+          "label": "Matrix 1",
+        },
+        {
+          "id": "matrix2",
+          "label": "Matrix 2",
+        },
+        {
+          "id": "matrix3",
+          "label": "Matrix 3",
+        },
+        {
+          "id": "matrix4",
+          "label": "Matrix 4",
+        },
+        {
+          "id": "matrix5",
+          "label": "Matrix 5",
+        },
+        {
+          "id": "matrix6",
+          "label": "Matrix 6",
+        },
+        {
+          "id": "stereo",
+          "label": "Main Stereo",
+        },
+        {
+          "id": "mono",
+          "label": "Main Mono",
+        },
+        {
+          "id": "dca1",
+          "label": "DCA 1",
+        },
+        {
+          "id": "dca2",
+          "label": "DCA 2",
+        },
+        {
+          "id": "dca3",
+          "label": "DCA 3",
+        },
+        {
+          "id": "dca4",
+          "label": "DCA 4",
+        },
+        {
+          "id": "dca5",
+          "label": "DCA 5",
+        },
+        {
+          "id": "dca6",
+          "label": "DCA 6",
+        },
+        {
+          "id": "dca7",
+          "label": "DCA 7",
+        },
+        {
+          "id": "dca8",
+          "label": "DCA 8",
+        },
+      ],
+      "default": "channel1",
+      "id": "target",
+      "label": "Target",
+      "type": "dropdown",
+    },
+  ],
+  "type": "boolean",
+  "unsubscribe": [Function],
+}
+`;
+
+exports[`Feedbacks test > Check Change from oscillator destination state (oscillator-destination) 1`] = `
+{
+  "callback": [Function],
+  "defaultStyle": {
+    "bgcolor": 16711680,
+    "color": 0,
+  },
+  "description": "If the oscillator destination matches",
+  "name": "Change from oscillator destination state",
+  "options": [
+    {
+      "allowInvalidValues": true,
+      "choices": [
+        {
+          "id": "bus1",
+          "label": "MixBus 1",
+        },
+        {
+          "id": "bus2",
+          "label": "MixBus 2",
+        },
+        {
+          "id": "bus3",
+          "label": "MixBus 3",
+        },
+        {
+          "id": "bus4",
+          "label": "MixBus 4",
+        },
+        {
+          "id": "bus5",
+          "label": "MixBus 5",
+        },
+        {
+          "id": "bus6",
+          "label": "MixBus 6",
+        },
+        {
+          "id": "bus7",
+          "label": "MixBus 7",
+        },
+        {
+          "id": "bus8",
+          "label": "MixBus 8",
+        },
+        {
+          "id": "bus9",
+          "label": "MixBus 9",
+        },
+        {
+          "id": "bus10",
+          "label": "MixBus 10",
+        },
+        {
+          "id": "bus11",
+          "label": "MixBus 11",
+        },
+        {
+          "id": "bus12",
+          "label": "MixBus 12",
+        },
+        {
+          "id": "bus13",
+          "label": "MixBus 13",
+        },
+        {
+          "id": "bus14",
+          "label": "MixBus 14",
+        },
+        {
+          "id": "bus15",
+          "label": "MixBus 15",
+        },
+        {
+          "id": "bus16",
+          "label": "MixBus 16",
+        },
+        {
+          "id": "matrix1",
+          "label": "Matrix 1",
+        },
+        {
+          "id": "matrix2",
+          "label": "Matrix 2",
+        },
+        {
+          "id": "matrix3",
+          "label": "Matrix 3",
+        },
+        {
+          "id": "matrix4",
+          "label": "Matrix 4",
+        },
+        {
+          "id": "matrix5",
+          "label": "Matrix 5",
+        },
+        {
+          "id": "matrix6",
+          "label": "Matrix 6",
+        },
+        {
+          "id": "stereo",
+          "label": "Main Stereo",
+        },
+        {
+          "id": "mono",
+          "label": "Main Mono",
+        },
+        {
+          "id": "left",
+          "label": "Main Left",
+        },
+        {
+          "id": "right",
+          "label": "Main Right",
+        },
+      ],
+      "default": "bus1",
+      "id": "destination",
+      "label": "destination",
+      "type": "dropdown",
+    },
+  ],
+  "type": "boolean",
+  "unsubscribe": [Function],
+}
+`;
+
+exports[`Feedbacks test > Check Change from oscillator enabled state (oscillator-enable) 1`] = `
+{
+  "callback": [Function],
+  "defaultStyle": {
+    "bgcolor": 16711680,
+    "color": 0,
+  },
+  "description": "If the oscillator is on",
+  "name": "Change from oscillator enabled state",
+  "options": [],
+  "type": "boolean",
+  "unsubscribe": [Function],
+}
+`;
+
+exports[`Feedbacks test > Check Change from route page selected state (route-page) 1`] = `
+{
+  "callback": [Function],
+  "defaultStyle": {
+    "bgcolor": 65407,
+    "color": 0,
+  },
+  "description": "If route screen is on and selected page is active",
+  "name": "Change from route page selected state",
+  "options": [
+    {
+      "choices": [
+        {
+          "id": "0",
+          "label": "INPUT",
+        },
+        {
+          "id": "1",
+          "label": "AES-A",
+        },
+        {
+          "id": "2",
+          "label": "AES-B",
+        },
+        {
+          "id": "3",
+          "label": "CARD",
+        },
+        {
+          "id": "4",
+          "label": "XLR",
+        },
+        {
+          "id": "5",
+          "label": "PATCH OUT",
+        },
+        {
+          "id": "6",
+          "label": "PATCH AUX",
+        },
+        {
+          "id": "7",
+          "label": "PATCH P16",
+        },
+        {
+          "id": "8",
+          "label": "PATCH USER",
+        },
+      ],
+      "default": "0",
+      "disableAutoExpression": true,
+      "id": "page",
+      "label": "page",
+      "type": "dropdown",
+    },
+  ],
+  "type": "boolean",
+  "unsubscribe": [Function],
+}
+`;
+
+exports[`Feedbacks test > Check Change from scene page selected state (scene-page) 1`] = `
+{
+  "callback": [Function],
+  "defaultStyle": {
+    "bgcolor": 65407,
+    "color": 0,
+  },
+  "description": "If scene screen is on and selected page is active",
+  "name": "Change from scene page selected state",
+  "options": [
+    {
+      "choices": [
+        {
+          "id": "0",
+          "label": "CUES",
+        },
+        {
+          "id": "1",
+          "label": "SCENES",
+        },
+        {
+          "id": "2",
+          "label": "SNIPPETS",
+        },
+        {
+          "id": "3",
+          "label": "PARAMETER SAFE",
+        },
+        {
+          "id": "4",
+          "label": "CHANNEL SAFE",
+        },
+        {
+          "id": "5",
+          "label": "MIDI",
+        },
+      ],
+      "default": "0",
+      "disableAutoExpression": true,
+      "id": "page",
+      "label": "page",
+      "type": "dropdown",
+    },
+  ],
+  "type": "boolean",
+  "unsubscribe": [Function],
+}
+`;
+
+exports[`Feedbacks test > Check Change from screen state (screens) 1`] = `
+{
+  "callback": [Function],
+  "defaultStyle": {
+    "bgcolor": 65407,
+    "color": 0,
+  },
+  "description": "If the select screen is being shown",
+  "name": "Change from screen state",
+  "options": [
+    {
+      "choices": [
+        {
+          "id": "0",
+          "label": "HOME",
+        },
+        {
+          "id": "1",
+          "label": "METERS",
+        },
+        {
+          "id": "2",
+          "label": "ROUTING",
+        },
+        {
+          "id": "3",
+          "label": "SETUP",
+        },
+        {
+          "id": "4",
+          "label": "LIBRARY",
+        },
+        {
+          "id": "5",
+          "label": "EFFECTS",
+        },
+        {
+          "id": "6",
+          "label": "MONITOR",
+        },
+        {
+          "id": "7",
+          "label": "USB RECORDER",
+        },
+        {
+          "id": "8",
+          "label": "SCENES",
+        },
+        {
+          "id": "9",
+          "label": "ASSIGN",
+        },
+      ],
+      "default": "0",
+      "disableAutoExpression": true,
+      "id": "screen",
+      "label": "Screen",
+      "type": "dropdown",
+    },
+  ],
+  "type": "boolean",
+  "unsubscribe": [Function],
+}
+`;
+
+exports[`Feedbacks test > Check Change from select state (select) 1`] = `
+{
+  "callback": [Function],
+  "defaultStyle": {
+    "bgcolor": 65407,
+    "color": 0,
+  },
+  "description": "If specified channel is selected",
+  "name": "Change from select state",
+  "options": [
+    {
+      "allowInvalidValues": true,
+      "choices": [
+        {
+          "id": "channel1",
+          "label": "Channel 1",
+        },
+        {
+          "id": "channel2",
+          "label": "Channel 2",
+        },
+        {
+          "id": "channel3",
+          "label": "Channel 3",
+        },
+        {
+          "id": "channel4",
+          "label": "Channel 4",
+        },
+        {
+          "id": "channel5",
+          "label": "Channel 5",
+        },
+        {
+          "id": "channel6",
+          "label": "Channel 6",
+        },
+        {
+          "id": "channel7",
+          "label": "Channel 7",
+        },
+        {
+          "id": "channel8",
+          "label": "Channel 8",
+        },
+        {
+          "id": "channel9",
+          "label": "Channel 9",
+        },
+        {
+          "id": "channel10",
+          "label": "Channel 10",
+        },
+        {
+          "id": "channel11",
+          "label": "Channel 11",
+        },
+        {
+          "id": "channel12",
+          "label": "Channel 12",
+        },
+        {
+          "id": "channel13",
+          "label": "Channel 13",
+        },
+        {
+          "id": "channel14",
+          "label": "Channel 14",
+        },
+        {
+          "id": "channel15",
+          "label": "Channel 15",
+        },
+        {
+          "id": "channel16",
+          "label": "Channel 16",
+        },
+        {
+          "id": "channel17",
+          "label": "Channel 17",
+        },
+        {
+          "id": "channel18",
+          "label": "Channel 18",
+        },
+        {
+          "id": "channel19",
+          "label": "Channel 19",
+        },
+        {
+          "id": "channel20",
+          "label": "Channel 20",
+        },
+        {
+          "id": "channel21",
+          "label": "Channel 21",
+        },
+        {
+          "id": "channel22",
+          "label": "Channel 22",
+        },
+        {
+          "id": "channel23",
+          "label": "Channel 23",
+        },
+        {
+          "id": "channel24",
+          "label": "Channel 24",
+        },
+        {
+          "id": "channel25",
+          "label": "Channel 25",
+        },
+        {
+          "id": "channel26",
+          "label": "Channel 26",
+        },
+        {
+          "id": "channel27",
+          "label": "Channel 27",
+        },
+        {
+          "id": "channel28",
+          "label": "Channel 28",
+        },
+        {
+          "id": "channel29",
+          "label": "Channel 29",
+        },
+        {
+          "id": "channel30",
+          "label": "Channel 30",
+        },
+        {
+          "id": "channel31",
+          "label": "Channel 31",
+        },
+        {
+          "id": "channel32",
+          "label": "Channel 32",
+        },
+        {
+          "id": "aux1",
+          "label": "Aux In 1",
+        },
+        {
+          "id": "aux2",
+          "label": "Aux In 2",
+        },
+        {
+          "id": "aux3",
+          "label": "Aux In 3",
+        },
+        {
+          "id": "aux4",
+          "label": "Aux In 4",
+        },
+        {
+          "id": "aux5",
+          "label": "Aux In 5",
+        },
+        {
+          "id": "aux6",
+          "label": "Aux In 6",
+        },
+        {
+          "id": "aux7",
+          "label": "Aux In 7",
+        },
+        {
+          "id": "aux8",
+          "label": "Aux In 8",
+        },
+        {
+          "id": "fx1",
+          "label": "FX Return 1 L",
+        },
+        {
+          "id": "fx2",
+          "label": "FX Return 1 R",
+        },
+        {
+          "id": "fx3",
+          "label": "FX Return 2 L",
+        },
+        {
+          "id": "fx4",
+          "label": "FX Return 2 R",
+        },
+        {
+          "id": "fx5",
+          "label": "FX Return 3 L",
+        },
+        {
+          "id": "fx6",
+          "label": "FX Return 3 R",
+        },
+        {
+          "id": "fx7",
+          "label": "FX Return 4 L",
+        },
+        {
+          "id": "fx8",
+          "label": "FX Return 4 R",
+        },
+        {
+          "id": "bus1",
+          "label": "MixBus 1",
+        },
+        {
+          "id": "bus2",
+          "label": "MixBus 2",
+        },
+        {
+          "id": "bus3",
+          "label": "MixBus 3",
+        },
+        {
+          "id": "bus4",
+          "label": "MixBus 4",
+        },
+        {
+          "id": "bus5",
+          "label": "MixBus 5",
+        },
+        {
+          "id": "bus6",
+          "label": "MixBus 6",
+        },
+        {
+          "id": "bus7",
+          "label": "MixBus 7",
+        },
+        {
+          "id": "bus8",
+          "label": "MixBus 8",
+        },
+        {
+          "id": "bus9",
+          "label": "MixBus 9",
+        },
+        {
+          "id": "bus10",
+          "label": "MixBus 10",
+        },
+        {
+          "id": "bus11",
+          "label": "MixBus 11",
+        },
+        {
+          "id": "bus12",
+          "label": "MixBus 12",
+        },
+        {
+          "id": "bus13",
+          "label": "MixBus 13",
+        },
+        {
+          "id": "bus14",
+          "label": "MixBus 14",
+        },
+        {
+          "id": "bus15",
+          "label": "MixBus 15",
+        },
+        {
+          "id": "bus16",
+          "label": "MixBus 16",
+        },
+        {
+          "id": "matrix1",
+          "label": "Matrix 1",
+        },
+        {
+          "id": "matrix2",
+          "label": "Matrix 2",
+        },
+        {
+          "id": "matrix3",
+          "label": "Matrix 3",
+        },
+        {
+          "id": "matrix4",
+          "label": "Matrix 4",
+        },
+        {
+          "id": "matrix5",
+          "label": "Matrix 5",
+        },
+        {
+          "id": "matrix6",
+          "label": "Matrix 6",
+        },
+        {
+          "id": "stereo",
+          "label": "Main Stereo",
+        },
+        {
+          "id": "mono",
+          "label": "Main Mono",
+        },
+      ],
+      "default": "channel1",
+      "id": "select",
+      "label": "Target",
+      "type": "dropdown",
+    },
+  ],
+  "type": "boolean",
+  "unsubscribe": [Function],
+}
+`;
+
+exports[`Feedbacks test > Check Change from selected Bus Send (bus-send-bank) 1`] = `
+{
+  "callback": [Function],
+  "defaultStyle": {
+    "bgcolor": 16744192,
+    "color": 0,
+  },
+  "description": "If the selected bus send bank is active",
+  "name": "Change from selected Bus Send",
+  "options": [
+    {
+      "choices": [
+        {
+          "id": "0",
+          "label": "Bus 1-4",
+        },
+        {
+          "id": "1",
+          "label": "Bus 5-8",
+        },
+        {
+          "id": "2",
+          "label": "Bus 9-12",
+        },
+        {
+          "id": "3",
+          "label": "Bus 13-16",
+        },
+      ],
+      "default": "0",
+      "disableAutoExpression": true,
+      "id": "bank",
+      "label": "Send Bank",
+      "type": "dropdown",
+    },
+  ],
+  "type": "boolean",
+  "unsubscribe": [Function],
+}
+`;
+
+exports[`Feedbacks test > Check Change from selected User Assign Bank (user-bank) 1`] = `
+{
+  "callback": [Function],
+  "defaultStyle": {
+    "bgcolor": 16744192,
+    "color": 0,
+  },
+  "description": "If the selected assign bank is active",
+  "name": "Change from selected User Assign Bank",
+  "options": [
+    {
+      "choices": [
+        {
+          "id": "0",
+          "label": "Set A",
+        },
+        {
+          "id": "1",
+          "label": "Set B",
+        },
+        {
+          "id": "2",
+          "label": "Set C",
+        },
+      ],
+      "default": "0",
+      "disableAutoExpression": true,
+      "id": "bank",
+      "label": "User Bank",
+      "type": "dropdown",
+    },
+  ],
+  "type": "boolean",
+  "unsubscribe": [Function],
+}
+`;
+
+exports[`Feedbacks test > Check Change from selected channel bank (X32 Compact/X32 Producer/M32R) (channel-bank-compact) 1`] = `
+{
+  "callback": [Function],
+  "defaultStyle": {
+    "bgcolor": 65407,
+    "color": 0,
+  },
+  "description": "If the channel bank matches the selected channel bank. Please note these will be incorrect if used connected to an X32/M32 use the X32/M32 feedback instead.",
+  "name": "Change from selected channel bank (X32 Compact/X32 Producer/M32R)",
+  "options": [
+    {
+      "choices": [
+        {
+          "id": "0",
+          "label": "CH 1 - 8",
+        },
+        {
+          "id": "1",
+          "label": "CH 9 - 16",
+        },
+        {
+          "id": "2",
+          "label": "CH 17 - 24",
+        },
+        {
+          "id": "3",
+          "label": "CH 25 - 32",
+        },
+        {
+          "id": "4",
+          "label": "AUX IN / USB",
+        },
+        {
+          "id": "5",
+          "label": "FX RTN",
+        },
+        {
+          "id": "6",
+          "label": "BUS 1-8",
+        },
+        {
+          "id": "7",
+          "label": "BUS 1-8",
+        },
+      ],
+      "default": "0",
+      "disableAutoExpression": true,
+      "id": "bank",
+      "label": "Bank",
+      "type": "dropdown",
+    },
+  ],
+  "type": "boolean",
+  "unsubscribe": [Function],
+}
+`;
+
+exports[`Feedbacks test > Check Change from selected channel bank (X32/M32) (channel-bank) 1`] = `
+{
+  "callback": [Function],
+  "defaultStyle": {
+    "bgcolor": 65407,
+    "color": 0,
+  },
+  "description": "If the channel bank matches the selected channel bank. Please note these will be incorrect if used connected to an X32 Compact/X32 Producer/M32R use the X32 Compact/X32 Producer/M32R feedback instead.",
+  "name": "Change from selected channel bank (X32/M32)",
+  "options": [
+    {
+      "choices": [
+        {
+          "id": "0",
+          "label": "CH 1 - 16",
+        },
+        {
+          "id": "1",
+          "label": "CH 17 - 32",
+        },
+        {
+          "id": "2",
+          "label": "AUX IN / USB / FX RTN",
+        },
+        {
+          "id": "3",
+          "label": "BUS MASTERS",
+        },
+      ],
+      "default": "0",
+      "disableAutoExpression": true,
+      "id": "bank",
+      "label": "Bank",
+      "type": "dropdown",
+    },
+  ],
+  "type": "boolean",
+  "unsubscribe": [Function],
+}
+`;
+
+exports[`Feedbacks test > Check Change from selected group bank (X32 Compact/X32 Producer/M32R) (group-bank-compact) 1`] = `
+{
+  "callback": [Function],
+  "defaultStyle": {
+    "bgcolor": 65407,
+    "color": 0,
+  },
+  "description": "If the group bank matches the selected group bank. Please note these will be incorrect if used connected to an X32/M32 use the X32/M32 feedback instead.",
+  "name": "Change from selected group bank (X32 Compact/X32 Producer/M32R)",
+  "options": [
+    {
+      "choices": [
+        {
+          "id": "0",
+          "label": "GROUP DCA 1 - 8",
+        },
+        {
+          "id": "1",
+          "label": "BUS 1 - 8",
+        },
+        {
+          "id": "2",
+          "label": "BUS 9 - 16",
+        },
+        {
+          "id": "3",
+          "label": "MATRIX 1 - 6 / MAIN C",
+        },
+        {
+          "id": "4",
+          "label": "CH 1 - 8",
+        },
+        {
+          "id": "5",
+          "label": "CH 9 - 16",
+        },
+        {
+          "id": "6",
+          "label": "CH 17 - 24",
+        },
+        {
+          "id": "7",
+          "label": "CH 25 - 32",
+        },
+        {
+          "id": "8",
+          "label": "AUX IN / USB",
+        },
+        {
+          "id": "9",
+          "label": "FX RTN",
+        },
+      ],
+      "default": "0",
+      "disableAutoExpression": true,
+      "id": "bank",
+      "label": "Bank",
+      "type": "dropdown",
+    },
+  ],
+  "type": "boolean",
+  "unsubscribe": [Function],
+}
+`;
+
+exports[`Feedbacks test > Check Change from selected group bank (X32/M32) (group-bank) 1`] = `
+{
+  "callback": [Function],
+  "defaultStyle": {
+    "bgcolor": 65407,
+    "color": 0,
+  },
+  "description": "If the group bank matches the selected group bank. Please note these will be incorrect if used connected to an X32 Compact/X32 Producer/M32R use the X32 Compact/X32 Producer/M32R feedback instead.",
+  "name": "Change from selected group bank (X32/M32)",
+  "options": [
+    {
+      "choices": [
+        {
+          "id": "0",
+          "label": "GROUP DCA 1 - 8",
+        },
+        {
+          "id": "1",
+          "label": "BUS 1 - 8",
+        },
+        {
+          "id": "2",
+          "label": "BUS 9 - 16",
+        },
+        {
+          "id": "3",
+          "label": "MATRIX 1 - 6 / MAIN C",
+        },
+      ],
+      "default": "0",
+      "disableAutoExpression": true,
+      "id": "bank",
+      "label": "Bank",
+      "type": "dropdown",
+    },
+  ],
+  "type": "boolean",
+  "unsubscribe": [Function],
+}
+`;
+
+exports[`Feedbacks test > Check Change from setup page selected state (setup-page) 1`] = `
+{
+  "callback": [Function],
+  "defaultStyle": {
+    "bgcolor": 65407,
+    "color": 0,
+  },
+  "description": "If setup screen is on and selected page is active",
+  "name": "Change from setup page selected state",
+  "options": [
+    {
+      "choices": [
+        {
+          "id": "0",
+          "label": "GLOBAL",
+        },
+        {
+          "id": "1",
+          "label": "CONFIG",
+        },
+        {
+          "id": "2",
+          "label": "REMOTE",
+        },
+        {
+          "id": "3",
+          "label": "NETWORK",
+        },
+        {
+          "id": "4",
+          "label": "SCRIBBLE STRIPS",
+        },
+        {
+          "id": "5",
+          "label": "PREAMPS",
+        },
+        {
+          "id": "6",
+          "label": "CARD",
+        },
+      ],
+      "default": "0",
+      "disableAutoExpression": true,
+      "id": "page",
+      "label": "page",
+      "type": "dropdown",
+    },
+  ],
+  "type": "boolean",
+  "unsubscribe": [Function],
+}
+`;
+
+exports[`Feedbacks test > Check Change from solo enabled state (solo) 1`] = `
+{
+  "callback": [Function],
+  "defaultStyle": {
+    "bgcolor": 16744192,
+    "color": 0,
+  },
+  "description": "If the solo is on for specified channel",
+  "name": "Change from solo enabled state",
+  "options": [
+    {
+      "allowInvalidValues": true,
+      "choices": [
+        {
+          "id": "channel1",
+          "label": "Channel 1",
+        },
+        {
+          "id": "channel2",
+          "label": "Channel 2",
+        },
+        {
+          "id": "channel3",
+          "label": "Channel 3",
+        },
+        {
+          "id": "channel4",
+          "label": "Channel 4",
+        },
+        {
+          "id": "channel5",
+          "label": "Channel 5",
+        },
+        {
+          "id": "channel6",
+          "label": "Channel 6",
+        },
+        {
+          "id": "channel7",
+          "label": "Channel 7",
+        },
+        {
+          "id": "channel8",
+          "label": "Channel 8",
+        },
+        {
+          "id": "channel9",
+          "label": "Channel 9",
+        },
+        {
+          "id": "channel10",
+          "label": "Channel 10",
+        },
+        {
+          "id": "channel11",
+          "label": "Channel 11",
+        },
+        {
+          "id": "channel12",
+          "label": "Channel 12",
+        },
+        {
+          "id": "channel13",
+          "label": "Channel 13",
+        },
+        {
+          "id": "channel14",
+          "label": "Channel 14",
+        },
+        {
+          "id": "channel15",
+          "label": "Channel 15",
+        },
+        {
+          "id": "channel16",
+          "label": "Channel 16",
+        },
+        {
+          "id": "channel17",
+          "label": "Channel 17",
+        },
+        {
+          "id": "channel18",
+          "label": "Channel 18",
+        },
+        {
+          "id": "channel19",
+          "label": "Channel 19",
+        },
+        {
+          "id": "channel20",
+          "label": "Channel 20",
+        },
+        {
+          "id": "channel21",
+          "label": "Channel 21",
+        },
+        {
+          "id": "channel22",
+          "label": "Channel 22",
+        },
+        {
+          "id": "channel23",
+          "label": "Channel 23",
+        },
+        {
+          "id": "channel24",
+          "label": "Channel 24",
+        },
+        {
+          "id": "channel25",
+          "label": "Channel 25",
+        },
+        {
+          "id": "channel26",
+          "label": "Channel 26",
+        },
+        {
+          "id": "channel27",
+          "label": "Channel 27",
+        },
+        {
+          "id": "channel28",
+          "label": "Channel 28",
+        },
+        {
+          "id": "channel29",
+          "label": "Channel 29",
+        },
+        {
+          "id": "channel30",
+          "label": "Channel 30",
+        },
+        {
+          "id": "channel31",
+          "label": "Channel 31",
+        },
+        {
+          "id": "channel32",
+          "label": "Channel 32",
+        },
+        {
+          "id": "aux1",
+          "label": "Aux In 1",
+        },
+        {
+          "id": "aux2",
+          "label": "Aux In 2",
+        },
+        {
+          "id": "aux3",
+          "label": "Aux In 3",
+        },
+        {
+          "id": "aux4",
+          "label": "Aux In 4",
+        },
+        {
+          "id": "aux5",
+          "label": "Aux In 5",
+        },
+        {
+          "id": "aux6",
+          "label": "Aux In 6",
+        },
+        {
+          "id": "aux7",
+          "label": "Aux In 7",
+        },
+        {
+          "id": "aux8",
+          "label": "Aux In 8",
+        },
+        {
+          "id": "fx1",
+          "label": "FX Return 1 L",
+        },
+        {
+          "id": "fx2",
+          "label": "FX Return 1 R",
+        },
+        {
+          "id": "fx3",
+          "label": "FX Return 2 L",
+        },
+        {
+          "id": "fx4",
+          "label": "FX Return 2 R",
+        },
+        {
+          "id": "fx5",
+          "label": "FX Return 3 L",
+        },
+        {
+          "id": "fx6",
+          "label": "FX Return 3 R",
+        },
+        {
+          "id": "fx7",
+          "label": "FX Return 4 L",
+        },
+        {
+          "id": "fx8",
+          "label": "FX Return 4 R",
+        },
+        {
+          "id": "bus1",
+          "label": "MixBus 1",
+        },
+        {
+          "id": "bus2",
+          "label": "MixBus 2",
+        },
+        {
+          "id": "bus3",
+          "label": "MixBus 3",
+        },
+        {
+          "id": "bus4",
+          "label": "MixBus 4",
+        },
+        {
+          "id": "bus5",
+          "label": "MixBus 5",
+        },
+        {
+          "id": "bus6",
+          "label": "MixBus 6",
+        },
+        {
+          "id": "bus7",
+          "label": "MixBus 7",
+        },
+        {
+          "id": "bus8",
+          "label": "MixBus 8",
+        },
+        {
+          "id": "bus9",
+          "label": "MixBus 9",
+        },
+        {
+          "id": "bus10",
+          "label": "MixBus 10",
+        },
+        {
+          "id": "bus11",
+          "label": "MixBus 11",
+        },
+        {
+          "id": "bus12",
+          "label": "MixBus 12",
+        },
+        {
+          "id": "bus13",
+          "label": "MixBus 13",
+        },
+        {
+          "id": "bus14",
+          "label": "MixBus 14",
+        },
+        {
+          "id": "bus15",
+          "label": "MixBus 15",
+        },
+        {
+          "id": "bus16",
+          "label": "MixBus 16",
+        },
+        {
+          "id": "matrix1",
+          "label": "Matrix 1",
+        },
+        {
+          "id": "matrix2",
+          "label": "Matrix 2",
+        },
+        {
+          "id": "matrix3",
+          "label": "Matrix 3",
+        },
+        {
+          "id": "matrix4",
+          "label": "Matrix 4",
+        },
+        {
+          "id": "matrix5",
+          "label": "Matrix 5",
+        },
+        {
+          "id": "matrix6",
+          "label": "Matrix 6",
+        },
+        {
+          "id": "stereo",
+          "label": "Main Stereo",
+        },
+        {
+          "id": "mono",
+          "label": "Main Mono",
+        },
+        {
+          "id": "dca1",
+          "label": "DCA 1",
+        },
+        {
+          "id": "dca2",
+          "label": "DCA 2",
+        },
+        {
+          "id": "dca3",
+          "label": "DCA 3",
+        },
+        {
+          "id": "dca4",
+          "label": "DCA 4",
+        },
+        {
+          "id": "dca5",
+          "label": "DCA 5",
+        },
+        {
+          "id": "dca6",
+          "label": "DCA 6",
+        },
+        {
+          "id": "dca7",
+          "label": "DCA 7",
+        },
+        {
+          "id": "dca8",
+          "label": "DCA 8",
+        },
+      ],
+      "default": "channel1",
+      "id": "solo",
+      "label": "Target",
+      "type": "dropdown",
+    },
+  ],
+  "type": "boolean",
+  "unsubscribe": [Function],
+}
+`;
+
+exports[`Feedbacks test > Check Change from talkback config of single source (talkback_config_single_source) 1`] = `
+{
+  "callback": [Function],
+  "defaultStyle": {
+    "bgcolor": 16744192,
+    "color": 0,
+  },
+  "description": "If the source is mapped to a talkback destination",
+  "name": "Change from talkback config of single source",
+  "options": [
+    {
+      "choices": [
+        {
+          "id": "A",
+          "label": "A",
+        },
+        {
+          "id": "B",
+          "label": "B",
+        },
+      ],
+      "default": "A",
+      "disableAutoExpression": true,
+      "id": "channel",
+      "label": "Function",
+      "type": "dropdown",
+    },
+    {
+      "allowInvalidValues": true,
+      "choices": [
+        {
+          "id": "bus1",
+          "label": "MixBus 1",
+        },
+        {
+          "id": "bus2",
+          "label": "MixBus 2",
+        },
+        {
+          "id": "bus3",
+          "label": "MixBus 3",
+        },
+        {
+          "id": "bus4",
+          "label": "MixBus 4",
+        },
+        {
+          "id": "bus5",
+          "label": "MixBus 5",
+        },
+        {
+          "id": "bus6",
+          "label": "MixBus 6",
+        },
+        {
+          "id": "bus7",
+          "label": "MixBus 7",
+        },
+        {
+          "id": "bus8",
+          "label": "MixBus 8",
+        },
+        {
+          "id": "bus9",
+          "label": "MixBus 9",
+        },
+        {
+          "id": "bus10",
+          "label": "MixBus 10",
+        },
+        {
+          "id": "bus11",
+          "label": "MixBus 11",
+        },
+        {
+          "id": "bus12",
+          "label": "MixBus 12",
+        },
+        {
+          "id": "bus13",
+          "label": "MixBus 13",
+        },
+        {
+          "id": "bus14",
+          "label": "MixBus 14",
+        },
+        {
+          "id": "bus15",
+          "label": "MixBus 15",
+        },
+        {
+          "id": "bus16",
+          "label": "MixBus 16",
+        },
+        {
+          "id": "stereo",
+          "label": "Main Stereo",
+        },
+        {
+          "id": "mono",
+          "label": "Main Mono",
+        },
+      ],
+      "default": "bus1",
+      "id": "dest",
+      "label": "Destinations",
+      "type": "dropdown",
+    },
+  ],
+  "type": "boolean",
+  "unsubscribe": [Function],
+}
+`;
+
+exports[`Feedbacks test > Check Change from talkback talk state (talkback_talk) 1`] = `
+{
+  "callback": [Function],
+  "defaultStyle": {
+    "bgcolor": 16744192,
+    "color": 0,
+  },
+  "description": "If the specified talkback is on",
+  "name": "Change from talkback talk state",
+  "options": [
+    {
+      "choices": [
+        {
+          "id": "A",
+          "label": "A",
+        },
+        {
+          "id": "B",
+          "label": "B",
+        },
+      ],
+      "default": "A",
+      "disableAutoExpression": true,
+      "id": "channel",
+      "label": "Function",
+      "type": "dropdown",
+    },
+  ],
+  "type": "boolean",
+  "unsubscribe": [Function],
+}
+`;
+
+exports[`Feedbacks test > Check Change from tape operation state (tape) 1`] = `
+{
+  "callback": [Function],
+  "defaultStyle": {
+    "bgcolor": 16711680,
+    "color": 0,
+  },
+  "description": "If the tape state matches",
+  "name": "Change from tape operation state",
+  "options": [
+    {
+      "choices": [
+        {
+          "id": "0",
+          "label": "STOP",
+        },
+        {
+          "id": "1",
+          "label": "PLAY PAUSE",
+        },
+        {
+          "id": "2",
+          "label": "PLAY",
+        },
+        {
+          "id": "3",
+          "label": "RECORD PAUSE",
+        },
+        {
+          "id": "4",
+          "label": "RECORD",
+        },
+        {
+          "id": "5",
+          "label": "FAST FORWARD",
+        },
+        {
+          "id": "6",
+          "label": "REWIND",
+        },
+      ],
+      "default": "0",
+      "disableAutoExpression": true,
+      "id": "tapeFunc",
+      "label": "Function",
+      "type": "dropdown",
+    },
+  ],
+  "type": "boolean",
+  "unsubscribe": [Function],
+}
+`;
+
+exports[`Feedbacks test > Check Change from user in routing state (route-user-in) 1`] = `
+{
+  "callback": [Function],
+  "defaultStyle": {
+    "bgcolor": 16711680,
+    "color": 0,
+  },
+  "description": "If the specified source is routed to the specified destination. Protip: You can use \`Store channel\` with and then select \`FROM STORAGE\` to chain screens",
+  "name": "Change from user in routing state",
+  "options": [
+    {
+      "allowInvalidValues": true,
+      "choices": [
+        {
+          "id": 0,
+          "label": "OFF",
+        },
+        {
+          "id": 1,
+          "label": "Local In 1",
+        },
+        {
+          "id": 2,
+          "label": "Local In 2",
+        },
+        {
+          "id": 3,
+          "label": "Local In 3",
+        },
+        {
+          "id": 4,
+          "label": "Local In 4",
+        },
+        {
+          "id": 5,
+          "label": "Local In 5",
+        },
+        {
+          "id": 6,
+          "label": "Local In 6",
+        },
+        {
+          "id": 7,
+          "label": "Local In 7",
+        },
+        {
+          "id": 8,
+          "label": "Local In 8",
+        },
+        {
+          "id": 9,
+          "label": "Local In 9",
+        },
+        {
+          "id": 10,
+          "label": "Local In 10",
+        },
+        {
+          "id": 11,
+          "label": "Local In 11",
+        },
+        {
+          "id": 12,
+          "label": "Local In 12",
+        },
+        {
+          "id": 13,
+          "label": "Local In 13",
+        },
+        {
+          "id": 14,
+          "label": "Local In 14",
+        },
+        {
+          "id": 15,
+          "label": "Local In 15",
+        },
+        {
+          "id": 16,
+          "label": "Local In 16",
+        },
+        {
+          "id": 17,
+          "label": "Local In 17",
+        },
+        {
+          "id": 18,
+          "label": "Local In 18",
+        },
+        {
+          "id": 19,
+          "label": "Local In 19",
+        },
+        {
+          "id": 20,
+          "label": "Local In 20",
+        },
+        {
+          "id": 21,
+          "label": "Local In 21",
+        },
+        {
+          "id": 22,
+          "label": "Local In 22",
+        },
+        {
+          "id": 23,
+          "label": "Local In 23",
+        },
+        {
+          "id": 24,
+          "label": "Local In 24",
+        },
+        {
+          "id": 25,
+          "label": "Local In 25",
+        },
+        {
+          "id": 26,
+          "label": "Local In 26",
+        },
+        {
+          "id": 27,
+          "label": "Local In 27",
+        },
+        {
+          "id": 28,
+          "label": "Local In 28",
+        },
+        {
+          "id": 29,
+          "label": "Local In 29",
+        },
+        {
+          "id": 30,
+          "label": "Local In 30",
+        },
+        {
+          "id": 31,
+          "label": "Local In 31",
+        },
+        {
+          "id": 32,
+          "label": "Local In 32",
+        },
+        {
+          "id": 33,
+          "label": "AES50-A 1",
+        },
+        {
+          "id": 34,
+          "label": "AES50-A 2",
+        },
+        {
+          "id": 35,
+          "label": "AES50-A 3",
+        },
+        {
+          "id": 36,
+          "label": "AES50-A 4",
+        },
+        {
+          "id": 37,
+          "label": "AES50-A 5",
+        },
+        {
+          "id": 38,
+          "label": "AES50-A 6",
+        },
+        {
+          "id": 39,
+          "label": "AES50-A 7",
+        },
+        {
+          "id": 40,
+          "label": "AES50-A 8",
+        },
+        {
+          "id": 41,
+          "label": "AES50-A 9",
+        },
+        {
+          "id": 42,
+          "label": "AES50-A 10",
+        },
+        {
+          "id": 43,
+          "label": "AES50-A 11",
+        },
+        {
+          "id": 44,
+          "label": "AES50-A 12",
+        },
+        {
+          "id": 45,
+          "label": "AES50-A 13",
+        },
+        {
+          "id": 46,
+          "label": "AES50-A 14",
+        },
+        {
+          "id": 47,
+          "label": "AES50-A 15",
+        },
+        {
+          "id": 48,
+          "label": "AES50-A 16",
+        },
+        {
+          "id": 49,
+          "label": "AES50-A 17",
+        },
+        {
+          "id": 50,
+          "label": "AES50-A 18",
+        },
+        {
+          "id": 51,
+          "label": "AES50-A 19",
+        },
+        {
+          "id": 52,
+          "label": "AES50-A 20",
+        },
+        {
+          "id": 53,
+          "label": "AES50-A 21",
+        },
+        {
+          "id": 54,
+          "label": "AES50-A 22",
+        },
+        {
+          "id": 55,
+          "label": "AES50-A 23",
+        },
+        {
+          "id": 56,
+          "label": "AES50-A 24",
+        },
+        {
+          "id": 57,
+          "label": "AES50-A 25",
+        },
+        {
+          "id": 58,
+          "label": "AES50-A 26",
+        },
+        {
+          "id": 59,
+          "label": "AES50-A 27",
+        },
+        {
+          "id": 60,
+          "label": "AES50-A 28",
+        },
+        {
+          "id": 61,
+          "label": "AES50-A 29",
+        },
+        {
+          "id": 62,
+          "label": "AES50-A 30",
+        },
+        {
+          "id": 63,
+          "label": "AES50-A 31",
+        },
+        {
+          "id": 64,
+          "label": "AES50-A 32",
+        },
+        {
+          "id": 65,
+          "label": "AES50-A 33",
+        },
+        {
+          "id": 66,
+          "label": "AES50-A 34",
+        },
+        {
+          "id": 67,
+          "label": "AES50-A 35",
+        },
+        {
+          "id": 68,
+          "label": "AES50-A 36",
+        },
+        {
+          "id": 69,
+          "label": "AES50-A 37",
+        },
+        {
+          "id": 70,
+          "label": "AES50-A 38",
+        },
+        {
+          "id": 71,
+          "label": "AES50-A 39",
+        },
+        {
+          "id": 72,
+          "label": "AES50-A 40",
+        },
+        {
+          "id": 73,
+          "label": "AES50-A 41",
+        },
+        {
+          "id": 74,
+          "label": "AES50-A 42",
+        },
+        {
+          "id": 75,
+          "label": "AES50-A 43",
+        },
+        {
+          "id": 76,
+          "label": "AES50-A 44",
+        },
+        {
+          "id": 77,
+          "label": "AES50-A 45",
+        },
+        {
+          "id": 78,
+          "label": "AES50-A 46",
+        },
+        {
+          "id": 79,
+          "label": "AES50-A 47",
+        },
+        {
+          "id": 80,
+          "label": "AES50-A 48",
+        },
+        {
+          "id": 81,
+          "label": "AES50-B 1",
+        },
+        {
+          "id": 82,
+          "label": "AES50-B 2",
+        },
+        {
+          "id": 83,
+          "label": "AES50-B 3",
+        },
+        {
+          "id": 84,
+          "label": "AES50-B 4",
+        },
+        {
+          "id": 85,
+          "label": "AES50-B 5",
+        },
+        {
+          "id": 86,
+          "label": "AES50-B 6",
+        },
+        {
+          "id": 87,
+          "label": "AES50-B 7",
+        },
+        {
+          "id": 88,
+          "label": "AES50-B 8",
+        },
+        {
+          "id": 89,
+          "label": "AES50-B 9",
+        },
+        {
+          "id": 90,
+          "label": "AES50-B 10",
+        },
+        {
+          "id": 91,
+          "label": "AES50-B 11",
+        },
+        {
+          "id": 92,
+          "label": "AES50-B 12",
+        },
+        {
+          "id": 93,
+          "label": "AES50-B 13",
+        },
+        {
+          "id": 94,
+          "label": "AES50-B 14",
+        },
+        {
+          "id": 95,
+          "label": "AES50-B 15",
+        },
+        {
+          "id": 96,
+          "label": "AES50-B 16",
+        },
+        {
+          "id": 97,
+          "label": "AES50-B 17",
+        },
+        {
+          "id": 98,
+          "label": "AES50-B 18",
+        },
+        {
+          "id": 99,
+          "label": "AES50-B 19",
+        },
+        {
+          "id": 100,
+          "label": "AES50-B 20",
+        },
+        {
+          "id": 101,
+          "label": "AES50-B 21",
+        },
+        {
+          "id": 102,
+          "label": "AES50-B 22",
+        },
+        {
+          "id": 103,
+          "label": "AES50-B 23",
+        },
+        {
+          "id": 104,
+          "label": "AES50-B 24",
+        },
+        {
+          "id": 105,
+          "label": "AES50-B 25",
+        },
+        {
+          "id": 106,
+          "label": "AES50-B 26",
+        },
+        {
+          "id": 107,
+          "label": "AES50-B 27",
+        },
+        {
+          "id": 108,
+          "label": "AES50-B 28",
+        },
+        {
+          "id": 109,
+          "label": "AES50-B 29",
+        },
+        {
+          "id": 110,
+          "label": "AES50-B 30",
+        },
+        {
+          "id": 111,
+          "label": "AES50-B 31",
+        },
+        {
+          "id": 112,
+          "label": "AES50-B 32",
+        },
+        {
+          "id": 113,
+          "label": "AES50-B 33",
+        },
+        {
+          "id": 114,
+          "label": "AES50-B 34",
+        },
+        {
+          "id": 115,
+          "label": "AES50-B 35",
+        },
+        {
+          "id": 116,
+          "label": "AES50-B 36",
+        },
+        {
+          "id": 117,
+          "label": "AES50-B 37",
+        },
+        {
+          "id": 118,
+          "label": "AES50-B 38",
+        },
+        {
+          "id": 119,
+          "label": "AES50-B 39",
+        },
+        {
+          "id": 120,
+          "label": "AES50-B 40",
+        },
+        {
+          "id": 121,
+          "label": "AES50-B 41",
+        },
+        {
+          "id": 122,
+          "label": "AES50-B 42",
+        },
+        {
+          "id": 123,
+          "label": "AES50-B 43",
+        },
+        {
+          "id": 124,
+          "label": "AES50-B 44",
+        },
+        {
+          "id": 125,
+          "label": "AES50-B 45",
+        },
+        {
+          "id": 126,
+          "label": "AES50-B 46",
+        },
+        {
+          "id": 127,
+          "label": "AES50-B 47",
+        },
+        {
+          "id": 128,
+          "label": "AES50-B 48",
+        },
+        {
+          "id": 129,
+          "label": "Card In 1",
+        },
+        {
+          "id": 130,
+          "label": "Card In 2",
+        },
+        {
+          "id": 131,
+          "label": "Card In 3",
+        },
+        {
+          "id": 132,
+          "label": "Card In 4",
+        },
+        {
+          "id": 133,
+          "label": "Card In 5",
+        },
+        {
+          "id": 134,
+          "label": "Card In 6",
+        },
+        {
+          "id": 135,
+          "label": "Card In 7",
+        },
+        {
+          "id": 136,
+          "label": "Card In 8",
+        },
+        {
+          "id": 137,
+          "label": "Card In 9",
+        },
+        {
+          "id": 138,
+          "label": "Card In 10",
+        },
+        {
+          "id": 139,
+          "label": "Card In 11",
+        },
+        {
+          "id": 140,
+          "label": "Card In 12",
+        },
+        {
+          "id": 141,
+          "label": "Card In 13",
+        },
+        {
+          "id": 142,
+          "label": "Card In 14",
+        },
+        {
+          "id": 143,
+          "label": "Card In 15",
+        },
+        {
+          "id": 144,
+          "label": "Card In 16",
+        },
+        {
+          "id": 145,
+          "label": "Card In 17",
+        },
+        {
+          "id": 146,
+          "label": "Card In 18",
+        },
+        {
+          "id": 147,
+          "label": "Card In 19",
+        },
+        {
+          "id": 148,
+          "label": "Card In 20",
+        },
+        {
+          "id": 149,
+          "label": "Card In 21",
+        },
+        {
+          "id": 150,
+          "label": "Card In 22",
+        },
+        {
+          "id": 151,
+          "label": "Card In 23",
+        },
+        {
+          "id": 152,
+          "label": "Card In 24",
+        },
+        {
+          "id": 153,
+          "label": "Card In 25",
+        },
+        {
+          "id": 154,
+          "label": "Card In 26",
+        },
+        {
+          "id": 155,
+          "label": "Card In 27",
+        },
+        {
+          "id": 156,
+          "label": "Card In 28",
+        },
+        {
+          "id": 157,
+          "label": "Card In 29",
+        },
+        {
+          "id": 158,
+          "label": "Card In 30",
+        },
+        {
+          "id": 159,
+          "label": "Card In 31",
+        },
+        {
+          "id": 160,
+          "label": "Card In 32",
+        },
+        {
+          "id": 161,
+          "label": "Aux In 1",
+        },
+        {
+          "id": 162,
+          "label": "Aux In 2",
+        },
+        {
+          "id": 163,
+          "label": "Aux In 3",
+        },
+        {
+          "id": 164,
+          "label": "Aux In 4",
+        },
+        {
+          "id": 165,
+          "label": "Aux In 5",
+        },
+        {
+          "id": 166,
+          "label": "Aux In 6",
+        },
+        {
+          "id": 167,
+          "label": "Talkback Internal",
+        },
+        {
+          "id": 168,
+          "label": "Talkback External",
+        },
+      ],
+      "default": 0,
+      "id": "source",
+      "label": "source",
+      "type": "dropdown",
+    },
+    {
+      "allowInvalidValues": true,
+      "choices": [
+        {
+          "id": -1,
+          "label": "STORED CHANNEL",
+        },
+        {
+          "id": 1,
+          "label": "CH 1",
+        },
+        {
+          "id": 2,
+          "label": "CH 2",
+        },
+        {
+          "id": 3,
+          "label": "CH 3",
+        },
+        {
+          "id": 4,
+          "label": "CH 4",
+        },
+        {
+          "id": 5,
+          "label": "CH 5",
+        },
+        {
+          "id": 6,
+          "label": "CH 6",
+        },
+        {
+          "id": 7,
+          "label": "CH 7",
+        },
+        {
+          "id": 8,
+          "label": "CH 8",
+        },
+        {
+          "id": 9,
+          "label": "CH 9",
+        },
+        {
+          "id": 10,
+          "label": "CH 10",
+        },
+        {
+          "id": 11,
+          "label": "CH 11",
+        },
+        {
+          "id": 12,
+          "label": "CH 12",
+        },
+        {
+          "id": 13,
+          "label": "CH 13",
+        },
+        {
+          "id": 14,
+          "label": "CH 14",
+        },
+        {
+          "id": 15,
+          "label": "CH 15",
+        },
+        {
+          "id": 16,
+          "label": "CH 16",
+        },
+        {
+          "id": 17,
+          "label": "CH 17",
+        },
+        {
+          "id": 18,
+          "label": "CH 18",
+        },
+        {
+          "id": 19,
+          "label": "CH 19",
+        },
+        {
+          "id": 20,
+          "label": "CH 20",
+        },
+        {
+          "id": 21,
+          "label": "CH 21",
+        },
+        {
+          "id": 22,
+          "label": "CH 22",
+        },
+        {
+          "id": 23,
+          "label": "CH 23",
+        },
+        {
+          "id": 24,
+          "label": "CH 24",
+        },
+        {
+          "id": 25,
+          "label": "CH 25",
+        },
+        {
+          "id": 26,
+          "label": "CH 26",
+        },
+        {
+          "id": 27,
+          "label": "CH 27",
+        },
+        {
+          "id": 28,
+          "label": "CH 28",
+        },
+        {
+          "id": 29,
+          "label": "CH 29",
+        },
+        {
+          "id": 30,
+          "label": "CH 30",
+        },
+        {
+          "id": 31,
+          "label": "CH 31",
+        },
+        {
+          "id": 32,
+          "label": "CH 32",
+        },
+      ],
+      "default": 1,
+      "id": "channel",
+      "label": "destination channel",
+      "type": "dropdown",
+    },
+  ],
+  "type": "boolean",
+  "unsubscribe": [Function],
+}
+`;
+
+exports[`Feedbacks test > Check Change from user out routing state (route-user-out) 1`] = `
+{
+  "callback": [Function],
+  "defaultStyle": {
+    "bgcolor": 16711680,
+    "color": 0,
+  },
+  "description": "If the specified source is routed to the specified destination. Protip: You can use \`Store channel\` with and then select \`FROM STORAGE\` to chain screens",
+  "name": "Change from user out routing state",
+  "options": [
+    {
+      "allowInvalidValues": true,
+      "choices": [
+        {
+          "id": 0,
+          "label": "OFF",
+        },
+        {
+          "id": 1,
+          "label": "Local In 1",
+        },
+        {
+          "id": 2,
+          "label": "Local In 2",
+        },
+        {
+          "id": 3,
+          "label": "Local In 3",
+        },
+        {
+          "id": 4,
+          "label": "Local In 4",
+        },
+        {
+          "id": 5,
+          "label": "Local In 5",
+        },
+        {
+          "id": 6,
+          "label": "Local In 6",
+        },
+        {
+          "id": 7,
+          "label": "Local In 7",
+        },
+        {
+          "id": 8,
+          "label": "Local In 8",
+        },
+        {
+          "id": 9,
+          "label": "Local In 9",
+        },
+        {
+          "id": 10,
+          "label": "Local In 10",
+        },
+        {
+          "id": 11,
+          "label": "Local In 11",
+        },
+        {
+          "id": 12,
+          "label": "Local In 12",
+        },
+        {
+          "id": 13,
+          "label": "Local In 13",
+        },
+        {
+          "id": 14,
+          "label": "Local In 14",
+        },
+        {
+          "id": 15,
+          "label": "Local In 15",
+        },
+        {
+          "id": 16,
+          "label": "Local In 16",
+        },
+        {
+          "id": 17,
+          "label": "Local In 17",
+        },
+        {
+          "id": 18,
+          "label": "Local In 18",
+        },
+        {
+          "id": 19,
+          "label": "Local In 19",
+        },
+        {
+          "id": 20,
+          "label": "Local In 20",
+        },
+        {
+          "id": 21,
+          "label": "Local In 21",
+        },
+        {
+          "id": 22,
+          "label": "Local In 22",
+        },
+        {
+          "id": 23,
+          "label": "Local In 23",
+        },
+        {
+          "id": 24,
+          "label": "Local In 24",
+        },
+        {
+          "id": 25,
+          "label": "Local In 25",
+        },
+        {
+          "id": 26,
+          "label": "Local In 26",
+        },
+        {
+          "id": 27,
+          "label": "Local In 27",
+        },
+        {
+          "id": 28,
+          "label": "Local In 28",
+        },
+        {
+          "id": 29,
+          "label": "Local In 29",
+        },
+        {
+          "id": 30,
+          "label": "Local In 30",
+        },
+        {
+          "id": 31,
+          "label": "Local In 31",
+        },
+        {
+          "id": 32,
+          "label": "Local In 32",
+        },
+        {
+          "id": 33,
+          "label": "AES50-A 1",
+        },
+        {
+          "id": 34,
+          "label": "AES50-A 2",
+        },
+        {
+          "id": 35,
+          "label": "AES50-A 3",
+        },
+        {
+          "id": 36,
+          "label": "AES50-A 4",
+        },
+        {
+          "id": 37,
+          "label": "AES50-A 5",
+        },
+        {
+          "id": 38,
+          "label": "AES50-A 6",
+        },
+        {
+          "id": 39,
+          "label": "AES50-A 7",
+        },
+        {
+          "id": 40,
+          "label": "AES50-A 8",
+        },
+        {
+          "id": 41,
+          "label": "AES50-A 9",
+        },
+        {
+          "id": 42,
+          "label": "AES50-A 10",
+        },
+        {
+          "id": 43,
+          "label": "AES50-A 11",
+        },
+        {
+          "id": 44,
+          "label": "AES50-A 12",
+        },
+        {
+          "id": 45,
+          "label": "AES50-A 13",
+        },
+        {
+          "id": 46,
+          "label": "AES50-A 14",
+        },
+        {
+          "id": 47,
+          "label": "AES50-A 15",
+        },
+        {
+          "id": 48,
+          "label": "AES50-A 16",
+        },
+        {
+          "id": 49,
+          "label": "AES50-A 17",
+        },
+        {
+          "id": 50,
+          "label": "AES50-A 18",
+        },
+        {
+          "id": 51,
+          "label": "AES50-A 19",
+        },
+        {
+          "id": 52,
+          "label": "AES50-A 20",
+        },
+        {
+          "id": 53,
+          "label": "AES50-A 21",
+        },
+        {
+          "id": 54,
+          "label": "AES50-A 22",
+        },
+        {
+          "id": 55,
+          "label": "AES50-A 23",
+        },
+        {
+          "id": 56,
+          "label": "AES50-A 24",
+        },
+        {
+          "id": 57,
+          "label": "AES50-A 25",
+        },
+        {
+          "id": 58,
+          "label": "AES50-A 26",
+        },
+        {
+          "id": 59,
+          "label": "AES50-A 27",
+        },
+        {
+          "id": 60,
+          "label": "AES50-A 28",
+        },
+        {
+          "id": 61,
+          "label": "AES50-A 29",
+        },
+        {
+          "id": 62,
+          "label": "AES50-A 30",
+        },
+        {
+          "id": 63,
+          "label": "AES50-A 31",
+        },
+        {
+          "id": 64,
+          "label": "AES50-A 32",
+        },
+        {
+          "id": 65,
+          "label": "AES50-A 33",
+        },
+        {
+          "id": 66,
+          "label": "AES50-A 34",
+        },
+        {
+          "id": 67,
+          "label": "AES50-A 35",
+        },
+        {
+          "id": 68,
+          "label": "AES50-A 36",
+        },
+        {
+          "id": 69,
+          "label": "AES50-A 37",
+        },
+        {
+          "id": 70,
+          "label": "AES50-A 38",
+        },
+        {
+          "id": 71,
+          "label": "AES50-A 39",
+        },
+        {
+          "id": 72,
+          "label": "AES50-A 40",
+        },
+        {
+          "id": 73,
+          "label": "AES50-A 41",
+        },
+        {
+          "id": 74,
+          "label": "AES50-A 42",
+        },
+        {
+          "id": 75,
+          "label": "AES50-A 43",
+        },
+        {
+          "id": 76,
+          "label": "AES50-A 44",
+        },
+        {
+          "id": 77,
+          "label": "AES50-A 45",
+        },
+        {
+          "id": 78,
+          "label": "AES50-A 46",
+        },
+        {
+          "id": 79,
+          "label": "AES50-A 47",
+        },
+        {
+          "id": 80,
+          "label": "AES50-A 48",
+        },
+        {
+          "id": 81,
+          "label": "AES50-B 1",
+        },
+        {
+          "id": 82,
+          "label": "AES50-B 2",
+        },
+        {
+          "id": 83,
+          "label": "AES50-B 3",
+        },
+        {
+          "id": 84,
+          "label": "AES50-B 4",
+        },
+        {
+          "id": 85,
+          "label": "AES50-B 5",
+        },
+        {
+          "id": 86,
+          "label": "AES50-B 6",
+        },
+        {
+          "id": 87,
+          "label": "AES50-B 7",
+        },
+        {
+          "id": 88,
+          "label": "AES50-B 8",
+        },
+        {
+          "id": 89,
+          "label": "AES50-B 9",
+        },
+        {
+          "id": 90,
+          "label": "AES50-B 10",
+        },
+        {
+          "id": 91,
+          "label": "AES50-B 11",
+        },
+        {
+          "id": 92,
+          "label": "AES50-B 12",
+        },
+        {
+          "id": 93,
+          "label": "AES50-B 13",
+        },
+        {
+          "id": 94,
+          "label": "AES50-B 14",
+        },
+        {
+          "id": 95,
+          "label": "AES50-B 15",
+        },
+        {
+          "id": 96,
+          "label": "AES50-B 16",
+        },
+        {
+          "id": 97,
+          "label": "AES50-B 17",
+        },
+        {
+          "id": 98,
+          "label": "AES50-B 18",
+        },
+        {
+          "id": 99,
+          "label": "AES50-B 19",
+        },
+        {
+          "id": 100,
+          "label": "AES50-B 20",
+        },
+        {
+          "id": 101,
+          "label": "AES50-B 21",
+        },
+        {
+          "id": 102,
+          "label": "AES50-B 22",
+        },
+        {
+          "id": 103,
+          "label": "AES50-B 23",
+        },
+        {
+          "id": 104,
+          "label": "AES50-B 24",
+        },
+        {
+          "id": 105,
+          "label": "AES50-B 25",
+        },
+        {
+          "id": 106,
+          "label": "AES50-B 26",
+        },
+        {
+          "id": 107,
+          "label": "AES50-B 27",
+        },
+        {
+          "id": 108,
+          "label": "AES50-B 28",
+        },
+        {
+          "id": 109,
+          "label": "AES50-B 29",
+        },
+        {
+          "id": 110,
+          "label": "AES50-B 30",
+        },
+        {
+          "id": 111,
+          "label": "AES50-B 31",
+        },
+        {
+          "id": 112,
+          "label": "AES50-B 32",
+        },
+        {
+          "id": 113,
+          "label": "AES50-B 33",
+        },
+        {
+          "id": 114,
+          "label": "AES50-B 34",
+        },
+        {
+          "id": 115,
+          "label": "AES50-B 35",
+        },
+        {
+          "id": 116,
+          "label": "AES50-B 36",
+        },
+        {
+          "id": 117,
+          "label": "AES50-B 37",
+        },
+        {
+          "id": 118,
+          "label": "AES50-B 38",
+        },
+        {
+          "id": 119,
+          "label": "AES50-B 39",
+        },
+        {
+          "id": 120,
+          "label": "AES50-B 40",
+        },
+        {
+          "id": 121,
+          "label": "AES50-B 41",
+        },
+        {
+          "id": 122,
+          "label": "AES50-B 42",
+        },
+        {
+          "id": 123,
+          "label": "AES50-B 43",
+        },
+        {
+          "id": 124,
+          "label": "AES50-B 44",
+        },
+        {
+          "id": 125,
+          "label": "AES50-B 45",
+        },
+        {
+          "id": 126,
+          "label": "AES50-B 46",
+        },
+        {
+          "id": 127,
+          "label": "AES50-B 47",
+        },
+        {
+          "id": 128,
+          "label": "AES50-B 48",
+        },
+        {
+          "id": 129,
+          "label": "Card In 1",
+        },
+        {
+          "id": 130,
+          "label": "Card In 2",
+        },
+        {
+          "id": 131,
+          "label": "Card In 3",
+        },
+        {
+          "id": 132,
+          "label": "Card In 4",
+        },
+        {
+          "id": 133,
+          "label": "Card In 5",
+        },
+        {
+          "id": 134,
+          "label": "Card In 6",
+        },
+        {
+          "id": 135,
+          "label": "Card In 7",
+        },
+        {
+          "id": 136,
+          "label": "Card In 8",
+        },
+        {
+          "id": 137,
+          "label": "Card In 9",
+        },
+        {
+          "id": 138,
+          "label": "Card In 10",
+        },
+        {
+          "id": 139,
+          "label": "Card In 11",
+        },
+        {
+          "id": 140,
+          "label": "Card In 12",
+        },
+        {
+          "id": 141,
+          "label": "Card In 13",
+        },
+        {
+          "id": 142,
+          "label": "Card In 14",
+        },
+        {
+          "id": 143,
+          "label": "Card In 15",
+        },
+        {
+          "id": 144,
+          "label": "Card In 16",
+        },
+        {
+          "id": 145,
+          "label": "Card In 17",
+        },
+        {
+          "id": 146,
+          "label": "Card In 18",
+        },
+        {
+          "id": 147,
+          "label": "Card In 19",
+        },
+        {
+          "id": 148,
+          "label": "Card In 20",
+        },
+        {
+          "id": 149,
+          "label": "Card In 21",
+        },
+        {
+          "id": 150,
+          "label": "Card In 22",
+        },
+        {
+          "id": 151,
+          "label": "Card In 23",
+        },
+        {
+          "id": 152,
+          "label": "Card In 24",
+        },
+        {
+          "id": 153,
+          "label": "Card In 25",
+        },
+        {
+          "id": 154,
+          "label": "Card In 26",
+        },
+        {
+          "id": 155,
+          "label": "Card In 27",
+        },
+        {
+          "id": 156,
+          "label": "Card In 28",
+        },
+        {
+          "id": 157,
+          "label": "Card In 29",
+        },
+        {
+          "id": 158,
+          "label": "Card In 30",
+        },
+        {
+          "id": 159,
+          "label": "Card In 31",
+        },
+        {
+          "id": 160,
+          "label": "Card In 32",
+        },
+        {
+          "id": 161,
+          "label": "Aux In 1",
+        },
+        {
+          "id": 162,
+          "label": "Aux In 2",
+        },
+        {
+          "id": 163,
+          "label": "Aux In 3",
+        },
+        {
+          "id": 164,
+          "label": "Aux In 4",
+        },
+        {
+          "id": 165,
+          "label": "Aux In 5",
+        },
+        {
+          "id": 166,
+          "label": "Aux In 6",
+        },
+        {
+          "id": 167,
+          "label": "Talkback Internal",
+        },
+        {
+          "id": 168,
+          "label": "Talkback External",
+        },
+        {
+          "id": 169,
+          "label": "Out 1",
+        },
+        {
+          "id": 170,
+          "label": "Out 2",
+        },
+        {
+          "id": 171,
+          "label": "Out 3",
+        },
+        {
+          "id": 172,
+          "label": "Out 4",
+        },
+        {
+          "id": 173,
+          "label": "Out 5",
+        },
+        {
+          "id": 174,
+          "label": "Out 6",
+        },
+        {
+          "id": 175,
+          "label": "Out 7",
+        },
+        {
+          "id": 176,
+          "label": "Out 8",
+        },
+        {
+          "id": 177,
+          "label": "Out 9",
+        },
+        {
+          "id": 178,
+          "label": "Out 10",
+        },
+        {
+          "id": 179,
+          "label": "Out 11",
+        },
+        {
+          "id": 180,
+          "label": "Out 12",
+        },
+        {
+          "id": 181,
+          "label": "Out 13",
+        },
+        {
+          "id": 182,
+          "label": "Out 14",
+        },
+        {
+          "id": 183,
+          "label": "Out 15",
+        },
+        {
+          "id": 184,
+          "label": "Out 16",
+        },
+        {
+          "id": 185,
+          "label": "Ultranet 1",
+        },
+        {
+          "id": 186,
+          "label": "Ultranet 2",
+        },
+        {
+          "id": 187,
+          "label": "Ultranet 3",
+        },
+        {
+          "id": 188,
+          "label": "Ultranet 4",
+        },
+        {
+          "id": 189,
+          "label": "Ultranet 5",
+        },
+        {
+          "id": 190,
+          "label": "Ultranet 6",
+        },
+        {
+          "id": 191,
+          "label": "Ultranet 7",
+        },
+        {
+          "id": 192,
+          "label": "Ultranet 8",
+        },
+        {
+          "id": 193,
+          "label": "Ultranet 9",
+        },
+        {
+          "id": 194,
+          "label": "Ultranet 10",
+        },
+        {
+          "id": 195,
+          "label": "Ultranet 11",
+        },
+        {
+          "id": 196,
+          "label": "Ultranet 12",
+        },
+        {
+          "id": 197,
+          "label": "Ultranet 13",
+        },
+        {
+          "id": 198,
+          "label": "Ultranet 14",
+        },
+        {
+          "id": 199,
+          "label": "Ultranet 15",
+        },
+        {
+          "id": 200,
+          "label": "Ultranet 16",
+        },
+        {
+          "id": 201,
+          "label": "Aux Out 1",
+        },
+        {
+          "id": 202,
+          "label": "Aux Out 2",
+        },
+        {
+          "id": 203,
+          "label": "Aux Out 3",
+        },
+        {
+          "id": 204,
+          "label": "Aux Out 4",
+        },
+        {
+          "id": 205,
+          "label": "Aux Out 5",
+        },
+        {
+          "id": 206,
+          "label": "Aux Out 6",
+        },
+        {
+          "id": 207,
+          "label": "Monitor L",
+        },
+        {
+          "id": 208,
+          "label": "Monitor R",
+        },
+      ],
+      "default": 0,
+      "id": "source",
+      "label": "source",
+      "type": "dropdown",
+    },
+    {
+      "allowInvalidValues": true,
+      "choices": [
+        {
+          "id": -1,
+          "label": "STORED CHANNEL",
+        },
+        {
+          "id": 1,
+          "label": "OUT 1",
+        },
+        {
+          "id": 2,
+          "label": "OUT 2",
+        },
+        {
+          "id": 3,
+          "label": "OUT 3",
+        },
+        {
+          "id": 4,
+          "label": "OUT 4",
+        },
+        {
+          "id": 5,
+          "label": "OUT 5",
+        },
+        {
+          "id": 6,
+          "label": "OUT 6",
+        },
+        {
+          "id": 7,
+          "label": "OUT 7",
+        },
+        {
+          "id": 8,
+          "label": "OUT 8",
+        },
+        {
+          "id": 9,
+          "label": "OUT 9",
+        },
+        {
+          "id": 10,
+          "label": "OUT 10",
+        },
+        {
+          "id": 11,
+          "label": "OUT 11",
+        },
+        {
+          "id": 12,
+          "label": "OUT 12",
+        },
+        {
+          "id": 13,
+          "label": "OUT 13",
+        },
+        {
+          "id": 14,
+          "label": "OUT 14",
+        },
+        {
+          "id": 15,
+          "label": "OUT 15",
+        },
+        {
+          "id": 16,
+          "label": "OUT 16",
+        },
+        {
+          "id": 17,
+          "label": "OUT 17",
+        },
+        {
+          "id": 18,
+          "label": "OUT 18",
+        },
+        {
+          "id": 19,
+          "label": "OUT 19",
+        },
+        {
+          "id": 20,
+          "label": "OUT 20",
+        },
+        {
+          "id": 21,
+          "label": "OUT 21",
+        },
+        {
+          "id": 22,
+          "label": "OUT 22",
+        },
+        {
+          "id": 23,
+          "label": "OUT 23",
+        },
+        {
+          "id": 24,
+          "label": "OUT 24",
+        },
+        {
+          "id": 25,
+          "label": "OUT 25",
+        },
+        {
+          "id": 26,
+          "label": "OUT 26",
+        },
+        {
+          "id": 27,
+          "label": "OUT 27",
+        },
+        {
+          "id": 28,
+          "label": "OUT 28",
+        },
+        {
+          "id": 29,
+          "label": "OUT 29",
+        },
+        {
+          "id": 30,
+          "label": "OUT 30",
+        },
+        {
+          "id": 31,
+          "label": "OUT 31",
+        },
+        {
+          "id": 32,
+          "label": "OUT 32",
+        },
+        {
+          "id": 33,
+          "label": "OUT 33",
+        },
+        {
+          "id": 34,
+          "label": "OUT 34",
+        },
+        {
+          "id": 35,
+          "label": "OUT 35",
+        },
+        {
+          "id": 36,
+          "label": "OUT 36",
+        },
+        {
+          "id": 37,
+          "label": "OUT 37",
+        },
+        {
+          "id": 38,
+          "label": "OUT 38",
+        },
+        {
+          "id": 39,
+          "label": "OUT 39",
+        },
+        {
+          "id": 40,
+          "label": "OUT 40",
+        },
+        {
+          "id": 41,
+          "label": "OUT 41",
+        },
+        {
+          "id": 42,
+          "label": "OUT 42",
+        },
+        {
+          "id": 43,
+          "label": "OUT 43",
+        },
+        {
+          "id": 44,
+          "label": "OUT 44",
+        },
+        {
+          "id": 45,
+          "label": "OUT 45",
+        },
+        {
+          "id": 46,
+          "label": "OUT 46",
+        },
+        {
+          "id": 47,
+          "label": "OUT 47",
+        },
+        {
+          "id": 48,
+          "label": "OUT 48",
+        },
+      ],
+      "default": 1,
+      "id": "channel",
+      "label": "destination output",
+      "type": "dropdown",
+    },
+  ],
+  "type": "boolean",
+  "unsubscribe": [Function],
+}
+`;
+
+exports[`Feedbacks test > Check Input block routing mode (route-input-block-mode) 1`] = `
+{
+  "callback": [Function],
+  "defaultStyle": {
+    "bgcolor": 32767,
+    "color": 0,
+  },
+  "description": "If the specified mode is active",
+  "name": "Input block routing mode",
+  "options": [
+    {
+      "choices": [
+        {
+          "id": 0,
+          "label": "RECORD",
+        },
+        {
+          "id": 1,
+          "label": "PLAY",
+        },
+      ],
+      "default": 0,
+      "disableAutoExpression": true,
+      "id": "mode",
+      "label": "Input mode",
+      "type": "dropdown",
+    },
+  ],
+  "type": "boolean",
+  "unsubscribe": [Function],
+}
+`;
+
+exports[`Feedbacks test > Check Input block routing state (route-input-blocks) 1`] = `
+{
+  "callback": [Function],
+  "defaultStyle": {
+    "bgcolor": 16711680,
+    "color": 0,
+  },
+  "description": "If the specified block is routed to the specified destination",
+  "name": "Input block routing state",
+  "options": [
+    {
+      "choices": [
+        {
+          "id": "IN",
+          "label": "RECORD",
+        },
+        {
+          "id": "PLAY",
+          "label": "PLAY",
+        },
+      ],
+      "default": "IN",
+      "disableAutoExpression": true,
+      "id": "mode",
+      "label": "Input mode",
+      "type": "dropdown",
+    },
+    {
+      "allowInvalidValues": true,
+      "choices": [
+        {
+          "id": "1-8",
+          "label": "1-8",
+        },
+        {
+          "id": "9-16",
+          "label": "9-16",
+        },
+        {
+          "id": "17-24",
+          "label": "17-24",
+        },
+        {
+          "id": "25-32",
+          "label": "25-32",
+        },
+      ],
+      "default": "1-8",
+      "id": "block",
+      "label": "Input block",
+      "type": "dropdown",
+    },
+    {
+      "allowInvalidValues": true,
+      "choices": [
+        {
+          "id": 0,
+          "label": "Local 1-8",
+        },
+        {
+          "id": 1,
+          "label": "Local 9-16",
+        },
+        {
+          "id": 2,
+          "label": "Local 17-24",
+        },
+        {
+          "id": 3,
+          "label": "Local 25-32",
+        },
+        {
+          "id": 4,
+          "label": "A 1-8",
+        },
+        {
+          "id": 5,
+          "label": "A 9-16",
+        },
+        {
+          "id": 6,
+          "label": "A 17-24",
+        },
+        {
+          "id": 7,
+          "label": "A 25-32",
+        },
+        {
+          "id": 8,
+          "label": "A 33-40",
+        },
+        {
+          "id": 9,
+          "label": "A 41-48",
+        },
+        {
+          "id": 10,
+          "label": "B 1-8",
+        },
+        {
+          "id": 11,
+          "label": "B 9-16",
+        },
+        {
+          "id": 12,
+          "label": "B 17-24",
+        },
+        {
+          "id": 13,
+          "label": "B 25-32",
+        },
+        {
+          "id": 14,
+          "label": "B 33-40",
+        },
+        {
+          "id": 15,
+          "label": "B 41-48",
+        },
+        {
+          "id": 16,
+          "label": "Card 1-8",
+        },
+        {
+          "id": 17,
+          "label": "Card 9-16",
+        },
+        {
+          "id": 18,
+          "label": "Card 17-24",
+        },
+        {
+          "id": 19,
+          "label": "Card 25-32",
+        },
+        {
+          "id": 20,
+          "label": "User In 1-8",
+        },
+        {
+          "id": 21,
+          "label": "User In 9-16",
+        },
+        {
+          "id": 22,
+          "label": "User In 17-24",
+        },
+        {
+          "id": 23,
+          "label": "User In 25-32",
+        },
+      ],
+      "default": 0,
+      "id": "routing",
+      "label": "Routing source block",
+      "type": "dropdown",
+    },
+  ],
+  "type": "boolean",
+  "unsubscribe": [Function],
+}
+`;
+
+exports[`Feedbacks test > Check Insert Destination (insert-select) 1`] = `
+{
+  "callback": [Function],
+  "defaultStyle": {
+    "bgcolor": 16744192,
+    "color": 0,
+  },
+  "description": "If the insert destination of specified source matches the specified destination",
+  "name": "Insert Destination",
+  "options": [
+    {
+      "allowInvalidValues": true,
+      "choices": [
+        {
+          "id": "channel1",
+          "label": "Channel 1",
+        },
+        {
+          "id": "channel2",
+          "label": "Channel 2",
+        },
+        {
+          "id": "channel3",
+          "label": "Channel 3",
+        },
+        {
+          "id": "channel4",
+          "label": "Channel 4",
+        },
+        {
+          "id": "channel5",
+          "label": "Channel 5",
+        },
+        {
+          "id": "channel6",
+          "label": "Channel 6",
+        },
+        {
+          "id": "channel7",
+          "label": "Channel 7",
+        },
+        {
+          "id": "channel8",
+          "label": "Channel 8",
+        },
+        {
+          "id": "channel9",
+          "label": "Channel 9",
+        },
+        {
+          "id": "channel10",
+          "label": "Channel 10",
+        },
+        {
+          "id": "channel11",
+          "label": "Channel 11",
+        },
+        {
+          "id": "channel12",
+          "label": "Channel 12",
+        },
+        {
+          "id": "channel13",
+          "label": "Channel 13",
+        },
+        {
+          "id": "channel14",
+          "label": "Channel 14",
+        },
+        {
+          "id": "channel15",
+          "label": "Channel 15",
+        },
+        {
+          "id": "channel16",
+          "label": "Channel 16",
+        },
+        {
+          "id": "channel17",
+          "label": "Channel 17",
+        },
+        {
+          "id": "channel18",
+          "label": "Channel 18",
+        },
+        {
+          "id": "channel19",
+          "label": "Channel 19",
+        },
+        {
+          "id": "channel20",
+          "label": "Channel 20",
+        },
+        {
+          "id": "channel21",
+          "label": "Channel 21",
+        },
+        {
+          "id": "channel22",
+          "label": "Channel 22",
+        },
+        {
+          "id": "channel23",
+          "label": "Channel 23",
+        },
+        {
+          "id": "channel24",
+          "label": "Channel 24",
+        },
+        {
+          "id": "channel25",
+          "label": "Channel 25",
+        },
+        {
+          "id": "channel26",
+          "label": "Channel 26",
+        },
+        {
+          "id": "channel27",
+          "label": "Channel 27",
+        },
+        {
+          "id": "channel28",
+          "label": "Channel 28",
+        },
+        {
+          "id": "channel29",
+          "label": "Channel 29",
+        },
+        {
+          "id": "channel30",
+          "label": "Channel 30",
+        },
+        {
+          "id": "channel31",
+          "label": "Channel 31",
+        },
+        {
+          "id": "channel32",
+          "label": "Channel 32",
+        },
+        {
+          "id": "bus1",
+          "label": "MixBus 1",
+        },
+        {
+          "id": "bus2",
+          "label": "MixBus 2",
+        },
+        {
+          "id": "bus3",
+          "label": "MixBus 3",
+        },
+        {
+          "id": "bus4",
+          "label": "MixBus 4",
+        },
+        {
+          "id": "bus5",
+          "label": "MixBus 5",
+        },
+        {
+          "id": "bus6",
+          "label": "MixBus 6",
+        },
+        {
+          "id": "bus7",
+          "label": "MixBus 7",
+        },
+        {
+          "id": "bus8",
+          "label": "MixBus 8",
+        },
+        {
+          "id": "bus9",
+          "label": "MixBus 9",
+        },
+        {
+          "id": "bus10",
+          "label": "MixBus 10",
+        },
+        {
+          "id": "bus11",
+          "label": "MixBus 11",
+        },
+        {
+          "id": "bus12",
+          "label": "MixBus 12",
+        },
+        {
+          "id": "bus13",
+          "label": "MixBus 13",
+        },
+        {
+          "id": "bus14",
+          "label": "MixBus 14",
+        },
+        {
+          "id": "bus15",
+          "label": "MixBus 15",
+        },
+        {
+          "id": "bus16",
+          "label": "MixBus 16",
+        },
+        {
+          "id": "matrix1",
+          "label": "Matrix 1",
+        },
+        {
+          "id": "matrix2",
+          "label": "Matrix 2",
+        },
+        {
+          "id": "matrix3",
+          "label": "Matrix 3",
+        },
+        {
+          "id": "matrix4",
+          "label": "Matrix 4",
+        },
+        {
+          "id": "matrix5",
+          "label": "Matrix 5",
+        },
+        {
+          "id": "matrix6",
+          "label": "Matrix 6",
+        },
+        {
+          "id": "stereo",
+          "label": "Main Stereo",
+        },
+        {
+          "id": "mono",
+          "label": "Main Mono",
+        },
+      ],
+      "default": "channel1",
+      "id": "src",
+      "label": "Source",
+      "type": "dropdown",
+    },
+    {
+      "choices": [
+        {
+          "id": 0,
+          "label": "OFF",
+        },
+        {
+          "id": 1,
+          "label": "FX1L",
+        },
+        {
+          "id": 2,
+          "label": "FX1R",
+        },
+        {
+          "id": 3,
+          "label": "FX2L",
+        },
+        {
+          "id": 4,
+          "label": "FX2R",
+        },
+        {
+          "id": 5,
+          "label": "FX3L",
+        },
+        {
+          "id": 6,
+          "label": "FX3R",
+        },
+        {
+          "id": 7,
+          "label": "FX4L",
+        },
+        {
+          "id": 8,
+          "label": "FX4R",
+        },
+        {
+          "id": 9,
+          "label": "FX5L",
+        },
+        {
+          "id": 10,
+          "label": "FX5R",
+        },
+        {
+          "id": 11,
+          "label": "FX6L",
+        },
+        {
+          "id": 12,
+          "label": "FX6R",
+        },
+        {
+          "id": 13,
+          "label": "FX7L",
+        },
+        {
+          "id": 14,
+          "label": "FX7R",
+        },
+        {
+          "id": 15,
+          "label": "FX8L",
+        },
+        {
+          "id": 16,
+          "label": "FX8R",
+        },
+        {
+          "id": 17,
+          "label": "AUX1",
+        },
+        {
+          "id": 18,
+          "label": "AUX2",
+        },
+        {
+          "id": 19,
+          "label": "AUX3",
+        },
+        {
+          "id": 20,
+          "label": "AUX4",
+        },
+        {
+          "id": 21,
+          "label": "AUX5",
+        },
+        {
+          "id": 22,
+          "label": "AUX6",
+        },
+      ],
+      "default": 0,
+      "disableAutoExpression": true,
+      "id": "dest",
+      "label": "Destination",
+      "type": "dropdown",
+    },
+  ],
+  "type": "boolean",
+  "unsubscribe": [Function],
+}
+`;
+
+exports[`Feedbacks test > Check Insert Position (insert-pos) 1`] = `
+{
+  "callback": [Function],
+  "defaultStyle": {
+    "bgcolor": 16744192,
+    "color": 0,
+  },
+  "description": "If the insert position of specified source matches the specified state",
+  "name": "Insert Position",
+  "options": [
+    {
+      "allowInvalidValues": true,
+      "choices": [
+        {
+          "id": "channel1",
+          "label": "Channel 1",
+        },
+        {
+          "id": "channel2",
+          "label": "Channel 2",
+        },
+        {
+          "id": "channel3",
+          "label": "Channel 3",
+        },
+        {
+          "id": "channel4",
+          "label": "Channel 4",
+        },
+        {
+          "id": "channel5",
+          "label": "Channel 5",
+        },
+        {
+          "id": "channel6",
+          "label": "Channel 6",
+        },
+        {
+          "id": "channel7",
+          "label": "Channel 7",
+        },
+        {
+          "id": "channel8",
+          "label": "Channel 8",
+        },
+        {
+          "id": "channel9",
+          "label": "Channel 9",
+        },
+        {
+          "id": "channel10",
+          "label": "Channel 10",
+        },
+        {
+          "id": "channel11",
+          "label": "Channel 11",
+        },
+        {
+          "id": "channel12",
+          "label": "Channel 12",
+        },
+        {
+          "id": "channel13",
+          "label": "Channel 13",
+        },
+        {
+          "id": "channel14",
+          "label": "Channel 14",
+        },
+        {
+          "id": "channel15",
+          "label": "Channel 15",
+        },
+        {
+          "id": "channel16",
+          "label": "Channel 16",
+        },
+        {
+          "id": "channel17",
+          "label": "Channel 17",
+        },
+        {
+          "id": "channel18",
+          "label": "Channel 18",
+        },
+        {
+          "id": "channel19",
+          "label": "Channel 19",
+        },
+        {
+          "id": "channel20",
+          "label": "Channel 20",
+        },
+        {
+          "id": "channel21",
+          "label": "Channel 21",
+        },
+        {
+          "id": "channel22",
+          "label": "Channel 22",
+        },
+        {
+          "id": "channel23",
+          "label": "Channel 23",
+        },
+        {
+          "id": "channel24",
+          "label": "Channel 24",
+        },
+        {
+          "id": "channel25",
+          "label": "Channel 25",
+        },
+        {
+          "id": "channel26",
+          "label": "Channel 26",
+        },
+        {
+          "id": "channel27",
+          "label": "Channel 27",
+        },
+        {
+          "id": "channel28",
+          "label": "Channel 28",
+        },
+        {
+          "id": "channel29",
+          "label": "Channel 29",
+        },
+        {
+          "id": "channel30",
+          "label": "Channel 30",
+        },
+        {
+          "id": "channel31",
+          "label": "Channel 31",
+        },
+        {
+          "id": "channel32",
+          "label": "Channel 32",
+        },
+        {
+          "id": "bus1",
+          "label": "MixBus 1",
+        },
+        {
+          "id": "bus2",
+          "label": "MixBus 2",
+        },
+        {
+          "id": "bus3",
+          "label": "MixBus 3",
+        },
+        {
+          "id": "bus4",
+          "label": "MixBus 4",
+        },
+        {
+          "id": "bus5",
+          "label": "MixBus 5",
+        },
+        {
+          "id": "bus6",
+          "label": "MixBus 6",
+        },
+        {
+          "id": "bus7",
+          "label": "MixBus 7",
+        },
+        {
+          "id": "bus8",
+          "label": "MixBus 8",
+        },
+        {
+          "id": "bus9",
+          "label": "MixBus 9",
+        },
+        {
+          "id": "bus10",
+          "label": "MixBus 10",
+        },
+        {
+          "id": "bus11",
+          "label": "MixBus 11",
+        },
+        {
+          "id": "bus12",
+          "label": "MixBus 12",
+        },
+        {
+          "id": "bus13",
+          "label": "MixBus 13",
+        },
+        {
+          "id": "bus14",
+          "label": "MixBus 14",
+        },
+        {
+          "id": "bus15",
+          "label": "MixBus 15",
+        },
+        {
+          "id": "bus16",
+          "label": "MixBus 16",
+        },
+        {
+          "id": "matrix1",
+          "label": "Matrix 1",
+        },
+        {
+          "id": "matrix2",
+          "label": "Matrix 2",
+        },
+        {
+          "id": "matrix3",
+          "label": "Matrix 3",
+        },
+        {
+          "id": "matrix4",
+          "label": "Matrix 4",
+        },
+        {
+          "id": "matrix5",
+          "label": "Matrix 5",
+        },
+        {
+          "id": "matrix6",
+          "label": "Matrix 6",
+        },
+        {
+          "id": "stereo",
+          "label": "Main Stereo",
+        },
+        {
+          "id": "mono",
+          "label": "Main Mono",
+        },
+      ],
+      "default": "channel1",
+      "id": "src",
+      "label": "Source",
+      "type": "dropdown",
+    },
+    {
+      "choices": [
+        {
+          "id": 0,
+          "label": "PRE",
+        },
+        {
+          "id": 1,
+          "label": "POST",
+        },
+      ],
+      "default": 0,
+      "disableAutoExpression": true,
+      "id": "pos",
+      "label": "PRE / POST",
+      "type": "dropdown",
+    },
+  ],
+  "type": "boolean",
+  "unsubscribe": [Function],
+}
+`;
+
+exports[`Feedbacks test > Check Insert Status (insert-on) 1`] = `
+{
+  "callback": [Function],
+  "defaultStyle": {
+    "bgcolor": 16744192,
+    "color": 0,
+  },
+  "description": "If the insert status of specified source matches the specified state",
+  "name": "Insert Status",
+  "options": [
+    {
+      "allowInvalidValues": true,
+      "choices": [
+        {
+          "id": "channel1",
+          "label": "Channel 1",
+        },
+        {
+          "id": "channel2",
+          "label": "Channel 2",
+        },
+        {
+          "id": "channel3",
+          "label": "Channel 3",
+        },
+        {
+          "id": "channel4",
+          "label": "Channel 4",
+        },
+        {
+          "id": "channel5",
+          "label": "Channel 5",
+        },
+        {
+          "id": "channel6",
+          "label": "Channel 6",
+        },
+        {
+          "id": "channel7",
+          "label": "Channel 7",
+        },
+        {
+          "id": "channel8",
+          "label": "Channel 8",
+        },
+        {
+          "id": "channel9",
+          "label": "Channel 9",
+        },
+        {
+          "id": "channel10",
+          "label": "Channel 10",
+        },
+        {
+          "id": "channel11",
+          "label": "Channel 11",
+        },
+        {
+          "id": "channel12",
+          "label": "Channel 12",
+        },
+        {
+          "id": "channel13",
+          "label": "Channel 13",
+        },
+        {
+          "id": "channel14",
+          "label": "Channel 14",
+        },
+        {
+          "id": "channel15",
+          "label": "Channel 15",
+        },
+        {
+          "id": "channel16",
+          "label": "Channel 16",
+        },
+        {
+          "id": "channel17",
+          "label": "Channel 17",
+        },
+        {
+          "id": "channel18",
+          "label": "Channel 18",
+        },
+        {
+          "id": "channel19",
+          "label": "Channel 19",
+        },
+        {
+          "id": "channel20",
+          "label": "Channel 20",
+        },
+        {
+          "id": "channel21",
+          "label": "Channel 21",
+        },
+        {
+          "id": "channel22",
+          "label": "Channel 22",
+        },
+        {
+          "id": "channel23",
+          "label": "Channel 23",
+        },
+        {
+          "id": "channel24",
+          "label": "Channel 24",
+        },
+        {
+          "id": "channel25",
+          "label": "Channel 25",
+        },
+        {
+          "id": "channel26",
+          "label": "Channel 26",
+        },
+        {
+          "id": "channel27",
+          "label": "Channel 27",
+        },
+        {
+          "id": "channel28",
+          "label": "Channel 28",
+        },
+        {
+          "id": "channel29",
+          "label": "Channel 29",
+        },
+        {
+          "id": "channel30",
+          "label": "Channel 30",
+        },
+        {
+          "id": "channel31",
+          "label": "Channel 31",
+        },
+        {
+          "id": "channel32",
+          "label": "Channel 32",
+        },
+        {
+          "id": "bus1",
+          "label": "MixBus 1",
+        },
+        {
+          "id": "bus2",
+          "label": "MixBus 2",
+        },
+        {
+          "id": "bus3",
+          "label": "MixBus 3",
+        },
+        {
+          "id": "bus4",
+          "label": "MixBus 4",
+        },
+        {
+          "id": "bus5",
+          "label": "MixBus 5",
+        },
+        {
+          "id": "bus6",
+          "label": "MixBus 6",
+        },
+        {
+          "id": "bus7",
+          "label": "MixBus 7",
+        },
+        {
+          "id": "bus8",
+          "label": "MixBus 8",
+        },
+        {
+          "id": "bus9",
+          "label": "MixBus 9",
+        },
+        {
+          "id": "bus10",
+          "label": "MixBus 10",
+        },
+        {
+          "id": "bus11",
+          "label": "MixBus 11",
+        },
+        {
+          "id": "bus12",
+          "label": "MixBus 12",
+        },
+        {
+          "id": "bus13",
+          "label": "MixBus 13",
+        },
+        {
+          "id": "bus14",
+          "label": "MixBus 14",
+        },
+        {
+          "id": "bus15",
+          "label": "MixBus 15",
+        },
+        {
+          "id": "bus16",
+          "label": "MixBus 16",
+        },
+        {
+          "id": "matrix1",
+          "label": "Matrix 1",
+        },
+        {
+          "id": "matrix2",
+          "label": "Matrix 2",
+        },
+        {
+          "id": "matrix3",
+          "label": "Matrix 3",
+        },
+        {
+          "id": "matrix4",
+          "label": "Matrix 4",
+        },
+        {
+          "id": "matrix5",
+          "label": "Matrix 5",
+        },
+        {
+          "id": "matrix6",
+          "label": "Matrix 6",
+        },
+        {
+          "id": "stereo",
+          "label": "Main Stereo",
+        },
+        {
+          "id": "mono",
+          "label": "Main Mono",
+        },
+      ],
+      "default": "channel1",
+      "id": "src",
+      "label": "Source",
+      "type": "dropdown",
+    },
+  ],
+  "type": "boolean",
+  "unsubscribe": [Function],
+}
+`;
+
+exports[`Feedbacks test > Check Lock/Shutdown (lock-and-shutdown) 1`] = `
+{
+  "callback": [Function],
+  "defaultStyle": {
+    "bgcolor": 16711680,
+    "color": 0,
+  },
+  "description": "If the specified state is active",
+  "name": "Lock/Shutdown",
+  "options": [
+    {
+      "choices": [
+        {
+          "id": 0,
+          "label": "Unlock",
+        },
+        {
+          "id": 1,
+          "label": "Lock",
+        },
+        {
+          "id": 2,
+          "label": "Shutdown",
+        },
+      ],
+      "default": 0,
+      "disableAutoExpression": true,
+      "id": "lockState",
+      "label": "Lock/Shutdown state",
+      "type": "dropdown",
+    },
+  ],
+  "type": "boolean",
+  "unsubscribe": [Function],
+}
+`;
+
+exports[`Feedbacks test > Check Undo available (undo-available) 1`] = `
+{
+  "callback": [Function],
+  "defaultStyle": {
+    "bgcolor": 16744192,
+    "color": 0,
+  },
+  "name": "Undo available",
+  "options": [],
+  "type": "boolean",
+  "unsubscribe": [Function],
+}
+`;
+
+exports[`Feedbacks test > Check XRL left block routing state (route-xlr-left-outputs) 1`] = `
+{
+  "callback": [Function],
+  "defaultStyle": {
+    "bgcolor": 16711680,
+    "color": 0,
+  },
+  "description": "If the specified block is routed to the specified destination",
+  "name": "XRL left block routing state",
+  "options": [
+    {
+      "choices": [
+        {
+          "id": "1-4",
+          "label": "1-4",
+        },
+        {
+          "id": "9-12",
+          "label": "9-12",
+        },
+      ],
+      "default": "1-4",
+      "disableAutoExpression": true,
+      "id": "block",
+      "label": "Output block",
+      "type": "dropdown",
+    },
+    {
+      "choices": [
+        {
+          "id": 0,
+          "label": "Local 1-4",
+        },
+        {
+          "id": 1,
+          "label": "Local 9-12",
+        },
+        {
+          "id": 2,
+          "label": "Local 17-20",
+        },
+        {
+          "id": 3,
+          "label": "Local 25-28",
+        },
+        {
+          "id": 4,
+          "label": "A 1-4",
+        },
+        {
+          "id": 5,
+          "label": "A 9-12",
+        },
+        {
+          "id": 6,
+          "label": "A 17-20",
+        },
+        {
+          "id": 7,
+          "label": "A 25-28",
+        },
+        {
+          "id": 8,
+          "label": "A 33-36",
+        },
+        {
+          "id": 9,
+          "label": "A 41-44",
+        },
+        {
+          "id": 10,
+          "label": "B 1-4",
+        },
+        {
+          "id": 11,
+          "label": "B 9-12",
+        },
+        {
+          "id": 12,
+          "label": "B 17-20",
+        },
+        {
+          "id": 13,
+          "label": "B 25-28",
+        },
+        {
+          "id": 14,
+          "label": "B 33-36",
+        },
+        {
+          "id": 15,
+          "label": "B 41-44",
+        },
+        {
+          "id": 16,
+          "label": "Card 1-4",
+        },
+        {
+          "id": 17,
+          "label": "Card 9-12",
+        },
+        {
+          "id": 18,
+          "label": "Card 17-20",
+        },
+        {
+          "id": 19,
+          "label": "Card 25-28",
+        },
+        {
+          "id": 20,
+          "label": "Out 1-4",
+        },
+        {
+          "id": 21,
+          "label": "Out 9-12",
+        },
+        {
+          "id": 22,
+          "label": "Ultranet 1-4",
+        },
+        {
+          "id": 23,
+          "label": "Ultranet 9-12",
+        },
+        {
+          "id": 24,
+          "label": "Aux Out/CR",
+        },
+        {
+          "id": 25,
+          "label": "Aux In/TB",
+        },
+        {
+          "id": 26,
+          "label": "User Out 1-4",
+        },
+        {
+          "id": 27,
+          "label": "User Out 9-12",
+        },
+        {
+          "id": 28,
+          "label": "User Out 17-20",
+        },
+        {
+          "id": 29,
+          "label": "User Out 25-28",
+        },
+        {
+          "id": 30,
+          "label": "User Out 33-36",
+        },
+        {
+          "id": 31,
+          "label": "User Out 41-44",
+        },
+        {
+          "id": 32,
+          "label": "User In 1-4",
+        },
+        {
+          "id": 33,
+          "label": "User In 9-12",
+        },
+        {
+          "id": 34,
+          "label": "User In 17-20",
+        },
+        {
+          "id": 35,
+          "label": "User In 25-28",
+        },
+      ],
+      "default": 0,
+      "disableAutoExpression": true,
+      "id": "routing",
+      "label": "Routing source block",
+      "type": "dropdown",
+    },
+  ],
+  "type": "boolean",
+  "unsubscribe": [Function],
+}
+`;
+
+exports[`Feedbacks test > Check XRL right block routing state (route-xlr-right-outputs) 1`] = `
+{
+  "callback": [Function],
+  "defaultStyle": {
+    "bgcolor": 16711680,
+    "color": 0,
+  },
+  "description": "If the specified block is routed to the specified destination",
+  "name": "XRL right block routing state",
+  "options": [
+    {
+      "choices": [
+        {
+          "id": "5-8",
+          "label": "5-8",
+        },
+        {
+          "id": "13-16",
+          "label": "13-16",
+        },
+      ],
+      "default": "5-8",
+      "disableAutoExpression": true,
+      "id": "block",
+      "label": "Output block",
+      "type": "dropdown",
+    },
+    {
+      "choices": [
+        {
+          "id": 0,
+          "label": "Local 5-8",
+        },
+        {
+          "id": 1,
+          "label": "Local 13-16",
+        },
+        {
+          "id": 2,
+          "label": "Local 21-24",
+        },
+        {
+          "id": 3,
+          "label": "Local 29-32",
+        },
+        {
+          "id": 4,
+          "label": "A 5-8",
+        },
+        {
+          "id": 5,
+          "label": "A 13-16",
+        },
+        {
+          "id": 6,
+          "label": "A 21-24",
+        },
+        {
+          "id": 7,
+          "label": "A 29-32",
+        },
+        {
+          "id": 8,
+          "label": "A 37-40",
+        },
+        {
+          "id": 9,
+          "label": "A 45-48",
+        },
+        {
+          "id": 10,
+          "label": "B 5-8",
+        },
+        {
+          "id": 11,
+          "label": "B 13-16",
+        },
+        {
+          "id": 12,
+          "label": "B 21-24",
+        },
+        {
+          "id": 13,
+          "label": "B 29-32",
+        },
+        {
+          "id": 14,
+          "label": "B 37-40",
+        },
+        {
+          "id": 15,
+          "label": "B 45-48",
+        },
+        {
+          "id": 16,
+          "label": "Card 5-8",
+        },
+        {
+          "id": 17,
+          "label": "Card 13-16",
+        },
+        {
+          "id": 18,
+          "label": "Card 21-24",
+        },
+        {
+          "id": 19,
+          "label": "Card 29-32",
+        },
+        {
+          "id": 20,
+          "label": "Out  5-8",
+        },
+        {
+          "id": 21,
+          "label": "Out  13-16",
+        },
+        {
+          "id": 22,
+          "label": "Ultranet 5-8",
+        },
+        {
+          "id": 23,
+          "label": "Ultranet 13-16",
+        },
+        {
+          "id": 24,
+          "label": "Aux Out/CR",
+        },
+        {
+          "id": 25,
+          "label": "Aux In/TB",
+        },
+        {
+          "id": 26,
+          "label": "User Out 5-8",
+        },
+        {
+          "id": 27,
+          "label": "User Out 13-16",
+        },
+        {
+          "id": 28,
+          "label": "User Out 21-24",
+        },
+        {
+          "id": 29,
+          "label": "User Out 29-32",
+        },
+        {
+          "id": 30,
+          "label": "User Out 37-40",
+        },
+        {
+          "id": 31,
+          "label": "User Out 45-48",
+        },
+        {
+          "id": 32,
+          "label": "User In 5-8",
+        },
+        {
+          "id": 33,
+          "label": "User In 13-16",
+        },
+        {
+          "id": 34,
+          "label": "User In 21-24",
+        },
+        {
+          "id": 35,
+          "label": "User In 29-32",
+        },
+      ],
+      "default": 0,
+      "disableAutoExpression": true,
+      "id": "routing",
+      "label": "Routing source block",
+      "type": "dropdown",
+    },
+  ],
+  "type": "boolean",
+  "unsubscribe": [Function],
+}
+`;
