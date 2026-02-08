@@ -10,7 +10,7 @@ import {
 } from '../choices.js'
 import { parseRefToPaths } from '../paths.js'
 import { floatToDB } from '../util.js'
-import type { Easing } from '../easings.js'
+import type { FadeProps } from '../transitions.js'
 
 export type BusSendLevelActionsSchema = {
 	level_bus_send: {
@@ -18,20 +18,14 @@ export type BusSendLevelActionsSchema = {
 			source: string
 			target: string
 			fad: number
-			fadeDuration: number
-			fadeAlgorithm: string
-			fadeType: string
-		}
+		} & FadeProps
 	}
 	level_bus_send_delta: {
 		options: {
 			source: string
 			target: string
 			delta: number
-			fadeDuration: number
-			fadeAlgorithm: string
-			fadeType: string
-		}
+		} & FadeProps
 	}
 	level_bus_store: {
 		options: {
@@ -43,10 +37,7 @@ export type BusSendLevelActionsSchema = {
 		options: {
 			source: string
 			target: string
-			fadeDuration: number
-			fadeAlgorithm: string
-			fadeType: string
-		}
+		} & FadeProps
 	}
 }
 
@@ -85,14 +76,7 @@ export function getBusSendLevelActions(props: ActionsProps): CompanionActionDefi
 				},
 				execute: (action, cachedData, path) => {
 					const currentVal = cachedData && cachedData[0]?.type === 'f' ? floatToDB(cachedData[0]?.value) : undefined
-					props.transitions.runForDb(
-						path,
-						currentVal,
-						action.options.fad,
-						action.options.fadeDuration,
-						action.options.fadeAlgorithm as Easing.algorithm,
-						action.options.fadeType as Easing.curve,
-					)
+					props.transitions.runForDb(path, currentVal, action.options.fad, action.options)
 
 					// Handled by the transitions!
 					return undefined
@@ -134,14 +118,7 @@ export function getBusSendLevelActions(props: ActionsProps): CompanionActionDefi
 				execute: (action, cachedData, path) => {
 					const currentVal = cachedData && cachedData[0]?.type === 'f' ? floatToDB(cachedData[0]?.value) : undefined
 					if (typeof currentVal === 'number') {
-						props.transitions.runForDb(
-							path,
-							currentVal,
-							currentVal + action.options.delta,
-							action.options.fadeDuration,
-							action.options.fadeAlgorithm as Easing.algorithm,
-							action.options.fadeType as Easing.curve,
-						)
+						props.transitions.runForDb(path, currentVal, currentVal + action.options.delta, action.options)
 					}
 
 					// Handled by the transitions!
@@ -224,7 +201,7 @@ export function getBusSendLevelActions(props: ActionsProps): CompanionActionDefi
 					if (storedVal !== undefined) {
 						const currentVal = cachedData && cachedData[0]?.type === 'f' ? floatToDB(cachedData[0]?.value) : undefined
 						if (currentVal !== undefined) {
-							props.transitions.runForDb(path, currentVal, storedVal, action.options.fadeDuration)
+							props.transitions.runForDb(path, currentVal, storedVal, action.options)
 						}
 					}
 

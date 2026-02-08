@@ -10,17 +10,14 @@ import {
 } from '../choices.js'
 import { parseRefToPaths } from '../paths.js'
 import { floatToDB } from '../util.js'
-import type { Easing } from '../easings.js'
+import type { FadeProps } from '../transitions.js'
 
 export type FaderActionsSchema = {
 	fad: {
 		options: {
 			target: string
 			fad: number
-			fadeDuration: number
-			fadeAlgorithm: string
-			fadeType: string
-		}
+		} & FadeProps
 	}
 	fader_store: {
 		options: {
@@ -30,19 +27,13 @@ export type FaderActionsSchema = {
 	fader_restore: {
 		options: {
 			target: string
-			fadeDuration: number
-			fadeAlgorithm: string
-			fadeType: string
-		}
+		} & FadeProps
 	}
 	fader_delta: {
 		options: {
 			target: string
 			delta: number
-			fadeDuration: number
-			fadeAlgorithm: string
-			fadeType: string
-		}
+		} & FadeProps
 	}
 }
 
@@ -70,14 +61,7 @@ export function getFaderActions(props: ActionsProps): CompanionActionDefinitions
 				},
 				execute: (action, cachedData, path) => {
 					const currentVal = cachedData && cachedData[0]?.type === 'f' ? floatToDB(cachedData[0]?.value) : undefined
-					props.transitions.runForDb(
-						path,
-						currentVal,
-						action.options.fad,
-						action.options.fadeDuration,
-						action.options.fadeAlgorithm as Easing.algorithm,
-						action.options.fadeType as Easing.curve,
-					)
+					props.transitions.runForDb(path, currentVal, action.options.fad, action.options)
 
 					// Handled by the transitions!
 					return undefined
@@ -137,7 +121,7 @@ export function getFaderActions(props: ActionsProps): CompanionActionDefinitions
 					if (storedVal !== undefined) {
 						const currentVal = cachedData && cachedData[0]?.type === 'f' ? floatToDB(cachedData[0]?.value) : undefined
 						if (currentVal !== undefined) {
-							props.transitions.runForDb(path, currentVal, storedVal, action.options.fadeDuration)
+							props.transitions.runForDb(path, currentVal, storedVal, action.options)
 						}
 					}
 
@@ -169,14 +153,7 @@ export function getFaderActions(props: ActionsProps): CompanionActionDefinitions
 				execute: (action, cachedData, path) => {
 					const currentVal = cachedData && cachedData[0]?.type === 'f' ? floatToDB(cachedData[0]?.value) : undefined
 					if (typeof currentVal === 'number') {
-						props.transitions.runForDb(
-							path,
-							currentVal,
-							currentVal + action.options.delta,
-							action.options.fadeDuration,
-							action.options.fadeAlgorithm as Easing.algorithm,
-							action.options.fadeType as Easing.curve,
-						)
+						props.transitions.runForDb(path, currentVal, currentVal + action.options.delta, action.options)
 					}
 
 					// Handled by the transitions!

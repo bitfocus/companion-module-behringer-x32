@@ -17,6 +17,9 @@ import { getLabelsActions, LabelsActionsSchema } from './labels.js'
 import { getPresetsActions, PresetsActionsSchema } from './presets.js'
 import { getGoCommandActions, GoCommandActionsSchema } from './go-command.js'
 import { getRoutingActions, RoutingActionsSchema } from './routing.js'
+import { getScreenActions, ScreenActionsSchema } from './screen.js'
+import { getInsertActions, InsertActionsSchema } from './insert.js'
+import { getMonitorActions, MonitorActionsSchema } from './monitor.js'
 
 export type ActionsSchema = XLiveActionsSchema &
 	MarkerActionsSchema &
@@ -33,7 +36,10 @@ export type ActionsSchema = XLiveActionsSchema &
 	LabelsActionsSchema &
 	PresetsActionsSchema &
 	GoCommandActionsSchema &
-	RoutingActionsSchema
+	RoutingActionsSchema &
+	ScreenActionsSchema &
+	InsertActionsSchema &
+	MonitorActionsSchema
 
 export interface ActionsProps {
 	readonly transitions: X32Transitions
@@ -60,5 +66,8 @@ export function GetActionsList(props: ActionsProps): CompanionActionDefinitions<
 		...getPresetsActions(props),
 		...getGoCommandActions(props),
 		...getRoutingActions(props),
+		...getScreenActions(props),
+		...getInsertActions(props),
+		...getMonitorActions(props),
 	}
 }

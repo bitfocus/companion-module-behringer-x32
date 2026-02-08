@@ -3,26 +3,20 @@ import type { ActionsProps } from './main.js'
 import { actionSubscriptionWrapper } from './util.js'
 import { convertChoices, FadeDurationChoice, PanningChoice, GetPanningChoiceConfigs, PanningDelta } from '../choices.js'
 import { parseRefToPaths } from '../paths.js'
-import type { Easing } from '../easings.js'
+import type { FadeProps } from '../transitions.js'
 
 export type PanningActionsSchema = {
 	panning: {
 		options: {
 			target: string
 			pan: number
-			fadeDuration: number
-			fadeAlgorithm: string
-			fadeType: string
-		}
+		} & FadeProps
 	}
 	'panning-delta': {
 		options: {
 			target: string
 			delta: number
-			fadeDuration: number
-			fadeAlgorithm: string
-			fadeType: string
-		}
+		} & FadeProps
 	}
 	'panning-store': {
 		options: {
@@ -32,10 +26,7 @@ export type PanningActionsSchema = {
 	'panning-restore': {
 		options: {
 			target: string
-			fadeDuration: number
-			fadeAlgorithm: string
-			fadeType: string
-		}
+		} & FadeProps
 	}
 }
 
@@ -63,14 +54,7 @@ export function getPanningActions(props: ActionsProps): CompanionActionDefinitio
 				},
 				execute: (action, cachedData, path) => {
 					const currentVal = cachedData && cachedData[0]?.type === 'f' ? cachedData[0]?.value : undefined
-					props.transitions.run(
-						path,
-						currentVal,
-						action.options.pan / 100 + 0.5,
-						action.options.fadeDuration,
-						action.options.fadeAlgorithm as Easing.algorithm,
-						action.options.fadeType as Easing.curve,
-					)
+					props.transitions.run(path, currentVal, action.options.pan / 100 + 0.5, action.options)
 
 					// Handled by the transitions!
 					return undefined
@@ -105,14 +89,7 @@ export function getPanningActions(props: ActionsProps): CompanionActionDefinitio
 					} else if (newVal > 1) {
 						newVal = 1
 					}
-					props.transitions.run(
-						path,
-						currentVal,
-						newVal,
-						action.options.fadeDuration,
-						action.options.fadeAlgorithm as Easing.algorithm,
-						action.options.fadeType as Easing.curve,
-					)
+					props.transitions.run(path, currentVal, newVal, action.options)
 
 					// Handled by the transitions!
 					return undefined
@@ -172,14 +149,7 @@ export function getPanningActions(props: ActionsProps): CompanionActionDefinitio
 					if (storedVal != undefined) {
 						const currentVal = cachedData && cachedData[0]?.type === 'f' ? cachedData[0].value : undefined
 						if (currentVal !== undefined) {
-							props.transitions.run(
-								path,
-								currentVal,
-								storedVal,
-								action.options.fadeDuration,
-								action.options.fadeAlgorithm as Easing.algorithm,
-								action.options.fadeType as Easing.curve,
-							)
+							props.transitions.run(path, currentVal, storedVal, action.options)
 						}
 					}
 
