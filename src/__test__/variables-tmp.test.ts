@@ -12,12 +12,12 @@ describe('Variables test', () => {
 		it(name, () => {
 			const mockDefs = vi.fn()
 			const mockVals = vi.fn()
-			const mockInstance: Pick<InstanceBaseExt<any>, 'setVariableDefinitions' | 'setVariableValues'> = {
+			const mockInstance: Pick<InstanceBaseExt, 'setVariableDefinitions' | 'setVariableValues'> = {
 				setVariableDefinitions: mockDefs,
 				setVariableValues: mockVals,
 			}
 
-			fn(mockInstance as InstanceBaseExt<any>, new X32State() as any)
+			fn(mockInstance as InstanceBaseExt, new X32State() as any)
 
 			expect(mockDefs.mock.calls[0]).toMatchSnapshot()
 			expect(mockVals.mock.calls[0]).toMatchSnapshot()

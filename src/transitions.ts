@@ -1,5 +1,5 @@
 import { MetaArgument } from 'osc'
-import { fadeFpsDefault, X32Config } from './config.js'
+import { fadeFpsDefault } from './config.js'
 import { Easing } from './easings.js'
 import { dbToFloat, InstanceBaseExt } from './util.js'
 
@@ -9,12 +9,12 @@ export interface TransitionInfo {
 
 export class X32Transitions {
 	private readonly transitions: Map<string, TransitionInfo>
-	private readonly instance: InstanceBaseExt<X32Config>
+	private readonly instance: InstanceBaseExt
 	private readonly fps: number
 
 	private tickInterval: NodeJS.Timeout | undefined
 
-	constructor(instance: InstanceBaseExt<X32Config>) {
+	constructor(instance: InstanceBaseExt) {
 		this.transitions = new Map()
 		this.instance = instance
 		this.fps = instance.config.fadeFps ?? fadeFpsDefault

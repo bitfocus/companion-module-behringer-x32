@@ -1,4 +1,7 @@
-import type { JsonValue, InstanceBase, JsonObject } from '@companion-module/base'
+import type { JsonValue, InstanceBase, InstanceManifest } from '@companion-module/base'
+import type { X32Config } from './config.js'
+import type { ActionsSchema } from './actions.js'
+import type { FeedbacksSchema } from './feedback.js'
 
 export const MEDIA_PLAYER_SOURCE_CLIP_OFFSET = 1000
 
@@ -126,6 +129,12 @@ export function compareNumber(
 	}
 }
 
-export interface InstanceBaseExt<TConfig extends JsonObject> extends InstanceBase<TConfig> {
-	config: TConfig
+export interface X32Manifest extends InstanceManifest {
+	config: X32Config
+	actions: ActionsSchema
+	feedbacks: FeedbacksSchema
+}
+
+export interface InstanceBaseExt extends InstanceBase<X32Manifest> {
+	config: X32Manifest['config']
 }

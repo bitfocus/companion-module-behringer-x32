@@ -1,5 +1,4 @@
 import { X32State } from './state.js'
-import { X32Config } from './config.js'
 import { trimToFloat, headampGainToFloat, floatToDB, InstanceBaseExt, padNumber, stringifyValueAlways } from './util.js'
 import {
 	CHOICES_TAPE_FUNC,
@@ -598,7 +597,7 @@ export type ActionsSchema = {
 }
 
 export function GetActionsList(
-	self: InstanceBaseExt<X32Config>,
+	self: InstanceBaseExt,
 	transitions: X32Transitions,
 	state: X32State,
 	ensureLoaded: (path: string | undefined) => void,

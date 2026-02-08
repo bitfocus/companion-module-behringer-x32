@@ -33,8 +33,7 @@ import {
 	EmptyUpgradeScript,
 	InstanceStatus,
 } from '@companion-module/base'
-import { InstanceBaseExt } from './util.js'
-import { GetEntitiesLists } from './entities/list.js'
+import type { InstanceBaseExt, X32Manifest } from './util.js'
 
 export const UpgradeScripts: CompanionStaticUpgradeScript<X32Config>[] = [
 	EmptyUpgradeScript, // Previous version had a script
@@ -47,10 +46,7 @@ export const UpgradeScripts: CompanionStaticUpgradeScript<X32Config>[] = [
 /**
  * Companion instance class for the Behringer X32 Mixers.
  */
-export default class X32Instance
-	extends InstanceBase<X32Config>
-	implements InstanceBaseExt<X32Config>, IStoredChannelObserver
-{
+export default class X32Instance extends InstanceBase<X32Manifest> implements InstanceBaseExt, IStoredChannelObserver {
 	private osc: osc.UDPPort
 	private x32State: X32State
 	private x32Subscriptions: X32Subscriptions
@@ -211,18 +207,18 @@ export default class X32Instance
 		InitVariables(this, this.x32State)
 		this.setPresetDefinitions(GetPresetsList(this, this.x32State))
 
-		const { actions, feedbacks } = GetEntitiesLists(
-			this,
-			this.x32State,
-			this.x32Subscriptions,
-			this.transitions,
-			this.queueEnsureLoaded,
-		)
-		this.setActionDefinitions(actions)
-		this.setFeedbackDefinitions(feedbacks)
+		// const { actions, feedbacks } = GetEntitiesLists(
+		// 	this,
+		// 	this.x32State,
+		// 	this.x32Subscriptions,
+		// 	this.transitions,
+		// 	this.queueEnsureLoaded,
+		// )
+		// this.setActionDefinitions(actions)
+		// this.setFeedbackDefinitions(feedbacks)
 
-		// this.setFeedbackDefinitions(GetFeedbacksList(this, this.x32State, this.x32Subscriptions, this.queueEnsureLoaded))
-		// this.setActionDefinitions(GetActionsList(this, this.transitions, this.x32State, this.queueEnsureLoaded))
+		this.setFeedbackDefinitions(GetFeedbacksList(this, this.x32State, this.x32Subscriptions, this.queueEnsureLoaded))
+		this.setActionDefinitions(GetActionsList(this, this.transitions, this.x32State, this.queueEnsureLoaded))
 		this.checkFeedbacks()
 		updateNameVariables(this, this.x32State)
 		updateSelectedVariables(this, this.x32State)

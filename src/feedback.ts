@@ -29,7 +29,6 @@ import {
 import { compareNumber, floatToDB, InstanceBaseExt, padNumber, stringifyValueAlways } from './util.js'
 import { UserRouteInPath, UserRouteOutPath, parseRefToPaths, ParseRefOptions } from './paths.js'
 import osc from 'osc'
-import { X32Config } from './config.js'
 import { NumberComparitorPicker } from './input.js'
 import type { SetRequired } from 'type-fest'
 import {
@@ -314,7 +313,7 @@ function subscribeFeedback(
 }
 
 export function GetFeedbacksList(
-	_self: InstanceBaseExt<X32Config>,
+	_self: InstanceBaseExt,
 	state: X32State,
 	subs: X32Subscriptions,
 	ensureLoaded: (path: string) => void,

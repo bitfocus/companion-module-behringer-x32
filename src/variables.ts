@@ -1,4 +1,3 @@
-import { X32Config } from './config.js'
 import { X32State } from './state.js'
 import osc from 'osc'
 import { GetNameFromState, GetTargetPaths, getColorChoiceFromId } from './choices.js'
@@ -24,7 +23,7 @@ const sendToBusSources = GetTargetPaths({
 	allowFx: true,
 })
 
-export function InitVariables(instance: InstanceBaseExt<X32Config>, state: X32State): void {
+export function InitVariables(instance: InstanceBaseExt, state: X32State): void {
 	const variables: CompanionVariableDefinition[] = [
 		{
 			name: 'Device name',
@@ -138,7 +137,7 @@ export function InitVariables(instance: InstanceBaseExt<X32Config>, state: X32St
 	})
 }
 
-export function updateDeviceInfoVariables(instance: InstanceBaseExt<X32Config>, args: osc.MetaArgument[]): void {
+export function updateDeviceInfoVariables(instance: InstanceBaseExt, args: osc.MetaArgument[]): void {
 	const getStringArg = (index: number): string => {
 		const raw = args[index]
 		if (raw && raw.type === 's') {
@@ -154,7 +153,7 @@ export function updateDeviceInfoVariables(instance: InstanceBaseExt<X32Config>, 
 	})
 }
 
-export function updateTapeTime(instance: InstanceBaseExt<X32Config>, state: X32State): void {
+export function updateTapeTime(instance: InstanceBaseExt, state: X32State): void {
 	const etime = state.get('/-stat/tape/etime')
 	const time = etime && etime[0]?.type === 'i' ? etime[0].value : 0
 	const hh = `${Math.floor(time / 3600)}`.padStart(2, '0')
@@ -166,7 +165,7 @@ export function updateTapeTime(instance: InstanceBaseExt<X32Config>, state: X32S
 	})
 }
 
-export function updateUReceTime(instance: InstanceBaseExt<X32Config>, state: X32State): void {
+export function updateUReceTime(instance: InstanceBaseExt, state: X32State): void {
 	const etime = state.get('/-stat/urec/etime')
 	const time = etime && etime[0]?.type === 'i' ? etime[0].value : 0
 	const mm = `${Math.floor(time / 1000 / 60) % 60}`.padStart(2, '0')
@@ -178,7 +177,7 @@ export function updateUReceTime(instance: InstanceBaseExt<X32Config>, state: X32
 	})
 }
 
-export function updateURecrTime(instance: InstanceBaseExt<X32Config>, state: X32State): void {
+export function updateURecrTime(instance: InstanceBaseExt, state: X32State): void {
 	const etime = state.get('/-stat/urec/rtime')
 	const time = etime && etime[0]?.type === 'i' ? etime[0].value : 0
 	const mm = `${Math.floor(time / 1000 / 60) % 60}`.padStart(2, '0')
@@ -190,7 +189,7 @@ export function updateURecrTime(instance: InstanceBaseExt<X32Config>, state: X32
 	})
 }
 
-export function updateNameVariables(instance: InstanceBaseExt<X32Config>, state: X32State): void {
+export function updateNameVariables(instance: InstanceBaseExt, state: X32State): void {
 	const variables: CompanionVariableValues = {}
 
 	for (const target of allSources) {
@@ -239,13 +238,13 @@ export function updateNameVariables(instance: InstanceBaseExt<X32Config>, state:
 	instance.setVariableValues(variables)
 }
 
-export function updateStoredChannelVariable(instance: InstanceBaseExt<X32Config>, state: X32State): void {
+export function updateStoredChannelVariable(instance: InstanceBaseExt, state: X32State): void {
 	instance.setVariableValues({
 		stored_channel: `${state.getStoredChannel()}`,
 	})
 }
 
-export function updateSelectedVariables(instance: InstanceBaseExt<X32Config>, state: X32State): void {
+export function updateSelectedVariables(instance: InstanceBaseExt, state: X32State): void {
 	const selidx = state.get('/-stat/selidx')
 	const index = selidx && selidx[0]?.type === 'i' ? selidx[0].value : 0
 
@@ -259,7 +258,7 @@ export function updateSelectedVariables(instance: InstanceBaseExt<X32Config>, st
 	})
 }
 
-export function updateUndoTime(instance: InstanceBaseExt<X32Config>, state: X32State): void {
+export function updateUndoTime(instance: InstanceBaseExt, state: X32State): void {
 	const undoTime = state.get('/-undo/time')
 	const time = undoTime && undoTime[0]?.type === 's' ? undoTime[0].value : ''
 	instance.setVariableValues({

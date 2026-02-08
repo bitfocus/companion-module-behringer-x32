@@ -1,4 +1,3 @@
-import { X32Config } from './config.js'
 import { FeedbackId } from './feedback.js'
 import { X32State } from './state.js'
 import type { SetRequired } from 'type-fest'
@@ -27,7 +26,7 @@ interface CompanionPresetExt extends CompanionButtonPresetDefinition {
 	// >
 }
 
-export function GetPresetsList(_instance: InstanceBaseExt<X32Config>, _state: X32State): CompanionPresetDefinitions {
+export function GetPresetsList(_instance: InstanceBaseExt, _state: X32State): CompanionPresetDefinitions {
 	const presets: {
 		[id: string]: CompanionPresetExt | undefined
 	} = {}
