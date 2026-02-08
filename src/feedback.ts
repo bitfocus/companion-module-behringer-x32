@@ -519,7 +519,6 @@ export function GetFeedbacksList(
 		record: {
 			type: 'boolean',
 			name: 'Change from X-Live state',
-			description: 'If the X-Live state has changed, change style of the bank',
 			options: [
 				{
 					type: 'dropdown',
@@ -550,7 +549,7 @@ export function GetFeedbacksList(
 		mute: {
 			type: 'boolean',
 			name: 'Change from mute state',
-			description: 'If the specified target is muted, change style of the bank',
+			description: 'If the specified target is muted',
 			options: [
 				{
 					id: 'target',
@@ -577,7 +576,7 @@ export function GetFeedbacksList(
 		mute_grp: {
 			type: 'boolean',
 			name: 'Change from mute group state',
-			description: 'If the specified mute group is muted, change style of the bank',
+			description: 'If the specified mute group is muted',
 			options: [
 				{
 					id: 'mute_grp',
@@ -604,7 +603,7 @@ export function GetFeedbacksList(
 		mute_channel_send: {
 			type: 'boolean',
 			name: 'Change from channel to bus send mute state',
-			description: 'If the specified channel send is muted, change style of the bank',
+			description: 'If the specified channel send is muted',
 			options: [
 				{
 					type: 'dropdown',
@@ -639,7 +638,7 @@ export function GetFeedbacksList(
 		mute_bus_send: {
 			type: 'boolean',
 			name: 'Change from bus to matrix send mute state',
-			description: 'If the specified bus send is muted, change style of the bank',
+			description: 'If the specified bus send is muted',
 			options: [
 				{
 					type: 'dropdown',
@@ -674,7 +673,7 @@ export function GetFeedbacksList(
 		fader_level: {
 			type: 'boolean',
 			name: 'Change from fader level',
-			description: 'If the fader level has the specified gain, change style of the bank',
+			description: 'If the fader level has the specified gain',
 			options: [
 				{
 					type: 'dropdown',
@@ -709,7 +708,7 @@ export function GetFeedbacksList(
 		level_channel_send: {
 			type: 'boolean',
 			name: 'Change from level of channel to bus send',
-			description: 'If the channel to bus send level has the specified gain, change style of the bank',
+			description: 'If the channel to bus send level has the specified gain',
 			options: [
 				{
 					type: 'dropdown',
@@ -752,7 +751,7 @@ export function GetFeedbacksList(
 		level_bus_send: {
 			type: 'boolean',
 			name: 'Change from level of bus to matrix send',
-			description: 'If the bus to matrix send level has the specified gain, change style of the bank',
+			description: 'If the bus to matrix send level has the specified gain',
 			options: [
 				{
 					type: 'dropdown',
@@ -796,7 +795,7 @@ export function GetFeedbacksList(
 		channel_panning: {
 			type: 'boolean',
 			name: 'Change from channel panning',
-			description: 'If the channel panning has the specified value, change style of the bank',
+			description: 'If the channel panning has the specified value',
 			options: [
 				{
 					type: 'dropdown',
@@ -831,7 +830,7 @@ export function GetFeedbacksList(
 		channel_send_panning: {
 			type: 'boolean',
 			name: 'Change from channel send panning',
-			description: 'If the channel send panning has the specified value, change style of the bank',
+			description: 'If the channel send panning has the specified value',
 			options: [
 				{
 					type: 'dropdown',
@@ -874,7 +873,7 @@ export function GetFeedbacksList(
 		bus_send_panning: {
 			type: 'boolean',
 			name: 'Change from bus send panning',
-			description: 'If the bus send has the specified value, change style of the bank',
+			description: 'If the bus send has the specified value',
 			options: [
 				{
 					type: 'dropdown',
@@ -917,7 +916,7 @@ export function GetFeedbacksList(
 		talkback_talk: {
 			type: 'boolean',
 			name: 'Change from talkback talk state',
-			description: 'If the specified talkback is on, change style of the bank',
+			description: 'If the specified talkback is on',
 			options: [
 				{
 					type: 'dropdown',
@@ -948,7 +947,7 @@ export function GetFeedbacksList(
 		talkback_config_single_source: {
 			type: 'boolean',
 			name: 'Change from talkback config of single source',
-			description: 'If the source is mapped to a talkback destination, change style of the bank',
+			description: 'If the source is mapped to a talkback destination',
 			options: [
 				{
 					type: 'dropdown',
@@ -992,7 +991,7 @@ export function GetFeedbacksList(
 		'oscillator-enable': {
 			type: 'boolean',
 			name: 'Change from oscillator enabled state',
-			description: 'If the oscillator is on, change style of the bank',
+			description: 'If the oscillator is on',
 			options: [],
 			defaultStyle: {
 				bgcolor: 0xff0000,
@@ -1006,7 +1005,7 @@ export function GetFeedbacksList(
 		'oscillator-destination': {
 			type: 'boolean',
 			name: 'Change from oscillator destination state',
-			description: 'If the oscillator destination matches, change style of the bank',
+			description: 'If the oscillator destination matches',
 			options: [
 				{
 					type: 'dropdown',
@@ -1034,7 +1033,7 @@ export function GetFeedbacksList(
 		select: {
 			type: 'boolean',
 			name: 'Change from select state',
-			description: 'If specified channel is selected, change style of the bank',
+			description: 'If specified channel is selected',
 			options: [
 				{
 					type: 'dropdown',
@@ -1062,7 +1061,7 @@ export function GetFeedbacksList(
 		solo: {
 			type: 'boolean',
 			name: 'Change from solo enabled state',
-			description: 'If the solo is on for specified channel, change style of the bank',
+			description: 'If the solo is on for specified channel',
 			options: [
 				{
 					type: 'dropdown',
@@ -1088,7 +1087,7 @@ export function GetFeedbacksList(
 		clear: {
 			type: 'boolean',
 			name: 'Change from clear solo state',
-			description: 'If atleast one solo is selected the clear solo button is on and will change style of the bank',
+			description: 'If at least one solo is selected the clear solo button is on',
 			options: [],
 			defaultStyle: {
 				bgcolor: 0xff7f00,
@@ -1102,7 +1101,7 @@ export function GetFeedbacksList(
 		'sends-on-fader': {
 			type: 'boolean',
 			name: 'Change from Sends on Fader/Fader Flip state',
-			description: 'If the Sends on Fader/Fader Flip is on, change style of the bank',
+			description: 'If the Sends on Fader/Fader Flip is on',
 			options: [],
 			defaultStyle: {
 				bgcolor: 0xff7f00,
@@ -1116,7 +1115,7 @@ export function GetFeedbacksList(
 		'solo-mono': {
 			type: 'boolean',
 			name: 'Change from Solo Mono enabled state',
-			description: 'If the Solo Mono is on, change style of the bank',
+			description: 'If the Solo Mono is on',
 			options: [],
 			defaultStyle: {
 				bgcolor: 0xff7f00,
@@ -1130,7 +1129,7 @@ export function GetFeedbacksList(
 		'solo-dim': {
 			type: 'boolean',
 			name: 'Change from Solo Dim enabled state',
-			description: 'If the Solo Dim is on, change style of the bank',
+			description: 'If the Solo Dim is on',
 			options: [],
 			defaultStyle: {
 				bgcolor: 0xff7f00,
@@ -1144,7 +1143,7 @@ export function GetFeedbacksList(
 		tape: {
 			type: 'boolean',
 			name: 'Change from tape operation state',
-			description: 'If the tape state matches, change style of the bank',
+			description: 'If the tape state matches',
 			options: [
 				{
 					type: 'dropdown',
@@ -1167,7 +1166,7 @@ export function GetFeedbacksList(
 			type: 'boolean',
 			name: 'Change from selected channel bank (X32/M32)',
 			description:
-				'If the channel bank matches the selected channel bank, change style of the bank. Please note these will be incorrect if used connected to an X32 Compact/X32 Producer/M32R use the X32 Compact/X32 Producer/M32R feedback instead.',
+				'If the channel bank matches the selected channel bank. Please note these will be incorrect if used connected to an X32 Compact/X32 Producer/M32R use the X32 Compact/X32 Producer/M32R feedback instead.',
 			options: [
 				{
 					type: 'dropdown',
@@ -1207,7 +1206,7 @@ export function GetFeedbacksList(
 			type: 'boolean',
 			name: 'Change from selected group bank (X32/M32)',
 			description:
-				'If the group bank matches the selected group bank, change style of the bank. Please note these will be incorrect if used connected to an X32 Compact/X32 Producer/M32R use the X32 Compact/X32 Producer/M32R feedback instead.',
+				'If the group bank matches the selected group bank. Please note these will be incorrect if used connected to an X32 Compact/X32 Producer/M32R use the X32 Compact/X32 Producer/M32R feedback instead.',
 			options: [
 				{
 					type: 'dropdown',
@@ -1247,7 +1246,7 @@ export function GetFeedbacksList(
 			type: 'boolean',
 			name: 'Change from selected channel bank (X32 Compact/X32 Producer/M32R)',
 			description:
-				'If the channel bank matches the selected channel bank, change style of the bank. Please note these will be incorrect if used connected to an X32/M32 use the X32/M32 feedback instead.',
+				'If the channel bank matches the selected channel bank. Please note these will be incorrect if used connected to an X32/M32 use the X32/M32 feedback instead.',
 			options: [
 				{
 					type: 'dropdown',
@@ -1303,7 +1302,7 @@ export function GetFeedbacksList(
 			type: 'boolean',
 			name: 'Change from selected group bank (X32 Compact/X32 Producer/M32R)',
 			description:
-				'If the group bank matches the selected group bank, change style of the bank. Please note these will be incorrect if used connected to an X32/M32 use the X32/M32 feedback instead.',
+				'If the group bank matches the selected group bank. Please note these will be incorrect if used connected to an X32/M32 use the X32/M32 feedback instead.',
 			options: [
 				{
 					type: 'dropdown',
@@ -1366,7 +1365,7 @@ export function GetFeedbacksList(
 		'bus-send-bank': {
 			type: 'boolean',
 			name: 'Change from selected Bus Send',
-			description: 'If the selected bus send bank is active,, change style of the bank',
+			description: 'If the selected bus send bank is active',
 			options: [
 				{
 					type: 'dropdown',
@@ -1405,7 +1404,7 @@ export function GetFeedbacksList(
 		'user-bank': {
 			type: 'boolean',
 			name: 'Change from selected User Assign Bank',
-			description: 'If the selected assign bank is active, change style of the bank',
+			description: 'If the selected assign bank is active',
 			options: [
 				{
 					type: 'dropdown',
@@ -1440,7 +1439,7 @@ export function GetFeedbacksList(
 		screens: {
 			type: 'boolean',
 			name: 'Change from screen state',
-			description: 'If the select screen is being shown, change style of the bank',
+			description: 'If the select screen is being shown',
 			options: [
 				{
 					type: 'dropdown',
@@ -1503,7 +1502,7 @@ export function GetFeedbacksList(
 		'mute-group-screen': {
 			type: 'boolean',
 			name: 'Change from mute groups screen enabled state',
-			description: 'If mute groups screen is on, change style of the bank',
+			description: 'If mute groups screen is on',
 			options: [],
 			defaultStyle: {
 				bgcolor: 0xff0000,
@@ -1517,7 +1516,7 @@ export function GetFeedbacksList(
 		'utility-screen': {
 			type: 'boolean',
 			name: 'Change from Utility enabled state',
-			description: 'If utility screen is on, change style of the bank',
+			description: 'If utility screen is on',
 			options: [],
 			defaultStyle: {
 				bgcolor: 0x00ff7f,
@@ -1531,7 +1530,7 @@ export function GetFeedbacksList(
 		'channel-page': {
 			type: 'boolean',
 			name: 'Change from channel page selected state',
-			description: 'If channel screen is on and selected page is active, change style of the bank',
+			description: 'If channel screen is on and selected page is active',
 			options: [
 				{
 					type: 'dropdown',
@@ -1582,7 +1581,7 @@ export function GetFeedbacksList(
 		'meter-page': {
 			type: 'boolean',
 			name: 'Change from meter page selected state',
-			description: 'If meter screen is on and selected page is active, change style of the bank',
+			description: 'If meter screen is on and selected page is active',
 			options: [
 				{
 					type: 'dropdown',
@@ -1629,7 +1628,7 @@ export function GetFeedbacksList(
 		'route-page': {
 			type: 'boolean',
 			name: 'Change from route page selected state',
-			description: 'If route screen is on and selected page is active, change style of the bank',
+			description: 'If route screen is on and selected page is active',
 			options: [
 				{
 					type: 'dropdown',
@@ -1688,7 +1687,7 @@ export function GetFeedbacksList(
 		'setup-page': {
 			type: 'boolean',
 			name: 'Change from setup page selected state',
-			description: 'If setup screen is on and selected page is active, change style of the bank',
+			description: 'If setup screen is on and selected page is active',
 			options: [
 				{
 					type: 'dropdown',
@@ -1739,7 +1738,7 @@ export function GetFeedbacksList(
 		'library-page': {
 			type: 'boolean',
 			name: 'Change from library page selected state',
-			description: 'If library screen is on and selected page is active, change style of the bank',
+			description: 'If library screen is on and selected page is active',
 			options: [
 				{
 					type: 'dropdown',
@@ -1778,7 +1777,7 @@ export function GetFeedbacksList(
 		'effects-page': {
 			type: 'boolean',
 			name: 'Change from effects page selected state',
-			description: 'If effects screen is on and selected page is active, change style of the bank',
+			description: 'If effects screen is on and selected page is active',
 			options: [
 				{
 					type: 'dropdown',
@@ -1837,7 +1836,7 @@ export function GetFeedbacksList(
 		'monitor-page': {
 			type: 'boolean',
 			name: 'Change from monitor page selected state',
-			description: 'If monitor screen is on and selected page is active, change style of the bank',
+			description: 'If monitor screen is on and selected page is active',
 			options: [
 				{
 					type: 'dropdown',
@@ -1876,7 +1875,7 @@ export function GetFeedbacksList(
 		'usb-page': {
 			type: 'boolean',
 			name: 'Change from USB page selected state',
-			description: 'If USB screen is on and selected page is active, change style of the bank',
+			description: 'If USB screen is on and selected page is active',
 			options: [
 				{
 					type: 'dropdown',
@@ -1907,7 +1906,7 @@ export function GetFeedbacksList(
 		'scene-page': {
 			type: 'boolean',
 			name: 'Change from scene page selected state',
-			description: 'If scene screen is on and selected page is active, change style of the bank',
+			description: 'If scene screen is on and selected page is active',
 			options: [
 				{
 					type: 'dropdown',
@@ -1954,7 +1953,7 @@ export function GetFeedbacksList(
 		'assign-page': {
 			type: 'boolean',
 			name: 'Change from assign page selected state',
-			description: 'If assign screen is on and selected page is active, change style of the bank',
+			description: 'If assign screen is on and selected page is active',
 			options: [
 				{
 					type: 'dropdown',
@@ -1995,7 +1994,7 @@ export function GetFeedbacksList(
 			type: 'boolean',
 			name: 'Change from user in routing state',
 			description:
-				'If the specified source is routed to the specified destination, change style of the bank. Protip: You can use `Store channel` with and then select `FROM STORAGE` to chain screens ',
+				'If the specified source is routed to the specified destination. Protip: You can use `Store channel` with and then select `FROM STORAGE` to chain screens',
 			options: [
 				{
 					type: 'dropdown',
@@ -2078,7 +2077,7 @@ export function GetFeedbacksList(
 			type: 'boolean',
 			name: 'Change from user out routing state',
 			description:
-				'If the specified source is routed to the specified destination, change style of the bank. Protip: You can use `Store channel` with and then select `FROM STORAGE` to chain screens ',
+				'If the specified source is routed to the specified destination. Protip: You can use `Store channel` with and then select `FROM STORAGE` to chain screens',
 			options: [
 				{
 					type: 'dropdown',
@@ -2160,7 +2159,7 @@ export function GetFeedbacksList(
 		'stored-channel': {
 			type: 'boolean',
 			name: 'Change based on Stored Channel',
-			description: 'If the specified channl is stored, change style of the bank.',
+			description: 'If the specified channel is stored',
 			options: [
 				{
 					type: 'dropdown',
@@ -2183,7 +2182,7 @@ export function GetFeedbacksList(
 		'route-input-block-mode': {
 			type: 'boolean',
 			name: 'Input block routing mode',
-			description: 'If the specified mode is active, change style of the bank.',
+			description: 'If the specified mode is active',
 			options: [
 				{
 					type: 'dropdown',
@@ -2211,7 +2210,7 @@ export function GetFeedbacksList(
 		'route-input-blocks': {
 			type: 'boolean',
 			name: 'Input block routing state',
-			description: 'If the specified block is routed to the specified destination, change style of the bank.',
+			description: 'If the specified block is routed to the specified destination',
 			options: [
 				{
 					type: 'dropdown',
@@ -2254,7 +2253,7 @@ export function GetFeedbacksList(
 		'route-aux-blocks': {
 			type: 'boolean',
 			name: 'Aux block routing state',
-			description: 'If the specified block is routed to the specified destination, change style of the bank.',
+			description: 'If the specified block is routed to the specified destination',
 			options: [
 				{
 					type: 'dropdown',
@@ -2289,7 +2288,7 @@ export function GetFeedbacksList(
 		'route-aes50-blocks': {
 			type: 'boolean',
 			name: 'AES50 block routing state',
-			description: 'If the specified block is routed to the specified destination, change style of the bank.',
+			description: 'If the specified block is routed to the specified destination',
 			options: [
 				{
 					type: 'dropdown',
@@ -2332,7 +2331,7 @@ export function GetFeedbacksList(
 		'route-card-blocks': {
 			type: 'boolean',
 			name: 'Card block routing state',
-			description: 'If the specified block is routed to the specified destination, change style of the bank.',
+			description: 'If the specified block is routed to the specified destination',
 			options: [
 				{
 					type: 'dropdown',
@@ -2364,7 +2363,7 @@ export function GetFeedbacksList(
 		'route-xlr-left-outputs': {
 			type: 'boolean',
 			name: 'XRL left block routing state',
-			description: 'If the specified block is routed to the specified destination, change style of the bank.',
+			description: 'If the specified block is routed to the specified destination',
 			options: [
 				{
 					type: 'dropdown',
@@ -2399,7 +2398,7 @@ export function GetFeedbacksList(
 		'route-xlr-right-outputs': {
 			type: 'boolean',
 			name: 'XRL right block routing state',
-			description: 'If the specified block is routed to the specified destination, change style of the bank.',
+			description: 'If the specified block is routed to the specified destination',
 			options: [
 				{
 					type: 'dropdown',
@@ -2435,7 +2434,7 @@ export function GetFeedbacksList(
 		'lock-and-shutdown': {
 			type: 'boolean',
 			name: 'Lock/Shutdown',
-			description: 'If the specified state is active, change style of the bank.',
+			description: 'If the specified state is active',
 			options: [
 				{
 					type: 'dropdown',
@@ -2462,7 +2461,7 @@ export function GetFeedbacksList(
 		'insert-on': {
 			type: 'boolean',
 			name: 'Insert Status',
-			description: 'If the insert status of specified source matches the specified state, change style of the bank.',
+			description: 'If the insert status of specified source matches the specified state',
 			options: [
 				{
 					type: 'dropdown',
@@ -2487,7 +2486,7 @@ export function GetFeedbacksList(
 		'insert-pos': {
 			type: 'boolean',
 			name: 'Insert Position',
-			description: 'If the insert position of specified source matches the specified state, change style of the bank.',
+			description: 'If the insert position of specified source matches the specified state',
 			options: [
 				{
 					type: 'dropdown',
@@ -2522,8 +2521,7 @@ export function GetFeedbacksList(
 		'insert-select': {
 			type: 'boolean',
 			name: 'Insert Destination',
-			description:
-				'If the insert destination of specified source matches the specified destination, change style of the bank.',
+			description: 'If the insert destination of specified source matches the specified destination',
 			options: [
 				{
 					type: 'dropdown',
@@ -2555,7 +2553,6 @@ export function GetFeedbacksList(
 		'undo-available': {
 			type: 'boolean',
 			name: 'Undo available',
-			description: 'If undo is available, change the style of the bank',
 			options: [],
 			defaultStyle: {
 				bgcolor: 0xff7f00,

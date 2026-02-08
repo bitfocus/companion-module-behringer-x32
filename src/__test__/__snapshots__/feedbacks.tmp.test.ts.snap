@@ -7,7 +7,7 @@ exports[`Feedbacks test > Check AES50 block routing state (route-aes50-blocks) 1
     "bgcolor": 16711680,
     "color": 0,
   },
-  "description": "If the specified block is routed to the specified destination, change style of the bank.",
+  "description": "If the specified block is routed to the specified destination",
   "name": "AES50 block routing state",
   "options": [
     {
@@ -226,7 +226,7 @@ exports[`Feedbacks test > Check Aux block routing state (route-aux-blocks) 1`] =
     "bgcolor": 16711680,
     "color": 0,
   },
-  "description": "If the specified block is routed to the specified destination, change style of the bank.",
+  "description": "If the specified block is routed to the specified destination",
   "name": "Aux block routing state",
   "options": [
     {
@@ -332,7 +332,7 @@ exports[`Feedbacks test > Check Card block routing state (route-card-blocks) 1`]
     "bgcolor": 16711680,
     "color": 0,
   },
-  "description": "If the specified block is routed to the specified destination, change style of the bank.",
+  "description": "If the specified block is routed to the specified destination",
   "name": "Card block routing state",
   "options": [
     {
@@ -526,7 +526,7 @@ exports[`Feedbacks test > Check Change based on Stored Channel (stored-channel) 
     "bgcolor": 65407,
     "color": 0,
   },
-  "description": "If the specified channl is stored, change style of the bank.",
+  "description": "If the specified channel is stored",
   "name": "Change based on Stored Channel",
   "options": [
     {
@@ -743,7 +743,7 @@ exports[`Feedbacks test > Check Change from Sends on Fader/Fader Flip state (sen
     "bgcolor": 16744192,
     "color": 0,
   },
-  "description": "If the Sends on Fader/Fader Flip is on, change style of the bank",
+  "description": "If the Sends on Fader/Fader Flip is on",
   "name": "Change from Sends on Fader/Fader Flip state",
   "options": [],
   "type": "boolean",
@@ -758,7 +758,7 @@ exports[`Feedbacks test > Check Change from Solo Dim enabled state (solo-dim) 1`
     "bgcolor": 16744192,
     "color": 0,
   },
-  "description": "If the Solo Dim is on, change style of the bank",
+  "description": "If the Solo Dim is on",
   "name": "Change from Solo Dim enabled state",
   "options": [],
   "type": "boolean",
@@ -773,7 +773,7 @@ exports[`Feedbacks test > Check Change from Solo Mono enabled state (solo-mono) 
     "bgcolor": 16744192,
     "color": 0,
   },
-  "description": "If the Solo Mono is on, change style of the bank",
+  "description": "If the Solo Mono is on",
   "name": "Change from Solo Mono enabled state",
   "options": [],
   "type": "boolean",
@@ -788,7 +788,7 @@ exports[`Feedbacks test > Check Change from USB page selected state (usb-page) 1
     "bgcolor": 65407,
     "color": 0,
   },
-  "description": "If USB screen is on and selected page is active, change style of the bank",
+  "description": "If USB screen is on and selected page is active",
   "name": "Change from USB page selected state",
   "options": [
     {
@@ -821,7 +821,7 @@ exports[`Feedbacks test > Check Change from Utility enabled state (utility-scree
     "bgcolor": 65407,
     "color": 0,
   },
-  "description": "If utility screen is on, change style of the bank",
+  "description": "If utility screen is on",
   "name": "Change from Utility enabled state",
   "options": [],
   "type": "boolean",
@@ -836,7 +836,6 @@ exports[`Feedbacks test > Check Change from X-Live state (record) 1`] = `
     "bgcolor": 16711680,
     "color": 0,
   },
-  "description": "If the X-Live state has changed, change style of the bank",
   "name": "Change from X-Live state",
   "options": [
     {
@@ -877,7 +876,7 @@ exports[`Feedbacks test > Check Change from assign page selected state (assign-p
     "bgcolor": 65407,
     "color": 0,
   },
-  "description": "If assign screen is on and selected page is active, change style of the bank",
+  "description": "If assign screen is on and selected page is active",
   "name": "Change from assign page selected state",
   "options": [
     {
@@ -918,7 +917,7 @@ exports[`Feedbacks test > Check Change from bus send panning (bus_send_panning) 
     "bgcolor": 65280,
     "color": 0,
   },
-  "description": "If the bus send has the specified value, change style of the bank",
+  "description": "If the bus send has the specified value",
   "name": "Change from bus send panning",
   "options": [
     {
@@ -1075,7 +1074,7 @@ exports[`Feedbacks test > Check Change from bus to matrix send mute state (mute_
     "bgcolor": 16711680,
     "color": 0,
   },
-  "description": "If the specified bus send is muted, change style of the bank",
+  "description": "If the specified bus send is muted",
   "name": "Change from bus to matrix send mute state",
   "options": [
     {
@@ -1205,7 +1204,7 @@ exports[`Feedbacks test > Check Change from channel page selected state (channel
     "bgcolor": 65407,
     "color": 0,
   },
-  "description": "If channel screen is on and selected page is active, change style of the bank",
+  "description": "If channel screen is on and selected page is active",
   "name": "Change from channel page selected state",
   "options": [
     {
@@ -1258,7 +1257,7 @@ exports[`Feedbacks test > Check Change from channel panning (channel_panning) 1`
     "bgcolor": 65280,
     "color": 0,
   },
-  "description": "If the channel panning has the specified value, change style of the bank",
+  "description": "If the channel panning has the specified value",
   "name": "Change from channel panning",
   "options": [
     {
@@ -1586,7 +1585,7 @@ exports[`Feedbacks test > Check Change from channel send panning (channel_send_p
     "bgcolor": 65280,
     "color": 0,
   },
-  "description": "If the channel send panning has the specified value, change style of the bank",
+  "description": "If the channel send panning has the specified value",
   "name": "Change from channel send panning",
   "options": [
     {
@@ -1955,7 +1954,7 @@ exports[`Feedbacks test > Check Change from channel to bus send mute state (mute
     "bgcolor": 16711680,
     "color": 0,
   },
-  "description": "If the specified channel send is muted, change style of the bank",
+  "description": "If the specified channel send is muted",
   "name": "Change from channel to bus send mute state",
   "options": [
     {
@@ -2253,7 +2252,7 @@ exports[`Feedbacks test > Check Change from clear solo state (clear) 1`] = `
     "bgcolor": 16744192,
     "color": 0,
   },
-  "description": "If atleast one solo is selected the clear solo button is on and will change style of the bank",
+  "description": "If at least one solo is selected the clear solo button is on",
   "name": "Change from clear solo state",
   "options": [],
   "type": "boolean",
@@ -2268,7 +2267,7 @@ exports[`Feedbacks test > Check Change from effects page selected state (effects
     "bgcolor": 65407,
     "color": 0,
   },
-  "description": "If effects screen is on and selected page is active, change style of the bank",
+  "description": "If effects screen is on and selected page is active",
   "name": "Change from effects page selected state",
   "options": [
     {
@@ -2329,7 +2328,7 @@ exports[`Feedbacks test > Check Change from fader level (fader_level) 1`] = `
     "bgcolor": 65280,
     "color": 0,
   },
-  "description": "If the fader level has the specified gain, change style of the bank",
+  "description": "If the fader level has the specified gain",
   "name": "Change from fader level",
   "options": [
     {
@@ -2717,7 +2716,7 @@ exports[`Feedbacks test > Check Change from level of bus to matrix send (level_b
     "bgcolor": 65280,
     "color": 0,
   },
-  "description": "If the bus to matrix send level has the specified gain, change style of the bank",
+  "description": "If the bus to matrix send level has the specified gain",
   "name": "Change from level of bus to matrix send",
   "options": [
     {
@@ -2890,7 +2889,7 @@ exports[`Feedbacks test > Check Change from level of channel to bus send (level_
     "bgcolor": 65280,
     "color": 0,
   },
-  "description": "If the channel to bus send level has the specified gain, change style of the bank",
+  "description": "If the channel to bus send level has the specified gain",
   "name": "Change from level of channel to bus send",
   "options": [
     {
@@ -3227,7 +3226,7 @@ exports[`Feedbacks test > Check Change from library page selected state (library
     "bgcolor": 65407,
     "color": 0,
   },
-  "description": "If library screen is on and selected page is active, change style of the bank",
+  "description": "If library screen is on and selected page is active",
   "name": "Change from library page selected state",
   "options": [
     {
@@ -3268,7 +3267,7 @@ exports[`Feedbacks test > Check Change from meter page selected state (meter-pag
     "bgcolor": 65407,
     "color": 0,
   },
-  "description": "If meter screen is on and selected page is active, change style of the bank",
+  "description": "If meter screen is on and selected page is active",
   "name": "Change from meter page selected state",
   "options": [
     {
@@ -3317,7 +3316,7 @@ exports[`Feedbacks test > Check Change from monitor page selected state (monitor
     "bgcolor": 65407,
     "color": 0,
   },
-  "description": "If monitor screen is on and selected page is active, change style of the bank",
+  "description": "If monitor screen is on and selected page is active",
   "name": "Change from monitor page selected state",
   "options": [
     {
@@ -3358,7 +3357,7 @@ exports[`Feedbacks test > Check Change from mute group state (mute_grp) 1`] = `
     "bgcolor": 16711680,
     "color": 0,
   },
-  "description": "If the specified mute group is muted, change style of the bank",
+  "description": "If the specified mute group is muted",
   "name": "Change from mute group state",
   "options": [
     {
@@ -3407,7 +3406,7 @@ exports[`Feedbacks test > Check Change from mute groups screen enabled state (mu
     "bgcolor": 16711680,
     "color": 0,
   },
-  "description": "If mute groups screen is on, change style of the bank",
+  "description": "If mute groups screen is on",
   "name": "Change from mute groups screen enabled state",
   "options": [],
   "type": "boolean",
@@ -3422,7 +3421,7 @@ exports[`Feedbacks test > Check Change from mute state (mute) 1`] = `
     "bgcolor": 16711680,
     "color": 0,
   },
-  "description": "If the specified target is muted, change style of the bank",
+  "description": "If the specified target is muted",
   "name": "Change from mute state",
   "options": [
     {
@@ -3767,7 +3766,7 @@ exports[`Feedbacks test > Check Change from oscillator destination state (oscill
     "bgcolor": 16711680,
     "color": 0,
   },
-  "description": "If the oscillator destination matches, change style of the bank",
+  "description": "If the oscillator destination matches",
   "name": "Change from oscillator destination state",
   "options": [
     {
@@ -3896,7 +3895,7 @@ exports[`Feedbacks test > Check Change from oscillator enabled state (oscillator
     "bgcolor": 16711680,
     "color": 0,
   },
-  "description": "If the oscillator is on, change style of the bank",
+  "description": "If the oscillator is on",
   "name": "Change from oscillator enabled state",
   "options": [],
   "type": "boolean",
@@ -3911,7 +3910,7 @@ exports[`Feedbacks test > Check Change from route page selected state (route-pag
     "bgcolor": 65407,
     "color": 0,
   },
-  "description": "If route screen is on and selected page is active, change style of the bank",
+  "description": "If route screen is on and selected page is active",
   "name": "Change from route page selected state",
   "options": [
     {
@@ -3972,7 +3971,7 @@ exports[`Feedbacks test > Check Change from scene page selected state (scene-pag
     "bgcolor": 65407,
     "color": 0,
   },
-  "description": "If scene screen is on and selected page is active, change style of the bank",
+  "description": "If scene screen is on and selected page is active",
   "name": "Change from scene page selected state",
   "options": [
     {
@@ -4021,7 +4020,7 @@ exports[`Feedbacks test > Check Change from screen state (screens) 1`] = `
     "bgcolor": 65407,
     "color": 0,
   },
-  "description": "If the select screen is being shown, change style of the bank",
+  "description": "If the select screen is being shown",
   "name": "Change from screen state",
   "options": [
     {
@@ -4086,7 +4085,7 @@ exports[`Feedbacks test > Check Change from select state (select) 1`] = `
     "bgcolor": 65407,
     "color": 0,
   },
-  "description": "If specified channel is selected, change style of the bank",
+  "description": "If specified channel is selected",
   "name": "Change from select state",
   "options": [
     {
@@ -4399,7 +4398,7 @@ exports[`Feedbacks test > Check Change from selected Bus Send (bus-send-bank) 1`
     "bgcolor": 16744192,
     "color": 0,
   },
-  "description": "If the selected bus send bank is active,, change style of the bank",
+  "description": "If the selected bus send bank is active",
   "name": "Change from selected Bus Send",
   "options": [
     {
@@ -4440,7 +4439,7 @@ exports[`Feedbacks test > Check Change from selected User Assign Bank (user-bank
     "bgcolor": 16744192,
     "color": 0,
   },
-  "description": "If the selected assign bank is active, change style of the bank",
+  "description": "If the selected assign bank is active",
   "name": "Change from selected User Assign Bank",
   "options": [
     {
@@ -4477,7 +4476,7 @@ exports[`Feedbacks test > Check Change from selected channel bank (X32 Compact/X
     "bgcolor": 65407,
     "color": 0,
   },
-  "description": "If the channel bank matches the selected channel bank, change style of the bank. Please note these will be incorrect if used connected to an X32/M32 use the X32/M32 feedback instead.",
+  "description": "If the channel bank matches the selected channel bank. Please note these will be incorrect if used connected to an X32/M32 use the X32/M32 feedback instead.",
   "name": "Change from selected channel bank (X32 Compact/X32 Producer/M32R)",
   "options": [
     {
@@ -4534,7 +4533,7 @@ exports[`Feedbacks test > Check Change from selected channel bank (X32/M32) (cha
     "bgcolor": 65407,
     "color": 0,
   },
-  "description": "If the channel bank matches the selected channel bank, change style of the bank. Please note these will be incorrect if used connected to an X32 Compact/X32 Producer/M32R use the X32 Compact/X32 Producer/M32R feedback instead.",
+  "description": "If the channel bank matches the selected channel bank. Please note these will be incorrect if used connected to an X32 Compact/X32 Producer/M32R use the X32 Compact/X32 Producer/M32R feedback instead.",
   "name": "Change from selected channel bank (X32/M32)",
   "options": [
     {
@@ -4575,7 +4574,7 @@ exports[`Feedbacks test > Check Change from selected group bank (X32 Compact/X32
     "bgcolor": 65407,
     "color": 0,
   },
-  "description": "If the group bank matches the selected group bank, change style of the bank. Please note these will be incorrect if used connected to an X32/M32 use the X32/M32 feedback instead.",
+  "description": "If the group bank matches the selected group bank. Please note these will be incorrect if used connected to an X32/M32 use the X32/M32 feedback instead.",
   "name": "Change from selected group bank (X32 Compact/X32 Producer/M32R)",
   "options": [
     {
@@ -4640,7 +4639,7 @@ exports[`Feedbacks test > Check Change from selected group bank (X32/M32) (group
     "bgcolor": 65407,
     "color": 0,
   },
-  "description": "If the group bank matches the selected group bank, change style of the bank. Please note these will be incorrect if used connected to an X32 Compact/X32 Producer/M32R use the X32 Compact/X32 Producer/M32R feedback instead.",
+  "description": "If the group bank matches the selected group bank. Please note these will be incorrect if used connected to an X32 Compact/X32 Producer/M32R use the X32 Compact/X32 Producer/M32R feedback instead.",
   "name": "Change from selected group bank (X32/M32)",
   "options": [
     {
@@ -4681,7 +4680,7 @@ exports[`Feedbacks test > Check Change from setup page selected state (setup-pag
     "bgcolor": 65407,
     "color": 0,
   },
-  "description": "If setup screen is on and selected page is active, change style of the bank",
+  "description": "If setup screen is on and selected page is active",
   "name": "Change from setup page selected state",
   "options": [
     {
@@ -4734,7 +4733,7 @@ exports[`Feedbacks test > Check Change from solo enabled state (solo) 1`] = `
     "bgcolor": 16744192,
     "color": 0,
   },
-  "description": "If the solo is on for specified channel, change style of the bank",
+  "description": "If the solo is on for specified channel",
   "name": "Change from solo enabled state",
   "options": [
     {
@@ -5079,7 +5078,7 @@ exports[`Feedbacks test > Check Change from talkback config of single source (ta
     "bgcolor": 16744192,
     "color": 0,
   },
-  "description": "If the source is mapped to a talkback destination, change style of the bank",
+  "description": "If the source is mapped to a talkback destination",
   "name": "Change from talkback config of single source",
   "options": [
     {
@@ -5193,7 +5192,7 @@ exports[`Feedbacks test > Check Change from talkback talk state (talkback_talk) 
     "bgcolor": 16744192,
     "color": 0,
   },
-  "description": "If the specified talkback is on, change style of the bank",
+  "description": "If the specified talkback is on",
   "name": "Change from talkback talk state",
   "options": [
     {
@@ -5226,7 +5225,7 @@ exports[`Feedbacks test > Check Change from tape operation state (tape) 1`] = `
     "bgcolor": 16711680,
     "color": 0,
   },
-  "description": "If the tape state matches, change style of the bank",
+  "description": "If the tape state matches",
   "name": "Change from tape operation state",
   "options": [
     {
@@ -5279,7 +5278,7 @@ exports[`Feedbacks test > Check Change from user in routing state (route-user-in
     "bgcolor": 16711680,
     "color": 0,
   },
-  "description": "If the specified source is routed to the specified destination, change style of the bank. Protip: You can use \`Store channel\` with and then select \`FROM STORAGE\` to chain screens ",
+  "description": "If the specified source is routed to the specified destination. Protip: You can use \`Store channel\` with and then select \`FROM STORAGE\` to chain screens",
   "name": "Change from user in routing state",
   "options": [
     {
@@ -6121,7 +6120,7 @@ exports[`Feedbacks test > Check Change from user out routing state (route-user-o
     "bgcolor": 16711680,
     "color": 0,
   },
-  "description": "If the specified source is routed to the specified destination, change style of the bank. Protip: You can use \`Store channel\` with and then select \`FROM STORAGE\` to chain screens ",
+  "description": "If the specified source is routed to the specified destination. Protip: You can use \`Store channel\` with and then select \`FROM STORAGE\` to chain screens",
   "name": "Change from user out routing state",
   "options": [
     {
@@ -7187,7 +7186,7 @@ exports[`Feedbacks test > Check Input block routing mode (route-input-block-mode
     "bgcolor": 32767,
     "color": 0,
   },
-  "description": "If the specified mode is active, change style of the bank.",
+  "description": "If the specified mode is active",
   "name": "Input block routing mode",
   "options": [
     {
@@ -7220,7 +7219,7 @@ exports[`Feedbacks test > Check Input block routing state (route-input-blocks) 1
     "bgcolor": 16711680,
     "color": 0,
   },
-  "description": "If the specified block is routed to the specified destination, change style of the bank.",
+  "description": "If the specified block is routed to the specified destination",
   "name": "Input block routing state",
   "options": [
     {
@@ -7383,7 +7382,7 @@ exports[`Feedbacks test > Check Insert Destination (insert-select) 1`] = `
     "bgcolor": 16744192,
     "color": 0,
   },
-  "description": "If the insert destination of specified source matches the specified destination, change style of the bank.",
+  "description": "If the insert destination of specified source matches the specified destination",
   "name": "Insert Destination",
   "options": [
     {
@@ -7733,7 +7732,7 @@ exports[`Feedbacks test > Check Insert Position (insert-pos) 1`] = `
     "bgcolor": 16744192,
     "color": 0,
   },
-  "description": "If the insert position of specified source matches the specified state, change style of the bank.",
+  "description": "If the insert position of specified source matches the specified state",
   "name": "Insert Position",
   "options": [
     {
@@ -7999,7 +7998,7 @@ exports[`Feedbacks test > Check Insert Status (insert-on) 1`] = `
     "bgcolor": 16744192,
     "color": 0,
   },
-  "description": "If the insert status of specified source matches the specified state, change style of the bank.",
+  "description": "If the insert status of specified source matches the specified state",
   "name": "Insert Status",
   "options": [
     {
@@ -8248,7 +8247,7 @@ exports[`Feedbacks test > Check Lock/Shutdown (lock-and-shutdown) 1`] = `
     "bgcolor": 16711680,
     "color": 0,
   },
-  "description": "If the specified state is active, change style of the bank.",
+  "description": "If the specified state is active",
   "name": "Lock/Shutdown",
   "options": [
     {
@@ -8285,7 +8284,6 @@ exports[`Feedbacks test > Check Undo available (undo-available) 1`] = `
     "bgcolor": 16744192,
     "color": 0,
   },
-  "description": "If undo is available, change the style of the bank",
   "name": "Undo available",
   "options": [],
   "type": "boolean",
@@ -8300,7 +8298,7 @@ exports[`Feedbacks test > Check XRL left block routing state (route-xlr-left-out
     "bgcolor": 16711680,
     "color": 0,
   },
-  "description": "If the specified block is routed to the specified destination, change style of the bank.",
+  "description": "If the specified block is routed to the specified destination",
   "name": "XRL left block routing state",
   "options": [
     {
@@ -8486,7 +8484,7 @@ exports[`Feedbacks test > Check XRL right block routing state (route-xlr-right-o
     "bgcolor": 16711680,
     "color": 0,
   },
-  "description": "If the specified block is routed to the specified destination, change style of the bank.",
+  "description": "If the specified block is routed to the specified destination",
   "name": "XRL right block routing state",
   "options": [
     {
