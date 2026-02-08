@@ -164,436 +164,628 @@ export enum ActionId {
 
 export type ActionsSchema = {
 	[ActionId.Record]: {
-		state: number
+		options: {
+			state: number
+		}
 	}
-	[ActionId.AddMarker]: Record<string, never>
+	[ActionId.AddMarker]: { options: Record<string, never> }
 	[ActionId.Mute]: {
-		target: string
-		mute: number // 0=off, 1=on, 2=toggle
+		options: {
+			target: string
+			mute: number // 0=off, 1=on, 2=toggle
+		}
 	}
 	[ActionId.MuteGroup]: {
-		target: string
-		mute: number // 0=off, 1=on, 2=toggle
+		options: {
+			target: string
+			mute: number // 0=off, 1=on, 2=toggle
+		}
 	}
 	[ActionId.MuteChannelSend]: {
-		source: string
-		target: string
-		mute: number // 0=off, 1=on, 2=toggle
+		options: {
+			source: string
+			target: string
+			mute: number // 0=off, 1=on, 2=toggle
+		}
 	}
 	[ActionId.MuteBusSend]: {
-		source: string
-		target: string
-		mute: number // 0=off, 1=on, 2=toggle
+		options: {
+			source: string
+			target: string
+			mute: number // 0=off, 1=on, 2=toggle
+		}
 	}
 	[ActionId.FaderLevel]: {
-		target: string
-		fad: number
-		fadeDuration: number
-		fadeAlgorithm: string
-		fadeType: string
+		options: {
+			target: string
+			fad: number
+			fadeDuration: number
+			fadeAlgorithm: string
+			fadeType: string
+		}
 	}
 	[ActionId.FaderLevelStore]: {
-		target: string
+		options: {
+			target: string
+		}
 	}
 	[ActionId.FaderLevelRestore]: {
-		target: string
-		fadeDuration: number
-		fadeAlgorithm: string
-		fadeType: string
+		options: {
+			target: string
+			fadeDuration: number
+			fadeAlgorithm: string
+			fadeType: string
+		}
 	}
 	[ActionId.FaderLevelDelta]: {
-		target: string
-		useVariable: boolean
-		delta: number
-		varDelta: string
-		fadeDuration: number
-		fadeAlgorithm: string
-		fadeType: string
+		options: {
+			target: string
+			useVariable: boolean
+			delta: number
+			varDelta: string
+			fadeDuration: number
+			fadeAlgorithm: string
+			fadeType: string
+		}
 	}
 	[ActionId.Panning]: {
-		target: string
-		pan: number
-		fadeDuration: number
-		fadeAlgorithm: string
-		fadeType: string
+		options: {
+			target: string
+			pan: number
+			fadeDuration: number
+			fadeAlgorithm: string
+			fadeType: string
+		}
 	}
 	[ActionId.PanningDelta]: {
-		target: string
-		useVariable: boolean
-		delta: number
-		varDelta: string
-		fadeDuration: number
-		fadeAlgorithm: string
-		fadeType: string
+		options: {
+			target: string
+			useVariable: boolean
+			delta: number
+			varDelta: string
+			fadeDuration: number
+			fadeAlgorithm: string
+			fadeType: string
+		}
 	}
 	[ActionId.PanningStore]: {
-		target: string
+		options: {
+			target: string
+		}
 	}
 	[ActionId.PanningRestore]: {
-		target: string
-		fadeDuration: number
-		fadeAlgorithm: string
-		fadeType: string
+		options: {
+			target: string
+			fadeDuration: number
+			fadeAlgorithm: string
+			fadeType: string
+		}
 	}
 	[ActionId.ChannelSendLevel]: {
-		source: string
-		target: string
-		fad: number
-		fadeDuration: number
-		fadeAlgorithm: string
-		fadeType: string
+		options: {
+			source: string
+			target: string
+			fad: number
+			fadeDuration: number
+			fadeAlgorithm: string
+			fadeType: string
+		}
 	}
 	[ActionId.ChannelSendLevelDelta]: {
-		source: string
-		target: string
-		useVariable: boolean
-		delta: number
-		varDelta: string
-		fadeDuration: number
-		fadeAlgorithm: string
-		fadeType: string
+		options: {
+			source: string
+			target: string
+			useVariable: boolean
+			delta: number
+			varDelta: string
+			fadeDuration: number
+			fadeAlgorithm: string
+			fadeType: string
+		}
 	}
 	[ActionId.ChannelSendLevelStore]: {
-		source: string
-		target: string
+		options: {
+			source: string
+			target: string
+		}
 	}
 	[ActionId.ChannelSendLevelRestore]: {
-		source: string
-		target: string
-		fadeDuration: number
-		fadeAlgorithm: string
-		fadeType: string
+		options: {
+			source: string
+			target: string
+			fadeDuration: number
+			fadeAlgorithm: string
+			fadeType: string
+		}
 	}
 	[ActionId.ChannelSendPanning]: {
-		source: string
-		target: string
-		pan: number
-		fadeDuration: number
-		fadeAlgorithm: string
-		fadeType: string
+		options: {
+			source: string
+			target: string
+			pan: number
+			fadeDuration: number
+			fadeAlgorithm: string
+			fadeType: string
+		}
 	}
 	[ActionId.ChannelSendPanningDelta]: {
-		source: string
-		target: string
-		useVariable: boolean
-		delta: number
-		varDelta: string
-		fadeDuration: number
-		fadeAlgorithm: string
-		fadeType: string
+		options: {
+			source: string
+			target: string
+			useVariable: boolean
+			delta: number
+			varDelta: string
+			fadeDuration: number
+			fadeAlgorithm: string
+			fadeType: string
+		}
 	}
 	[ActionId.ChannelSendPanningStore]: {
-		source: string
-		target: string
+		options: {
+			source: string
+			target: string
+		}
 	}
 	[ActionId.ChannelSendPanningRestore]: {
-		source: string
-		target: string
-		fadeDuration: number
-		fadeAlgorithm: string
-		fadeType: string
+		options: {
+			source: string
+			target: string
+			fadeDuration: number
+			fadeAlgorithm: string
+			fadeType: string
+		}
 	}
 	[ActionId.BusSendLevel]: {
-		source: string
-		target: string
-		fad: number
-		fadeDuration: number
-		fadeAlgorithm: string
-		fadeType: string
+		options: {
+			source: string
+			target: string
+			fad: number
+			fadeDuration: number
+			fadeAlgorithm: string
+			fadeType: string
+		}
 	}
 	[ActionId.BusSendLevelDelta]: {
-		source: string
-		target: string
-		useVariable: boolean
-		delta: number
-		varDelta: string
-		fadeDuration: number
-		fadeAlgorithm: string
-		fadeType: string
+		options: {
+			source: string
+			target: string
+			useVariable: boolean
+			delta: number
+			varDelta: string
+			fadeDuration: number
+			fadeAlgorithm: string
+			fadeType: string
+		}
 	}
 	[ActionId.BusSendLevelStore]: {
-		source: string
-		target: string
+		options: {
+			source: string
+			target: string
+		}
 	}
 	[ActionId.BusSendLevelRestore]: {
-		source: string
-		target: string
-		fadeDuration: number
-		fadeAlgorithm: string
-		fadeType: string
+		options: {
+			source: string
+			target: string
+			fadeDuration: number
+			fadeAlgorithm: string
+			fadeType: string
+		}
 	}
 	[ActionId.BusSendPanning]: {
-		source: string
-		target: string
-		pan: number
-		fadeDuration: number
-		fadeAlgorithm: string
-		fadeType: string
+		options: {
+			source: string
+			target: string
+			pan: number
+			fadeDuration: number
+			fadeAlgorithm: string
+			fadeType: string
+		}
 	}
 	[ActionId.BusSendPanningDelta]: {
-		source: string
-		target: string
-		useVariable: boolean
-		delta: number
-		varDelta: string
-		fadeDuration: number
-		fadeAlgorithm: string
-		fadeType: string
+		options: {
+			source: string
+			target: string
+			useVariable: boolean
+			delta: number
+			varDelta: string
+			fadeDuration: number
+			fadeAlgorithm: string
+			fadeType: string
+		}
 	}
 	[ActionId.BusSendPanningStore]: {
-		source: string
-		target: string
+		options: {
+			source: string
+			target: string
+		}
 	}
 	[ActionId.BusSendPanningRestore]: {
-		source: string
-		target: string
-		fadeDuration: number
-		fadeAlgorithm: string
-		fadeType: string
+		options: {
+			source: string
+			target: string
+			fadeDuration: number
+			fadeAlgorithm: string
+			fadeType: string
+		}
 	}
 	[ActionId.InputTrim]: {
-		input: string
-		trim: number
+		options: {
+			input: string
+			trim: number
+		}
 	}
 	[ActionId.HeadampGain]: {
-		headamp: string
-		gain: number
+		options: {
+			headamp: string
+			gain: number
+		}
 	}
 	[ActionId.Label]: {
-		target: string
-		lab: string
+		options: {
+			target: string
+			lab: string
+		}
 	}
 	[ActionId.Color]: {
-		target: string
-		col: string
+		options: {
+			target: string
+			col: string
+		}
 	}
 	[ActionId.GoCue]: {
-		cue: number
+		options: {
+			cue: number
+		}
 	}
 	[ActionId.GoScene]: {
-		scene: number
+		options: {
+			scene: number
+		}
 	}
 	[ActionId.GoSnip]: {
-		snip: number
+		options: {
+			snip: number
+		}
 	}
 	[ActionId.Select]: {
-		select: string
+		options: {
+			select: string
+		}
 	}
 	[ActionId.Solo]: {
-		solo: string
-		on: number
+		options: {
+			solo: string
+			on: number
+		}
 	}
-	[ActionId.ClearSolo]: Record<string, never>
+	[ActionId.ClearSolo]: { options: Record<string, never> }
 	[ActionId.Tape]: {
-		tFunc: number
+		options: {
+			tFunc: number
+		}
 	}
 	[ActionId.TalkbackTalk]: {
-		channel: 'A' | 'B'
-		on: number
+		options: {
+			channel: 'A' | 'B'
+			on: number
+		}
 	}
 	[ActionId.TalkbackConfig]: {
-		function: number
-		dest: string
+		options: {
+			function: number
+			dest: string
+		}
 	}
 	[ActionId.TalkbackConfigSingleSource]: {
-		function: number
-		dest: string
-		on: number
+		options: {
+			function: number
+			dest: string
+			on: number
+		}
 	}
 	[ActionId.TalkbackConfigStore]: {
-		function: number
+		options: {
+			function: number
+		}
 	}
 	[ActionId.TalkbackConfigRestore]: {
-		function: number
+		options: {
+			function: number
+		}
 	}
 	[ActionId.OscillatorEnable]: {
-		on: number
+		options: {
+			on: number
+		}
 	}
 	[ActionId.OscillatorDestination]: {
-		destination: string
+		options: {
+			destination: string
+		}
 	}
 	[ActionId.SoloMono]: {
-		on: number
+		options: {
+			on: number
+		}
 	}
 	[ActionId.SoloDim]: {
-		on: number
+		options: {
+			on: number
+		}
 	}
 	[ActionId.SoloDimAttenuation]: {
-		dimAtt: number
+		options: {
+			dimAtt: number
+		}
 	}
 	[ActionId.MonitorLevel]: {
-		fad: number
-		fadeDuration: number
-		fadeAlgorithm: string
-		fadeType: string
+		options: {
+			fad: number
+			fadeDuration: number
+			fadeAlgorithm: string
+			fadeType: string
+		}
 	}
-	[ActionId.SyncClock]: Record<string, never>
+	[ActionId.SyncClock]: { options: Record<string, never> }
 	[ActionId.ChannelBank]: {
-		bank: number
+		options: {
+			bank: number
+		}
 	}
 	[ActionId.GroupBank]: {
-		bank: number
+		options: {
+			bank: number
+		}
 	}
 	[ActionId.ChannelBankCompact]: {
-		bank: number
+		options: {
+			bank: number
+		}
 	}
 	[ActionId.GroupBankCompact]: {
-		bank: number
+		options: {
+			bank: number
+		}
 	}
 	[ActionId.SendsOnFader]: {
-		on: number
+		options: {
+			on: number
+		}
 	}
 	[ActionId.BusSendBank]: {
-		bank: number
+		options: {
+			bank: number
+		}
 	}
 	[ActionId.UserBank]: {
-		bank: number
+		options: {
+			bank: number
+		}
 	}
 	[ActionId.Screens]: {
-		screen: number
+		options: {
+			screen: number
+		}
 	}
 	[ActionId.MuteGroupScreen]: {
-		on: number
+		options: {
+			on: number
+		}
 	}
 	[ActionId.UtilityScreen]: {
-		on: number
+		options: {
+			on: number
+		}
 	}
 	[ActionId.ChannelPage]: {
-		page: number
+		options: {
+			page: number
+		}
 	}
 	[ActionId.MeterPage]: {
-		page: number
+		options: {
+			page: number
+		}
 	}
 	[ActionId.RoutePage]: {
-		page: number
+		options: {
+			page: number
+		}
 	}
 	[ActionId.SetupPage]: {
-		page: number
+		options: {
+			page: number
+		}
 	}
 	[ActionId.LibPage]: {
-		page: number
+		options: {
+			page: number
+		}
 	}
 	[ActionId.FxPage]: {
-		page: number
+		options: {
+			page: number
+		}
 	}
 	[ActionId.MonPage]: {
-		page: number
+		options: {
+			page: number
+		}
 	}
 	[ActionId.USBPage]: {
-		page: number
+		options: {
+			page: number
+		}
 	}
 	[ActionId.ScenePage]: {
-		page: number
+		options: {
+			page: number
+		}
 	}
 	[ActionId.AssignPage]: {
-		page: number
+		options: {
+			page: number
+		}
 	}
 	[ActionId.NextPrevPage]: {
-		goto: number
+		options: {
+			goto: number
+		}
 	}
 	[ActionId.RouteUserIn]: {
-		source: number
-		channel: number
+		options: {
+			source: number
+			channel: number
+		}
 	}
 	[ActionId.RouteUserOut]: {
-		source: number
-		channel: number
+		options: {
+			source: number
+			channel: number
+		}
 	}
 	[ActionId.StoreChannel]: {
-		channel: number
+		options: {
+			channel: number
+		}
 	}
 	[ActionId.RouteInputBlockMode]: {
-		mode: number
+		options: {
+			mode: number
+		}
 	}
 	[ActionId.RouteInputBlocks]: {
-		mode: number
-		block: number
-		routing: number
+		options: {
+			mode: number
+			block: number
+			routing: number
+		}
 	}
 	[ActionId.RouteAuxBlocks]: {
-		mode: number
-		routing: number
+		options: {
+			mode: number
+			routing: number
+		}
 	}
 	[ActionId.RouteAES50Blocks]: {
-		mode: number
-		block: number
-		routing: number
+		options: {
+			mode: number
+			block: number
+			routing: number
+		}
 	}
 	[ActionId.RouteCardBlocks]: {
-		block: number
-		routing: number
+		options: {
+			block: number
+			routing: number
+		}
 	}
 	[ActionId.RouteXLRLeftOutputs]: {
-		block: number
-		routing: number
+		options: {
+			block: number
+			routing: number
+		}
 	}
 	[ActionId.RouteXLRRightOutputs]: {
-		block: number
-		routing: number
+		options: {
+			block: number
+			routing: number
+		}
 	}
 	[ActionId.LockAndShutdown]: {
-		newState: number
+		options: {
+			newState: number
+		}
 	}
 	[ActionId.SaveScene]: {
-		sceneIndex: number
-		sceneName: string
-		sceneNote: string
+		options: {
+			sceneIndex: number
+			sceneName: string
+			sceneNote: string
+		}
 	}
 	[ActionId.SelectActiveSDCard]: {
-		card: number
+		options: {
+			card: number
+		}
 	}
 	[ActionId.RecordedTracks]: {
-		tracks: number
+		options: {
+			tracks: number
+		}
 	}
 	[ActionId.SelectPlaybackDevice]: {
-		device: number
+		options: {
+			device: number
+		}
 	}
 	[ActionId.FormatSDCard]: {
-		card: number
+		options: {
+			card: number
+		}
 	}
 	[ActionId.XLiveRouting]: {
-		route: number
+		options: {
+			route: number
+		}
 	}
 	[ActionId.XLiveClearAlert]: {
-		alert: number
+		options: {
+			alert: number
+		}
 	}
 	[ActionId.XLivePosition]: {
-		position: number
+		options: {
+			position: number
+		}
 	}
-	[ActionId.GoCommand]: Record<string, never>
-	[ActionId.NextCommand]: Record<string, never>
-	[ActionId.PrevCommand]: Record<string, never>
+	[ActionId.GoCommand]: { options: Record<string, never> }
+	[ActionId.NextCommand]: { options: Record<string, never> }
+	[ActionId.PrevCommand]: { options: Record<string, never> }
 	[ActionId.InsertOn]: {
-		src: string
-		on: number
+		options: {
+			src: string
+			on: number
+		}
 	}
 	[ActionId.InsertPos]: {
-		src: string
-		pos: number
+		options: {
+			src: string
+			pos: number
+		}
 	}
 	[ActionId.InsertSelect]: {
-		src: string
-		dest: number
+		options: {
+			src: string
+			dest: number
+		}
 	}
 	[ActionId.LoadChannelPreset]: {
-		preset: string
-		channel: string
-		ha: boolean
-		config: boolean
-		gate: boolean
-		dyn: boolean
-		eq: boolean
-		sends: boolean
+		options: {
+			preset: string
+			channel: string
+			ha: boolean
+			config: boolean
+			gate: boolean
+			dyn: boolean
+			eq: boolean
+			sends: boolean
+		}
 	}
 	[ActionId.LoadFXPreset]: {
-		preset: string
-		channel: number
+		options: {
+			preset: string
+			channel: number
+		}
 	}
 	[ActionId.LoadAESPreset]: {
-		preset: string
+		options: {
+			preset: string
+		}
 	}
-	[ActionId.DoUndo]: Record<string, never>
-	[ActionId.SetUndoCheckpoint]: Record<string, never>
+	[ActionId.DoUndo]: { options: Record<string, never> }
+	[ActionId.SetUndoCheckpoint]: { options: Record<string, never> }
 }
 
 export function GetActionsList(
@@ -855,7 +1047,7 @@ export function GetActionsList(
 			],
 			...actionSubscriptionWrapper({
 				getPath: (options) => {
-					const muteGroupNumber = parseInt(options.target as string, 10)
+					const muteGroupNumber = parseInt(options.target, 10)
 					if (isNaN(muteGroupNumber)) return null
 
 					return `/config/mute/${muteGroupNumber}`
@@ -3509,7 +3701,7 @@ export function GetActionsList(
 				},
 			],
 			callback: (action): void => {
-				let channel = action.options.channel as number
+				let channel = action.options.channel
 				if (channel == -1) {
 					channel = state.getStoredChannel()
 					if (channel == undefined || channel > 31) return
@@ -3548,7 +3740,7 @@ export function GetActionsList(
 				},
 			],
 			callback: (action): void => {
-				let channel = action.options.channel as number
+				let channel = action.options.channel
 				if (channel == -1) {
 					channel = state.getStoredChannel()
 					if (channel == undefined) return
@@ -3574,7 +3766,7 @@ export function GetActionsList(
 				},
 			],
 			callback: (action): void => {
-				state.setStoredChannel(action.options.channel as number)
+				state.setStoredChannel(action.options.channel)
 			},
 		},
 		[ActionId.RouteInputBlockMode]: {
@@ -3826,7 +4018,7 @@ export function GetActionsList(
 				const path = `/-stat/lock`
 				const lockState = state.get(path)
 				const lockValue = lockState && lockState[0].type === 'i' ? lockState[0].value : 0
-				let newState = action.options.newState ? (action.options.newState as number) : 0
+				let newState = action.options.newState ? action.options.newState : 0
 
 				if (lockValue == newState) {
 					return
@@ -3872,9 +4064,9 @@ export function GetActionsList(
 				},
 			],
 			callback: (action): void => {
-				const index = action.options.sceneIndex as number
-				const name = action.options.sceneName ? (action.options.sceneName as string) : ''
-				const note = action.options.sceneNote ? (action.options.sceneNote as string) : ''
+				const index = action.options.sceneIndex
+				const name = action.options.sceneName ? action.options.sceneName : ''
+				const note = action.options.sceneNote ? action.options.sceneNote : ''
 				sendOsc('/save', [
 					{ type: 's', value: 'scene' },
 					{ type: 'i', value: index },

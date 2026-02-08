@@ -101,189 +101,357 @@ export enum FeedbackId {
 
 export type FeedbacksSchema = {
 	[FeedbackId.Mute]: {
-		target: string
+		type: 'boolean'
+		options: {
+			target: string
+		}
 	}
 	[FeedbackId.MuteGroup]: {
-		mute_grp: string
+		type: 'boolean'
+		options: {
+			mute_grp: string
+		}
 	}
 	[FeedbackId.MuteChannelSend]: {
-		source: string
-		target: string
+		type: 'boolean'
+		options: {
+			source: string
+			target: string
+		}
 	}
 	[FeedbackId.MuteBusSend]: {
-		source: string
-		target: string
+		type: 'boolean'
+		options: {
+			source: string
+			target: string
+		}
 	}
 	[FeedbackId.FaderLevel]: {
-		target: string
-		comparitor: string
-		fad: number
+		type: 'boolean'
+		options: {
+			target: string
+			comparitor: string
+			fad: number
+		}
 	}
 	[FeedbackId.ChannelSendLevel]: {
-		source: string
-		target: string
-		comparitor: string
-		fad: number
+		type: 'boolean'
+		options: {
+			source: string
+			target: string
+			comparitor: string
+			fad: number
+		}
 	}
 	[FeedbackId.BusSendLevel]: {
-		source: string
-		target: string
-		comparitor: string
-		fad: number
+		type: 'boolean'
+		options: {
+			source: string
+			target: string
+			comparitor: string
+			fad: number
+		}
 	}
 	[FeedbackId.ChannelPanning]: {
-		target: string
-		comparitor: string
-		pan: number
+		type: 'boolean'
+		options: {
+			target: string
+			comparitor: string
+			pan: number
+		}
 	}
 	[FeedbackId.ChannelSendPanning]: {
-		source: string
-		target: string
-		comparitor: string
-		pan: number
+		type: 'boolean'
+		options: {
+			source: string
+			target: string
+			comparitor: string
+			pan: number
+		}
 	}
 	[FeedbackId.BusSendPanning]: {
-		source: string
-		target: string
-		comparitor: string
-		pan: number
+		type: 'boolean'
+		options: {
+			source: string
+			target: string
+			comparitor: string
+			pan: number
+		}
 	}
 	[FeedbackId.TalkbackTalk]: {
-		channel: 'A' | 'B'
+		type: 'boolean'
+		options: {
+			channel: 'A' | 'B'
+		}
 	}
 	[FeedbackId.TalkbackConfigSingleSource]: {
-		channel: 'A' | 'B'
-		dest: string
+		type: 'boolean'
+		options: {
+			channel: 'A' | 'B'
+			dest: string
+		}
 	}
-	[FeedbackId.OscillatorEnable]: Record<string, never>
+	[FeedbackId.OscillatorEnable]: {
+		type: 'boolean'
+		options: Record<string, never>
+	}
 	[FeedbackId.OscillatorDestination]: {
-		destination: string
+		type: 'boolean'
+		options: {
+			destination: string
+		}
 	}
-	[FeedbackId.SoloMono]: Record<string, never>
-	[FeedbackId.SoloDim]: Record<string, never>
+	[FeedbackId.SoloMono]: {
+		type: 'boolean'
+		options: Record<string, never>
+	}
+	[FeedbackId.SoloDim]: {
+		type: 'boolean'
+		options: Record<string, never>
+	}
 	[FeedbackId.Select]: {
-		select: string
+		type: 'boolean'
+		options: {
+			select: string
+		}
 	}
 	[FeedbackId.Solo]: {
-		solo: string
+		type: 'boolean'
+		options: {
+			solo: string
+		}
 	}
-	[FeedbackId.ClearSolo]: Record<string, never>
-	[FeedbackId.SendsOnFader]: Record<string, never>
+	[FeedbackId.ClearSolo]: {
+		type: 'boolean'
+		options: Record<string, never>
+	}
+	[FeedbackId.SendsOnFader]: {
+		type: 'boolean'
+		options: Record<string, never>
+	}
 	[FeedbackId.Tape]: {
-		tapeFunc: number
+		type: 'boolean'
+		options: {
+			tapeFunc: number
+		}
 	}
 	[FeedbackId.ChannelBank]: {
-		bank: number
+		type: 'boolean'
+		options: {
+			bank: number
+		}
 	}
 	[FeedbackId.GroupBank]: {
-		bank: number
+		type: 'boolean'
+		options: {
+			bank: number
+		}
 	}
 	[FeedbackId.ChannelBankCompact]: {
-		bank: number
+		type: 'boolean'
+		options: {
+			bank: number
+		}
 	}
 	[FeedbackId.GroupBankCompact]: {
-		bank: number
+		type: 'boolean'
+		options: {
+			bank: number
+		}
 	}
 	[FeedbackId.BusSendBank]: {
-		bank: number
+		type: 'boolean'
+		options: {
+			bank: number
+		}
 	}
 	[FeedbackId.UserBank]: {
-		bank: number
+		type: 'boolean'
+		options: {
+			bank: number
+		}
 	}
 	[FeedbackId.Screens]: {
-		screen: number
+		type: 'boolean'
+		options: {
+			screen: number
+		}
 	}
-	[FeedbackId.MuteGroupScreen]: Record<string, never>
-	[FeedbackId.UtilityScreen]: Record<string, never>
+	[FeedbackId.MuteGroupScreen]: {
+		type: 'boolean'
+		options: Record<string, never>
+	}
+	[FeedbackId.UtilityScreen]: {
+		type: 'boolean'
+		options: Record<string, never>
+	}
 	[FeedbackId.ChannelPage]: {
-		page: number
+		type: 'boolean'
+		options: {
+			page: number
+		}
 	}
 	[FeedbackId.MeterPage]: {
-		page: number
+		type: 'boolean'
+		options: {
+			page: number
+		}
 	}
 	[FeedbackId.RoutePage]: {
-		page: number
+		type: 'boolean'
+		options: {
+			page: number
+		}
 	}
 	[FeedbackId.SetupPage]: {
-		page: number
+		type: 'boolean'
+		options: {
+			page: number
+		}
 	}
 	[FeedbackId.LibPage]: {
-		page: number
+		type: 'boolean'
+		options: {
+			page: number
+		}
 	}
 	[FeedbackId.FxPage]: {
-		page: number
+		type: 'boolean'
+		options: {
+			page: number
+		}
 	}
 	[FeedbackId.MonPage]: {
-		page: number
+		type: 'boolean'
+		options: {
+			page: number
+		}
 	}
 	[FeedbackId.USBPage]: {
-		page: number
+		type: 'boolean'
+		options: {
+			page: number
+		}
 	}
 	[FeedbackId.ScenePage]: {
-		page: number
+		type: 'boolean'
+		options: {
+			page: number
+		}
 	}
 	[FeedbackId.AssignPage]: {
-		page: number
+		type: 'boolean'
+		options: {
+			page: number
+		}
 	}
 	[FeedbackId.RouteUserIn]: {
-		source: number
-		channel: number
+		type: 'boolean'
+		options: {
+			source: number
+			channel: number
+		}
 	}
 	[FeedbackId.RouteUserOut]: {
-		source: number
-		channel: number
+		type: 'boolean'
+		options: {
+			source: number
+			channel: number
+		}
 	}
 	[FeedbackId.StoredChannel]: {
-		channel: number
+		type: 'boolean'
+		options: {
+			channel: number
+		}
 	}
 	[FeedbackId.Record]: {
-		state: number
+		type: 'boolean'
+		options: {
+			state: number
+		}
 	}
 	[FeedbackId.RouteInputBlockMode]: {
-		mode: number
+		type: 'boolean'
+		options: {
+			mode: number
+		}
 	}
 	[FeedbackId.RouteInputBlocks]: {
-		mode: number
-		block: number
-		routing: number
+		type: 'boolean'
+		options: {
+			mode: number
+			block: number
+			routing: number
+		}
 	}
 	[FeedbackId.RouteAuxBlocks]: {
-		mode: number
-		routing: number
+		type: 'boolean'
+		options: {
+			mode: number
+			routing: number
+		}
 	}
 	[FeedbackId.RouteAES50Blocks]: {
-		mode: number
-		block: number
-		routing: number
+		type: 'boolean'
+		options: {
+			mode: number
+			block: number
+			routing: number
+		}
 	}
 	[FeedbackId.RouteCardBlocks]: {
-		block: number
-		routing: number
+		type: 'boolean'
+		options: {
+			block: number
+			routing: number
+		}
 	}
 	[FeedbackId.RouteXLRLeftOutputs]: {
-		block: number
-		routing: number
+		type: 'boolean'
+		options: {
+			block: number
+			routing: number
+		}
 	}
 	[FeedbackId.RouteXLRRightOutputs]: {
-		block: number
-		routing: number
+		type: 'boolean'
+		options: {
+			block: number
+			routing: number
+		}
 	}
 	[FeedbackId.LockAndShutdown]: {
-		lockState: number
+		type: 'boolean'
+		options: {
+			lockState: number
+		}
 	}
 	[FeedbackId.InsertOn]: {
-		src: string
-		on: number
+		type: 'boolean'
+		options: {
+			src: string
+			on: number
+		}
 	}
 	[FeedbackId.InsertPos]: {
-		src: string
-		pos: number
+		type: 'boolean'
+		options: {
+			src: string
+			pos: number
+		}
 	}
 	[FeedbackId.InsertSelect]: {
-		src: string
-		dest: number
+		type: 'boolean'
+		options: {
+			src: string
+			dest: number
+		}
 	}
-	[FeedbackId.UndoAvailable]: Record<string, never>
+	[FeedbackId.UndoAvailable]: {
+		type: 'boolean'
+		options: Record<string, never>
+	}
 }
 
 function getDataNumber(data: osc.MetaArgument[] | undefined, index: number): number | undefined {

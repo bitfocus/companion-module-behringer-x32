@@ -1,35 +1,11 @@
-import { FeedbackId, FeedbacksSchema } from './feedback.js'
+import { FeedbackId } from './feedback.js'
 import { X32State } from './state.js'
-import type { SetRequired } from 'type-fest'
-import {
-	CompanionPresetDefinitions,
-	CompanionPresetFeedback,
-	CompanionButtonPresetDefinition,
-	CompanionPresetDefinition,
-} from '@companion-module/base'
+import { CompanionPresetDefinitions } from '@companion-module/base'
 import { InstanceBaseExt, X32Types } from './util.js'
-import { ActionsSchema, ActionId } from './actions.js'
-import { MUTE_TOGGLE } from './choices.js'
+import { ActionId } from './actions.js'
+import { GetLevelsChoiceConfigs, MUTE_TOGGLE } from './choices.js'
 
-interface CompanionPresetExt extends CompanionButtonPresetDefinition {
-	feedbacks: Array<
-		{
-			feedbackId: FeedbackId
-		} & SetRequired<CompanionPresetFeedback, 'style'>
-	>
-	// actions: Array<
-	// 	{
-	// 		action: ActionId
-	// 	} & SomeCompanionPreset['actions'][0]
-	// >
-	// release_actions?: Array<
-	// 	{
-	// 		action: ActionId
-	// 	} & NonNullable<CompanionPreset['release_actions']>[0]
-	// >
-}
-
-export function GetPresetsList(_instance: InstanceBaseExt, _state: X32State): CompanionPresetDefinitions<X32Types> {
+export function GetPresetsList(_instance: InstanceBaseExt, state: X32State): CompanionPresetDefinitions<X32Types> {
 	const presets: CompanionPresetDefinitions<X32Types> = {}
 
 	const levelsChoices = GetLevelsChoiceConfigs(state)
