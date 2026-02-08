@@ -10,6 +10,13 @@ import { ChannelSendLevelActionsSchema, getChannelSendLevelActions } from './cha
 import { ChannelSendPanningActionsSchema, getChannelSendPanningActions } from './channel-send-panning.js'
 import { BusSendLevelActionsSchema, getBusSendLevelActions } from './bus-send-level.js'
 import { BusSendPanningActionsSchema, getBusSendPanningActions } from './bus-send-panning.js'
+import { getTalkbackActions, TalkbackActionsSchema } from './talkback.js'
+import { getOscillatorActions, OscillatorActionsSchema } from './oscillator.js'
+import { getSoloActions, SoloActionsSchema } from './solo.js'
+import { getLabelsActions, LabelsActionsSchema } from './labels.js'
+import { getPresetsActions, PresetsActionsSchema } from './presets.js'
+import { getGoCommandActions, GoCommandActionsSchema } from './go-command.js'
+import { getRoutingActions, RoutingActionsSchema } from './routing.js'
 
 export type ActionsSchema = XLiveActionsSchema &
 	MarkerActionsSchema &
@@ -19,7 +26,14 @@ export type ActionsSchema = XLiveActionsSchema &
 	ChannelSendLevelActionsSchema &
 	ChannelSendPanningActionsSchema &
 	BusSendLevelActionsSchema &
-	BusSendPanningActionsSchema
+	BusSendPanningActionsSchema &
+	TalkbackActionsSchema &
+	OscillatorActionsSchema &
+	SoloActionsSchema &
+	LabelsActionsSchema &
+	PresetsActionsSchema &
+	GoCommandActionsSchema &
+	RoutingActionsSchema
 
 export interface ActionsProps {
 	readonly transitions: X32Transitions
@@ -39,5 +53,12 @@ export function GetActionsList(props: ActionsProps): CompanionActionDefinitions<
 		...getChannelSendPanningActions(props),
 		...getBusSendLevelActions(props),
 		...getBusSendPanningActions(props),
+		...getTalkbackActions(props),
+		...getOscillatorActions(props),
+		...getSoloActions(props),
+		...getLabelsActions(props),
+		...getPresetsActions(props),
+		...getGoCommandActions(props),
+		...getRoutingActions(props),
 	}
 }
