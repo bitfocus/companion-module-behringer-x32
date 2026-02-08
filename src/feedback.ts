@@ -100,6 +100,194 @@ export enum FeedbackId {
 	UndoAvailable = 'undo-available',
 }
 
+export type FeedbacksSchema = {
+	[FeedbackId.Mute]: {
+		target: string
+	}
+	[FeedbackId.MuteGroup]: {
+		mute_grp: string
+	}
+	[FeedbackId.MuteChannelSend]: {
+		source: string
+		target: string
+	}
+	[FeedbackId.MuteBusSend]: {
+		source: string
+		target: string
+	}
+	[FeedbackId.FaderLevel]: {
+		target: string
+		comparitor: string
+		fad: number
+	}
+	[FeedbackId.ChannelSendLevel]: {
+		source: string
+		target: string
+		comparitor: string
+		fad: number
+	}
+	[FeedbackId.BusSendLevel]: {
+		source: string
+		target: string
+		comparitor: string
+		fad: number
+	}
+	[FeedbackId.ChannelPanning]: {
+		target: string
+		comparitor: string
+		pan: number
+	}
+	[FeedbackId.ChannelSendPanning]: {
+		source: string
+		target: string
+		comparitor: string
+		pan: number
+	}
+	[FeedbackId.BusSendPanning]: {
+		source: string
+		target: string
+		comparitor: string
+		pan: number
+	}
+	[FeedbackId.TalkbackTalk]: {
+		channel: number
+		on: number
+	}
+	[FeedbackId.TalkbackConfigSingleSource]: {
+		channel: string
+		dest: string
+	}
+	[FeedbackId.OscillatorEnable]: Record<string, never>
+	[FeedbackId.OscillatorDestination]: {
+		destination: string
+	}
+	[FeedbackId.SoloMono]: Record<string, never>
+	[FeedbackId.SoloDim]: Record<string, never>
+	[FeedbackId.Select]: {
+		select: string
+	}
+	[FeedbackId.Solo]: {
+		solo: string
+	}
+	[FeedbackId.ClearSolo]: Record<string, never>
+	[FeedbackId.SendsOnFader]: Record<string, never>
+	[FeedbackId.Tape]: {
+		tapeFunc: number
+	}
+	[FeedbackId.ChannelBank]: {
+		bank: number
+	}
+	[FeedbackId.GroupBank]: {
+		bank: number
+	}
+	[FeedbackId.ChannelBankCompact]: {
+		bank: number
+	}
+	[FeedbackId.GroupBankCompact]: {
+		bank: number
+	}
+	[FeedbackId.BusSendBank]: {
+		bank: number
+	}
+	[FeedbackId.UserBank]: {
+		bank: number
+	}
+	[FeedbackId.Screens]: {
+		screen: number
+	}
+	[FeedbackId.MuteGroupScreen]: Record<string, never>
+	[FeedbackId.UtilityScreen]: Record<string, never>
+	[FeedbackId.ChannelPage]: {
+		page: number
+	}
+	[FeedbackId.MeterPage]: {
+		page: number
+	}
+	[FeedbackId.RoutePage]: {
+		page: number
+	}
+	[FeedbackId.SetupPage]: {
+		page: number
+	}
+	[FeedbackId.LibPage]: {
+		page: number
+	}
+	[FeedbackId.FxPage]: {
+		page: number
+	}
+	[FeedbackId.MonPage]: {
+		page: number
+	}
+	[FeedbackId.USBPage]: {
+		page: number
+	}
+	[FeedbackId.ScenePage]: {
+		page: number
+	}
+	[FeedbackId.AssignPage]: {
+		page: number
+	}
+	[FeedbackId.RouteUserIn]: {
+		source: number
+		channel: number
+	}
+	[FeedbackId.RouteUserOut]: {
+		source: number
+		channel: number
+	}
+	[FeedbackId.StoredChannel]: {
+		channel: number
+	}
+	[FeedbackId.Record]: {
+		state: number
+	}
+	[FeedbackId.RouteInputBlockMode]: {
+		mode: number
+	}
+	[FeedbackId.RouteInputBlocks]: {
+		mode: number
+		block: number
+		routing: number
+	}
+	[FeedbackId.RouteAuxBlocks]: {
+		mode: number
+		routing: number
+	}
+	[FeedbackId.RouteAES50Blocks]: {
+		mode: number
+		block: number
+		routing: number
+	}
+	[FeedbackId.RouteCardBlocks]: {
+		block: number
+		routing: number
+	}
+	[FeedbackId.RouteXLRLeftOutputs]: {
+		block: number
+		routing: number
+	}
+	[FeedbackId.RouteXLRRightOutputs]: {
+		block: number
+		routing: number
+	}
+	[FeedbackId.LockAndShutdown]: {
+		lockState: number
+	}
+	[FeedbackId.InsertOn]: {
+		src: string
+		on: number
+	}
+	[FeedbackId.InsertPos]: {
+		src: string
+		pos: number
+	}
+	[FeedbackId.InsertSelect]: {
+		src: string
+		dest: number
+	}
+	[FeedbackId.UndoAvailable]: Record<string, never>
+}
+
 function getDataNumber(data: osc.MetaArgument[] | undefined, index: number): number | undefined {
 	const val = data ? data[index] : undefined
 	return val?.type === 'i' || val?.type === 'f' ? val.value : undefined
@@ -130,7 +318,7 @@ export function GetFeedbacksList(
 	state: X32State,
 	subs: X32Subscriptions,
 	ensureLoaded: (path: string) => void,
-): CompanionFeedbackDefinitions {
+): CompanionFeedbackDefinitions<FeedbacksSchema> {
 	const levelsChoices = GetLevelsChoiceConfigs(state)
 	const panningChoices = GetPanningChoiceConfigs(state)
 	const muteGroups = GetMuteGroupChoices(state)
@@ -217,7 +405,7 @@ export function GetFeedbacksList(
 		}
 	}
 
-	const feedbacks: { [id in FeedbackId]: CompanionFeedbackWithCallback | undefined } = {
+	const feedbacks: CompanionFeedbackDefinitions<FeedbacksSchema> = {
 		[FeedbackId.Record]: {
 			type: 'boolean',
 			name: 'Change from X-Live state',

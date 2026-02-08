@@ -139,7 +139,7 @@ export interface ChannelChoicesOptions {
 	// TODO - more skipXXX
 }
 
-export const FaderLevelChoice: CompanionInputFieldNumber = {
+export const FaderLevelChoice: CompanionInputFieldNumber<'fad'> = {
 	type: 'number',
 	label: 'Fader Level (-90 = -inf)',
 	id: 'fad',
@@ -150,7 +150,7 @@ export const FaderLevelChoice: CompanionInputFieldNumber = {
 	max: 10,
 }
 
-export const FaderLevelDeltaChoice: SomeCompanionActionInputField[] = [
+export const FaderLevelDeltaChoice: SomeCompanionActionInputField<'useVariable' | 'delta' | 'varDelta'>[] = [
 	{
 		type: 'checkbox',
 		label: 'Use a variable for Delta',
@@ -176,7 +176,7 @@ export const FaderLevelDeltaChoice: SomeCompanionActionInputField[] = [
 	},
 ]
 
-export const PanningChoice: CompanionInputFieldNumber = {
+export const PanningChoice: CompanionInputFieldNumber<'pan'> = {
 	type: 'number',
 	label: 'Panning (-50 = hard left, 0 = center, 50 = hard right)',
 	id: 'pan',
@@ -187,7 +187,7 @@ export const PanningChoice: CompanionInputFieldNumber = {
 	max: 50,
 }
 
-export const PanningDelta: SomeCompanionActionInputField[] = [
+export const PanningDelta: SomeCompanionActionInputField<'useVariable' | 'delta' | 'varDelta'>[] = [
 	{
 		type: 'checkbox',
 		label: 'Use a variable for Delta',
@@ -215,7 +215,7 @@ export const PanningDelta: SomeCompanionActionInputField[] = [
 	},
 ]
 
-export const HeadampGainChoice: CompanionInputFieldNumber = {
+export const HeadampGainChoice: CompanionInputFieldNumber<'gain'> = {
 	type: 'number',
 	label: 'Gain',
 	id: 'gain',
@@ -225,14 +225,14 @@ export const HeadampGainChoice: CompanionInputFieldNumber = {
 	min: -12,
 	max: 60,
 }
-export const MuteChoice: CompanionInputFieldDropdown = {
+export const MuteChoice: CompanionInputFieldDropdown<'mute'> = {
 	type: 'dropdown',
 	label: 'Mute / Unmute',
 	id: 'mute',
 	...convertChoices(CHOICES_MUTE),
 	disableAutoExpression: true, // Not sure if this should support expressions
 }
-export const FadeDurationChoice: SomeCompanionActionInputField[] = [
+export const FadeDurationChoice: SomeCompanionActionInputField<'fadeDuration' | 'fadeAlgorithm' | 'fadeType'>[] = [
 	{
 		type: 'number',
 		label: 'Fade Duration (ms)',

@@ -41,7 +41,6 @@ import {
 	GetTargetChoicesNew,
 } from './choices.js'
 import { ParseRefOptions, UserRouteInPath, UserRouteOutPath, parseHeadampRef, parseRefToPaths } from './paths.js'
-import type { SetRequired } from 'type-fest'
 import { X32Transitions } from './transitions.js'
 import { format as formatDate } from 'date-fns'
 import {
@@ -50,6 +49,8 @@ import {
 	CompanionActionInfo,
 	CompanionActionDefinitions,
 	OSCSomeArguments,
+	CompanionOptionValues,
+	OSCMetaArgument,
 } from '@companion-module/base'
 import { Easing } from './easings.js'
 
@@ -162,14 +163,446 @@ export enum ActionId {
 	SetUndoCheckpoint = 'set-undo-checkpoint',
 }
 
-type CompanionActionWithCallback = SetRequired<CompanionActionDefinition, 'callback'>
+export type ActionsSchema = {
+	[ActionId.Record]: {
+		state: number
+	}
+	[ActionId.AddMarker]: Record<string, never>
+	[ActionId.Mute]: {
+		target: string
+		mute: number // 0=off, 1=on, 2=toggle
+	}
+	[ActionId.MuteGroup]: {
+		target: string
+		mute: number // 0=off, 1=on, 2=toggle
+	}
+	[ActionId.MuteChannelSend]: {
+		source: string
+		target: string
+		mute: number // 0=off, 1=on, 2=toggle
+	}
+	[ActionId.MuteBusSend]: {
+		source: string
+		target: string
+		mute: number // 0=off, 1=on, 2=toggle
+	}
+	[ActionId.FaderLevel]: {
+		target: string
+		fad: number
+		fadeDuration: number
+		fadeAlgorithm: string
+		fadeType: string
+	}
+	[ActionId.FaderLevelStore]: {
+		target: string
+	}
+	[ActionId.FaderLevelRestore]: {
+		target: string
+		fadeDuration: number
+		fadeAlgorithm: string
+		fadeType: string
+	}
+	[ActionId.FaderLevelDelta]: {
+		target: string
+		useVariable: boolean
+		delta: number
+		varDelta: string
+		fadeDuration: number
+		fadeAlgorithm: string
+		fadeType: string
+	}
+	[ActionId.Panning]: {
+		target: string
+		pan: number
+		fadeDuration: number
+		fadeAlgorithm: string
+		fadeType: string
+	}
+	[ActionId.PanningDelta]: {
+		target: string
+		useVariable: boolean
+		delta: number
+		varDelta: string
+		fadeDuration: number
+		fadeAlgorithm: string
+		fadeType: string
+	}
+	[ActionId.PanningStore]: {
+		target: string
+	}
+	[ActionId.PanningRestore]: {
+		target: string
+		fadeDuration: number
+		fadeAlgorithm: string
+		fadeType: string
+	}
+	[ActionId.ChannelSendLevel]: {
+		source: string
+		target: string
+		fad: number
+		fadeDuration: number
+		fadeAlgorithm: string
+		fadeType: string
+	}
+	[ActionId.ChannelSendLevelDelta]: {
+		source: string
+		target: string
+		useVariable: boolean
+		delta: number
+		varDelta: string
+		fadeDuration: number
+		fadeAlgorithm: string
+		fadeType: string
+	}
+	[ActionId.ChannelSendLevelStore]: {
+		source: string
+		target: string
+	}
+	[ActionId.ChannelSendLevelRestore]: {
+		source: string
+		target: string
+		fadeDuration: number
+		fadeAlgorithm: string
+		fadeType: string
+	}
+	[ActionId.ChannelSendPanning]: {
+		source: string
+		target: string
+		pan: number
+		fadeDuration: number
+		fadeAlgorithm: string
+		fadeType: string
+	}
+	[ActionId.ChannelSendPanningDelta]: {
+		source: string
+		target: string
+		useVariable: boolean
+		delta: number
+		varDelta: string
+		fadeDuration: number
+		fadeAlgorithm: string
+		fadeType: string
+	}
+	[ActionId.ChannelSendPanningStore]: {
+		source: string
+		target: string
+	}
+	[ActionId.ChannelSendPanningRestore]: {
+		source: string
+		target: string
+		fadeDuration: number
+		fadeAlgorithm: string
+		fadeType: string
+	}
+	[ActionId.BusSendLevel]: {
+		source: string
+		target: string
+		fad: number
+		fadeDuration: number
+		fadeAlgorithm: string
+		fadeType: string
+	}
+	[ActionId.BusSendLevelDelta]: {
+		source: string
+		target: string
+		useVariable: boolean
+		delta: number
+		varDelta: string
+		fadeDuration: number
+		fadeAlgorithm: string
+		fadeType: string
+	}
+	[ActionId.BusSendLevelStore]: {
+		source: string
+		target: string
+	}
+	[ActionId.BusSendLevelRestore]: {
+		source: string
+		target: string
+		fadeDuration: number
+		fadeAlgorithm: string
+		fadeType: string
+	}
+	[ActionId.BusSendPanning]: {
+		source: string
+		target: string
+		pan: number
+		fadeDuration: number
+		fadeAlgorithm: string
+		fadeType: string
+	}
+	[ActionId.BusSendPanningDelta]: {
+		source: string
+		target: string
+		useVariable: boolean
+		delta: number
+		varDelta: string
+		fadeDuration: number
+		fadeAlgorithm: string
+		fadeType: string
+	}
+	[ActionId.BusSendPanningStore]: {
+		source: string
+		target: string
+	}
+	[ActionId.BusSendPanningRestore]: {
+		source: string
+		target: string
+		fadeDuration: number
+		fadeAlgorithm: string
+		fadeType: string
+	}
+	[ActionId.InputTrim]: {
+		input: string
+		trim: number
+	}
+	[ActionId.HeadampGain]: {
+		headamp: string
+		gain: number
+	}
+	[ActionId.Label]: {
+		target: string
+		lab: string
+	}
+	[ActionId.Color]: {
+		target: string
+		col: string
+	}
+	[ActionId.GoCue]: {
+		cue: number
+	}
+	[ActionId.GoScene]: {
+		scene: number
+	}
+	[ActionId.GoSnip]: {
+		snip: number
+	}
+	[ActionId.Select]: {
+		select: string
+	}
+	[ActionId.Solo]: {
+		solo: string
+		on: number
+	}
+	[ActionId.ClearSolo]: Record<string, never>
+	[ActionId.Tape]: {
+		tFunc: number
+	}
+	[ActionId.TalkbackTalk]: {
+		channel: number
+		on: number
+	}
+	[ActionId.TalkbackConfig]: {
+		function: number
+		dest: string
+	}
+	[ActionId.TalkbackConfigSingleSource]: {
+		function: number
+		dest: string
+		on: number
+	}
+	[ActionId.TalkbackConfigStore]: {
+		function: number
+	}
+	[ActionId.TalkbackConfigRestore]: {
+		function: number
+	}
+	[ActionId.OscillatorEnable]: {
+		on: number
+	}
+	[ActionId.OscillatorDestination]: {
+		destination: string
+	}
+	[ActionId.SoloMono]: {
+		on: number
+	}
+	[ActionId.SoloDim]: {
+		on: number
+	}
+	[ActionId.SoloDimAttenuation]: {
+		dimAtt: number
+	}
+	[ActionId.MonitorLevel]: {
+		fad: number
+		fadeDuration: number
+		fadeAlgorithm: string
+		fadeType: string
+	}
+	[ActionId.SyncClock]: Record<string, never>
+	[ActionId.ChannelBank]: {
+		bank: number
+	}
+	[ActionId.GroupBank]: {
+		bank: number
+	}
+	[ActionId.ChannelBankCompact]: {
+		bank: number
+	}
+	[ActionId.GroupBankCompact]: {
+		bank: number
+	}
+	[ActionId.SendsOnFader]: {
+		on: number
+	}
+	[ActionId.BusSendBank]: {
+		bank: number
+	}
+	[ActionId.UserBank]: {
+		bank: number
+	}
+	[ActionId.Screens]: {
+		screen: number
+	}
+	[ActionId.MuteGroupScreen]: {
+		on: number
+	}
+	[ActionId.UtilityScreen]: {
+		on: number
+	}
+	[ActionId.ChannelPage]: {
+		page: number
+	}
+	[ActionId.MeterPage]: {
+		page: number
+	}
+	[ActionId.RoutePage]: {
+		page: number
+	}
+	[ActionId.SetupPage]: {
+		page: number
+	}
+	[ActionId.LibPage]: {
+		page: number
+	}
+	[ActionId.FxPage]: {
+		page: number
+	}
+	[ActionId.MonPage]: {
+		page: number
+	}
+	[ActionId.USBPage]: {
+		page: number
+	}
+	[ActionId.ScenePage]: {
+		page: number
+	}
+	[ActionId.AssignPage]: {
+		page: number
+	}
+	[ActionId.NextPrevPage]: {
+		goto: number
+	}
+	[ActionId.RouteUserIn]: {
+		source: number
+		channel: number
+	}
+	[ActionId.RouteUserOut]: {
+		source: number
+		channel: number
+	}
+	[ActionId.StoreChannel]: {
+		channel: number
+	}
+	[ActionId.RouteInputBlockMode]: {
+		mode: number
+	}
+	[ActionId.RouteInputBlocks]: {
+		mode: number
+		block: number
+		routing: number
+	}
+	[ActionId.RouteAuxBlocks]: {
+		mode: number
+		routing: number
+	}
+	[ActionId.RouteAES50Blocks]: {
+		mode: number
+		block: number
+		routing: number
+	}
+	[ActionId.RouteCardBlocks]: {
+		block: number
+		routing: number
+	}
+	[ActionId.RouteXLRLeftOutputs]: {
+		block: number
+		routing: number
+	}
+	[ActionId.RouteXLRRightOutputs]: {
+		block: number
+		routing: number
+	}
+	[ActionId.LockAndShutdown]: {
+		newState: number
+	}
+	[ActionId.SaveScene]: {
+		sceneIndex: number
+		sceneName: string
+		sceneNote: string
+	}
+	[ActionId.SelectActiveSDCard]: {
+		card: number
+	}
+	[ActionId.RecordedTracks]: {
+		tracks: number
+	}
+	[ActionId.SelectPlaybackDevice]: {
+		device: number
+	}
+	[ActionId.FormatSDCard]: {
+		card: number
+	}
+	[ActionId.XLiveRouting]: {
+		route: number
+	}
+	[ActionId.XLiveClearAlert]: {
+		alert: number
+	}
+	[ActionId.XLivePosition]: {
+		position: number
+	}
+	[ActionId.GoCommand]: Record<string, never>
+	[ActionId.NextCommand]: Record<string, never>
+	[ActionId.PrevCommand]: Record<string, never>
+	[ActionId.InsertOn]: {
+		src: string
+		on: number
+	}
+	[ActionId.InsertPos]: {
+		src: string
+		pos: number
+	}
+	[ActionId.InsertSelect]: {
+		src: string
+		dest: number
+	}
+	[ActionId.LoadChannelPreset]: {
+		preset: string
+		channel: string
+		ha: boolean
+		config: boolean
+		gate: boolean
+		dyn: boolean
+		eq: boolean
+		sends: boolean
+	}
+	[ActionId.LoadFXPreset]: {
+		preset: string
+		channel: number
+	}
+	[ActionId.LoadAESPreset]: {
+		preset: string
+	}
+	[ActionId.DoUndo]: Record<string, never>
+	[ActionId.SetUndoCheckpoint]: Record<string, never>
+}
 
 export function GetActionsList(
 	self: InstanceBaseExt<X32Config>,
 	transitions: X32Transitions,
 	state: X32State,
 	ensureLoaded: (path: string | undefined) => void,
-): CompanionActionDefinitions {
+): CompanionActionDefinitions<ActionsSchema> {
 	const levelsChoices = GetLevelsChoiceConfigs(state)
 	const panningChoices = GetPanningChoiceConfigs(state)
 	const muteGroups = GetMuteGroupChoices(state)
@@ -274,10 +707,17 @@ export function GetActionsList(
 		cmdIsCalledOn: boolean,
 		prop: 'mute' | 'on' = 'mute',
 	): number => {
+		return getResolveOnOffMute2(action, state.get(cmd), cmdIsCalledOn, prop)
+	}
+	const getResolveOnOffMute2 = (
+		action: CompanionActionEvent,
+		cachedData: OSCMetaArgument[] | undefined,
+		cmdIsCalledOn: boolean,
+		prop: 'mute' | 'on' = 'mute',
+	): number => {
 		const onState = getOptNumber(action, prop)
 		if (onState === MUTE_TOGGLE) {
-			const currentState = state.get(cmd)
-			const currentVal = currentState && currentState[0]?.type === 'i' && currentState[0]?.value
+			const currentVal = cachedData && cachedData[0]?.type === 'i' && cachedData[0]?.value
 			if (typeof currentVal === 'number') {
 				return currentVal === 0 ? 1 : 0
 			} else {
@@ -289,7 +729,41 @@ export function GetActionsList(
 		}
 	}
 
-	const actions: { [id in ActionId]: CompanionActionWithCallback | undefined } = {
+	const actionSubscriptionWrapper = <TOptions extends CompanionOptionValues>(input: {
+		getPath: (options: TOptions) => string | null
+		execute: (
+			evt: CompanionActionEvent<TOptions>,
+			cachedData: OSCMetaArgument[] | undefined,
+		) => OSCMetaArgument | OSCMetaArgument[] | undefined
+		shouldSubscribe: ((options: TOptions) => boolean) | false
+		optionsToMonitorForSubscribe: Extract<keyof TOptions, string>[]
+	}): Pick<CompanionActionDefinition<TOptions>, 'callback' | 'subscribe' | 'optionsToMonitorForSubscribe'> => {
+		return {
+			callback: (evt: CompanionActionEvent<TOptions>) => {
+				const path = input.getPath(evt.options)
+				if (!path) return
+
+				const cachedData = state.get(path)
+				const values = input.execute(evt, cachedData)
+
+				// Check if the action gave values
+				if (!values) return
+
+				sendOsc(path, values)
+			},
+			// Only define the subscribe method when it does something
+			subscribe: input.shouldSubscribe
+				? (evt: CompanionActionInfo<TOptions>) => {
+						if (!input.shouldSubscribe) return
+
+						const path = input.getPath(evt.options)
+						if (path) ensureLoaded(path)
+					}
+				: undefined,
+		}
+	}
+
+	const actions: CompanionActionDefinitions<ActionsSchema> = {
 		[ActionId.Record]: {
 			name: 'Set X-live State',
 			options: [
@@ -307,24 +781,28 @@ export function GetActionsList(
 					disableAutoExpression: true,
 				},
 			],
-			callback: (action): void => {
-				const cmd = `/-stat/urec/state`
-				sendOsc(cmd, {
+			...actionSubscriptionWrapper({
+				getPath: () => `/-stat/urec/state`,
+				execute: (action) => ({
 					type: 'i',
 					value: convertAnyToNumber(action.options.state),
-				})
-			},
+				}),
+				shouldSubscribe: false,
+				optionsToMonitorForSubscribe: [],
+			}),
 		},
 		[ActionId.AddMarker]: {
 			name: 'Add marker in recording',
 			options: [],
-			callback: (): void => {
-				const cmd = `/-action/addmarker`
-				sendOsc(cmd, {
+			...actionSubscriptionWrapper({
+				getPath: () => `/-action/addmarker`,
+				execute: () => ({
 					type: 'i',
 					value: 1,
-				})
-			},
+				}),
+				shouldSubscribe: false,
+				optionsToMonitorForSubscribe: [],
+			}),
 		},
 		[ActionId.Mute]: {
 			name: 'Set mute',
@@ -338,23 +816,25 @@ export function GetActionsList(
 				},
 				MuteChoice,
 			],
-			callback: async (action): Promise<void> => {
-				const refPaths = parseRefToPaths(action.options.target, levelsChoices.channelsParseOptions)
-				if (!refPaths?.muteOrOn) return // Not a valid path
+			...actionSubscriptionWrapper({
+				getPath: (options) => {
+					const refPaths = parseRefToPaths(options.target, levelsChoices.channelsParseOptions)
+					return refPaths?.muteOrOn?.path || null
+				},
+				execute: (action) => {
+					const refPaths = parseRefToPaths(action.options.target, levelsChoices.channelsParseOptions)
+					if (!refPaths?.muteOrOn) return
 
-				sendOsc(refPaths.muteOrOn.path, {
-					type: 'i',
-					value: getResolveOnOffMute(action, refPaths.muteOrOn.path, refPaths.muteOrOn.isOn),
-				})
-			},
-			subscribe: (evt): void => {
-				if (evt.options.mute === MUTE_TOGGLE) {
-					const refPaths = parseRefToPaths(evt.options.target, levelsChoices.channelsParseOptions)
-					if (!refPaths?.muteOrOn) return // Not a valid path
+					// TODO - how to avoid this lookup for isOn?
 
-					ensureLoaded(refPaths.muteOrOn.path)
-				}
-			},
+					return {
+						type: 'i',
+						value: getResolveOnOffMute(action, refPaths.muteOrOn.path, refPaths.muteOrOn.isOn),
+					}
+				},
+				shouldSubscribe: (options) => options.mute === MUTE_TOGGLE,
+				optionsToMonitorForSubscribe: ['target', 'mute'],
+			}),
 		},
 		[ActionId.MuteGroup]: {
 			name: 'Mute Group ON/OFF',
@@ -374,27 +854,20 @@ export function GetActionsList(
 					disableAutoExpression: true,
 				},
 			],
-			callback: async (action): Promise<void> => {
-				const muteGroupNumber = parseInt(action.options.target as string, 10)
-				if (isNaN(muteGroupNumber)) return
+			...actionSubscriptionWrapper({
+				getPath: (options) => {
+					const muteGroupNumber = parseInt(options.target as string, 10)
+					if (isNaN(muteGroupNumber)) return null
 
-				const mutePath = `/config/mute/${muteGroupNumber}`
-
-				sendOsc(mutePath, {
+					return `/config/mute/${muteGroupNumber}`
+				},
+				execute: (action, cachedData) => ({
 					type: 'i',
-					value: getResolveOnOffMute(action, mutePath, false),
-				})
-			},
-			subscribe: (evt): void => {
-				if (evt.options.mute === MUTE_TOGGLE) {
-					const muteGroupNumber = parseInt(evt.options.target as string, 10)
-					if (isNaN(muteGroupNumber)) return
-
-					const mutePath = `/config/mute/${muteGroupNumber}`
-
-					ensureLoaded(mutePath)
-				}
-			},
+					value: getResolveOnOffMute2(action, cachedData, false),
+				}),
+				shouldSubscribe: (options) => options.mute === MUTE_TOGGLE,
+				optionsToMonitorForSubscribe: ['target', 'mute'],
+			}),
 		},
 		[ActionId.MuteChannelSend]: {
 			name: 'Set mute for channel to bus send',

@@ -1,7 +1,7 @@
 import type { CompanionInputFieldDropdown } from '@companion-module/base'
 import { NumberComparitor } from './util.js'
 
-export function NumberComparitorPicker(): CompanionInputFieldDropdown {
+export function NumberComparitorPicker(): CompanionInputFieldDropdown<'comparitor'> {
 	const options = [
 		{ id: NumberComparitor.Equal, label: 'Equal' },
 		{ id: NumberComparitor.NotEqual, label: 'Not Equal' },
