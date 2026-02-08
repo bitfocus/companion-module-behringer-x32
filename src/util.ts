@@ -2,6 +2,7 @@ import type { JsonValue, InstanceBase } from '@companion-module/base'
 import type { X32Config } from './config.js'
 import type { ActionsSchema } from './actions/main.js'
 import type { FeedbacksSchema } from './feedback.js'
+import type { VariablesSchema } from './variables/schema.js'
 
 export const MEDIA_PLAYER_SOURCE_CLIP_OFFSET = 1000
 
@@ -122,6 +123,7 @@ export interface X32Types {
 	secrets: undefined
 	actions: ActionsSchema
 	feedbacks: FeedbacksSchema
+	variables: VariablesSchema
 }
 
 export interface InstanceBaseExt extends InstanceBase<X32Types> {

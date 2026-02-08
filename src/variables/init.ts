@@ -1,6 +1,7 @@
-import type { CompanionVariableDefinition, CompanionVariableValues, Complete } from '@companion-module/base'
+import type { CompanionVariableDefinition, Complete } from '@companion-module/base'
 import { VariableDefinitions } from './main.js'
 import type { X32State } from '../state.js'
+import { VariablesSchema } from './schema.js'
 
 export function GetCompanionVariableDefinitions(): CompanionVariableDefinition[] {
 	return VariableDefinitions.map(
@@ -8,14 +9,15 @@ export function GetCompanionVariableDefinitions(): CompanionVariableDefinition[]
 	)
 }
 
-export function GetCompanionVariableValues(state: X32State, limitTo?: ReadonlySet<string>): CompanionVariableValues {
-	const values: CompanionVariableValues = {}
+export function GetCompanionVariableValues(state: X32State, limitTo?: ReadonlySet<string>): Partial<VariablesSchema> {
+	const values: Partial<VariablesSchema> = {}
 
 	for (const defs of VariableDefinitions) {
 		if (limitTo && !limitTo.has(defs.variableId)) continue
 
 		const cachedArgs = defs.oscPath ? state.get(defs.oscPath) : undefined
-		values[defs.variableId] = defs.getValue(cachedArgs, state)
+		// Types are hard to get right here
+		values[defs.variableId] = defs.getValue(cachedArgs, state) as any
 	}
 
 	return values

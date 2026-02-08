@@ -1,15 +1,20 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-import type { CompanionVariableDefinition, JsonValue, OSCMetaArgument } from '@companion-module/base'
+import type { OSCMetaArgument } from '@companion-module/base'
 import { getStringArg } from './util.js'
 import type { X32State } from '../state.js'
 import { getColorChoiceFromId, GetNameFromState, GetTargetPaths } from '../choices.js'
 import { floatToDB } from '../util.js'
+import { VariablesSchema } from './schema.js'
 
-export interface MyVariableDefinition extends CompanionVariableDefinition {
-	oscPath: string | null
-	additionalPaths?: string[]
-	getValue: (args: OSCMetaArgument[] | undefined, state: X32State) => JsonValue | undefined
-}
+export type MyVariableDefinition = {
+	[K in keyof VariablesSchema]: {
+		variableId: K
+		name: string
+		oscPath: string | null
+		additionalPaths?: string[]
+		getValue: (args: OSCMetaArgument[] | undefined, state: X32State) => VariablesSchema[K] | undefined
+	}
+}[keyof VariablesSchema]
 
 const allSources = GetTargetPaths({
 	allowStereo: true,
