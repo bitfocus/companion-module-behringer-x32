@@ -5,14 +5,15 @@ __metadata:
   version: 8
   cacheKey: 10c0
 
-"@companion-module/base@portal:/home/julus/Projects/companion/companion-module-base/packages/companion-module-base::locator=behringer-x32%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@companion-module/base@portal:/home/julus/Projects/companion/companion-module-base/packages/companion-module-base::locator=behringer-x32%40workspace%3A."
+"@companion-module/base@npm:2.0.0-0-nightly-feat-2-0-20260208-211813-59350ed":
+  version: 2.0.0-0-nightly-feat-2-0-20260208-211813-59350ed
+  resolution: "@companion-module/base@npm:2.0.0-0-nightly-feat-2-0-20260208-211813-59350ed"
   dependencies:
     colord: "npm:^2.9.3"
     tslib: "npm:^2.8.1"
+  checksum: 10c0/39d0764828c12c109f0710ef4849c3bab043948d942cb9f1c873a965b4089e2e056888e349c3fcbd40d2b528f5bf9fc46a50ca6bc4e71bc61c69f4a6496d4c22
   languageName: node
-  linkType: soft
+  linkType: hard
 
 "@companion-module/tools@npm:^2.6.1":
   version: 2.6.1
@@ -1442,7 +1443,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "behringer-x32@workspace:."
   dependencies:
-    "@companion-module/base": "npm:2.0.0-0-nightly-feat-2-0-20260131-124809-4f9655d"
+    "@companion-module/base": "npm:2.0.0-0-nightly-feat-2-0-20260208-211813-59350ed"
     "@companion-module/tools": "npm:^2.6.1"
     "@types/debug": "npm:^4.1.12"
     "@types/node": "npm:^22.19.7"
