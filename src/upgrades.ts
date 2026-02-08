@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unsafe-enum-comparison */
-import type {
-	CompanionMigrationOptionValues,
-	CompanionStaticUpgradeResult,
-	CompanionStaticUpgradeScript,
-	ExpressionOptionsObject,
-	JsonValue,
+import {
+	FixupNumericOrVariablesValueToExpressions,
+	type CompanionMigrationOptionValues,
+	type CompanionStaticUpgradeResult,
+	type CompanionStaticUpgradeScript,
+	type ExpressionOptionsObject,
+	type JsonValue,
 } from '@companion-module/base'
 import { FeedbackId } from './feedback.js'
 import { padNumber, stringifyValueAlways } from './util.js'
@@ -412,3 +413,31 @@ const oscillatorDestinationChoicesLookup = [
 	'matrix5',
 	'matrix6',
 ]
+
+export const upgradeToBuiltinVariableParsing: CompanionStaticUpgradeScript<any> = (_ctx, props) => {
+	const result: CompanionStaticUpgradeResult<any, undefined> = {
+		updatedConfig: null,
+		updatedSecrets: null,
+		updatedActions: [],
+		updatedFeedbacks: [],
+	}
+
+	for (const action of props.actions) {
+		if (
+			action.actionId === ActionId.PanningDelta ||
+			action.actionId === ActionId.BusSendPanningDelta ||
+			action.actionId === ActionId.ChannelSendPanningDelta ||
+			action.actionId === ActionId.FaderLevelDelta ||
+			action.actionId === ActionId.ChannelSendLevelDelta ||
+			action.actionId === ActionId.BusSendLevelDelta
+		) {
+			const oldValue = action.options.useVariable?.value ? action.options.varDelta : action.options.delta
+			delete action.options.useVariable
+			delete action.options.varDelta
+
+			action.options.delta = FixupNumericOrVariablesValueToExpressions(oldValue)
+		}
+	}
+
+	return result
+}

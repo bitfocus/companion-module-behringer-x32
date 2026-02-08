@@ -19,6 +19,7 @@ import {
 	BooleanFeedbackUpgradeMap,
 	upgradeChannelOrFaderValuesFromOscPaths,
 	upgradeToBuiltinFeedbackInverted,
+	upgradeToBuiltinVariableParsing,
 } from './upgrades.js'
 import { GetTargetPaths } from './choices.js'
 import debounceFn from 'debounce-fn'
@@ -41,6 +42,7 @@ export const UpgradeScripts: CompanionStaticUpgradeScript<X32Config>[] = [
 	CreateConvertToBooleanFeedbackUpgradeScript(BooleanFeedbackUpgradeMap),
 	upgradeToBuiltinFeedbackInverted,
 	upgradeChannelOrFaderValuesFromOscPaths,
+	upgradeToBuiltinVariableParsing,
 ]
 
 /**
@@ -114,11 +116,6 @@ export default class X32Instance extends InstanceBase<X32Types> implements Insta
 		const list = [FeedbackId.StoredChannel, FeedbackId.RouteUserIn, FeedbackId.RouteUserOut]
 		list.forEach((f) => this.messageFeedbacks.add(f))
 		this.debounceMessageFeedbacks()
-	}
-
-	// Override base types to make types stricter
-	public checkFeedbacks(...feedbackTypes: FeedbackId[]): void {
-		return super.checkFeedbacks(...feedbackTypes)
 	}
 
 	/**

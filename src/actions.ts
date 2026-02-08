@@ -220,9 +220,7 @@ export type ActionsSchema = {
 	[ActionId.FaderLevelDelta]: {
 		options: {
 			target: string
-			useVariable: boolean
 			delta: number
-			varDelta: string
 			fadeDuration: number
 			fadeAlgorithm: string
 			fadeType: string
@@ -240,9 +238,7 @@ export type ActionsSchema = {
 	[ActionId.PanningDelta]: {
 		options: {
 			target: string
-			useVariable: boolean
 			delta: number
-			varDelta: string
 			fadeDuration: number
 			fadeAlgorithm: string
 			fadeType: string
@@ -275,9 +271,7 @@ export type ActionsSchema = {
 		options: {
 			source: string
 			target: string
-			useVariable: boolean
 			delta: number
-			varDelta: string
 			fadeDuration: number
 			fadeAlgorithm: string
 			fadeType: string
@@ -312,9 +306,7 @@ export type ActionsSchema = {
 		options: {
 			source: string
 			target: string
-			useVariable: boolean
 			delta: number
-			varDelta: string
 			fadeDuration: number
 			fadeAlgorithm: string
 			fadeType: string
@@ -349,9 +341,7 @@ export type ActionsSchema = {
 		options: {
 			source: string
 			target: string
-			useVariable: boolean
 			delta: number
-			varDelta: string
 			fadeDuration: number
 			fadeAlgorithm: string
 			fadeType: string
@@ -386,9 +376,7 @@ export type ActionsSchema = {
 		options: {
 			source: string
 			target: string
-			useVariable: boolean
 			delta: number
-			varDelta: string
 			fadeDuration: number
 			fadeAlgorithm: string
 			fadeType: string
@@ -848,10 +836,7 @@ export function GetActionsList(
 	}
 
 	const getDeltaNumber = async (action: CompanionActionInfo, defVal?: number): Promise<number> => {
-		const useVariable = action.options.useVariable
-		const rawVal = useVariable ? action.options.varDelta : action.options.delta
-		if (defVal !== undefined && rawVal === undefined) return defVal
-		const val = useVariable ? Number((rawVal as string).trim()) : Number(rawVal)
+		const val = Number(action.options.delta)
 		if (isNaN(val) || val < -100 || val > 100) {
 			return defVal ?? 0
 		}
@@ -1241,7 +1226,7 @@ export function GetActionsList(
 					...convertChoices(levelsChoices.channels),
 					allowInvalidValues: true,
 				},
-				...FaderLevelDeltaChoice,
+				FaderLevelDeltaChoice,
 				...FadeDurationChoice,
 			],
 			callback: async (action): Promise<void> => {
@@ -1313,7 +1298,7 @@ export function GetActionsList(
 					...convertChoices(panningChoices.allSources),
 					allowInvalidValues: true,
 				},
-				...PanningDelta,
+				PanningDelta,
 				...FadeDurationChoice,
 			],
 			callback: async (action): Promise<void> => {
@@ -1474,7 +1459,7 @@ export function GetActionsList(
 					...convertChoices(levelsChoices.channelSendTargets),
 					allowInvalidValues: true,
 				},
-				...FaderLevelDeltaChoice,
+				FaderLevelDeltaChoice,
 				...FadeDurationChoice,
 			],
 			callback: async (action): Promise<void> => {
@@ -1647,7 +1632,7 @@ export function GetActionsList(
 					...convertChoices(panningChoices.channelSendTargets),
 					allowInvalidValues: true,
 				},
-				...PanningDelta,
+				PanningDelta,
 				...FadeDurationChoice,
 			],
 			callback: async (action): Promise<void> => {
@@ -1824,7 +1809,7 @@ export function GetActionsList(
 					...convertChoices(levelsChoices.busSendTargets),
 					allowInvalidValues: true,
 				},
-				...FaderLevelDeltaChoice,
+				FaderLevelDeltaChoice,
 				...FadeDurationChoice,
 			],
 			callback: async (action): Promise<void> => {
@@ -1998,7 +1983,7 @@ export function GetActionsList(
 					...convertChoices(panningChoices.busSendTarget),
 					allowInvalidValues: true,
 				},
-				...PanningDelta,
+				PanningDelta,
 				...FadeDurationChoice,
 			],
 			callback: async (action): Promise<void> => {
