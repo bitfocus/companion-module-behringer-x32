@@ -2,17 +2,6 @@ import { GetActionsList } from './actions/main.js'
 import { X32Config, GetConfigFields } from './config.js'
 import { FeedbackId, GetFeedbacksList } from './feedback.js'
 import { GetPresetsList } from './presets.js'
-import {
-	InitVariables,
-	updateDeviceInfoVariables,
-	updateNameVariables,
-	updateSelectedVariables,
-	updateStoredChannelVariable,
-	updateTapeTime,
-	updateUReceTime,
-	updateURecrTime,
-	updateUndoTime,
-} from './variables.js'
 import { IStoredChannelObserver, X32State, X32Subscriptions } from './state.js'
 import osc from 'osc'
 import {
@@ -21,7 +10,6 @@ import {
 	upgradeToBuiltinFeedbackInverted,
 	upgradeToBuiltinVariableParsing,
 } from './upgrades.js'
-import { GetTargetPaths } from './choices.js'
 import debounceFn from 'debounce-fn'
 import PQueue from 'p-queue'
 import { X32Transitions } from './transitions.js'
@@ -36,6 +24,8 @@ import {
 	OSCSomeArguments,
 } from '@companion-module/base'
 import type { InstanceBaseExt, X32Types } from './util.js'
+import { STORED_CHANNEL_ID, VariableDefinitions } from './variables/main.js'
+import { GetCompanionVariableDefinitions, GetCompanionVariableValues } from './variables/init.js'
 
 export const UpgradeScripts: CompanionStaticUpgradeScript<X32Config>[] = [
 	EmptyUpgradeScript, // Previous version had a script
@@ -76,6 +66,10 @@ export default class X32Instance extends InstanceBase<X32Types> implements Insta
 	private readonly messageFeedbacks = new Set<FeedbackId>()
 	private readonly debounceMessageFeedbacks: () => void
 
+	private readonly invalidatedVariables = new Set<string>()
+	private readonly debounceUpdateVariables: () => void
+	private readonly variableInvalidationMap = new Map<string, string[]>()
+
 	/**
 	 * Create an instance of an X32 module.
 	 */
@@ -109,13 +103,47 @@ export default class X32Instance extends InstanceBase<X32Types> implements Insta
 				after: true,
 			},
 		)
+		this.debounceUpdateVariables = debounceFn(
+			() => {
+				console.log('fire variables')
+				const variables = new Set(this.invalidatedVariables.values())
+				this.invalidatedVariables.clear()
+
+				this.setVariableValues(GetCompanionVariableValues(this.x32State, variables))
+			},
+			{
+				wait: 100,
+				maxWait: 500,
+				before: true,
+				after: true,
+			},
+		)
+
+		// Build a map of osc paths to variableIds, so we can easily invalidate variables when we get an update for an osc path
+		for (const variableDef of VariableDefinitions) {
+			if (variableDef.oscPath) {
+				const existing = this.variableInvalidationMap.get(variableDef.oscPath) ?? []
+				existing.push(variableDef.variableId)
+				this.variableInvalidationMap.set(variableDef.oscPath, existing)
+			}
+			if (variableDef.additionalPaths) {
+				for (const additionalPath of variableDef.additionalPaths) {
+					const existing = this.variableInvalidationMap.get(additionalPath) ?? []
+					existing.push(variableDef.variableId)
+					this.variableInvalidationMap.set(additionalPath, existing)
+				}
+			}
+		}
 	}
 
 	// IStoredChannelObserver
 	storedChannelChanged(): void {
-		updateStoredChannelVariable(this, this.x32State)
-		const list = ['stored-channel', 'route-user-in', 'route-user-out'] as const
-		list.forEach((f) => this.messageFeedbacks.add(f))
+		this.invalidatedVariables.add(STORED_CHANNEL_ID)
+		this.debounceUpdateVariables()
+
+		this.messageFeedbacks.add('stored-channel')
+		this.messageFeedbacks.add('route-user-in')
+		this.messageFeedbacks.add('route-user-out')
 		this.debounceMessageFeedbacks()
 	}
 
@@ -202,18 +230,8 @@ export default class X32Instance extends InstanceBase<X32Types> implements Insta
 	}
 
 	private updateCompanionBits(): void {
-		InitVariables(this, this.x32State)
-		this.setPresetDefinitions(GetPresetsList(this, this.x32State))
-
-		// const { actions, feedbacks } = GetEntitiesLists(
-		// 	this,
-		// 	this.x32State,
-		// 	this.x32Subscriptions,
-		// 	this.transitions,
-		// 	this.queueEnsureLoaded,
-		// )
-		// this.setActionDefinitions(actions)
-		// this.setFeedbackDefinitions(feedbacks)
+		this.setVariableDefinitions(GetCompanionVariableDefinitions())
+		this.setVariableValues(GetCompanionVariableValues(this.x32State))
 
 		this.setFeedbackDefinitions(GetFeedbacksList(this, this.x32State, this.x32Subscriptions, this.queueEnsureLoaded))
 		this.setActionDefinitions(
@@ -232,10 +250,10 @@ export default class X32Instance extends InstanceBase<X32Types> implements Insta
 				},
 			}),
 		)
+
+		this.setPresetDefinitions(GetPresetsList(this, this.x32State))
+
 		this.checkFeedbacks()
-		updateNameVariables(this, this.x32State)
-		updateSelectedVariables(this, this.x32State)
-		updateUndoTime(this, this.x32State)
 
 		// Ensure all feedbacks & actions have an initial value, if we are connected
 		if (this.heartbeat) {
@@ -378,9 +396,7 @@ export default class X32Instance extends InstanceBase<X32Types> implements Insta
 				delete this.inFlightRequests[message.address]
 			}
 
-			// setImmediate(() => {
-			this.checkFeedbackChanges(message)
-			// })
+			this.triggerInvalidationsFromOsc(message)
 
 			switch (message.address) {
 				case '/xinfo':
@@ -399,20 +415,8 @@ export default class X32Instance extends InstanceBase<X32Types> implements Insta
 
 						// Load the initial data
 						this.loadVariablesData()
-						updateDeviceInfoVariables(this, args)
 						this.loadPresetData()
 					}
-					break
-				case '/-stat/tape/etime':
-					updateTapeTime(this, this.x32State)
-					break
-
-				case '/-stat/urec/etime':
-					updateUReceTime(this, this.x32State)
-					break
-
-				case '/-stat/urec/rtime':
-					updateURecrTime(this, this.x32State)
 					break
 			}
 		})
@@ -438,57 +442,16 @@ export default class X32Instance extends InstanceBase<X32Types> implements Insta
 	}
 
 	private loadVariablesData(): void {
-		// nocommit - this is pretty repetetive with the variables logic, can it be deduplicated?
-		const allSources = GetTargetPaths({
-			allowStereo: true,
-			allowMono: true,
-			allowChannel: true,
-			allowAuxIn: true,
-			allowFx: true,
-			allowBus: true,
-			allowMatrix: true,
-			allowDca: true,
-		})
-		const busSources = GetTargetPaths({ allowBus: true })
-		const matrixSources = GetTargetPaths({ allowMatrix: true })
-
-		const sendToBusSources = GetTargetPaths({
-			allowChannel: true,
-			allowAuxIn: true,
-			allowFx: true,
-		})
-
-		for (const target of allSources) {
-			if (!target.variablesPrefix) continue
-
-			this.queueEnsureLoaded(target.config?.name)
-			this.queueEnsureLoaded(target.config?.color)
-			this.queueEnsureLoaded(target.level?.path)
-		}
-
-		for (const source of sendToBusSources) {
-			if (!source.variablesPrefix || !source.sendTo) continue
-			for (const dest of busSources) {
-				if (!dest.variablesPrefix || !dest.sendToSink) continue
-
-				this.queueEnsureLoaded(`${source.sendTo.path}/${dest.sendToSink.on}`)
+		for (const definition of VariableDefinitions) {
+			if (definition.oscPath) this.queueEnsureLoaded(definition.oscPath)
+			if (definition.additionalPaths) {
+				definition.additionalPaths.forEach(this.queueEnsureLoaded)
 			}
 		}
-
-		for (const source of busSources) {
-			if (!source.variablesPrefix || !source.sendTo) continue
-			for (const dest of matrixSources) {
-				if (!dest.variablesPrefix || !dest.sendToSink) continue
-
-				this.queueEnsureLoaded(`${source.sendTo.path}/${dest.sendToSink.on}`)
-			}
-		}
-
-		this.queueEnsureLoaded('/-stat/selidx')
-		this.queueEnsureLoaded('/-undo/time')
 	}
 
 	private loadPresetData(): void {
+		// TODO: Is this still needed?
 		const options = [...Array(100).keys()].map((x) => `${x + 1}`.padStart(3, '0'))
 		options.forEach((option) => {
 			;['ch', 'fx', 'r', 'mon'].forEach((lib) => {
@@ -534,22 +497,23 @@ export default class X32Instance extends InstanceBase<X32Types> implements Insta
 			})
 	}
 
-	private checkFeedbackChanges(msg: osc.OscMessage): void {
+	private triggerInvalidationsFromOsc(msg: osc.OscMessage): void {
+		// Check for any feedbacks to invalidate
 		const toUpdate = this.x32Subscriptions.getFeedbacks(msg.address)
 		if (toUpdate.length > 0) {
 			toUpdate.forEach((f) => this.messageFeedbacks.add(f))
 			this.debounceMessageFeedbacks()
 		}
-		if (
-			msg.address.match('/config/name$') ||
-			msg.address.match('/config/color$') ||
-			msg.address.match('/fader$') ||
-			msg.address.match('/-stat/selidx') ||
-			msg.address.match('/-libs/') ||
-			msg.address.match('/-undo/time') ||
-			msg.address.match('/mix/../level')
-		) {
-			// nocommit - woah! this is waaaaaay too noisy
+
+		// Check for any variables to invalidate
+		const variableIds = this.variableInvalidationMap.get(msg.address)
+		if (variableIds) {
+			variableIds.forEach((id) => this.invalidatedVariables.add(id))
+			this.debounceUpdateVariables()
+		}
+
+		// Name changes mean the actions&feedbacks need to be regenerated
+		if (msg.address.match('/config/name$')) {
 			this.debounceUpdateCompanionBits()
 		}
 	}

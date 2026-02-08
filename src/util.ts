@@ -63,18 +63,6 @@ export function offsetFloatByDb(f: number, delta: number): number {
 	return dbToFloat(floatToDB(f) + delta)
 }
 
-export function formatDb(d: number): string {
-	// Round to 1dp
-	d = Math.round(d * 10) / 10
-
-	if (d <= -90) {
-		return '-inf'
-	} else if (d > 0) {
-		return `+${d}dB`
-	} else {
-		return `${d}dB`
-	}
-}
 export function trimToFloat(d: number): number {
 	return clamp((d + 18) / 36)
 }
