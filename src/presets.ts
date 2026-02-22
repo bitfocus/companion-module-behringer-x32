@@ -1,9 +1,12 @@
 import { X32State } from './state.js'
-import { CompanionPresetDefinitions } from '@companion-module/base'
+import { CompanionPresetDefinitions, CompanionPresetSection } from '@companion-module/base'
 import { InstanceBaseExt, X32Types } from './util.js'
 import { GetLevelsChoiceConfigs, MUTE_TOGGLE } from './choices.js'
 
-export function GetPresetsList(_instance: InstanceBaseExt, state: X32State): CompanionPresetDefinitions<X32Types> {
+export function GetPresetsList(
+	_instance: InstanceBaseExt,
+	state: X32State,
+): [CompanionPresetSection<X32Types>[], CompanionPresetDefinitions<X32Types>] {
 	const presets: CompanionPresetDefinitions<X32Types> = {}
 
 	const levelsChoices = GetLevelsChoiceConfigs(state)
@@ -16,8 +19,7 @@ export function GetPresetsList(_instance: InstanceBaseExt, state: X32State): Com
 
 	presets['xlive-record'] = {
 		name: 'X-Live Record',
-		category: 'X-Live',
-		type: 'button',
+		type: 'simple',
 		style: {
 			text: 'X-Live\\nRecord',
 			size: 'auto',
@@ -66,8 +68,7 @@ export function GetPresetsList(_instance: InstanceBaseExt, state: X32State): Com
 	}
 	presets['xlive-add-marker'] = {
 		name: 'Add marker',
-		category: 'X-Live',
-		type: 'button',
+		type: 'simple',
 		style: {
 			text: 'Add marker',
 			size: 'auto',
@@ -90,8 +91,7 @@ export function GetPresetsList(_instance: InstanceBaseExt, state: X32State): Com
 
 	presets['talkback-push-a'] = {
 		name: 'Push to talk A',
-		category: 'Talkback - Non-latching',
-		type: 'button',
+		type: 'simple',
 		style: {
 			text: 'TALK A',
 			size: 'auto',
@@ -136,8 +136,7 @@ export function GetPresetsList(_instance: InstanceBaseExt, state: X32State): Com
 
 	presets['talkback-latch-a'] = {
 		name: 'Latch talk A',
-		category: 'Talkback - Latching',
-		type: 'button',
+		type: 'simple',
 		style: {
 			text: 'TALK A',
 			size: 'auto',
@@ -174,8 +173,7 @@ export function GetPresetsList(_instance: InstanceBaseExt, state: X32State): Com
 
 	presets['talkback-push-b'] = {
 		name: 'Push to talk B',
-		category: 'Talkback - Non-latching',
-		type: 'button',
+		type: 'simple',
 		style: {
 			text: 'TALK B',
 			size: 'auto',
@@ -220,8 +218,7 @@ export function GetPresetsList(_instance: InstanceBaseExt, state: X32State): Com
 
 	presets['talkback-latch-b'] = {
 		name: 'Latch talk B',
-		category: 'Talkback - Latching',
-		type: 'button',
+		type: 'simple',
 		style: {
 			text: 'TALK B',
 			size: 'auto',
@@ -259,8 +256,7 @@ export function GetPresetsList(_instance: InstanceBaseExt, state: X32State): Com
 	if (sampleChannel) {
 		presets['dip-fader-level'] = {
 			name: 'Dip fader level',
-			category: 'Dip level',
-			type: 'button',
+			type: 'simple',
 			style: {
 				text: 'Dip fader',
 				size: 'auto',
@@ -307,8 +303,7 @@ export function GetPresetsList(_instance: InstanceBaseExt, state: X32State): Com
 	if (sampleInput && sampleChannelSendTarget) {
 		presets['dip-channel-to-bus-send'] = {
 			name: 'Dip channel to bus send',
-			category: 'Dip level',
-			type: 'button',
+			type: 'simple',
 			style: {
 				text: 'Dip channel send',
 				size: 'auto',
@@ -358,8 +353,7 @@ export function GetPresetsList(_instance: InstanceBaseExt, state: X32State): Com
 	if (sampleBusSendSource && sampleBusSendTarget) {
 		presets['dip-bus-to-matrix-send'] = {
 			name: 'Dip bus to matrix send',
-			category: 'Dip level',
-			type: 'button',
+			type: 'simple',
 			style: {
 				text: 'Dip bus send',
 				size: 'auto',
@@ -406,5 +400,28 @@ export function GetPresetsList(_instance: InstanceBaseExt, state: X32State): Com
 		}
 	}
 
-	return presets
+	const structure: CompanionPresetSection<X32Types>[] = [
+		{
+			id: 'xlive',
+			name: 'X-Live',
+			definitions: ['xlive-record', 'xlive-add-marker'],
+		},
+		{
+			id: 'talkback_nonlatching',
+			name: 'Talkback - Non-latching',
+			definitions: ['talkback-push-a', 'talkback-push-b'],
+		},
+		{
+			id: 'talkback_latching',
+			name: 'Talkback - Latching',
+			definitions: ['talkback-latch-a', 'talkback-latch-b'],
+		},
+		{
+			id: 'dip_level',
+			name: 'Dip level',
+			definitions: ['dip-fader-level', 'dip-channel-to-bus-send', 'dip-bus-to-matrix-send'],
+		},
+	]
+
+	return [structure, presets]
 }

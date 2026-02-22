@@ -1,4 +1,5 @@
 {
+	"$schema": "../node_modules/@companion-module/base/assets/manifest.schema.json",
 	"id": "behringer-x32",
 	"name": "behringer-x32",
 	"shortname": "x32",

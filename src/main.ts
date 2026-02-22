@@ -94,7 +94,9 @@ export default class X32Instance extends InstanceBase<X32Types> implements Insta
 				console.log('fire feedbacks')
 				const feedbacks = Array.from(this.messageFeedbacks)
 				this.messageFeedbacks.clear()
-				this.checkFeedbacks(...feedbacks)
+				if (feedbacks.length > 0) {
+					this.checkFeedbacks(feedbacks[0], ...feedbacks.slice(1))
+				}
 			},
 			{
 				wait: 100,
@@ -251,9 +253,9 @@ export default class X32Instance extends InstanceBase<X32Types> implements Insta
 			}),
 		)
 
-		this.setPresetDefinitions(GetPresetsList(this, this.x32State))
+		this.setPresetDefinitions(...GetPresetsList(this, this.x32State))
 
-		this.checkFeedbacks()
+		this.checkAllFeedbacks()
 
 		// Ensure all feedbacks & actions have an initial value, if we are connected
 		if (this.heartbeat) {
