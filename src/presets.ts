@@ -407,19 +407,46 @@ export function GetPresetsList(
 			definitions: ['xlive-record', 'xlive-add-marker'],
 		},
 		{
-			id: 'talkback_nonlatching',
-			name: 'Talkback - Non-latching',
-			definitions: ['talkback-push-a', 'talkback-push-b'],
-		},
-		{
-			id: 'talkback_latching',
-			name: 'Talkback - Latching',
-			definitions: ['talkback-latch-a', 'talkback-latch-b'],
+			id: 'talkback',
+			name: 'Talkback',
+			definitions: [
+				{
+					id: 'talkback-latching',
+					type: 'simple',
+					name: 'Latching',
+					presets: ['talkback-latch-a', 'talkback-latch-b'],
+				},
+				{
+					id: 'talkback-non-latching',
+					type: 'simple',
+					name: 'Non-latching',
+					presets: ['talkback-push-a', 'talkback-push-b'],
+				},
+			],
 		},
 		{
 			id: 'dip_level',
 			name: 'Dip level',
-			definitions: ['dip-fader-level', 'dip-channel-to-bus-send', 'dip-bus-to-matrix-send'],
+			definitions: [
+				{
+					id: 'dip_fader_level',
+					type: 'simple',
+					name: 'Dip fader level',
+					presets: ['dip-fader-level'],
+				},
+				{
+					id: 'dip_channel_send',
+					type: 'simple',
+					name: 'Dip channel to bus send',
+					presets: ['dip-channel-to-bus-send'],
+				},
+				{
+					id: 'dip_bus_send',
+					type: 'simple',
+					name: 'Dip bus to matrix send',
+					presets: ['dip-bus-to-matrix-send'],
+				},
+			],
 		},
 	]
 
