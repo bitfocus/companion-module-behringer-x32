@@ -38,7 +38,7 @@
 		"type-fest": "^5.4.2"
 	},
 	"devDependencies": {
-		"@companion-module/tools": "^2.7.1",
+		"@companion-module/tools": "2.7.1-nightly-feat-3-x-20260302-232541-e44c2eb",
 		"@types/debug": "^4.1.12",
 		"@types/node": "^22.19.7",
 		"eslint": "^9.39.2",
