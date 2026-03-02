@@ -10,6 +10,11 @@ While developing the module, by using `yarn dev` the compiler will be run in wat
 
 ## Changes
 
+### v4.0
+
+- Update to 2.0 module api
+- This supports expressions in most action/feedback fields
+
 ### v3.2
 
 - Fix using mute group would not update individual channel feedbacks
