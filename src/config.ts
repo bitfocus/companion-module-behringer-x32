@@ -3,7 +3,7 @@ import { X32DeviceDetectorInstance } from './device-detector.js'
 
 export const fadeFpsDefault = 10
 
-export interface X32Config {
+export type X32Config = {
 	host?: string
 	fadeFps?: number
 }
@@ -27,7 +27,7 @@ export function GetConfigFields(): SomeCompanionConfigField[] {
 			type: 'number',
 			id: 'fadeFps',
 			label: 'Framerate for fades',
-			tooltip: 'Higher is smoother, but has higher impact on system performance',
+			description: 'Higher is smoother, but has higher impact on system performance',
 			width: 6,
 			min: 5,
 			max: 60,

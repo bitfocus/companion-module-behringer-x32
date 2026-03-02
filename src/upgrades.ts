@@ -1,136 +1,439 @@
-/* eslint-disable @typescript-eslint/no-unsafe-enum-comparison */
 import {
-	CompanionStaticUpgradeProps,
-	CompanionStaticUpgradeResult,
-	CompanionStaticUpgradeScript,
-	CompanionUpgradeContext,
+	FixupNumericOrVariablesValueToExpressions,
+	type CompanionMigrationOptionValues,
+	type CompanionStaticUpgradeResult,
+	type CompanionStaticUpgradeScript,
+	type ExpressionOptionsObject,
+	type JsonValue,
 } from '@companion-module/base'
-import { ActionId } from './actions.js'
-import { X32Config } from './config.js'
-import { FeedbackId } from './feedback.js'
-import { padNumber, floatToDB } from './util.js'
 
-export const upgradeV2x0x0: CompanionStaticUpgradeScript<X32Config> = (
-	_context: CompanionUpgradeContext<X32Config>,
-	props: CompanionStaticUpgradeProps<X32Config>,
-): CompanionStaticUpgradeResult<X32Config> => {
-	const updatedActions: CompanionStaticUpgradeResult<X32Config>['updatedActions'] = []
+import { padNumber, stringifyValueAlways } from './util.js'
+import { exprVal } from './upgradeUtil.js'
+import { getColorChoiceFromId } from './choices.js'
 
-	for (const action of props.actions) {
-		switch (action.actionId) {
-			case ActionId.Mute:
-			case ActionId.Color:
-			case ActionId.FaderLevel:
-			case ActionId.Label: {
-				if (!action.options.target) {
-					const type = action.options.type || '/ch/'
-					delete action.options.type
+export const BooleanFeedbackUpgradeMap: Record<string, true | undefined> = {
+	mute: true,
+	mute_grp: true,
+	mute_channel_send: true,
+	mute_bus_send: true,
+	fader_level: true,
+	level_channel_send: true,
+	level_bus_send: true,
+	talkback_talk: true,
+	'oscillator-enable': true,
+	'oscillator-destination': true,
+}
 
-					const num = padNumber(Number(action.options.num || 1))
-					delete action.options.num
+export const upgradeToBuiltinFeedbackInverted: CompanionStaticUpgradeScript<any> = (_ctx, props) => {
+	const result: CompanionStaticUpgradeResult<any, undefined> = {
+		updatedConfig: null,
+		updatedSecrets: null,
+		updatedActions: [],
+		updatedFeedbacks: [],
+	}
 
-					action.options.target = `${type}${num}`
+	const feedbackIdsToUpgrade = new Set<string>([
+		'mute',
+		'mute_grp',
+		'mute_channel_send',
+		'mute_bus_send',
+		'talkback_talk',
+		'talkback_config_single_source',
+		'oscillator-enable',
+		'solo',
+		'clear',
+		'sends-on-fader',
+		'solo-mono',
+		'solo-dim',
+		'channel-bank',
+		'group-bank',
+		'channel-bank-compact',
+		'group-bank-compact',
+		'bus-send-bank',
+		'user-bank',
+		'screens',
+		'mute-group-screen',
+		'utility-screen',
+		'channel-page',
+		'meter-page',
+		'route-page',
+		'setup-page',
+		'library-page',
+		'effects-page',
+		'monitor-page',
+		'usb-page',
+		'scene-page',
+		'assign-page',
+		'route-user-in',
+		'route-user-out',
+		'stored-channel',
+		'route-input-block-mode',
+		'route-input-blocks',
+		'route-aux-blocks',
+		'route-aes50-blocks',
+		'route-card-blocks',
+		'route-xlr-left-outputs',
+		'route-xlr-right-outputs',
+		'lock-and-shutdown',
+		'insert-on',
+		'undo-available',
+	])
+	for (const feedback of props.feedbacks) {
+		if (!feedbackIdsToUpgrade.has(feedback.feedbackId)) continue
 
-					if (action.actionId === ActionId.Mute && action.options.mute === null) {
-						action.options.mute = 0
-					} else if (action.actionId === ActionId.Color && action.options.col === null) {
-						action.options.col = '0'
-					} else if (action.actionId === ActionId.FaderLevel) {
-						action.options.fad = floatToDB((action.options.fad ?? 0) as number)
-					}
+		// Migrate to built-in inverted state
+		feedback.isInverted = {
+			isExpression: false, // The existing ones can never be true, as expressions were not supported until this script
+			value: feedback.isInverted?.value ? !!feedback.options.state?.value : !feedback.options.state?.value,
+		}
+		delete feedback.options.state
 
-					updatedActions.push(action)
-				}
-				break
-			}
-			case ActionId.MuteGroup: {
-				if (action.options.mute_grp) {
-					action.options.target = `/config/mute/${action.options.mute_grp}`
-					delete action.options.mute_grp
+		result.updatedFeedbacks.push(feedback)
+	}
 
-					if (action.options.mute === null) {
-						action.options.mute = 0
-					}
+	return result
+}
 
-					updatedActions.push(action)
-				}
-				break
-			}
-			case 'mMute': {
-				if (action.options.type) {
-					action.options.target = action.options.type
-					delete action.options.type
+const pathReplacements: Record<string | number, string | number | undefined> = {
+	'/main/st': 'stereo',
+	'/main/mono': 'mono',
+	st: 'stereo',
+	mlevel: 'mono',
+}
+for (let i = 1; i <= 32; i++) pathReplacements[`/ch/${padNumber(i)}`] = `channel${i}`
+for (let i = 1; i <= 8; i++) pathReplacements[`/auxin/${padNumber(i)}`] = `aux${i}`
+for (let i = 1; i <= 8; i++) pathReplacements[`/fxrtn/${padNumber(i)}`] = `fx${i}`
+for (let i = 1; i <= 16; i++) {
+	pathReplacements[`/bus/${padNumber(i)}`] = `bus${i}`
+	pathReplacements[`${padNumber(i)}/on`] = `bus${i}`
+	pathReplacements[`${padNumber(i)}/level`] = `bus${i}`
+	pathReplacements[`${padNumber(i)}/pan`] = `bus${i}`
+}
+for (let i = 1; i <= 6; i++) pathReplacements[`/mtx/${padNumber(i)}`] = `matrix${i}`
+for (let i = 1; i <= 8; i++) pathReplacements[`/dca/${padNumber(i)}`] = `dca${i}`
+for (let i = 1; i <= 6; i++) pathReplacements[`/config/mute/${i}`] = i
+for (let i = 1; i <= 32; i++) pathReplacements[padNumber(i)] = i
+for (let i = 1; i <= 32; i++) pathReplacements[`/headamp/${padNumber(i - 1, 3)}`] = `local${i}`
+for (let i = 1; i <= 32; i++) pathReplacements[`/headamp/${padNumber(i - 1 + 32, 3)}`] = `aes-a${i}`
+for (let i = 1; i <= 32; i++) pathReplacements[`/headamp/${padNumber(i - 1 + 64, 3)}`] = `aes-b${i}`
 
-					if (action.options.mute === null) {
-						action.options.mute = 0
-					}
+const actionsToUpgrade: Record<string, string[] | undefined> = {
+	mute: ['target'],
+	mute_grp: ['target'],
+	mute_channel_send: ['source', 'target'],
+	mute_bus_send: ['source', 'target'],
+	fad: ['target'],
+	fader_store: ['target'],
+	fader_restore: ['target'],
+	fader_delta: ['target'],
+	panning: ['target'],
+	'panning-delta': ['target'],
+	'panning-store': ['target'],
+	'panning-restore': ['target'],
+	level_channel_send: ['source', 'target'],
+	level_channel_send_delta: ['source', 'target'],
+	level_channel_store: ['source', 'target'],
+	level_channel_restore: ['source', 'target'],
+	'channel-send-panning': ['source', 'target'],
+	'channel-send-panning-delta': ['source', 'target'],
+	'channel-send-panning-store': ['source', 'target'],
+	'channel-send-panning-restore': ['source', 'target'],
+	level_bus_send: ['source', 'target'],
+	level_bus_send_delta: ['source', 'target'],
+	level_bus_store: ['source', 'target'],
+	level_bus_restore: ['source', 'target'],
+	'bus-send-panning': ['source', 'target'],
+	'bus-send-panning-delta': ['source', 'target'],
+	'bus-send-panning-store': ['source', 'target'],
+	'bus-send-panning-restore': ['source', 'target'],
+	input_trim: ['input'],
+	label: ['target'],
+	color: ['target'],
+	select: ['select'],
+	headamp_gain: ['headamp'],
+	'insert-on': ['src'],
+	'insert-pos': ['src'],
+	'insert-select': ['src'],
+}
+const feedbacksToUpgrade: Record<string, string[] | undefined> = {
+	mute: ['target'],
+	mute_grp: ['mute_grp'],
+	mute_channel_send: ['source', 'target'],
+	mute_bus_send: ['source', 'target'],
+	fader_level: ['target'],
+	level_channel_send: ['source', 'target'],
+	level_bus_send: ['source', 'target'],
+	channel_panning: ['target'],
+	channel_send_panning: ['source', 'target'],
+	bus_send_panning: ['source', 'target'],
+	'oscillator-destination': ['destination'],
+	'insert-on': ['src'],
+	'insert-pos': ['src'],
+	'insert-select': ['src'],
+}
 
-					action.actionId = ActionId.Mute
+export const upgradeChannelOrFaderValuesFromOscPaths: CompanionStaticUpgradeScript<any> = (_ctx, props) => {
+	const result: CompanionStaticUpgradeResult<any, undefined> = {
+		updatedConfig: null,
+		updatedSecrets: null,
+		updatedActions: [],
+		updatedFeedbacks: [],
+	}
 
-					updatedActions.push(action)
-				}
-				break
-			}
-			case 'mColor': {
-				if (action.options.type) {
-					action.options.target = action.options.type
-					delete action.options.type
-
-					if (action.options.col === null) {
-						action.options.col = '0'
-					}
-
-					action.actionId = ActionId.Color
-
-					updatedActions.push(action)
-				}
-				break
-			}
-			case 'mLabel': {
-				if (action.options.type) {
-					action.options.target = action.options.type
-					delete action.options.type
-
-					action.actionId = ActionId.Label
-
-					updatedActions.push(action)
-				}
-				break
-			}
-			case 'mFad': {
-				if (action.options.type) {
-					action.options.target = action.options.type
-					delete action.options.type
-
-					action.options.fad = floatToDB((action.options.fad ?? 0) as number)
-
-					action.actionId = ActionId.FaderLevel
-
-					updatedActions.push(action)
-				}
-				break
+	const upgradeProps = (options: ExpressionOptionsObject, propKeys: string[]) => {
+		for (const propKey of propKeys) {
+			if (!options[propKey]) {
+				options[propKey] = exprVal('')
+			} else if (options[propKey]?.isExpression) {
+				continue // Skip expressions
+			} else if (typeof options[propKey].value === 'string') {
+				// Migrate value
+				options[propKey].value = pathReplacements[options[propKey].value] ?? options[propKey].value
 			}
 		}
 	}
+	for (const action of props.actions) {
+		// A couple of cases that need manual handling due to unclear & overlapping values
+		if (action.actionId === 'solo') {
+			fixupNumericOption(action.options, 'solo', soloOrSelectChoicesLookup)
+		} else if (action.actionId === 'select') {
+			// This uses a few less than solo, but no harm in mapping the extra ones
+			fixupNumericOption(action.options, 'select', soloOrSelectChoicesLookup)
+		} else if (action.actionId === 'talkback_config_single_src') {
+			fixupNumericOption(action.options, 'dest', talkbackTargetChoicesLookup)
+		} else if (action.actionId === 'talkback_config') {
+			fixupNumericOption(action.options, 'dest', talkbackTargetChoicesLookup, { asArray: true })
+		} else if (action.actionId === 'color') {
+			// Merge the split color fields
+			if (action.options.useVariable !== undefined) {
+				action.options.col =
+					action.options.useVariable.value && action.options.varCol
+						? {
+								isExpression: true,
+								value: `parseVariables('${stringifyValueAlways(action.options.varCol.value)}')`,
+							}
+						: {
+								isExpression: false,
+								value: getColorChoiceFromId(action.options.col?.value)?.id ?? action.options.col?.value,
+							}
+			}
+		} else if (action.actionId === 'oscillator-destination') {
+			fixupNumericOption(action.options, 'destination', oscillatorDestinationChoicesLookup)
+		} else if (action.actionId === 'load-channel-preset') {
+			fixupNumericOption(action.options, 'channel', soloOrSelectChoicesLookup, { includeSelectedAsMinusOne: true })
+		}
 
-	return {
-		updatedConfig: null,
-		updatedFeedbacks: [],
-		updatedActions,
+		const propsToUpgrade = actionsToUpgrade[action.actionId]
+		if (!propsToUpgrade) continue
+
+		upgradeProps(action.options, propsToUpgrade)
+		result.updatedActions.push(action)
+	}
+	for (const feedback of props.feedbacks) {
+		if (feedback.feedbackId === 'solo') {
+			fixupNumericOption(feedback.options, 'solo', soloOrSelectChoicesLookup)
+		} else if (feedback.feedbackId === 'select') {
+			// This uses a few less than solo, but no harm in mapping the extra ones
+			fixupNumericOption(feedback.options, 'select', soloOrSelectChoicesLookup)
+		} else if (feedback.feedbackId === 'oscillator-destination') {
+			fixupNumericOption(feedback.options, 'destination', oscillatorDestinationChoicesLookup)
+		} else if (feedback.feedbackId === 'talkback_config_single_source') {
+			fixupNumericOption(feedback.options, 'dest', talkbackTargetChoicesLookup)
+		}
+
+		const propsToUpgrade = feedbacksToUpgrade[feedback.feedbackId]
+		if (!propsToUpgrade) continue
+
+		upgradeProps(feedback.options, propsToUpgrade)
+		result.updatedFeedbacks.push(feedback)
+	}
+
+	return result
+}
+
+function fixupNumericOption(
+	options: CompanionMigrationOptionValues,
+	key: string,
+	newValues: Array<string>,
+	opts?: {
+		asArray?: boolean
+		includeSelectedAsMinusOne?: boolean
+	},
+): void {
+	if (!options[key]) return
+
+	const translateValue = (val: JsonValue | undefined): JsonValue | undefined => {
+		if (opts?.includeSelectedAsMinusOne && val === -1) {
+			return 'selected'
+		}
+		return newValues[Number(val)] || val
+	}
+
+	if (opts?.asArray) {
+		const rawArr = Array.isArray(options[key].value) ? options[key].value : [options[key].value]
+		options[key].value = rawArr.map((v) => translateValue(v)) as JsonValue
+	} else {
+		options[key].value = translateValue(options[key].value)
 	}
 }
 
-export const BooleanFeedbackUpgradeMap: {
-	[id in FeedbackId]?: true
-} = {
-	[FeedbackId.Mute]: true,
-	[FeedbackId.MuteGroup]: true,
-	[FeedbackId.MuteChannelSend]: true,
-	[FeedbackId.MuteBusSend]: true,
-	[FeedbackId.FaderLevel]: true,
-	[FeedbackId.ChannelSendLevel]: true,
-	[FeedbackId.BusSendLevel]: true,
-	[FeedbackId.TalkbackTalk]: true,
-	[FeedbackId.OscillatorEnable]: true,
-	[FeedbackId.OscillatorDestination]: true,
+const soloOrSelectChoicesLookup = [
+	'channel1',
+	'channel2',
+	'channel3',
+	'channel4',
+	'channel5',
+	'channel6',
+	'channel7',
+	'channel8',
+	'channel9',
+	'channel10',
+	'channel11',
+	'channel12',
+	'channel13',
+	'channel14',
+	'channel15',
+	'channel16',
+	'channel17',
+	'channel18',
+	'channel19',
+	'channel20',
+	'channel21',
+	'channel22',
+	'channel23',
+	'channel24',
+	'channel25',
+	'channel26',
+	'channel27',
+	'channel28',
+	'channel29',
+	'channel30',
+	'channel31',
+	'channel32',
+	'aux1',
+	'aux2',
+	'aux3',
+	'aux4',
+	'aux5',
+	'aux6',
+	'aux7',
+	'aux8',
+	'fx1',
+	'fx2',
+	'fx3',
+	'fx4',
+	'fx5',
+	'fx6',
+	'fx7',
+	'fx8',
+	'bus1',
+	'bus2',
+	'bus3',
+	'bus4',
+	'bus5',
+	'bus6',
+	'bus7',
+	'bus8',
+	'bus9',
+	'bus10',
+	'bus11',
+	'bus12',
+	'bus13',
+	'bus14',
+	'bus15',
+	'bus16',
+	'matrix1',
+	'matrix2',
+	'matrix3',
+	'matrix4',
+	'matrix5',
+	'matrix6',
+	'stereo',
+	'mono',
+	'dca1',
+	'dca2',
+	'dca3',
+	'dca4',
+	'dca5',
+	'dca6',
+	'dca7',
+	'dca8',
+]
+
+const talkbackTargetChoicesLookup = [
+	'bus1',
+	'bus2',
+	'bus3',
+	'bus4',
+	'bus5',
+	'bus6',
+	'bus7',
+	'bus8',
+	'bus9',
+	'bus10',
+	'bus11',
+	'bus12',
+	'bus13',
+	'bus14',
+	'bus15',
+	'bus16',
+	'stereo',
+	'mono',
+]
+
+const oscillatorDestinationChoicesLookup = [
+	'bus1',
+	'bus2',
+	'bus3',
+	'bus4',
+	'bus5',
+	'bus6',
+	'bus7',
+	'bus8',
+	'bus9',
+	'bus10',
+	'bus11',
+	'bus12',
+	'bus13',
+	'bus14',
+	'bus15',
+	'bus16',
+	'left',
+	'right',
+	'stereo',
+	'mono',
+	'matrix1',
+	'matrix2',
+	'matrix3',
+	'matrix4',
+	'matrix5',
+	'matrix6',
+]
+
+export const upgradeToBuiltinVariableParsing: CompanionStaticUpgradeScript<any> = (_ctx, props) => {
+	const result: CompanionStaticUpgradeResult<any, undefined> = {
+		updatedConfig: null,
+		updatedSecrets: null,
+		updatedActions: [],
+		updatedFeedbacks: [],
+	}
+
+	for (const action of props.actions) {
+		if (
+			action.actionId === 'panning-delta' ||
+			action.actionId === 'bus-send-panning-delta' ||
+			action.actionId === 'channel-send-panning-delta' ||
+			action.actionId === 'fader_delta' ||
+			action.actionId === 'level_channel_send_delta' ||
+			action.actionId === 'level_bus_send_delta'
+		) {
+			const oldValue = action.options.useVariable?.value ? action.options.varDelta : action.options.delta
+			delete action.options.useVariable
+			delete action.options.varDelta
+
+			action.options.delta = FixupNumericOrVariablesValueToExpressions(oldValue)
+		}
+	}
+
+	return result
 }

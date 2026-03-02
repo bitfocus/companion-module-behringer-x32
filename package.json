@@ -1,7 +1,7 @@
 {
 	"name": "behringer-x32",
 	"version": "3.2.0",
-	"main": "dist/index.js",
+	"main": "dist/main.js",
 	"type": "module",
 	"scripts": {
 		"postinstall": "husky",
@@ -30,16 +30,15 @@
 		"node": "^22.20"
 	},
 	"dependencies": {
-		"@companion-module/base": "~1.14.1",
+		"@companion-module/base": "2.0.0",
 		"date-fns": "^3.6.0",
 		"debounce-fn": "^6.0.0",
-		"debug": "^4.4.3",
 		"osc": "^2.4.5",
 		"p-queue": "^9.1.0",
 		"type-fest": "^5.4.2"
 	},
 	"devDependencies": {
-		"@companion-module/tools": "^2.6.1",
+		"@companion-module/tools": "2.7.1-nightly-feat-3-x-20260302-232541-e44c2eb",
 		"@types/debug": "^4.1.12",
 		"@types/node": "^22.19.7",
 		"eslint": "^9.39.2",
@@ -47,6 +46,7 @@
 		"lint-staged": "^16.2.7",
 		"prettier": "^3.8.1",
 		"rimraf": "^6.1.2",
+		"tsx": "^4.21.0",
 		"typescript": "~5.9.3",
 		"typescript-eslint": "^8.54.0"
 	},

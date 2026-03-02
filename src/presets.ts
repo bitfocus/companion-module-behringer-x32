@@ -1,39 +1,13 @@
-import { ActionId } from './actions.js'
-import { X32Config } from './config.js'
-import { FeedbackId } from './feedback.js'
 import { X32State } from './state.js'
-import { GetLevelsChoiceConfigs } from './choices.js'
-import type { SetRequired } from 'type-fest'
-import {
-	combineRgb,
-	CompanionPresetDefinitions,
-	CompanionPresetFeedback,
-	CompanionButtonPresetDefinition,
-} from '@companion-module/base'
-import { InstanceBaseExt } from './util.js'
+import { CompanionPresetDefinitions, CompanionPresetSection } from '@companion-module/base'
+import { InstanceBaseExt, X32Types } from './util.js'
+import { GetLevelsChoiceConfigs, MUTE_TOGGLE } from './choices.js'
 
-interface CompanionPresetExt extends CompanionButtonPresetDefinition {
-	feedbacks: Array<
-		{
-			feedbackId: FeedbackId
-		} & SetRequired<CompanionPresetFeedback, 'style'>
-	>
-	// actions: Array<
-	// 	{
-	// 		action: ActionId
-	// 	} & SomeCompanionPreset['actions'][0]
-	// >
-	// release_actions?: Array<
-	// 	{
-	// 		action: ActionId
-	// 	} & NonNullable<CompanionPreset['release_actions']>[0]
-	// >
-}
-
-export function GetPresetsList(_instance: InstanceBaseExt<X32Config>, state: X32State): CompanionPresetDefinitions {
-	const presets: {
-		[id: string]: CompanionPresetExt | undefined
-	} = {}
+export function GetPresetsList(
+	_instance: InstanceBaseExt,
+	state: X32State,
+): [CompanionPresetSection<X32Types>[], CompanionPresetDefinitions<X32Types>] {
+	const presets: CompanionPresetDefinitions<X32Types> = {}
 
 	const levelsChoices = GetLevelsChoiceConfigs(state)
 
@@ -45,13 +19,12 @@ export function GetPresetsList(_instance: InstanceBaseExt<X32Config>, state: X32
 
 	presets['xlive-record'] = {
 		name: 'X-Live Record',
-		category: 'X-Live',
-		type: 'button',
+		type: 'simple',
 		style: {
 			text: 'X-Live\\nRecord',
 			size: 'auto',
-			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
+			color: 0xffffff,
+			bgcolor: 0x000000,
 		},
 		options: {
 			stepAutoProgress: true,
@@ -60,7 +33,7 @@ export function GetPresetsList(_instance: InstanceBaseExt<X32Config>, state: X32
 			{
 				down: [
 					{
-						actionId: ActionId.Record,
+						actionId: 'record',
 						options: {
 							state: 3,
 						},
@@ -71,7 +44,7 @@ export function GetPresetsList(_instance: InstanceBaseExt<X32Config>, state: X32
 			{
 				down: [
 					{
-						actionId: ActionId.Record,
+						actionId: 'record',
 						options: {
 							state: 0,
 						},
@@ -82,32 +55,31 @@ export function GetPresetsList(_instance: InstanceBaseExt<X32Config>, state: X32
 		],
 		feedbacks: [
 			{
-				feedbackId: FeedbackId.Record,
+				feedbackId: 'record',
 				options: {
 					state: 3,
 				},
 				style: {
-					color: combineRgb(255, 255, 255),
-					bgcolor: combineRgb(255, 0, 0),
+					color: 0xffffff,
+					bgcolor: 0xff0000,
 				},
 			},
 		],
 	}
 	presets['xlive-add-marker'] = {
 		name: 'Add marker',
-		category: 'X-Live',
-		type: 'button',
+		type: 'simple',
 		style: {
 			text: 'Add marker',
 			size: 'auto',
-			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
+			color: 0xffffff,
+			bgcolor: 0x000000,
 		},
 		steps: [
 			{
 				down: [
 					{
-						actionId: ActionId.AddMarker,
+						actionId: 'add_marker',
 						options: {},
 					},
 				],
@@ -119,19 +91,18 @@ export function GetPresetsList(_instance: InstanceBaseExt<X32Config>, state: X32
 
 	presets['talkback-push-a'] = {
 		name: 'Push to talk A',
-		category: 'Talkback - Non-latching',
-		type: 'button',
+		type: 'simple',
 		style: {
 			text: 'TALK A',
 			size: 'auto',
-			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
+			color: 0xffffff,
+			bgcolor: 0x000000,
 		},
 		steps: [
 			{
 				down: [
 					{
-						actionId: ActionId.TalkbackTalk,
+						actionId: 'talkback_talk',
 						options: {
 							channel: 'A',
 							on: 1,
@@ -140,7 +111,7 @@ export function GetPresetsList(_instance: InstanceBaseExt<X32Config>, state: X32
 				],
 				up: [
 					{
-						actionId: ActionId.TalkbackTalk,
+						actionId: 'talkback_talk',
 						options: {
 							channel: 'A',
 							on: 0,
@@ -151,14 +122,13 @@ export function GetPresetsList(_instance: InstanceBaseExt<X32Config>, state: X32
 		],
 		feedbacks: [
 			{
-				feedbackId: FeedbackId.TalkbackTalk,
+				feedbackId: 'talkback_talk',
 				options: {
 					channel: 'A',
-					state: true,
 				},
 				style: {
-					bgcolor: combineRgb(255, 127, 0),
-					color: combineRgb(0, 0, 0),
+					bgcolor: 0xff7f00,
+					color: 0x000000,
 				},
 			},
 		],
@@ -166,22 +136,21 @@ export function GetPresetsList(_instance: InstanceBaseExt<X32Config>, state: X32
 
 	presets['talkback-latch-a'] = {
 		name: 'Latch talk A',
-		category: 'Talkback - Latching',
-		type: 'button',
+		type: 'simple',
 		style: {
 			text: 'TALK A',
 			size: 'auto',
-			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
+			color: 0xffffff,
+			bgcolor: 0x000000,
 		},
 		steps: [
 			{
 				down: [
 					{
-						actionId: ActionId.TalkbackTalk,
+						actionId: 'talkback_talk',
 						options: {
 							channel: 'A',
-							on: 2,
+							on: MUTE_TOGGLE,
 						},
 					},
 				],
@@ -190,14 +159,13 @@ export function GetPresetsList(_instance: InstanceBaseExt<X32Config>, state: X32
 		],
 		feedbacks: [
 			{
-				feedbackId: FeedbackId.TalkbackTalk,
+				feedbackId: 'talkback_talk',
 				options: {
 					channel: 'A',
-					state: true,
 				},
 				style: {
-					bgcolor: combineRgb(255, 127, 0),
-					color: combineRgb(0, 0, 0),
+					bgcolor: 0xff7f00,
+					color: 0x000000,
 				},
 			},
 		],
@@ -205,19 +173,18 @@ export function GetPresetsList(_instance: InstanceBaseExt<X32Config>, state: X32
 
 	presets['talkback-push-b'] = {
 		name: 'Push to talk B',
-		category: 'Talkback - Non-latching',
-		type: 'button',
+		type: 'simple',
 		style: {
 			text: 'TALK B',
 			size: 'auto',
-			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
+			color: 0xffffff,
+			bgcolor: 0x000000,
 		},
 		steps: [
 			{
 				down: [
 					{
-						actionId: ActionId.TalkbackTalk,
+						actionId: 'talkback_talk',
 						options: {
 							channel: 'B',
 							on: 1,
@@ -226,7 +193,7 @@ export function GetPresetsList(_instance: InstanceBaseExt<X32Config>, state: X32
 				],
 				up: [
 					{
-						actionId: ActionId.TalkbackTalk,
+						actionId: 'talkback_talk',
 						options: {
 							channel: 'B',
 							on: 0,
@@ -237,14 +204,13 @@ export function GetPresetsList(_instance: InstanceBaseExt<X32Config>, state: X32
 		],
 		feedbacks: [
 			{
-				feedbackId: FeedbackId.TalkbackTalk,
+				feedbackId: 'talkback_talk',
 				options: {
 					channel: 'B',
-					state: true,
 				},
 				style: {
-					bgcolor: combineRgb(255, 127, 0),
-					color: combineRgb(0, 0, 0),
+					bgcolor: 0xff7f00,
+					color: 0x000000,
 				},
 			},
 		],
@@ -252,22 +218,21 @@ export function GetPresetsList(_instance: InstanceBaseExt<X32Config>, state: X32
 
 	presets['talkback-latch-b'] = {
 		name: 'Latch talk B',
-		category: 'Talkback - Latching',
-		type: 'button',
+		type: 'simple',
 		style: {
 			text: 'TALK B',
 			size: 'auto',
-			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
+			color: 0xffffff,
+			bgcolor: 0x000000,
 		},
 		steps: [
 			{
 				down: [
 					{
-						actionId: ActionId.TalkbackTalk,
+						actionId: 'talkback_talk',
 						options: {
 							channel: 'B',
-							on: 2,
+							on: MUTE_TOGGLE,
 						},
 					},
 				],
@@ -276,14 +241,13 @@ export function GetPresetsList(_instance: InstanceBaseExt<X32Config>, state: X32
 		],
 		feedbacks: [
 			{
-				feedbackId: FeedbackId.TalkbackTalk,
+				feedbackId: 'talkback_talk',
 				options: {
 					channel: 'B',
-					state: true,
 				},
 				style: {
-					bgcolor: combineRgb(255, 127, 0),
-					color: combineRgb(0, 0, 0),
+					bgcolor: 0xff7f00,
+					color: 0x000000,
 				},
 			},
 		],
@@ -292,38 +256,41 @@ export function GetPresetsList(_instance: InstanceBaseExt<X32Config>, state: X32
 	if (sampleChannel) {
 		presets['dip-fader-level'] = {
 			name: 'Dip fader level',
-			category: 'Dip level',
-			type: 'button',
+			type: 'simple',
 			style: {
 				text: 'Dip fader',
 				size: 'auto',
-				color: combineRgb(255, 255, 255),
-				bgcolor: combineRgb(0, 0, 0),
+				color: 0xffffff,
+				bgcolor: 0x000000,
 			},
 			steps: [
 				{
 					down: [
 						{
-							actionId: ActionId.FaderLevelStore,
+							actionId: 'fader_store',
 							options: {
 								target: sampleChannel.id,
 							},
 						},
 						{
-							actionId: ActionId.FaderLevelDelta,
+							actionId: 'fader_delta',
 							options: {
 								target: sampleChannel.id,
 								delta: -10,
-								duration: 0,
+								fadeDuration: 0,
+								fadeAlgorithm: 'linear',
+								fadeType: 'ease-in',
 							},
 						},
 					],
 					up: [
 						{
-							actionId: ActionId.FaderLevelRestore,
+							actionId: 'fader_restore',
 							options: {
 								target: sampleChannel.id,
-								duration: 0,
+								fadeDuration: 0,
+								fadeAlgorithm: 'linear',
+								fadeType: 'ease-in',
 							},
 						},
 					],
@@ -336,41 +303,44 @@ export function GetPresetsList(_instance: InstanceBaseExt<X32Config>, state: X32
 	if (sampleInput && sampleChannelSendTarget) {
 		presets['dip-channel-to-bus-send'] = {
 			name: 'Dip channel to bus send',
-			category: 'Dip level',
-			type: 'button',
+			type: 'simple',
 			style: {
 				text: 'Dip channel send',
 				size: 'auto',
-				color: combineRgb(255, 255, 255),
-				bgcolor: combineRgb(0, 0, 0),
+				color: 0xffffff,
+				bgcolor: 0x000000,
 			},
 			steps: [
 				{
 					down: [
 						{
-							actionId: ActionId.ChannelSendLevelStore,
+							actionId: 'level_channel_store',
 							options: {
 								source: sampleInput.id,
 								target: sampleChannelSendTarget.id,
 							},
 						},
 						{
-							actionId: ActionId.ChannelSendLevelDelta,
+							actionId: 'level_channel_send_delta',
 							options: {
 								source: sampleInput.id,
 								target: sampleChannelSendTarget.id,
 								delta: -10,
-								duration: 0,
+								fadeDuration: 0,
+								fadeAlgorithm: 'linear',
+								fadeType: 'ease-in',
 							},
 						},
 					],
 					up: [
 						{
-							actionId: ActionId.ChannelSendLevelRestore,
+							actionId: 'level_channel_restore',
 							options: {
 								source: sampleInput.id,
 								target: sampleChannelSendTarget.id,
-								duration: 0,
+								fadeDuration: 0,
+								fadeAlgorithm: 'linear',
+								fadeType: 'ease-in',
 							},
 						},
 					],
@@ -383,41 +353,44 @@ export function GetPresetsList(_instance: InstanceBaseExt<X32Config>, state: X32
 	if (sampleBusSendSource && sampleBusSendTarget) {
 		presets['dip-bus-to-matrix-send'] = {
 			name: 'Dip bus to matrix send',
-			category: 'Dip level',
-			type: 'button',
+			type: 'simple',
 			style: {
 				text: 'Dip bus send',
 				size: 'auto',
-				color: combineRgb(255, 255, 255),
-				bgcolor: combineRgb(0, 0, 0),
+				color: 0xffffff,
+				bgcolor: 0x000000,
 			},
 			steps: [
 				{
 					down: [
 						{
-							actionId: ActionId.BusSendLevelStore,
+							actionId: 'level_bus_store',
 							options: {
 								source: sampleBusSendSource.id,
 								target: sampleBusSendTarget.id,
 							},
 						},
 						{
-							actionId: ActionId.BusSendLevelDelta,
+							actionId: 'level_bus_send_delta',
 							options: {
 								source: sampleBusSendSource.id,
 								target: sampleBusSendTarget.id,
 								delta: -10,
-								duration: 0,
+								fadeDuration: 0,
+								fadeAlgorithm: 'linear',
+								fadeType: 'ease-in',
 							},
 						},
 					],
 					up: [
 						{
-							actionId: ActionId.BusSendLevelRestore,
+							actionId: 'level_bus_restore',
 							options: {
 								source: sampleBusSendSource.id,
 								target: sampleBusSendTarget.id,
-								duration: 0,
+								fadeDuration: 0,
+								fadeAlgorithm: 'linear',
+								fadeType: 'ease-in',
 							},
 						},
 					],
@@ -427,5 +400,55 @@ export function GetPresetsList(_instance: InstanceBaseExt<X32Config>, state: X32
 		}
 	}
 
-	return presets
+	const structure: CompanionPresetSection<X32Types>[] = [
+		{
+			id: 'xlive',
+			name: 'X-Live',
+			definitions: ['xlive-record', 'xlive-add-marker'],
+		},
+		{
+			id: 'talkback',
+			name: 'Talkback',
+			definitions: [
+				{
+					id: 'talkback-latching',
+					type: 'simple',
+					name: 'Latching',
+					presets: ['talkback-latch-a', 'talkback-latch-b'],
+				},
+				{
+					id: 'talkback-non-latching',
+					type: 'simple',
+					name: 'Non-latching',
+					presets: ['talkback-push-a', 'talkback-push-b'],
+				},
+			],
+		},
+		{
+			id: 'dip_level',
+			name: 'Dip level',
+			definitions: [
+				{
+					id: 'dip_fader_level',
+					type: 'simple',
+					name: 'Dip fader level',
+					presets: ['dip-fader-level'],
+				},
+				{
+					id: 'dip_channel_send',
+					type: 'simple',
+					name: 'Dip channel to bus send',
+					presets: ['dip-channel-to-bus-send'],
+				},
+				{
+					id: 'dip_bus_send',
+					type: 'simple',
+					name: 'Dip bus to matrix send',
+					presets: ['dip-bus-to-matrix-send'],
+				},
+			],
+		},
+	]
+
+	return [structure, presets]
 }

@@ -1,5 +1,5 @@
 import { MetaArgument } from 'osc'
-import { fadeFpsDefault, X32Config } from './config.js'
+import { fadeFpsDefault } from './config.js'
 import { Easing } from './easings.js'
 import { dbToFloat, InstanceBaseExt } from './util.js'
 
@@ -7,14 +7,20 @@ export interface TransitionInfo {
 	steps: number[]
 }
 
+export type FadeProps = {
+	fadeDuration: number
+	fadeAlgorithm: Easing.algorithm
+	fadeType: Easing.curve
+}
+
 export class X32Transitions {
 	private readonly transitions: Map<string, TransitionInfo>
-	private readonly instance: InstanceBaseExt<X32Config>
+	private readonly instance: InstanceBaseExt
 	private readonly fps: number
 
 	private tickInterval: NodeJS.Timeout | undefined
 
-	constructor(instance: InstanceBaseExt<X32Config>) {
+	constructor(instance: InstanceBaseExt) {
 		this.transitions = new Map()
 		this.instance = instance
 		this.fps = instance.config.fadeFps ?? fadeFpsDefault
@@ -63,29 +69,15 @@ export class X32Transitions {
 		}
 	}
 
-	public runForDb(
-		path: string,
-		from: number | undefined,
-		to: number,
-		duration: number,
-		algorithm?: Easing.algorithm,
-		curve?: Easing.curve,
-	): void {
+	public runForDb(path: string, from: number | undefined, to: number, fadeProps: FadeProps | null): void {
 		const floatTo = dbToFloat(to)
 		const floatFrom = from ? dbToFloat(from) : undefined
-		this.run(path, floatFrom, floatTo, duration, algorithm, curve)
+		this.run(path, floatFrom, floatTo, fadeProps)
 	}
 
-	public run(
-		path: string,
-		from: number | undefined,
-		to: number,
-		duration: number,
-		algorithm?: Easing.algorithm,
-		curve?: Easing.curve,
-	): void {
+	public run(path: string, from: number | undefined, to: number, fadeProps: FadeProps | null): void {
 		const interval = 1000 / this.fps
-		const stepCount = Math.ceil(duration / interval)
+		const stepCount = Math.ceil(fadeProps?.fadeDuration ?? 0 / interval)
 
 		if (stepCount <= 1 || typeof from !== 'number') {
 			this.transitions.delete(path)
@@ -94,7 +86,7 @@ export class X32Transitions {
 			const diff = to - from
 			const steps: number[] = []
 
-			const easing = Easing.getEasing(algorithm, curve)
+			const easing = Easing.getEasing(fadeProps?.fadeAlgorithm, fadeProps?.fadeType)
 			for (let i = 1; i <= stepCount; i++) {
 				const fraction = easing(i / stepCount)
 				steps.push(from + diff * fraction)

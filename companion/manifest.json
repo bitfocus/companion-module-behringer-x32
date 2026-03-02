@@ -1,4 +1,5 @@
 {
+	"$schema": "../node_modules/@companion-module/base/assets/manifest.schema.json",
 	"id": "behringer-x32",
 	"name": "behringer-x32",
 	"shortname": "x32",
@@ -18,7 +19,7 @@
 		"type": "node22",
 		"api": "nodejs-ipc",
 		"apiVersion": "0.0.0",
-		"entrypoint": "../dist/index.js"
+		"entrypoint": "../dist/main.js"
 	},
 	"manufacturer": "Behringer/Midas",
 	"products": ["X32/M32"],
