@@ -122,16 +122,16 @@ export default class X32Instance extends InstanceBase<X32Types> implements Insta
 		)
 
 		// Build a map of osc paths to variableIds, so we can easily invalidate variables when we get an update for an osc path
-		for (const variableDef of VariableDefinitions) {
+		for (const [variableId, variableDef] of Object.entries(VariableDefinitions)) {
 			if (variableDef.oscPath) {
 				const existing = this.variableInvalidationMap.get(variableDef.oscPath) ?? []
-				existing.push(variableDef.variableId)
+				existing.push(variableId)
 				this.variableInvalidationMap.set(variableDef.oscPath, existing)
 			}
 			if (variableDef.additionalPaths) {
 				for (const additionalPath of variableDef.additionalPaths) {
 					const existing = this.variableInvalidationMap.get(additionalPath) ?? []
-					existing.push(variableDef.variableId)
+					existing.push(variableId)
 					this.variableInvalidationMap.set(additionalPath, existing)
 				}
 			}
@@ -444,7 +444,7 @@ export default class X32Instance extends InstanceBase<X32Types> implements Insta
 	}
 
 	private loadVariablesData(): void {
-		for (const definition of VariableDefinitions) {
+		for (const definition of Object.values(VariableDefinitions)) {
 			if (definition.oscPath) this.queueEnsureLoaded(definition.oscPath)
 			if (definition.additionalPaths) {
 				definition.additionalPaths.forEach(this.queueEnsureLoaded)
