@@ -196,7 +196,7 @@ for (const source of sendToBusSources) {
 
 		VariableDefinitions[`fader_${source.variablesPrefix}_to_${dest.variablesPrefix}`] = {
 			name: `Fader: ${source.defaultName} to ${dest.defaultName}`,
-			oscPath: `${source.sendTo.path}/${dest.sendToSink.on}`,
+			oscPath: `${source.sendTo.path}/${dest.sendToSink.level}`,
 			getValue: (args) => {
 				const faderNum = args && args[0]?.type === 'f' ? args[0].value : NaN
 				return isNaN(faderNum) ? undefined : floatToDB(faderNum)
@@ -213,7 +213,7 @@ for (const source of busSources) {
 		const varName = `fader_${source.variablesPrefix}_to_${dest.variablesPrefix.replace('mtx', 'matrix')}` as const // HACK: backwards compatibility
 		VariableDefinitions[varName] = {
 			name: `Fader: ${source.defaultName} to ${dest.defaultName}`,
-			oscPath: `${source.sendTo.path}/${dest.sendToSink.on}`,
+			oscPath: `${source.sendTo.path}/${dest.sendToSink.level}`,
 			getValue: (args) => {
 				const faderNum = args && args[0]?.type === 'f' ? args[0].value : NaN
 				return isNaN(faderNum) ? undefined : floatToDB(faderNum)
