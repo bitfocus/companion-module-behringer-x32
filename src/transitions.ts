@@ -77,7 +77,7 @@ export class X32Transitions {
 
 	public run(path: string, from: number | undefined, to: number, fadeProps: FadeProps | null): void {
 		const interval = 1000 / this.fps
-		const stepCount = Math.ceil(fadeProps?.fadeDuration ?? 0 / interval)
+		const stepCount = Math.ceil((fadeProps?.fadeDuration ?? 0) / interval)
 
 		if (stepCount <= 1 || typeof from !== 'number') {
 			this.transitions.delete(path)
