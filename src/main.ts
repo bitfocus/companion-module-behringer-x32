@@ -107,7 +107,7 @@ export default class X32Instance extends InstanceBase<X32Types> implements Insta
 		)
 		this.debounceUpdateVariables = debounceFn(
 			() => {
-				console.log('fire variables')
+				// console.log('fire variables')
 				const variables = new Set(this.invalidatedVariables.values())
 				this.invalidatedVariables.clear()
 
