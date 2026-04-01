@@ -10,6 +10,11 @@ While developing the module, by using `yarn dev` the compiler will be run in wat
 
 ## Changes
 
+### v4.0.0-1
+
+- Add `_float` variables for all fader values (e.g. `$(x32:fader_ch_01_float)`, `$(x32:fader_ch_18_to_bus_07_float)`)
+- Float values are in normalized range 0.0–1.0 as received from the X32 over OSC
+
 ### v4.0
 
 - Update to 2.0 module api
