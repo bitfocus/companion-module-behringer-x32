@@ -186,6 +186,14 @@ for (const target of allSources) {
 				return isNaN(faderNum) ? undefined : floatToDB(faderNum)
 			},
 		}
+		VariableDefinitions[`fader_${target.variablesPrefix}_float`] = {
+			name: `Fader (float): ${target.defaultName}`,
+			oscPath: target.level.path,
+			getValue: (args) => {
+				const faderNum = args && args[0]?.type === 'f' ? args[0].value : NaN
+				return isNaN(faderNum) ? undefined : faderNum
+			},
+		}
 	}
 }
 
@@ -201,6 +209,16 @@ for (const source of sendToBusSources) {
 				const faderNum = args && args[0]?.type === 'f' ? args[0].value : NaN
 				return isNaN(faderNum) ? undefined : floatToDB(faderNum)
 			},
+		}
+		if (dest.sendToSink.level) {
+			VariableDefinitions[`fader_${source.variablesPrefix}_to_${dest.variablesPrefix}_float`] = {
+				name: `Fader (float): ${source.defaultName} to ${dest.defaultName}`,
+				oscPath: `${source.sendTo.path}/${dest.sendToSink.level}`,
+				getValue: (args) => {
+					const faderNum = args && args[0]?.type === 'f' ? args[0].value : NaN
+					return isNaN(faderNum) ? undefined : faderNum
+				},
+			}
 		}
 	}
 }
@@ -218,6 +236,18 @@ for (const source of busSources) {
 				const faderNum = args && args[0]?.type === 'f' ? args[0].value : NaN
 				return isNaN(faderNum) ? undefined : floatToDB(faderNum)
 			},
+		}
+		if (dest.sendToSink.level) {
+			const varNameFloat =
+				`fader_${source.variablesPrefix}_to_${dest.variablesPrefix.replace('mtx', 'matrix')}_float` as const
+			VariableDefinitions[varNameFloat] = {
+				name: `Fader (float): ${source.defaultName} to ${dest.defaultName}`,
+				oscPath: `${source.sendTo.path}/${dest.sendToSink.level}`,
+				getValue: (args) => {
+					const faderNum = args && args[0]?.type === 'f' ? args[0].value : NaN
+					return isNaN(faderNum) ? undefined : faderNum
+				},
+			}
 		}
 	}
 }
