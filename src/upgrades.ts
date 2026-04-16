@@ -432,6 +432,8 @@ export const upgradeToBuiltinVariableParsing: CompanionStaticUpgradeScript<any> 
 			delete action.options.varDelta
 
 			action.options.delta = FixupNumericOrVariablesValueToExpressions(oldValue)
+
+			result.updatedActions.push(action)
 		}
 	}
 
