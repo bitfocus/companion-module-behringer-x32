@@ -453,7 +453,9 @@ export function getMatrixPaths(matrixNumber: number): SourcePaths | null {
 export function getDcaPaths(dcaNumber: number): SourcePaths | null {
 	if (dcaNumber < 1 || dcaNumber > 8) return null
 
-	const basePath = `/dca/${String(dcaNumber).padStart(2, '0')}`
+	// X32 DCA paths use single-digit numbers (/dca/1 through /dca/8), unlike
+	// channels and buses which use zero-padded two-digit numbers (/ch/01, /bus/01).
+	const basePath = `/dca/${dcaNumber}`
 
 	return {
 		defaultName: `DCA ${dcaNumber}`,

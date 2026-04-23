@@ -32,7 +32,9 @@ import osc from 'osc'
 import { NumberComparitorPicker } from './input.js'
 import type { SetRequired } from 'type-fest'
 import {
+	CompanionAdvancedFeedbackDefinition,
 	CompanionBooleanFeedbackDefinition,
+	CompanionFeedbackAdvancedEvent,
 	CompanionFeedbackDefinitions,
 	CompanionFeedbackInfo,
 	CompanionOptionValues,
@@ -396,6 +398,18 @@ export type FeedbacksSchema = {
 		type: 'boolean'
 		options: Record<string, never>
 	}
+	fader_state_display: {
+		type: 'advanced'
+		options: {
+			target: string
+			show_channel_num: boolean
+			show_name: boolean
+			show_fader_level: boolean
+			show_mute_state: boolean
+			muted_bgcolor: number
+			live_bgcolor: number
+		}
+	}
 }
 
 function getDataNumber(data: osc.MetaArgument[] | undefined, index: number): number | undefined {
@@ -514,6 +528,12 @@ export function GetFeedbacksList(
 			},
 		}
 	}
+
+	// Tracks which OSC paths each fader_state_display feedback instance is
+	// subscribed to, keyed by feedback ID. Used for cleanup on every callback
+	// invocation and on unsubscribe — avoids relying on evt.previousOptions,
+	// which can be stale or absent after a reconnect.
+	const faderStateSubscribedPaths = new Map<string, string[]>()
 
 	const feedbacks: CompanionFeedbackDefinitions<FeedbacksSchema> = {
 		record: {
@@ -2566,6 +2586,151 @@ export function GetFeedbacksList(
 				},
 			}),
 		},
+		fader_state_display: {
+			type: 'advanced',
+			name: 'Fader State Display',
+			description: 'Show live fader level, mute state, and name on a button. Updates in real time from OSC.',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Fader Target',
+					id: 'target',
+					...convertChoices(levelsChoices.channels),
+					allowInvalidValues: true,
+				},
+				{
+					type: 'checkbox',
+					label: 'Show channel number / type',
+					id: 'show_channel_num',
+					default: false,
+				},
+				{
+					type: 'checkbox',
+					label: 'Show scribble strip name',
+					id: 'show_name',
+					default: true,
+				},
+				{
+					type: 'checkbox',
+					label: 'Show fader level in dB',
+					id: 'show_fader_level',
+					default: true,
+				},
+				{
+					type: 'checkbox',
+					label: 'Show mute state (MUTED / LIVE)',
+					id: 'show_mute_state',
+					default: false,
+				},
+				{
+					type: 'colorpicker',
+					label: 'Muted background color',
+					id: 'muted_bgcolor',
+					default: 0xff0000,
+				},
+				{
+					type: 'colorpicker',
+					label: 'Live background color',
+					id: 'live_bgcolor',
+					default: 0x000000,
+				},
+			],
+			callback: (evt: CompanionFeedbackAdvancedEvent<FeedbacksSchema['fader_state_display']['options']>) => {
+				const refPaths = parseRefToPaths(evt.options.target, levelsChoices.channelsParseOptions)
+
+				// Unsubscribe from the paths this instance was previously registered on.
+				// Using a local Map rather than evt.previousOptions avoids the case where
+				// previousOptions is stale or absent after a reconnect.
+				const prevPaths = faderStateSubscribedPaths.get(evt.id) ?? []
+				for (const p of prevPaths) subs.unsubscribe(p, evt.id)
+
+				if (!refPaths) {
+					faderStateSubscribedPaths.delete(evt.id)
+					return {}
+				}
+
+				const levelPath = refPaths.level?.path ?? null
+				const mutePath = refPaths.muteOrOn?.path ?? null
+				const namePath = refPaths.namePath ?? null
+
+				// Register subscriptions and record the active paths for this instance.
+				// subs.subscribe is idempotent (Map.set), so calling it on every invocation
+				// is safe and ensures subscriptions are re-established after a reconnect.
+				const activePaths: string[] = []
+				if (levelPath) {
+					subscribeFeedback(ensureLoaded, subs, levelPath, evt)
+					activePaths.push(levelPath)
+				}
+				if (mutePath) {
+					subscribeFeedback(ensureLoaded, subs, mutePath, evt)
+					activePaths.push(mutePath)
+				}
+				if (namePath) {
+					subscribeFeedback(ensureLoaded, subs, namePath, evt)
+					activePaths.push(namePath)
+				}
+				faderStateSubscribedPaths.set(evt.id, activePaths)
+
+				// Read cached OSC values written by the message handler in main.ts
+				const faderData = levelPath ? state.get(levelPath) : undefined
+				const muteData = mutePath ? state.get(mutePath) : undefined
+				const nameData = namePath ? state.get(namePath) : undefined
+
+				// muteOrOn.isOn: true means the path represents an "on" signal (1=live, 0=muted),
+				// which is how channels, buses, and DCAs all work on the X32.
+				let isMuted = false
+				if (refPaths.muteOrOn && muteData) {
+					const val = muteData[0]?.type === 'i' ? muteData[0].value : undefined
+					isMuted = refPaths.muteOrOn.isOn ? val === 0 : val === 1
+				}
+
+				const lines: string[] = []
+
+				if (evt.options.show_channel_num) {
+					lines.push(refPaths.defaultName)
+				}
+
+				if (evt.options.show_name) {
+					const name = nameData?.[0]?.type === 's' ? nameData[0].value.trim() : ''
+					if (name) lines.push(name)
+				}
+
+				if (evt.options.show_fader_level) {
+					const fFloat = faderData?.[0]?.type === 'f' ? faderData[0].value : undefined
+					if (fFloat !== undefined) {
+						if (fFloat === 0) {
+							// Fader fully off. floatToDB(0) returns -90 due to its piecewise
+							// formula, but X32 convention is -∞ at this position.
+							lines.push('-\u221e dB')
+						} else {
+							const db = floatToDB(fFloat)
+							const sign = db >= 0 ? '+' : '-'
+							lines.push(`${sign}${Math.abs(db).toFixed(1)} dB`)
+						}
+					}
+				}
+
+				if (evt.options.show_mute_state) {
+					lines.push(isMuted ? 'MUTED' : 'LIVE')
+				}
+
+				// Fix the font size based on line count so Companion's auto-sizer
+				// never fires. Auto-sizing changes the font when text pixel width
+				// varies (different digit counts, ∞ glyph, ± sign widths), causing
+				// the button to visually "jump" on every dB update.
+				const fixedSizes = ['24', '18', '14', '7'] as const
+				return {
+					text: lines.join('\n'),
+					bgcolor: isMuted ? Number(evt.options.muted_bgcolor) : Number(evt.options.live_bgcolor),
+					size: fixedSizes[Math.min(lines.length - 1, 3)],
+				}
+			},
+			unsubscribe: (evt: CompanionFeedbackInfo<FeedbacksSchema['fader_state_display']['options']>) => {
+				const paths = faderStateSubscribedPaths.get(evt.id) ?? []
+				for (const p of paths) subs.unsubscribe(p, evt.id)
+				faderStateSubscribedPaths.delete(evt.id)
+			},
+		} satisfies CompanionAdvancedFeedbackDefinition<FeedbacksSchema['fader_state_display']['options']>,
 	}
 
 	return feedbacks

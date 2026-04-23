@@ -25,6 +25,7 @@ import { getUndoActions, UndoActionsSchema } from './undo.js'
 import { FaderBankActionsSchema, getFaderBankActions } from './fader-bank.js'
 import { getHeadAmpActions, HeadAmpActionsSchema } from './headamp.js'
 import { getMiscActions, MiscActionsSchema } from './misc.js'
+import { getEncoderActions, EncoderActionsSchema } from './encoder.js'
 
 export type ActionsSchema = XLiveActionsSchema &
 	MarkerActionsSchema &
@@ -49,7 +50,8 @@ export type ActionsSchema = XLiveActionsSchema &
 	UndoActionsSchema &
 	FaderBankActionsSchema &
 	HeadAmpActionsSchema &
-	MiscActionsSchema
+	MiscActionsSchema &
+	EncoderActionsSchema
 
 export interface ActionsProps {
 	readonly transitions: X32Transitions
@@ -84,5 +86,6 @@ export function GetActionsList(props: ActionsProps): CompanionActionDefinitions<
 		...getFaderBankActions(props),
 		...getHeadAmpActions(props),
 		...getMiscActions(props),
+		...getEncoderActions(props),
 	}
 }
