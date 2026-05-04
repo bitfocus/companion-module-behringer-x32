@@ -124,20 +124,6 @@ export const CHOICES_TAPE_FUNC: DropdownChoice<string>[] = [
 	{ label: 'REWIND', id: '6' },
 ]
 
-export interface ChannelChoicesOptions {
-	defaultNames?: boolean
-	numericIndex?: boolean
-	includeMain?: boolean
-	includeST?: boolean
-	skipDca?: boolean
-	skipBus?: boolean
-	skipMatrix?: boolean
-	skipInputs?: boolean
-	skipAuxIn?: boolean
-	skipFxRtn?: boolean
-	// TODO - more skipXXX
-}
-
 export const FaderLevelChoice: CompanionInputFieldNumber<'fad'> = {
 	type: 'number',
 	label: 'Fader Level (-90 = -inf)',

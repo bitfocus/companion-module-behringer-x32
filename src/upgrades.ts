@@ -226,9 +226,8 @@ export const upgradeChannelOrFaderValuesFromOscPaths: CompanionStaticUpgradeScri
 		}
 
 		const propsToUpgrade = actionsToUpgrade[action.actionId]
-		if (!propsToUpgrade) continue
+		if (propsToUpgrade) upgradeProps(action.options, propsToUpgrade)
 
-		upgradeProps(action.options, propsToUpgrade)
 		result.updatedActions.push(action)
 	}
 	for (const feedback of props.feedbacks) {
@@ -244,9 +243,8 @@ export const upgradeChannelOrFaderValuesFromOscPaths: CompanionStaticUpgradeScri
 		}
 
 		const propsToUpgrade = feedbacksToUpgrade[feedback.feedbackId]
-		if (!propsToUpgrade) continue
+		if (propsToUpgrade) upgradeProps(feedback.options, propsToUpgrade)
 
-		upgradeProps(feedback.options, propsToUpgrade)
 		result.updatedFeedbacks.push(feedback)
 	}
 
