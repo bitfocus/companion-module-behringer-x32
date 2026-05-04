@@ -9,6 +9,7 @@ import {
 	upgradeChannelOrFaderValuesFromOscPaths,
 	upgradeToBuiltinFeedbackInverted,
 	upgradeToBuiltinVariableParsing,
+	upgradeSetFadeDurationDefaults,
 } from './upgrades.js'
 import debounceFn from 'debounce-fn'
 import PQueue from 'p-queue'
@@ -35,6 +36,7 @@ export const UpgradeScripts: CompanionStaticUpgradeScript<X32Config>[] = [
 	upgradeChannelOrFaderValuesFromOscPaths, // 4.0.0
 	upgradeToBuiltinVariableParsing, // 4.0.1
 	upgradeChannelOrFaderValuesFromOscPaths, // 4.0.2 - run it again, as some bugs mean some stuff was missed
+	upgradeSetFadeDurationDefaults, // 4.0.3
 ]
 
 /**

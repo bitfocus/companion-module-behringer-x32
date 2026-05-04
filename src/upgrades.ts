@@ -439,3 +439,57 @@ export const upgradeToBuiltinVariableParsing: CompanionStaticUpgradeScript<any> 
 
 	return result
 }
+
+const actionIdsWithFadeDuration = new Set<string>([
+	'fad',
+	'fader_restore',
+	'fader_delta',
+	'panning',
+	'panning-delta',
+	'panning-restore',
+	'monitor-level',
+	'level_channel_send',
+	'level_channel_send_delta',
+	'level_channel_restore',
+	'level_bus_send',
+	'level_bus_send_delta',
+	'level_bus_restore',
+	'channel-send-panning',
+	'channel-send-panning-delta',
+	'channel-send-panning-restore',
+	'bus-send-panning',
+	'bus-send-panning-delta',
+	'bus-send-panning-restore',
+])
+
+export const upgradeSetFadeDurationDefaults: CompanionStaticUpgradeScript<any> = (_ctx, props) => {
+	const result: CompanionStaticUpgradeResult<any, undefined> = {
+		updatedConfig: null,
+		updatedSecrets: null,
+		updatedActions: [],
+		updatedFeedbacks: [],
+	}
+
+	for (const action of props.actions) {
+		if (!actionIdsWithFadeDuration.has(action.actionId)) continue
+
+		let modified = false
+
+		if (action.options.fadeDuration === undefined) {
+			action.options.fadeDuration = exprVal(0)
+			modified = true
+		}
+		if (action.options.fadeAlgorithm === undefined) {
+			action.options.fadeAlgorithm = exprVal('linear')
+			modified = true
+		}
+		if (action.options.fadeType === undefined) {
+			action.options.fadeType = exprVal('ease-in')
+			modified = true
+		}
+
+		if (modified) result.updatedActions.push(action)
+	}
+
+	return result
+}
