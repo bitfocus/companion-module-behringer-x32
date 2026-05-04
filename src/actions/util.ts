@@ -43,6 +43,7 @@ export function actionSubscriptionWrapper<TOptions extends CompanionOptionValues
 					if (path) props.ensureLoaded(path)
 				}
 			: undefined,
+		optionsToMonitorForSubscribe: input.optionsToMonitorForSubscribe,
 	}
 }
 

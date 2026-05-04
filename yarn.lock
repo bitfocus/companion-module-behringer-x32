@@ -5,13 +5,13 @@ __metadata:
   version: 8
   cacheKey: 10c0
 
-"@companion-module/base@npm:~2.0.3":
-  version: 2.0.3
-  resolution: "@companion-module/base@npm:2.0.3"
+"@companion-module/base@npm:~2.0.4":
+  version: 2.0.4
+  resolution: "@companion-module/base@npm:2.0.4"
   dependencies:
     colord: "npm:^2.9.3"
     tslib: "npm:^2.8.1"
-  checksum: 10c0/a6b3be873fbc52e9a842cebe9201e670df1c79655975678aefb045d6b83e76ec8be77a507136e28153aca0cc5dab19dcf6c138c0eeeb365c1ada609c28b00ab8
+  checksum: 10c0/f7499efe73b9e409dec553d86a95c9832caafbbc4a2b40f053736f8a34b126ef94aeb8fee38456550d8696a9251fdc56aaddcea3f07ee5125db8befc7fba1def
   languageName: node
   linkType: hard
 
@@ -799,7 +799,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "behringer-x32@workspace:."
   dependencies:
-    "@companion-module/base": "npm:~2.0.3"
+    "@companion-module/base": "npm:~2.0.4"
     "@companion-module/tools": "npm:^3.0.1"
     "@types/debug": "npm:^4.1.13"
     "@types/node": "npm:^22.19.17"
