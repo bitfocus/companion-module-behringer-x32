@@ -110,7 +110,9 @@ for (let i = 1; i <= 16; i++) {
 	pathReplacements[`${padNumber(i)}/pan`] = `bus${i}`
 }
 for (let i = 1; i <= 6; i++) pathReplacements[`/mtx/${padNumber(i)}`] = `matrix${i}`
+for (let i = 1; i <= 6; i++) pathReplacements[`/mtx/${i}`] = `matrix${i}`
 for (let i = 1; i <= 8; i++) pathReplacements[`/dca/${padNumber(i)}`] = `dca${i}`
+for (let i = 1; i <= 8; i++) pathReplacements[`/dca/${i}`] = `dca${i}`
 for (let i = 1; i <= 6; i++) pathReplacements[`/config/mute/${i}`] = i
 for (let i = 1; i <= 32; i++) pathReplacements[padNumber(i)] = i
 for (let i = 1; i <= 32; i++) pathReplacements[`/headamp/${padNumber(i - 1, 3)}`] = `local${i}`

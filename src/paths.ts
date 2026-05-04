@@ -453,13 +453,13 @@ export function getMatrixPaths(matrixNumber: number): SourcePaths | null {
 export function getDcaPaths(dcaNumber: number): SourcePaths | null {
 	if (dcaNumber < 1 || dcaNumber > 8) return null
 
-	const basePath = `/dca/${String(dcaNumber).padStart(2, '0')}`
+	const basePath = `/dca/${String(dcaNumber)}`
 
 	return {
 		defaultName: `DCA ${dcaNumber}`,
 		defaultRef: `dca${dcaNumber}`,
 		namePath: `${basePath}/config/name`,
-		variablesPrefix: `dca_${String(dcaNumber).padStart(2, '0')}`,
+		variablesPrefix: `dca_${String(dcaNumber)}`,
 
 		isStereoRight: dcaNumber % 2 === 0,
 
