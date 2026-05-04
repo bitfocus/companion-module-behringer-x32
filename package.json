@@ -1,6 +1,6 @@
 {
 	"name": "behringer-x32",
-	"version": "4.0.2",
+	"version": "4.0.3",
 	"main": "dist/main.js",
 	"type": "module",
 	"scripts": {
