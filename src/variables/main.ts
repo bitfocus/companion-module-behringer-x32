@@ -31,6 +31,7 @@ const allSources = GetTargetPaths({
 	allowDca: true,
 })
 const busSources = GetTargetPaths({ allowBus: true })
+const matrixSendSources = GetTargetPaths({ allowStereo: true, allowMono: true, allowBus: true })
 const matrixSources = GetTargetPaths({ allowMatrix: true })
 
 const sendToBusSources = GetTargetPaths({
@@ -205,7 +206,7 @@ for (const source of sendToBusSources) {
 	}
 }
 
-for (const source of busSources) {
+for (const source of matrixSendSources) {
 	if (!source.variablesPrefix || !source.sendTo) continue
 	for (const dest of matrixSources) {
 		if (!dest.variablesPrefix || !dest.sendToSink) continue
