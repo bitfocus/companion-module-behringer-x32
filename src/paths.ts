@@ -172,7 +172,7 @@ export const MainStereoPaths: SourcePaths = {
 		color: `/main/st/config/color`,
 	},
 	sendTo: {
-		path: `/main/st`,
+		path: `/main/st/mix`,
 		isOn: true,
 	},
 	sendToSink: {
@@ -208,7 +208,7 @@ export const MainMonoPaths: SourcePaths = {
 		color: `/main/m/config/color`,
 	},
 	sendTo: {
-		path: `/main/m`,
+		path: `/main/m/mix`,
 		isOn: true,
 	},
 	sendToSink: {
