@@ -71,7 +71,7 @@ export class X32Transitions {
 
 	public runForDb(path: string, from: number | undefined, to: number, fadeProps: FadeProps | null): void {
 		const floatTo = dbToFloat(to)
-		const floatFrom = from ? dbToFloat(from) : undefined
+		const floatFrom = from !== undefined ? dbToFloat(from) : undefined
 		this.run(path, floatFrom, floatTo, fadeProps)
 	}
 
