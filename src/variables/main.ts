@@ -41,6 +41,20 @@ const sendToBusSources = GetTargetPaths({
 
 export const STORED_CHANNEL_ID = 'stored_channel'
 
+function getFaderLevel(args: OSCMetaArgument[] | undefined): number | undefined {
+	const faderNum = args && args[0]?.type === 'f' ? args[0].value : NaN
+	return isNaN(faderNum) ? undefined : floatToDB(faderNum)
+}
+
+function getDisplayFaderLevel(args: OSCMetaArgument[] | undefined): string | undefined {
+	const level = getFaderLevel(args)
+	if (level === undefined) return undefined
+	if (level <= -90) return '-∞ dB'
+
+	const roundedLevel = Math.abs(level) < 0.05 ? 0 : Math.round(level * 10) / 10
+	return `${roundedLevel.toFixed(1)} dB`
+}
+
 export const VariableDefinitions: MyVariableDefinitions = {
 	m_name: {
 		name: 'Device name',
@@ -181,10 +195,12 @@ for (const target of allSources) {
 		VariableDefinitions[`fader_${target.variablesPrefix}`] = {
 			name: `Fader: ${target.defaultName}`,
 			oscPath: target.level.path,
-			getValue: (args) => {
-				const faderNum = args && args[0]?.type === 'f' ? args[0].value : NaN
-				return isNaN(faderNum) ? undefined : floatToDB(faderNum)
-			},
+			getValue: getFaderLevel,
+		}
+		VariableDefinitions[`display_fader_${target.variablesPrefix}`] = {
+			name: `Fader display: ${target.defaultName}`,
+			oscPath: target.level.path,
+			getValue: getDisplayFaderLevel,
 		}
 	}
 }
@@ -197,10 +213,12 @@ for (const source of sendToBusSources) {
 		VariableDefinitions[`fader_${source.variablesPrefix}_to_${dest.variablesPrefix}`] = {
 			name: `Fader: ${source.defaultName} to ${dest.defaultName}`,
 			oscPath: `${source.sendTo.path}/${dest.sendToSink.level}`,
-			getValue: (args) => {
-				const faderNum = args && args[0]?.type === 'f' ? args[0].value : NaN
-				return isNaN(faderNum) ? undefined : floatToDB(faderNum)
-			},
+			getValue: getFaderLevel,
+		}
+		VariableDefinitions[`display_fader_${source.variablesPrefix}_to_${dest.variablesPrefix}`] = {
+			name: `Fader display: ${source.defaultName} to ${dest.defaultName}`,
+			oscPath: `${source.sendTo.path}/${dest.sendToSink.level}`,
+			getValue: getDisplayFaderLevel,
 		}
 	}
 }
@@ -210,14 +228,17 @@ for (const source of busSources) {
 	for (const dest of matrixSources) {
 		if (!dest.variablesPrefix || !dest.sendToSink) continue
 
-		const varName = `fader_${source.variablesPrefix}_to_${dest.variablesPrefix.replace('mtx', 'matrix')}` as const // HACK: backwards compatibility
+		const varName: `fader_${string}` = `fader_${source.variablesPrefix}_to_${dest.variablesPrefix.replace('mtx', 'matrix')}` // HACK: backwards compatibility
 		VariableDefinitions[varName] = {
 			name: `Fader: ${source.defaultName} to ${dest.defaultName}`,
 			oscPath: `${source.sendTo.path}/${dest.sendToSink.level}`,
-			getValue: (args) => {
-				const faderNum = args && args[0]?.type === 'f' ? args[0].value : NaN
-				return isNaN(faderNum) ? undefined : floatToDB(faderNum)
-			},
+			getValue: getFaderLevel,
+		}
+		const displayVarName: `display_fader_${string}` = `display_${varName}`
+		VariableDefinitions[displayVarName] = {
+			name: `Fader display: ${source.defaultName} to ${dest.defaultName}`,
+			oscPath: `${source.sendTo.path}/${dest.sendToSink.level}`,
+			getValue: getDisplayFaderLevel,
 		}
 	}
 }

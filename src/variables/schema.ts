@@ -15,4 +15,5 @@ export type VariablesSchema = {
 	[key: `name_${string}`]: string
 	[key: `color_${string}`]: string
 	[key: `fader_${string}`]: number
+	[key: `display_fader_${string}`]: string
 }
