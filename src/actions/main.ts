@@ -25,6 +25,8 @@ import { getUndoActions, UndoActionsSchema } from './undo.js'
 import { FaderBankActionsSchema, getFaderBankActions } from './fader-bank.js'
 import { getHeadAmpActions, HeadAmpActionsSchema } from './headamp.js'
 import { getMiscActions, MiscActionsSchema } from './misc.js'
+import { getDynamicsActions, DynamicsActionsSchema } from './dynamics.js'
+import { getDelayActions, DelayActionsSchema } from './delay.js'
 
 export type ActionsSchema = XLiveActionsSchema &
 	MarkerActionsSchema &
@@ -49,7 +51,9 @@ export type ActionsSchema = XLiveActionsSchema &
 	UndoActionsSchema &
 	FaderBankActionsSchema &
 	HeadAmpActionsSchema &
-	MiscActionsSchema
+	MiscActionsSchema &
+	DynamicsActionsSchema &
+	DelayActionsSchema
 
 export interface ActionsProps {
 	readonly transitions: X32Transitions
@@ -84,5 +88,7 @@ export function GetActionsList(props: ActionsProps): CompanionActionDefinitions<
 		...getFaderBankActions(props),
 		...getHeadAmpActions(props),
 		...getMiscActions(props),
+		...getDynamicsActions(props),
+		...getDelayActions(props),
 	}
 }

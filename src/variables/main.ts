@@ -2,7 +2,7 @@ import type { OSCMetaArgument, StringKeys } from '@companion-module/base'
 import { getStringArg } from './util.js'
 import type { X32State } from '../state.js'
 import { getColorChoiceFromId, GetNameFromState, GetTargetPaths } from '../choices.js'
-import { floatToDB } from '../util.js'
+import { floatToDB, floatToDelay } from '../util.js'
 import { VariablesSchema } from './schema.js'
 
 export type MyVariableDefinition<K extends keyof VariablesSchema> = {
@@ -185,6 +185,16 @@ for (const target of allSources) {
 			getValue: (args) => {
 				const faderNum = args && args[0]?.type === 'f' ? args[0].value : NaN
 				return isNaN(faderNum) ? undefined : floatToDB(faderNum)
+			},
+		}
+	}
+	if (target.delay?.timePath) {
+		VariableDefinitions[`delay_${target.variablesPrefix}_ms`] = {
+			name: `Delay time (ms): ${target.defaultName}`,
+			oscPath: target.delay.timePath,
+			getValue: (args) => {
+				const value = args?.[0]
+				return value?.type === 'f' && Number.isFinite(value.value) ? floatToDelay(value.value) : undefined
 			},
 		}
 	}

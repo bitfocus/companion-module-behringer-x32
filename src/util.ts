@@ -30,17 +30,20 @@ export function stringifyValueAlways(value: JsonValue | undefined): string {
 }
 
 export function floatToDB(f: number): number {
+	let db: number
 	if (f >= 0.5) {
-		return f * 40 - 30 // max dB value: +10.
+		db = f * 40 - 30 // max dB value: +10.
 	} else if (f >= 0.25) {
-		return f * 80 - 50
+		db = f * 80 - 50
 	} else if (f >= 0.0625) {
-		return f * 160 - 70
+		db = f * 160 - 70
 	} else if (f >= 0.0) {
-		return f * 480 - 90 // min dB value: -90 or -oo
+		db = f * 480 - 90 // min dB value: -90 or -oo
 	} else {
 		return Number.NEGATIVE_INFINITY
 	}
+	// Match the 0.1 dB controls and remove OSC float32 rounding errors.
+	return Math.round(db * 10) / 10 || 0
 }
 
 export function dbToFloat(d: number): number {
@@ -77,6 +80,14 @@ export function floatToHeadampGain(f: number): number {
 
 export function headampGainToFloat(d: number): number {
 	return clamp((d + 12) / 72)
+}
+
+export function delayToFloat(ms: number): number {
+	return clamp((ms - 0.3) / 499.7)
+}
+
+export function floatToDelay(f: number): number {
+	return Math.round((clamp(f) * 499.7 + 0.3) * 10) / 10
 }
 
 function clamp(val: number, min = 0, max = 1): number {

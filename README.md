@@ -10,6 +10,13 @@ While developing the module, by using `yarn dev` the compiler will be run in wat
 
 ## Changes
 
+### Unreleased
+
+- Add channel dynamics (compressor) on/off/toggle actions and enabled feedback.
+- Add channel delay on/off/toggle, absolute and relative time adjustments, and enabled feedback.
+- Add channel delay time variables in milliseconds, with 0.1 ms precision.
+- Round fader level variables and feedback comparisons to 0.1 dB to remove OSC floating-point artifacts.
+
 ### v4.0
 
 - Update to 2.0 module api

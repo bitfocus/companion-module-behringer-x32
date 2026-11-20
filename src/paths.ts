@@ -43,6 +43,13 @@ export interface SourcePaths {
 	trim?: {
 		path: string
 	}
+	dynamics?: {
+		onPath: string
+	}
+	delay?: {
+		onPath: string
+		timePath: string
+	}
 	config?: {
 		name: string
 		color: string
@@ -268,6 +275,13 @@ export function getChannelPaths(channelNumber: number): SourcePaths | null {
 		},
 		trim: {
 			path: `${basePath}/preamp/trim`,
+		},
+		dynamics: {
+			onPath: `${basePath}/dyn/on`,
+		},
+		delay: {
+			onPath: `${basePath}/delay/on`,
+			timePath: `${basePath}/delay/time`,
 		},
 		config: {
 			name: `${basePath}/config/name`,
