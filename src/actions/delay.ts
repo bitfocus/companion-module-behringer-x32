@@ -73,7 +73,7 @@ export function getDelayActions(props: ActionsProps): CompanionActionDefinitions
 					default: 0.3,
 					min: 0.3,
 					max: 500,
-					step: 0.1,
+					step: 1,
 				},
 			],
 			callback: (action) => {
@@ -95,7 +95,7 @@ export function getDelayActions(props: ActionsProps): CompanionActionDefinitions
 					default: 1,
 					min: -500,
 					max: 500,
-					step: 0.1,
+					step: 1,
 				},
 			],
 			...actionSubscriptionWrapper(props, {
