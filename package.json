@@ -8,6 +8,7 @@
 		"dev": "yarn build:main --watch",
 		"build": "rimraf dist && tsc -p tsconfig.build.json",
 		"build:main": "tsc -p tsconfig.build.json",
+		"test": "tsx --test src/processing.spec.ts",
 		"lint:raw": "./node_modules/.bin/eslint --ext .ts --ext .js --ignore-pattern dist --ignore-pattern pkg",
 		"lint": "yarn lint:raw .",
 		"dist": "yarn companion-module-build"

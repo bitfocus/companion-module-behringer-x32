@@ -44,6 +44,18 @@ type CompanionFeedbackWithCallback = SetRequired<CompanionBooleanFeedbackDefinit
 export type FeedbackId = StringKeys<FeedbacksSchema>
 
 export type FeedbacksSchema = {
+	'dyn-on': {
+		type: 'boolean'
+		options: {
+			target: string
+		}
+	}
+	'delay-on': {
+		type: 'boolean'
+		options: {
+			target: string
+		}
+	}
 	mute: {
 		type: 'boolean'
 		options: {
@@ -461,6 +473,8 @@ export function GetFeedbacksList(
 		allowMatrix: true,
 	}
 	const insertSourceChoices = GetTargetChoices(state, insertSourceParseOptions)
+	const channelParseOptions: ParseRefOptions = { allowChannel: true }
+	const channelChoices = GetTargetChoices(state, channelParseOptions)
 
 	const feedbackSubscriptionWrapper = (input: {
 		getPath: (options: CompanionOptionValues) => string | null
@@ -516,6 +530,48 @@ export function GetFeedbacksList(
 	}
 
 	const feedbacks: CompanionFeedbackDefinitions<FeedbacksSchema> = {
+		'dyn-on': {
+			type: 'boolean',
+			name: 'Channel dynamics (compressor) enabled',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Channel',
+					id: 'target',
+					...convertChoices(channelChoices),
+					allowInvalidValues: true,
+				},
+			],
+			defaultStyle: {
+				bgcolor: 0xff7f00,
+				color: 0x000000,
+			},
+			...feedbackSubscriptionWrapper({
+				getPath: (options) => parseRefToPaths(options.target, channelParseOptions)?.dynamics?.onPath ?? null,
+				getValue: (_evt, data) => getDataNumber(data, 0) === 1,
+			}),
+		},
+		'delay-on': {
+			type: 'boolean',
+			name: 'Channel delay enabled',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Channel',
+					id: 'target',
+					...convertChoices(channelChoices),
+					allowInvalidValues: true,
+				},
+			],
+			defaultStyle: {
+				bgcolor: 0xff7f00,
+				color: 0x000000,
+			},
+			...feedbackSubscriptionWrapper({
+				getPath: (options) => parseRefToPaths(options.target, channelParseOptions)?.delay?.onPath ?? null,
+				getValue: (_evt, data) => getDataNumber(data, 0) === 1,
+			}),
+		},
 		record: {
 			type: 'boolean',
 			name: 'Change from X-Live state',

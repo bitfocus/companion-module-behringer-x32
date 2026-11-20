@@ -19,6 +19,9 @@ We support the following actions:
 | Mute Group                                                     | Turns the selected mute group on or off                                                                            |
 | Channel set trim                                               | Sets the trim of the selected channel                                                                              |
 | Headamp set gain                                               | Sets the gain of the selected headamp                                                                              |
+| Channel dynamics (compressor)                                  | Turns channel 1-32 dynamics on, off, or toggles it                                                                 |
+| Channel delay                                                  | Turns channel 1-32 delay on, off, or toggles it                                                                    |
+| Channel delay time                                             | Sets or adjusts channel 1-32 delay from 0.3 to 500 ms in 0.1 ms steps                                              |
 | Load Console Cue                                               | Loads the given cue from the consoles internal cue list 0-99                                                       |
 | Load Console Scene                                             | Loads the given scene from the consoles internal scene list 0-99                                                   |
 | Load Console Snippet                                           | Loads the given snippet from the consoles internal snippet list 0-99                                               |
@@ -28,3 +31,9 @@ We support the following actions:
 for additional actions please raise a feature request at [github](https://github.com/bitfocus/companion-module-behringer-x32)
 
 If setting a fade duration, running another action for that value will cancel the first, and run the new one from the current level. If you wish to cancel a fade, run an 'Adjust fader level' with an offset of 0.
+
+Channel dynamics and delay enabled feedbacks can show their current on/off state on buttons. Fader level variables and feedback comparisons use 0.1 dB precision.
+
+To display the current channel delay time on a button, use `$(your_connection:delay_ch_01_ms) ms` for channel 1, up to `$(your_connection:delay_ch_32_ms) ms` for channel 32. Replace `your_connection` with the connection label in Companion. Values are read from the console and rounded to 0.1 ms.
+
+The channel delay range is 0.3 to 500 ms in 0.1 ms steps. In **Adjust channel delay time**, choose an adjustment such as `1`, `-1`, `10`, or `-10` for buttons that increase or decrease the delay by that many milliseconds. To bypass the delay, use **Channel delay on/off**.
